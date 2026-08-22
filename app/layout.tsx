@@ -1,23 +1,27 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
 
 const playfair = Playfair_Display({
-  variable: "--font-playfair",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-playfair",
+  display: "swap",
 });
 
 const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-dm-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Agropioo - AI-Powered Intelligence for Smarter Farming",
+  title: "Agropioo — Ask anything about your crop",
   description:
-    "Agropioo helps farmers make better decisions with real-time insights, smart recommendations and accurate predictions.",
+    "Agropioo pairs an AI agriculture advisor with digital farm records, weather-aware guidance, and your own language. Built for Pakistan. A product of Aplinode.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#F0FDF4",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -26,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${playfair.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }
