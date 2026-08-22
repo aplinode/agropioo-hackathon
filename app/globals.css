@@ -1,7 +1,8 @@
 /* Hallmark · macrostructure: Marquee Hero · genre: editorial · theme: custom (brand-locked)
  * nav: N1b contextual scroll-morph · footer: Ft5 statement · enrichment: E5 hand-built SVG
- * pre-emit critique: P5 H4 E5 S4 R5 V4
- * motion: cut (CSS-only) · contrast: pass (4.5:1+) · states: default/hover/focus/active
+ * pre-emit critique: P5 H5 E5 S4 R4 V4
+ * motion: cut (CSS-only, view-timeline reveal as progressive enhancement) · contrast: pass (4.5:1+)
+ * states: default/hover/focus/active · signature: furrow contours carrying mono signal labels
  */
 @import "tailwindcss";
 
@@ -81,6 +82,10 @@ body {
   overflow-x: clip;
 }
 
+section[id] {
+  scroll-margin-top: 4.5rem;
+}
+
 body {
   background-color: var(--color-agro-paper);
   color: var(--color-agro-ink);
@@ -103,6 +108,14 @@ body {
   text-wrap: balance;
 }
 
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
 @keyframes rise-in {
   from {
     opacity: 0;
@@ -120,12 +133,37 @@ body {
   animation-delay: var(--rise-delay, 0s);
 }
 
+@keyframes drift {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.drift {
+  animation: drift 90s linear infinite;
+  transform-origin: center;
+}
+
+/* Scroll-driven reveal — progressive enhancement only.
+   Browsers without view() timelines (and reduced-motion users) see static content. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: rise-in linear both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 26%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
-  .rise {
+  .rise,
+  .drift,
+  .reveal {
     opacity: 1;
     transform: none;
     animation: none;
