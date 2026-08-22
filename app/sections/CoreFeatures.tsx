@@ -210,7 +210,10 @@ export default function CoreFeatures() {
             <div className="flex flex-wrap items-start justify-between gap-6">
               <div className="max-w-sm">
                 <CardIcon path="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
-                <h3 className="mt-5 text-lg font-semibold tracking-tight text-agro-ink">
+                <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-earth">
+                  Module 04 · Weather
+                </p>
+                <h3 className="mt-1.5 text-lg font-semibold tracking-tight text-agro-ink">
                   Weather-aware guidance
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-agro-slate">
@@ -255,6 +258,15 @@ export default function CoreFeatures() {
             </div>
           </article>
         </div>
+
+        <a
+          href="#matrix"
+          className="reveal group mt-10 inline-flex items-center gap-3 font-mono text-sm font-semibold tracking-wide text-agro-canopy transition-colors hover:text-agro-forest"
+        >
+          <span className="inline-block h-2 w-2 rounded-full bg-agro-wheat transition-transform duration-300 group-hover:scale-125" aria-hidden="true" />
+          The platform keeps growing — see the full capability stack
+          <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">↓</span>
+        </a>
       </div>
     </section>
   );
