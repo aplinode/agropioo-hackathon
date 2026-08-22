@@ -2,25 +2,56 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a;
+
+  --agro-forest: #013b1f;
+  --agro-canopy: #1c6428;
+  --agro-leaf: #3f8839;
+  --agro-sprout: #c1d8c1;
+  --agro-earth: #8b6f47;
+  --agro-wheat: #d4a843;
+  --agro-stone: #f5f2ec;
+  --agro-clay: #e8e0d5;
+  --agro-ink: #0f172a;
+  --agro-slate: #475569;
+  --agro-cloud: #94a3b8;
+  --agro-paper: #ffffff;
+  --agro-night: #05140c;
+  --agro-mint: #f0fdf4;
+  --agro-success: #3f8839;
+  --agro-warning: #d4a843;
+  --agro-error: #b91c1c;
+  --agro-info: #1e6b7a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-dm-sans);
+  --font-display: var(--font-playfair);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-agro-forest: var(--agro-forest);
+  --color-agro-canopy: var(--agro-canopy);
+  --color-agro-leaf: var(--agro-leaf);
+  --color-agro-sprout: var(--agro-sprout);
+  --color-agro-earth: var(--agro-earth);
+  --color-agro-wheat: var(--agro-wheat);
+  --color-agro-stone: var(--agro-stone);
+  --color-agro-clay: var(--agro-clay);
+  --color-agro-ink: var(--agro-ink);
+  --color-agro-slate: var(--agro-slate);
+  --color-agro-cloud: var(--agro-cloud);
+  --color-agro-paper: var(--agro-paper);
+  --color-agro-night: var(--agro-night);
+  --color-agro-mint: var(--agro-mint);
+  --color-agro-success: var(--agro-success);
+  --color-agro-warning: var(--agro-warning);
+  --color-agro-error: var(--agro-error);
+  --color-agro-info: var(--agro-info);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
