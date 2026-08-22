@@ -21,9 +21,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Agropioo — Ask anything about your crop",
+  title: "Agropioo — AI-Powered Farm Intelligence Platform",
   description:
-    "Agropioo pairs an AI agriculture advisor with digital farm records, weather-aware guidance, and your own language. Built for Pakistan. A product of Aplinode.",
+    "Agropioo unites an AI advisor, satellite field monitoring, market price intelligence, and digital farm records on one platform. Built for Pakistan. A product of Aplinode.",
 };
 
 export const viewport: Viewport = {
