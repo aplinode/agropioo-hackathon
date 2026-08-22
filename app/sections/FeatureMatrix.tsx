@@ -3,8 +3,13 @@ const tiers = [
     index: "T1",
     name: "Must-Have",
     badge: "Baseline",
-    accent: "border-agro-sprout",
-    badgeClass: "border-agro-clay text-agro-slate",
+    cardClass: "border border-agro-clay bg-white",
+    headerClass: "border-b border-agro-clay bg-agro-mint/60",
+    badgeClass: "border border-agro-clay bg-white text-agro-slate",
+    featureCard: "border border-agro-clay/80 bg-white hover:border-agro-canopy/40",
+    numClass: "text-agro-canopy/50",
+    titleClass: "text-agro-ink group-hover:text-agro-canopy",
+    descClass: "text-agro-slate",
     features: [
       {
         title: "AI crop disease detection",
@@ -32,8 +37,13 @@ const tiers = [
     index: "T2",
     name: "Differentiators",
     badge: "Stand out",
-    accent: "border-agro-canopy",
-    badgeClass: "border-agro-canopy/40 bg-agro-mint text-agro-canopy",
+    cardClass: "border border-agro-sprout bg-white shadow-sm",
+    headerClass: "border-b border-agro-sprout/70 bg-agro-mint",
+    badgeClass: "border border-agro-canopy/30 bg-agro-canopy text-white",
+    featureCard: "border border-agro-sprout/70 bg-agro-mint/50 hover:border-agro-canopy/40",
+    numClass: "text-agro-canopy/50",
+    titleClass: "text-agro-ink group-hover:text-agro-canopy",
+    descClass: "text-agro-slate",
     features: [
       {
         title: "Regional language voice chatbot",
@@ -66,8 +76,13 @@ const tiers = [
     index: "T3",
     name: "Wow Factor",
     badge: "Ahead of the field",
-    accent: "border-agro-canopy",
-    badgeClass: "border-agro-canopy/40 bg-agro-mint text-agro-canopy",
+    cardClass: "border border-agro-forest bg-agro-forest text-white shadow-lg",
+    headerClass: "border-b border-white/10 bg-white/5",
+    badgeClass: "border border-agro-sprout/40 bg-agro-leaf/20 text-agro-sprout",
+    featureCard: "border border-white/15 bg-white/5 hover:border-agro-sprout/40",
+    numClass: "text-agro-sprout/60",
+    titleClass: "text-white group-hover:text-agro-sprout",
+    descClass: "text-agro-sprout/75",
     features: [
       {
         title: "Satellite change detection",
@@ -102,7 +117,7 @@ export default function FeatureMatrix() {
   return (
     <section
       id="matrix"
-      className="w-full bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
+      className="w-full border-t border-agro-clay/70 bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
     >
       <div className="mx-auto max-w-7xl">
         <div className="max-w-2xl">
@@ -119,48 +134,49 @@ export default function FeatureMatrix() {
           </p>
         </div>
 
-        <div className="mt-16 space-y-16">
+        <div className="mt-14 space-y-8">
           {tiers.map((tier) => (
-            <div
-              key={tier.index}
-              className="reveal grid gap-6 lg:grid-cols-[15rem_1fr] lg:gap-12"
-            >
-              {/* Tier label column */}
-              <div
-                className={`lg:border-l-2 lg:border-t-0 lg:pl-6 ${tier.accent} border-t-2 pt-5 lg:pt-1`}
-              >
-                <p className="font-mono text-xs font-semibold tracking-[0.22em] text-agro-slate">
+            <article key={tier.index} className={`reveal overflow-hidden rounded-2xl ${tier.cardClass}`}>
+              {/* Tier header */}
+              <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 px-6 py-5 sm:px-8 ${tier.headerClass}`}>
+                <span className="font-mono text-xs font-semibold tracking-[0.22em] opacity-80">
                   {tier.index}
-                </p>
-                <h3 className="mt-2 font-display text-2xl font-medium tracking-tight text-agro-ink">
+                </span>
+                <h3 className="font-display text-xl font-medium tracking-tight sm:text-2xl">
                   {tier.name}
                 </h3>
                 <span
-                  className={`mt-3 inline-flex items-center rounded-full border px-3 py-1 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.14em] ${tier.badgeClass}`}
+                  className={`ml-auto inline-flex items-center rounded-full px-3 py-1 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.14em] ${tier.badgeClass}`}
                 >
                   {tier.badge}
                 </span>
+                <span className="hidden w-full font-mono text-[0.65rem] uppercase tracking-[0.18em] opacity-60 sm:inline sm:w-auto">
+                  {String(tier.features.length).padStart(2, "0")} capabilities
+                </span>
               </div>
 
-              {/* Feature ledger */}
-              <ul className="divide-y divide-agro-clay/80 border-t border-agro-clay/80">
+              {/* Feature grid */}
+              <ul className="grid gap-4 p-6 sm:grid-cols-2 sm:p-8 lg:gap-x-8">
                 {tier.features.map((feature, i) => (
-                  <li key={feature.title} className="group py-4 sm:py-5">
-                    <div className="grid gap-1.5 sm:grid-cols-[2.25rem_13rem_1fr] sm:items-baseline sm:gap-4">
-                      <span className="font-mono text-xs tracking-widest text-agro-canopy/60 transition-colors duration-300 group-hover:text-agro-forest" aria-hidden="true">
+                  <li
+                    key={feature.title}
+                    className={`group rounded-xl p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${tier.featureCard}`}
+                  >
+                    <div className="flex items-baseline gap-3">
+                      <span className={`font-mono text-xs tracking-widest ${tier.numClass}`} aria-hidden="true">
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <h4 className="text-base font-semibold tracking-tight text-agro-ink">
+                      <h4 className={`font-semibold tracking-tight transition-colors duration-300 ${tier.titleClass}`}>
                         {feature.title}
                       </h4>
-                      <p className="text-sm leading-relaxed text-agro-slate">
-                        {feature.description}
-                      </p>
                     </div>
+                    <p className={`mt-2 pl-8 text-sm leading-relaxed ${tier.descClass}`}>
+                      {feature.description}
+                    </p>
                   </li>
                 ))}
               </ul>
-            </div>
+            </article>
           ))}
         </div>
       </div>

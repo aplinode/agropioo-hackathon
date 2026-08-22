@@ -33,26 +33,39 @@ const users = [
 
 export default function TargetUsers() {
   return (
-    <section className="w-full bg-white px-4 pb-20 sm:px-6 lg:px-8 lg:pb-28">
+    <section className="w-full border-t border-agro-clay/70 bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
       <div className="mx-auto max-w-7xl">
-        <div className="reveal grid divide-y divide-agro-clay rounded-2xl border border-agro-clay bg-agro-mint/40 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          {users.map((user) => (
-            <div key={user.title} className="flex flex-col p-7 sm:p-8">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-agro-canopy ring-1 ring-agro-sprout">
-                {user.icon}
-              </span>
-              <h3 className="mt-5 text-lg font-semibold tracking-tight text-agro-ink">
+        <div className="grid gap-6 md:grid-cols-3">
+          {users.map((user, index) => (
+            <div
+              key={user.title}
+              className="reveal group flex flex-col rounded-2xl border border-agro-sprout/80 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-agro-canopy/50 hover:shadow-xl sm:p-8"
+            >
+              <div className="flex items-start justify-between">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout transition-colors duration-300 group-hover:bg-agro-canopy group-hover:text-white">
+                  {user.icon}
+                </span>
+                <span
+                  className="font-mono text-sm font-semibold tracking-widest text-agro-canopy/40 transition-colors duration-300 group-hover:text-agro-canopy"
+                  aria-hidden="true"
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+              </div>
+              <h3 className="mt-6 font-display text-xl font-medium tracking-tight text-agro-ink">
                 {user.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-agro-slate">
+              <p className="mt-2.5 text-sm leading-relaxed text-agro-slate">
                 {user.description}
               </p>
             </div>
           ))}
         </div>
 
-        <p className="reveal mt-6 text-center font-mono text-xs uppercase tracking-[0.18em] text-agro-canopy">
+        <p className="reveal mt-10 flex items-center justify-center gap-4 text-center font-mono text-xs uppercase tracking-[0.18em] text-agro-canopy">
+          <span className="hidden h-px w-10 bg-agro-clay sm:inline-block" aria-hidden="true" />
           Designed for farmers first — growing with the ecosystem
+          <span className="hidden h-px w-10 bg-agro-clay sm:inline-block" aria-hidden="true" />
         </p>
       </div>
     </section>
