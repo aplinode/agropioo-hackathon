@@ -67,7 +67,7 @@ export default function Home() {
               className="h-10 w-10"
               priority
             />
-            <span className="font-display text-xl font-semibold tracking-tight text-agro-forest">
+            <span className="font-display text-[1.7rem] font-semibold leading-none tracking-tight text-agro-forest">
               Agropioo
             </span>
           </a>
@@ -151,7 +151,7 @@ export default function Home() {
                 height={36}
                 className="h-9 w-9"
               />
-              <span className="font-display text-xl font-semibold text-agro-forest">
+              <span className="font-display text-2xl font-semibold text-agro-forest">
                 Agropioo
               </span>
             </span>
