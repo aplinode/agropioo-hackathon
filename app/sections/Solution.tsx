@@ -54,8 +54,9 @@ export default function Solution() {
             </h2>
           </div>
           <p className="reveal max-w-md leading-relaxed text-agro-slate lg:col-span-4 lg:col-start-9">
-            Agropioo pairs an AI advisor with structured farm records, so every
-            answer is grounded in your land — not generic advice.
+            One intelligence platform for the whole season — advisory, records,
+            weather, and markets working from your land&apos;s data, not
+            generic advice.
           </p>
         </div>
 
