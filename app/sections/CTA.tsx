@@ -54,7 +54,7 @@ export default function CTA() {
               type="email"
               required
               placeholder="you@example.com"
-              className="h-14 w-full flex-1 rounded-lg border border-agro-sprout/50 bg-white px-4 text-base font-medium text-agro-ink shadow-md placeholder:font-normal placeholder:text-agro-cloud focus:border-agro-sprout focus:outline-none focus:ring-2 focus:ring-agro-sprout/60 sm:h-12"
+              className="h-16 w-full flex-1 rounded-lg border border-agro-sprout/50 bg-white px-4 text-base font-medium text-agro-ink shadow-md placeholder:font-normal placeholder:text-agro-cloud focus:border-agro-sprout focus:outline-none focus:ring-2 focus:ring-agro-sprout/60 sm:h-12"
             />
             <button
               type="submit"
