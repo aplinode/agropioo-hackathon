@@ -39,7 +39,7 @@ export default function CTA() {
           </div>
         ) : (
           <form
-            className="mx-auto mt-10 flex max-w-md flex-col gap-3 sm:flex-row"
+            className="mx-auto mt-10 flex max-w-sm flex-col gap-3 sm:max-w-md sm:flex-row"
             onSubmit={(e) => {
               e.preventDefault();
               setSubmitted(true);
@@ -54,11 +54,11 @@ export default function CTA() {
               type="email"
               required
               placeholder="you@example.com"
-              className="h-12 flex-1 rounded-lg border border-agro-sprout/50 bg-white px-4 text-base font-medium text-agro-ink shadow-md placeholder:font-normal placeholder:text-agro-cloud focus:border-agro-sprout focus:outline-none focus:ring-2 focus:ring-agro-sprout/60"
+              className="h-14 w-full flex-1 rounded-lg border border-agro-sprout/50 bg-white px-4 text-base font-medium text-agro-ink shadow-md placeholder:font-normal placeholder:text-agro-cloud focus:border-agro-sprout focus:outline-none focus:ring-2 focus:ring-agro-sprout/60 sm:h-12"
             />
             <button
               type="submit"
-              className="inline-flex h-12 cursor-pointer items-center justify-center rounded-lg bg-white px-7 text-sm font-semibold text-agro-forest shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-mint hover:shadow-lg active:translate-y-0"
+              className="inline-flex h-11 cursor-pointer items-center justify-center self-center rounded-lg bg-white px-8 text-sm font-semibold whitespace-nowrap text-agro-forest shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-mint hover:shadow-lg active:translate-y-0 sm:h-12 sm:self-auto sm:px-7"
             >
               Get early access
             </button>

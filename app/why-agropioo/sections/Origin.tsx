@@ -74,7 +74,7 @@ export default function Origin() {
               </article>
             ))}
 
-            <p className="reveal flex items-center justify-center gap-3 rounded-2xl bg-agro-canopy px-6 py-5 text-center font-mono text-xs uppercase tracking-[0.18em] text-white sm:col-span-2">
+            <p className="reveal flex items-center justify-center gap-3 rounded-2xl bg-agro-canopy px-6 py-5 text-center font-mono text-xs uppercase leading-relaxed tracking-[0.18em] text-white sm:col-span-2">
               <span className="h-px flex-1 bg-white/20" aria-hidden="true" />
               The cost of guessing is paid at harvest
               <span className="h-px flex-1 bg-white/20" aria-hidden="true" />
