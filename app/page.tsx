@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import logo from "@/references/logo.png";
 import Hero from "./sections/Hero";
+import CapabilityTicker from "./sections/CapabilityTicker";
 import Problem from "./sections/Problem";
 import Solution from "./sections/Solution";
 import CoreFeatures from "./sections/CoreFeatures";
@@ -209,6 +210,7 @@ export default function Home() {
 
       <main className="flex flex-1 flex-col">
         <Hero />
+        <CapabilityTicker />
         <Problem />
         <Solution />
         <CoreFeatures />

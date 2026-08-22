@@ -51,7 +51,24 @@ export default function Hero() {
             className="display-heading rise mt-5 font-display text-[2.6rem] font-medium leading-[1.08] tracking-tight text-agro-ink sm:text-6xl lg:text-[4.25rem]"
             style={{ "--rise-delay": "0.08s" } as React.CSSProperties}
           >
-            Intelligence for <span className="text-agro-canopy">smarter farming</span>
+            Intelligence for{" "}
+            <span className="relative inline-block text-agro-canopy">
+              smarter farming
+              <svg
+                className="draw absolute -bottom-1 left-0 h-[0.18em] w-full text-agro-wheat sm:-bottom-1.5"
+                viewBox="0 0 300 12"
+                fill="none"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M3 8C60 3 140 10 200 6C240 3.5 275 5 297 4"
+                  stroke="currentColor"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
           </h1>
 
           <p
