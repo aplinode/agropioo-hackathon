@@ -10,14 +10,7 @@ const recordChips = [
   "Harvest",
 ];
 
-const languageChips = [
-  { native: "اردو", latin: "Urdu" },
-  { native: "پنجابی", latin: "Punjabi" },
-  { native: "سرائیکی", latin: "Saraiki" },
-  { native: "پښتو", latin: "Pashto" },
-  { native: "بلوچی", latin: "Balochi" },
-  { native: "ہندکو", latin: "Hindko" },
-];
+const languageChips = ["Urdu", "Punjabi", "Saraiki", "Pashto", "Balochi", "Hindko"];
 
 function CardShell({
   className,
@@ -76,11 +69,8 @@ export function Features() {
             <div className="mt-6 space-y-3">
               <figure className="max-w-sm rounded-2xl rounded-bl-md border border-agro-sprout/70 bg-white px-4 py-3">
                 <blockquote className="text-sm text-agro-ink">
-                  پانی کب دینا چاہیے؟
+                  &ldquo;When should I irrigate my wheat?&rdquo;
                 </blockquote>
-                <figcaption className="mt-1 text-xs text-agro-slate">
-                  &ldquo;When should I irrigate?&rdquo;
-                </figcaption>
               </figure>
               <figure className="ml-auto max-w-sm rounded-2xl rounded-br-md bg-agro-canopy px-4 py-3 text-white">
                 <blockquote className="text-sm leading-relaxed">
@@ -131,13 +121,10 @@ export function Features() {
             <ul className="mt-6 flex flex-wrap gap-2" aria-label="Supported languages">
               {languageChips.map((lang) => (
                 <li
-                  key={lang.latin}
+                  key={lang}
                   className="rounded-full border border-agro-sprout bg-agro-mint px-3 py-1.5 text-xs font-medium text-agro-forest"
                 >
-                  <span lang="ur" aria-hidden="true">
-                    {lang.native}
-                  </span>{" "}
-                  {lang.latin}
+                  {lang}
                 </li>
               ))}
             </ul>

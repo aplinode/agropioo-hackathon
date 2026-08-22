@@ -1,11 +1,4 @@
-const languages = [
-  { native: "اردو", latin: "Urdu" },
-  { native: "پنجابی", latin: "Punjabi" },
-  { native: "سرائیکی", latin: "Saraiki" },
-  { native: "پښتو", latin: "Pashto" },
-  { native: "بلوچی", latin: "Balochi" },
-  { native: "ہندکو", latin: "Hindko" },
-];
+const languages = ["Urdu", "Punjabi", "Saraiki", "Pashto", "Balochi", "Hindko"];
 
 export function PakistanFirst() {
   return (
@@ -38,13 +31,10 @@ export function PakistanFirst() {
         >
           {languages.map((lang) => (
             <li
-              key={lang.latin}
-              className="rounded-full border border-agro-clay bg-white px-4 py-2 text-sm text-agro-forest shadow-sm"
+              key={lang}
+              className="rounded-full border border-agro-clay bg-white px-4 py-2 text-sm font-medium text-agro-forest shadow-sm"
             >
-              <span lang="ur" className="font-medium">
-                {lang.native}
-              </span>{" "}
-              <span className="text-agro-slate">{lang.latin}</span>
+              {lang}
             </li>
           ))}
         </ul>
