@@ -2,65 +2,90 @@ const problems = [
   {
     title: "Uncertain timing",
     description:
-      "Farmers often guess the right moment for irrigation, fertiliser, pesticide, planting, and harvesting — leading to lower yields and wasted inputs.",
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
+      "Irrigation, fertiliser, pesticide, planting, harvest — critical moments are still guessed, costing yield and wasted inputs.",
   },
   {
     title: "Lost farm history",
     description:
-      "Important activities are recorded informally or not at all, making it hard to learn from past seasons or plan the next one.",
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
-      </svg>
-    ),
+      "Seasons of knowledge live in memory or scattered notebooks. What worked last year is impossible to learn from this year.",
   },
   {
     title: "Fragmented advice",
     description:
-      "Information comes from many sources — neighbours, vendors, videos — and may not match the farmer's crop, soil, weather, or location.",
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-4.5 3h6m-6 3h9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
-      </svg>
-    ),
+      "Neighbours, vendors, and videos all offer answers — few match the farmer's crop, soil, weather, or location.",
   },
 ];
 
 export default function Problem() {
   return (
-    <section className="w-full bg-agro-stone px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
-      <div className="mx-auto max-w-7xl">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-display text-3xl font-bold tracking-tight text-agro-ink sm:text-4xl">
-            Farming decisions shouldn&apos;t be a guessing game
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-agro-slate">
-            Farmers still rely on tradition, local advice, and scattered information when making critical choices.
-          </p>
-        </div>
+    <section
+      id="why"
+      className="relative w-full overflow-hidden bg-agro-night px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-28"
+    >
+      {/* Faint furrow contours in the dark */}
+      <svg
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-56 w-full text-agro-sprout/10"
+        viewBox="0 0 1440 220"
+        fill="none"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path d="M0 80C240 50 480 110 720 82C960 54 1200 108 1440 72" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M0 140C240 112 480 168 720 142C960 116 1200 166 1440 132" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M0 200C240 174 480 226 720 202C960 178 1200 224 1440 192" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {problems.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-2xl border border-agro-clay bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md"
-            >
-              <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy">
-                {item.icon}
-              </div>
-              <h3 className="mt-4 text-lg font-semibold text-agro-ink">
-                {item.title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-agro-slate">
-                {item.description}
+      <div className="relative mx-auto max-w-7xl">
+        <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-5">
+            <p className="eyebrow reveal flex items-center gap-3 text-agro-wheat">
+              <span className="inline-block h-px w-8 bg-agro-wheat" aria-hidden="true" />
+              The problem
+            </p>
+            <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.9rem]">
+              Farming decisions shouldn&apos;t be a guessing game
+            </h2>
+            <p className="reveal mt-5 max-w-md leading-relaxed text-agro-sprout/85">
+              Across Pakistan, farmers make high-stakes choices with tradition,
+              local advice, and scattered information. The cost is paid at
+              harvest.
+            </p>
+          </div>
+
+          <div className="lg:col-span-7">
+            <ul>
+              {problems.map((item, index) => (
+                <li
+                  key={item.title}
+                  className="reveal group border-t border-agro-sprout/15 py-7 transition-colors duration-300 first:border-t-0 first:pt-0 hover:bg-white/[0.03] sm:first:pt-7 lg:first:border-t lg:first:pt-7"
+                >
+                  <div className="flex gap-6 px-2 sm:gap-8 sm:px-4">
+                    <span
+                      className="font-mono text-sm font-semibold tracking-widest text-agro-cloud transition-colors duration-300 group-hover:text-agro-wheat"
+                      aria-hidden="true"
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <div>
+                      <h3 className="text-xl font-semibold tracking-tight text-white">
+                        {item.title}
+                      </h3>
+                      <p className="mt-2 max-w-lg leading-relaxed text-agro-sprout/75">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="reveal mt-8 flex items-center gap-3 px-2 sm:px-4">
+              <span className="h-px flex-1 bg-agro-sprout/15" aria-hidden="true" />
+              <p className="font-mono text-xs uppercase tracking-[0.18em] text-agro-sprout/60">
+                The cost of guessing is paid at harvest
               </p>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>
