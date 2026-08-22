@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useState } from "react";
 import logo from "@/references/logo.png";
 import Hero from "./sections/Hero";
 import Problem from "./sections/Problem";
@@ -15,24 +15,35 @@ import CTA from "./sections/CTA";
 import Footer from "./sections/Footer";
 
 const navLinks = [
-  { label: "Home", href: "#" },
+  { label: "Why Agropioo", href: "#why" },
   { label: "Features", href: "#features" },
-  { label: "Solutions", href: "#solutions" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "About Us", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "How it works", href: "#journey" },
+  { label: "Vision", href: "#vision" },
 ];
 
 export default function Home() {
+  const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden bg-white">
+    <div className="flex min-h-screen flex-col overflow-x-hidden">
       {/* Navigation */}
-      <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-sm">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-2.5">
+      <header
+        className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+          scrolled || mobileMenuOpen
+            ? "border-b border-agro-clay bg-white/90 backdrop-blur-md"
+            : "border-b border-transparent bg-white/60 backdrop-blur-sm"
+        }`}
+      >
+        <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <a href="#top" className="flex items-center gap-2.5">
             <Image
               src={logo}
               alt="Agropioo logo"
@@ -41,40 +52,38 @@ export default function Home() {
               className="h-10 w-10"
               priority
             />
-            <span className="text-xl font-bold text-agro-forest">
+            <span className="font-display text-xl font-semibold tracking-tight text-agro-forest">
               Agropioo
             </span>
           </a>
 
-          {/* Desktop Nav */}
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm font-medium text-agro-slate transition-colors hover:text-agro-canopy"
+                className="text-sm font-medium text-agro-slate underline-offset-8 transition-colors hover:text-agro-canopy hover:underline hover:decoration-agro-sprout hover:decoration-2"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          {/* CTA */}
           <div className="hidden md:block">
             <a
-              href="#"
-              className="inline-flex h-10 items-center justify-center rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md"
+              href="#get-started"
+              className="inline-flex h-10 items-center justify-center rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0"
             >
-              Get Started
+              Get early access
             </a>
           </div>
 
-          {/* Mobile menu button */}
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-lg p-2 text-agro-forest md:hidden"
+            className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-agro-forest transition-colors hover:bg-agro-mint md:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {mobileMenuOpen ? (
               <svg
@@ -83,6 +92,7 @@ export default function Home() {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth={2}
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -97,6 +107,7 @@ export default function Home() {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth={2}
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -108,32 +119,31 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Mobile Nav */}
         {mobileMenuOpen && (
-          <div className="border-t border-agro-sprout bg-white px-4 py-4 md:hidden">
-            <nav className="flex flex-col gap-4">
+          <div className="border-t border-agro-clay bg-white px-4 py-4 md:hidden">
+            <nav className="flex flex-col gap-1" aria-label="Mobile">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-base font-medium text-agro-slate transition-colors hover:text-agro-canopy"
+                  className="rounded-lg px-3 py-3 text-base font-medium text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
                 </a>
               ))}
               <a
-                href="#"
+                href="#get-started"
                 className="mt-2 inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                Get Started
+                Get early access
               </a>
             </nav>
           </div>
         )}
       </header>
 
-      {/* Main content */}
       <main className="flex flex-1 flex-col">
         <Hero />
         <Problem />
