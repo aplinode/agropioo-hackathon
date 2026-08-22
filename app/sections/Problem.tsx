@@ -80,7 +80,7 @@ export default function Problem() {
             </ul>
 
             <div className="reveal mt-8 flex items-center gap-3 px-2 sm:px-4">
-              <span className="h-px flex-1 bg-agro-sprout/15" aria-hidden="true" />
+              <span className="hidden h-px flex-1 bg-agro-sprout/15 sm:block" aria-hidden="true" />
               <p className="font-mono text-xs uppercase tracking-[0.18em] text-agro-sprout/60">
                 The cost of guessing is paid at harvest
               </p>

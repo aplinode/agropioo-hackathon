@@ -60,12 +60,12 @@ export default function CoreFeatures() {
           <div className="lg:col-span-7">
             <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
               <span className="inline-block h-px w-8 bg-agro-wheat" aria-hidden="true" />
-              What Agropioo does
+              Inside the platform
             </p>
             <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
-              Four capabilities,
+              Multiple engines,
               <br />
-              one growing season
+              one intelligence platform
             </h2>
           </div>
           <p className="reveal max-w-md leading-relaxed text-agro-slate lg:col-span-4 lg:col-start-9">
@@ -81,6 +81,9 @@ export default function CoreFeatures() {
               <div className="flex items-center gap-3">
                 <CardIcon path="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
                 <div>
+                  <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-earth">
+                    Module 01 · Advisor
+                  </p>
                   <h3 className="text-lg font-semibold tracking-tight text-agro-ink">
                     AI agriculture advisor
                   </h3>
@@ -150,7 +153,10 @@ export default function CoreFeatures() {
           {/* Digital farm record */}
           <article className={cardClass}>
             <CardIcon path="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-            <h3 className="mt-5 text-lg font-semibold tracking-tight text-agro-ink">
+            <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-earth">
+              Module 02 · Records
+            </p>
+            <h3 className="text-lg font-semibold tracking-tight text-agro-ink">
               Digital farm record
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-agro-slate">
@@ -160,10 +166,10 @@ export default function CoreFeatures() {
 
             <ul className="mt-6 flex-1 divide-y divide-agro-clay/70 border-y border-agro-clay/70">
               {recordRows.map((row) => (
-                <li key={row.date} className="flex items-baseline justify-between gap-3 py-3">
-                  <span className="font-mono text-xs text-agro-earth">{row.date}</span>
-                  <span className="flex-1 text-sm font-medium text-agro-ink">{row.activity}</span>
-                  <span className="text-right font-mono text-xs text-agro-slate">{row.detail}</span>
+                <li key={row.date} className="flex items-baseline justify-between gap-2 py-3 sm:gap-3">
+                  <span className="shrink-0 font-mono text-xs text-agro-earth">{row.date}</span>
+                  <span className="min-w-0 flex-1 text-sm font-medium text-agro-ink">{row.activity}</span>
+                  <span className="max-w-28 text-right font-mono text-xs text-agro-slate sm:max-w-none">{row.detail}</span>
                 </li>
               ))}
             </ul>
@@ -175,7 +181,10 @@ export default function CoreFeatures() {
           {/* Local language */}
           <article className={cardClass}>
             <CardIcon path="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" />
-            <h3 className="mt-5 text-lg font-semibold tracking-tight text-agro-ink">
+            <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-earth">
+              Module 03 · Language
+            </p>
+            <h3 className="text-lg font-semibold tracking-tight text-agro-ink">
               Your language, your words
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-agro-slate">
@@ -215,11 +224,11 @@ export default function CoreFeatures() {
                 role="img"
                 aria-label="Five-day forecast strip highlighting Thursday as a no-spray advisory day"
               >
-                <ol className="grid grid-cols-5 gap-2">
+                <ol className="grid grid-cols-5 gap-1.5 sm:gap-2">
                   {forecast.map((day) => (
                     <li
                       key={day.day}
-                      className={`flex flex-col items-center gap-1.5 rounded-xl px-1 py-3 ${
+                      className={`flex flex-col items-center gap-1.5 rounded-lg px-0.5 py-3 sm:rounded-xl sm:px-1 ${
                         day.advisory ? "bg-agro-wheat/15 ring-1 ring-agro-wheat" : "bg-agro-stone"
                       }`}
                     >
@@ -227,8 +236,13 @@ export default function CoreFeatures() {
                         {day.day}
                       </span>
                       <WeatherGlyph kind={day.condition} />
-                      <span className={`text-center font-mono text-[0.6rem] uppercase tracking-wide ${day.advisory ? "font-bold text-agro-earth" : "text-transparent"}`}>
-                        {day.advisory ? "Hold spray" : "·"}
+                      <span
+                        className={`text-center font-mono text-[0.6rem] uppercase leading-tight tracking-wide ${
+                          day.advisory ? "font-bold text-agro-earth" : "text-transparent"
+                        }`}
+                      >
+                        <span className="sm:hidden">{day.advisory ? "!" : "·"}</span>
+                        <span className="hidden sm:inline">{day.advisory ? "Hold spray" : "·"}</span>
                       </span>
                     </li>
                   ))}

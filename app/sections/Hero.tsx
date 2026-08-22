@@ -5,19 +5,19 @@ const readings = [
     label: "Crop health",
     value: "92%",
     note: "Excellent",
-    position: "left-[4%] top-[20%] sm:left-[6%] lg:left-[7%]",
+    position: "left-[2%] top-[18%] sm:left-[6%] lg:left-[7%]",
   },
   {
     label: "Weather",
     value: "24°C",
     note: "Clear sky",
-    position: "bottom-[26%] left-0 lg:left-[1%]",
+    position: "bottom-[24%] left-0 lg:left-[1%]",
   },
   {
     label: "Soil moisture",
     value: "65%",
     note: "Optimal",
-    position: "bottom-[10%] right-[14%] sm:right-[22%] lg:right-[28%]",
+    position: "bottom-[8%] right-[4%] sm:right-[22%] lg:right-[28%]",
   },
 ];
 
@@ -138,7 +138,7 @@ export default function Hero() {
               {readings.map((reading, index) => (
                 <div
                   key={reading.label}
-                  className={`rise absolute z-10 w-32 rounded-xl border border-agro-clay/70 bg-white/95 p-3 shadow-lg backdrop-blur-sm sm:w-36 sm:p-4 ${reading.position}`}
+                  className={`rise absolute z-10 w-[7.5rem] rounded-xl border border-agro-clay/70 bg-white/95 p-2.5 shadow-lg backdrop-blur-sm sm:w-36 sm:p-4 ${reading.position}`}
                   style={{ "--rise-delay": `${0.4 + index * 0.12}s` } as React.CSSProperties}
                 >
                   <p className="flex items-center gap-1.5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-agro-canopy">
