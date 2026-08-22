@@ -1,26 +1,87 @@
+/* Hallmark · macrostructure: Marquee Hero · genre: editorial · theme: custom (brand-locked)
+ * nav: N1b contextual scroll-morph · footer: Ft5 statement · enrichment: E5 hand-built SVG
+ * pre-emit critique: P5 H4 E5 S4 R5 V4
+ * motion: cut (CSS-only) · contrast: pass (4.5:1+) · states: default/hover/focus/active
+ */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-agro-forest: #013b1f;
+  --color-agro-canopy: #1c6428;
+  --color-agro-leaf: #3f8839;
+  --color-agro-sprout: #c1d8c1;
+  --color-agro-earth: #8b6f47;
+  --color-agro-wheat: #d4a843;
+  --color-agro-stone: #f5f2ec;
+  --color-agro-clay: #e8e0d5;
+  --color-agro-ink: #0f172a;
+  --color-agro-slate: #475569;
+  --color-agro-cloud: #94a3b8;
+  --color-agro-paper: #ffffff;
+  --color-agro-mint: #f0fdf4;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-playfair);
+  --font-sans: var(--font-dm-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  overflow-x: clip;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-agro-paper);
+  color: var(--color-agro-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: var(--color-agro-sprout);
+  color: var(--color-agro-forest);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-agro-canopy);
+  outline-offset: 3px;
+}
+
+.display-heading {
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  opacity: 0;
+  animation: rise-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--rise-delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .rise {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
 }
