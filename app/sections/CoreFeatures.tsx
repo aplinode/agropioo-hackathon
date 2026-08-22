@@ -20,7 +20,7 @@ const cardClass =
 function WeatherGlyph({ kind }: { kind: string }) {
   if (kind === "sun") {
     return (
-      <svg className="h-4 w-4 text-agro-wheat" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+      <svg className="h-4 w-4 text-agro-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
       </svg>
     );
@@ -33,7 +33,7 @@ function WeatherGlyph({ kind }: { kind: string }) {
     );
   }
   return (
-    <svg className="h-4 w-4 text-agro-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+    <svg className="h-4 w-4 text-agro-slate" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
     </svg>
   );
@@ -59,7 +59,7 @@ export default function CoreFeatures() {
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
             <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
-              <span className="inline-block h-px w-8 bg-agro-wheat" aria-hidden="true" />
+              <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
               Inside the platform
             </p>
             <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
@@ -81,7 +81,7 @@ export default function CoreFeatures() {
               <div className="flex items-center gap-3">
                 <CardIcon path="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
                 <div>
-                  <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-earth">
+                  <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-canopy">
                     Module 01 · Advisor
                   </p>
                   <h3 className="text-lg font-semibold tracking-tight text-agro-ink">
@@ -118,11 +118,11 @@ export default function CoreFeatures() {
                   </p>
                   <ul className="mt-2 space-y-1.5">
                     <li className="flex gap-2">
-                      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-agro-wheat" aria-hidden="true" />
+                      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-agro-leaf" aria-hidden="true" />
                       <span><strong className="font-semibold">Water stress</strong> — irrigate in the cool hours, before 9 AM.</span>
                     </li>
                     <li className="flex gap-2">
-                      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-agro-wheat" aria-hidden="true" />
+                      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-agro-leaf" aria-hidden="true" />
                       <span><strong className="font-semibold">Nitrogen shortage</strong> — check the oldest leaves first; feed urea if needed.</span>
                     </li>
                   </ul>
@@ -134,7 +134,7 @@ export default function CoreFeatures() {
               </div>
 
               <div className="flex items-center gap-3 rounded-full border border-agro-sprout bg-white py-2 pl-4 pr-2 shadow-sm">
-                <span className="flex-1 truncate text-sm text-agro-cloud">
+                <span className="flex-1 truncate text-sm text-agro-canopy/60">
                   Apna sawal likhein ya bolein…
                 </span>
                 <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-agro-canopy text-white" aria-hidden="true">
@@ -153,7 +153,7 @@ export default function CoreFeatures() {
           {/* Digital farm record */}
           <article className={cardClass}>
             <CardIcon path="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-            <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-earth">
+            <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-canopy">
               Module 02 · Records
             </p>
             <h3 className="text-lg font-semibold tracking-tight text-agro-ink">
@@ -167,7 +167,7 @@ export default function CoreFeatures() {
             <ul className="mt-6 flex-1 divide-y divide-agro-clay/70 border-y border-agro-clay/70">
               {recordRows.map((row) => (
                 <li key={row.date} className="flex items-baseline justify-between gap-2 py-3 sm:gap-3">
-                  <span className="shrink-0 font-mono text-xs text-agro-earth">{row.date}</span>
+                  <span className="shrink-0 font-mono text-xs text-agro-slate">{row.date}</span>
                   <span className="min-w-0 flex-1 text-sm font-medium text-agro-ink">{row.activity}</span>
                   <span className="max-w-28 text-right font-mono text-xs text-agro-slate sm:max-w-none">{row.detail}</span>
                 </li>
@@ -181,7 +181,7 @@ export default function CoreFeatures() {
           {/* Local language */}
           <article className={cardClass}>
             <CardIcon path="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" />
-            <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-earth">
+            <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-canopy">
               Module 03 · Language
             </p>
             <h3 className="text-lg font-semibold tracking-tight text-agro-ink">
@@ -210,7 +210,7 @@ export default function CoreFeatures() {
             <div className="flex flex-wrap items-start justify-between gap-6">
               <div className="max-w-sm">
                 <CardIcon path="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
-                <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-earth">
+                <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-canopy">
                   Module 04 · Weather
                 </p>
                 <h3 className="mt-1.5 text-lg font-semibold tracking-tight text-agro-ink">
@@ -232,7 +232,7 @@ export default function CoreFeatures() {
                     <li
                       key={day.day}
                       className={`flex flex-col items-center gap-1.5 rounded-lg px-0.5 py-3 sm:rounded-xl sm:px-1 ${
-                        day.advisory ? "bg-agro-wheat/15 ring-1 ring-agro-wheat" : "bg-agro-stone"
+                        day.advisory ? "bg-agro-mint ring-1 ring-agro-canopy" : "bg-agro-stone"
                       }`}
                     >
                       <span className="font-mono text-[0.65rem] uppercase tracking-wider text-agro-slate">
@@ -241,7 +241,7 @@ export default function CoreFeatures() {
                       <WeatherGlyph kind={day.condition} />
                       <span
                         className={`text-center font-mono text-[0.6rem] uppercase leading-tight tracking-wide ${
-                          day.advisory ? "font-bold text-agro-earth" : "text-transparent"
+                          day.advisory ? "font-bold text-agro-forest" : "text-transparent"
                         }`}
                       >
                         <span className="sm:hidden">{day.advisory ? "!" : "·"}</span>
@@ -251,7 +251,7 @@ export default function CoreFeatures() {
                   ))}
                 </ol>
                 <p className="mt-3 flex items-center gap-2 font-mono text-xs text-agro-slate">
-                  <span className="inline-block h-2 w-2 rounded-sm bg-agro-wheat/60 ring-1 ring-agro-wheat" aria-hidden="true" />
+                  <span className="inline-block h-2 w-2 rounded-sm bg-agro-leaf ring-1 ring-agro-canopy" aria-hidden="true" />
                   Advisory day flagged from hyperlocal forecast
                 </p>
               </div>
@@ -263,7 +263,7 @@ export default function CoreFeatures() {
           href="#matrix"
           className="reveal group mt-10 inline-flex items-center gap-3 font-mono text-sm font-semibold tracking-wide text-agro-canopy transition-colors hover:text-agro-forest"
         >
-          <span className="inline-block h-2 w-2 rounded-full bg-agro-wheat transition-transform duration-300 group-hover:scale-125" aria-hidden="true" />
+          <span className="inline-block h-2 w-2 rounded-full bg-agro-leaf transition-transform duration-300 group-hover:scale-125" aria-hidden="true" />
           The platform keeps growing — see the full capability stack
           <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">↓</span>
         </a>

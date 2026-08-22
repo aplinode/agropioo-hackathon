@@ -18,7 +18,7 @@ function TickerContent() {
           className="flex items-center gap-6 pr-6 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-agro-sprout sm:gap-8 sm:pr-8 sm:text-sm"
         >
           {item}
-          <svg className="h-3 w-3 shrink-0 text-agro-wheat" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <svg className="h-3 w-3 shrink-0 text-agro-leaf" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 2C9 7 6 9.5 6 14a6 6 0 0012 0c0-4.5-3-7-6-12z" />
           </svg>
         </span>

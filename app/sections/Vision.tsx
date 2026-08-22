@@ -19,7 +19,7 @@ export default function Vision() {
       <div className="mx-auto max-w-7xl">
         <div className="max-w-2xl">
           <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
-            <span className="inline-block h-px w-8 bg-agro-wheat" aria-hidden="true" />
+            <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
             The vision
           </p>
           <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
@@ -33,7 +33,7 @@ export default function Vision() {
           {/* Pakistan-first — the wider panel */}
           <article className="relative overflow-hidden rounded-2xl bg-agro-clay/60 p-7 sm:p-10 lg:col-span-7">
             <svg
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-28 w-full text-agro-earth/25"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-28 w-full text-agro-sprout/20"
               viewBox="0 0 720 110"
               fill="none"
               preserveAspectRatio="none"
@@ -75,7 +75,7 @@ export default function Vision() {
           </article>
 
           {/* Global — the dark counterpoint */}
-          <article className="relative overflow-hidden rounded-2xl bg-agro-night p-7 text-white sm:p-10 lg:col-span-5">
+          <article className="relative overflow-hidden rounded-2xl bg-agro-forest p-7 text-white sm:p-10 lg:col-span-5">
             <svg
               className="pointer-events-none absolute inset-x-0 bottom-0 h-28 w-full text-agro-sprout/10"
               viewBox="0 0 520 110"
@@ -88,7 +88,7 @@ export default function Vision() {
             </svg>
 
             <div className="relative flex h-full flex-col">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-agro-sprout/30 bg-white/5 text-agro-wheat">
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-agro-sprout/30 bg-white/5 text-agro-sprout">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.236m0 0A8.959 8.959 0 013 12c0-.778.099-1.533.284-2.253" />
                 </svg>
@@ -104,7 +104,7 @@ export default function Vision() {
               <ul className="mt-auto space-y-3 pt-8">
                 {globalPoints.map((point) => (
                   <li key={point} className="flex items-start gap-3 text-sm text-white/90 sm:text-base">
-                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-agro-wheat" aria-hidden="true" />
+                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-agro-leaf" aria-hidden="true" />
                     {point}
                   </li>
                 ))}

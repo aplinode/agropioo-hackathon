@@ -43,7 +43,7 @@ export default function Hero() {
       <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2 lg:gap-8">
         <div className="flex flex-col items-start text-left">
           <p className="eyebrow rise flex items-center gap-3 text-agro-canopy">
-            <span className="inline-block h-px w-8 bg-agro-wheat" aria-hidden="true" />
+            <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
             AI-powered farm intelligence platform
           </p>
 
@@ -55,7 +55,7 @@ export default function Hero() {
             <span className="relative inline-block text-agro-canopy">
               smarter farming
               <svg
-                className="draw absolute -bottom-1 left-0 h-[0.18em] w-full text-agro-wheat sm:-bottom-1.5"
+                className="draw absolute -bottom-1 left-0 h-[0.18em] w-full text-agro-leaf sm:-bottom-1.5"
                 viewBox="0 0 300 12"
                 fill="none"
                 preserveAspectRatio="none"
@@ -103,7 +103,7 @@ export default function Hero() {
             style={{ "--rise-delay": "0.32s" } as React.CSSProperties}
           >
             <span className="font-mono tracking-wide">Built for Pakistan</span>
-            <span className="h-1 w-1 rounded-full bg-agro-wheat" aria-hidden="true" />
+            <span className="h-1 w-1 rounded-full bg-agro-leaf" aria-hidden="true" />
             <span>A product of Aplinode</span>
           </p>
         </div>
@@ -121,7 +121,7 @@ export default function Hero() {
               >
                 <circle cx="200" cy="200" r="164" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 10" />
                 <circle cx="200" cy="200" r="136" stroke="currentColor" strokeWidth="1.5" strokeDasharray="8 8" opacity="0.7" />
-                <circle cx="200" cy="18" r="4" fill="var(--color-agro-wheat)" stroke="none" />
+                <circle cx="200" cy="18" r="4" fill="var(--color-agro-leaf)" stroke="none" />
               </svg>
 
               <div className="absolute inset-0 overflow-hidden rounded-full">

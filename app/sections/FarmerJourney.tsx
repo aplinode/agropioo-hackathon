@@ -66,7 +66,7 @@ export default function FarmerJourney() {
         <ol className="relative mx-auto mt-16 max-w-2xl">
           {/* The furrow rail */}
           <span
-            className="absolute bottom-3 left-[1.375rem] top-3 w-px bg-gradient-to-b from-agro-canopy via-agro-leaf to-agro-wheat"
+            className="absolute bottom-3 left-[1.375rem] top-3 w-px bg-gradient-to-b from-agro-canopy via-agro-leaf to-agro-forest"
             aria-hidden="true"
           />
 

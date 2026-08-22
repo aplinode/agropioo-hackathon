@@ -20,7 +20,7 @@ export default function Problem() {
   return (
     <section
       id="why"
-      className="relative w-full overflow-hidden bg-agro-night px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-28"
+      className="relative w-full overflow-hidden bg-agro-forest px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-28"
     >
       {/* Faint furrow contours in the dark */}
       <svg
@@ -38,8 +38,8 @@ export default function Problem() {
       <div className="relative mx-auto max-w-7xl">
         <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5">
-            <p className="eyebrow reveal flex items-center gap-3 text-agro-wheat">
-              <span className="inline-block h-px w-8 bg-agro-wheat" aria-hidden="true" />
+            <p className="eyebrow reveal flex items-center gap-3 text-agro-sprout">
+              <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
               The problem
             </p>
             <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.9rem]">
@@ -61,7 +61,7 @@ export default function Problem() {
                 >
                   <div className="flex gap-6 px-2 sm:gap-8 sm:px-4">
                     <span
-                      className="font-mono text-sm font-semibold tracking-widest text-agro-cloud transition-colors duration-300 group-hover:text-agro-wheat"
+                      className="font-mono text-sm font-semibold tracking-widest text-agro-sprout/60 transition-colors duration-300 group-hover:text-white"
                       aria-hidden="true"
                     >
                       {String(index + 1).padStart(2, "0")}

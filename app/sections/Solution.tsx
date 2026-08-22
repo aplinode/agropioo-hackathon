@@ -44,7 +44,7 @@ export default function Solution() {
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
             <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
-              <span className="inline-block h-px w-8 bg-agro-wheat" aria-hidden="true" />
+              <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
               The solution
             </p>
             <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
@@ -72,7 +72,7 @@ export default function Solution() {
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-mint text-agro-canopy transition-colors duration-300 group-hover:bg-agro-canopy group-hover:text-white">
                   {item.icon}
                 </span>
-                <span className="font-mono text-sm font-semibold tracking-widest text-agro-wheat" aria-hidden="true">
+                <span className="font-mono text-sm font-semibold tracking-widest text-agro-canopy" aria-hidden="true">
                   {String(index + 1).padStart(2, "0")}
                 </span>
               </div>

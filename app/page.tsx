@@ -129,7 +129,7 @@ export default function Home() {
         inert={!mobileMenuOpen ? true : undefined}
       >
         <div
-          className={`absolute inset-0 bg-agro-night/50 backdrop-blur-sm transition-opacity duration-300 ${
+          className={`absolute inset-0 bg-agro-forest/60 backdrop-blur-sm transition-opacity duration-300 ${
             mobileMenuOpen ? "opacity-100" : "opacity-0"
           }`}
           onClick={() => setMobileMenuOpen(false)}

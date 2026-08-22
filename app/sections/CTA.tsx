@@ -1,32 +1,84 @@
+"use client";
+
+import { useState } from "react";
+
 export default function CTA() {
+  const [submitted, setSubmitted] = useState(false);
+
   return (
-    <section className="w-full bg-agro-forest px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
-      <div className="mx-auto max-w-4xl text-center">
-        <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-          Ready to farm smarter?
+    <section
+      id="get-started"
+      className="relative w-full overflow-hidden bg-agro-forest px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-28"
+    >
+      {/* Furrow contours rising behind the form */}
+      <svg
+        className="pointer-events-none absolute inset-x-0 top-0 h-48 w-full text-agro-sprout/15"
+        viewBox="0 0 1440 190"
+        fill="none"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path d="M0 60C240 34 480 86 720 58C960 30 1200 82 1440 54" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M0 124C240 98 480 150 720 122C960 94 1200 146 1440 118" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M0 180C240 158 480 204 720 180C960 156 1200 200 1440 176" stroke="currentColor" strokeWidth="1" opacity="0.7" />
+      </svg>
+
+      <div className="relative mx-auto max-w-2xl text-center">
+        <p className="eyebrow reveal justify-center text-agro-sprout">
+          Early access
+        </p>
+        <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.9rem]">
+          Bring your farm onto the platform
         </h2>
-        <p className="mt-4 text-lg leading-relaxed text-agro-sprout">
-          Join the farmers using Agropioo to make better decisions, protect their crops, and grow their income — starting in Pakistan and expanding worldwide.
+        <p className="reveal mx-auto mt-5 max-w-xl leading-relaxed text-agro-sprout/85">
+          Join the farmers making better decisions with Agropioo — starting in
+          Pakistan, growing worldwide.
         </p>
 
-        <form
-          className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
-          onSubmit={(e) => e.preventDefault()}
-        >
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="h-12 w-full max-w-sm rounded-lg border border-agro-sprout/30 bg-white/10 px-4 text-sm text-white placeholder:text-agro-sprout/70 focus:border-agro-sprout focus:outline-none focus:ring-2 focus:ring-agro-sprout/30"
-          />
-          <button
-            type="submit"
-            className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-white px-7 text-sm font-semibold text-agro-forest shadow-sm transition-all hover:-translate-y-0.5 hover:bg-agro-sprout sm:w-auto"
+        {submitted ? (
+          <div
+            className="reveal mx-auto mt-10 flex max-w-md items-center justify-center gap-3 rounded-xl border border-agro-sprout/40 bg-white/10 px-6 py-5 backdrop-blur-sm"
+            role="status"
           >
-            Get early access
-          </button>
-        </form>
+            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-agro-sprout text-agro-forest" aria-hidden="true">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </span>
+            <p className="text-left text-sm leading-relaxed text-white">
+              You&apos;re on the list. We&apos;ll be in touch when your
+              region opens.
+            </p>
+          </div>
+        ) : (
+          <form
+            className="reveal mx-auto mt-10 flex max-w-md flex-col gap-3 sm:flex-row"
+            onSubmit={(e) => {
+              e.preventDefault();
+              setSubmitted(true);
+            }}
+          >
+            <label htmlFor="cta-email" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="cta-email"
+              name="email"
+              type="email"
+              required
+              placeholder="you@example.com"
+              className="h-12 flex-1 rounded-lg border border-agro-sprout/40 bg-white px-4 text-sm text-agro-ink placeholder:text-agro-canopy/50 focus:border-agro-sprout focus:outline-none focus:ring-2 focus:ring-agro-sprout/50"
+            />
+            <button
+              type="submit"
+              className="inline-flex h-12 cursor-pointer items-center justify-center rounded-lg bg-white px-7 text-sm font-semibold text-agro-forest shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-mint hover:shadow-md active:translate-y-0"
+            >
+              Get early access
+            </button>
+          </form>
+        )}
 
-        <p className="mt-4 text-xs text-agro-sprout/80">
+        <p className="reveal mt-4 font-mono text-xs tracking-wide text-agro-sprout/70">
           No spam. Unsubscribe anytime.
         </p>
       </div>

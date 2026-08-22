@@ -3,7 +3,7 @@ const tiers = [
     index: "T1",
     name: "Must-Have",
     badge: "Baseline",
-    accent: "border-agro-cloud",
+    accent: "border-agro-sprout",
     badgeClass: "border-agro-clay text-agro-slate",
     features: [
       {
@@ -32,8 +32,8 @@ const tiers = [
     index: "T2",
     name: "Differentiators",
     badge: "Stand out",
-    accent: "border-agro-wheat",
-    badgeClass: "border-agro-wheat/60 bg-agro-wheat/10 text-agro-earth",
+    accent: "border-agro-canopy",
+    badgeClass: "border-agro-canopy/40 bg-agro-mint text-agro-canopy",
     features: [
       {
         title: "Regional language voice chatbot",
@@ -107,7 +107,7 @@ export default function FeatureMatrix() {
       <div className="mx-auto max-w-7xl">
         <div className="max-w-2xl">
           <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
-            <span className="inline-block h-px w-8 bg-agro-wheat" aria-hidden="true" />
+            <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
             Full capability stack
           </p>
           <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
@@ -129,7 +129,7 @@ export default function FeatureMatrix() {
               <div
                 className={`lg:border-l-2 lg:border-t-0 lg:pl-6 ${tier.accent} border-t-2 pt-5 lg:pt-1`}
               >
-                <p className="font-mono text-xs font-semibold tracking-[0.22em] text-agro-earth">
+                <p className="font-mono text-xs font-semibold tracking-[0.22em] text-agro-slate">
                   {tier.index}
                 </p>
                 <h3 className="mt-2 font-display text-2xl font-medium tracking-tight text-agro-ink">
@@ -147,7 +147,7 @@ export default function FeatureMatrix() {
                 {tier.features.map((feature, i) => (
                   <li key={feature.title} className="group py-4 sm:py-5">
                     <div className="grid gap-1.5 sm:grid-cols-[2.25rem_13rem_1fr] sm:items-baseline sm:gap-4">
-                      <span className="font-mono text-xs tracking-widest text-agro-cloud transition-colors duration-300 group-hover:text-agro-canopy" aria-hidden="true">
+                      <span className="font-mono text-xs tracking-widest text-agro-canopy/60 transition-colors duration-300 group-hover:text-agro-forest" aria-hidden="true">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <h4 className="text-base font-semibold tracking-tight text-agro-ink">
