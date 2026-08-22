@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import logo from "@/references/logo.png";
 import Hero from "./sections/Hero";
@@ -24,6 +24,7 @@ const navLinks = [
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -31,6 +32,20 @@ export default function Home() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileMenuOpen(false);
+    };
+    closeRef.current?.focus();
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [mobileMenuOpen]);
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden">
@@ -57,12 +72,12 @@ export default function Home() {
             </span>
           </a>
 
-          <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
+          <nav className="hidden items-center gap-9 md:flex" aria-label="Main">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm font-medium text-agro-slate underline-offset-8 transition-colors hover:text-agro-canopy hover:underline hover:decoration-agro-sprout hover:decoration-2"
+                className="text-lg font-medium text-agro-slate underline-offset-8 transition-colors hover:text-agro-canopy hover:underline hover:decoration-agro-sprout hover:decoration-2"
               >
                 {link.label}
               </a>
@@ -72,7 +87,7 @@ export default function Home() {
           <div className="hidden md:block">
             <a
               href="#get-started"
-              className="inline-flex h-10 items-center justify-center rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0"
+              className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-6 text-base font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0"
             >
               Get early access
             </a>
@@ -81,11 +96,72 @@ export default function Home() {
           <button
             type="button"
             className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-agro-forest transition-colors hover:bg-agro-mint md:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => setMobileMenuOpen(true)}
             aria-expanded={mobileMenuOpen}
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-haspopup="dialog"
+            aria-label="Open menu"
           >
-            {mobileMenuOpen ? (
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile sidebar */}
+      <div
+        className={`fixed inset-0 z-[60] md:hidden ${
+          mobileMenuOpen ? "" : "pointer-events-none"
+        }`}
+        aria-hidden={!mobileMenuOpen}
+        inert={!mobileMenuOpen ? true : undefined}
+      >
+        <div
+          className={`absolute inset-0 bg-agro-night/50 backdrop-blur-sm transition-opacity duration-300 ${
+            mobileMenuOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+        <aside
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site menu"
+          className={`absolute right-0 top-0 flex h-full w-[19rem] max-w-[86vw] flex-col bg-white shadow-2xl transition-transform duration-300 ease-out ${
+            mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <div className="flex items-center justify-between border-b border-agro-clay px-5 py-4">
+            <span className="flex items-center gap-2.5">
+              <Image
+                src={logo}
+                alt=""
+                width={36}
+                height={36}
+                className="h-9 w-9"
+              />
+              <span className="font-display text-xl font-semibold text-agro-forest">
+                Agropioo
+              </span>
+            </span>
+            <button
+              ref={closeRef}
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-agro-forest transition-colors hover:bg-agro-mint"
+              aria-label="Close menu"
+            >
               <svg
                 className="h-6 w-6"
                 fill="none"
@@ -100,49 +176,36 @@ export default function Home() {
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            ) : (
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            )}
-          </button>
-        </div>
+            </button>
+          </div>
 
-        {mobileMenuOpen && (
-          <div className="border-t border-agro-clay bg-white px-4 py-4 md:hidden">
-            <nav className="flex flex-col gap-1" aria-label="Mobile">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="rounded-lg px-3 py-3 text-base font-medium text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </a>
-              ))}
+          <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-4" aria-label="Sidebar">
+            {navLinks.map((link) => (
               <a
-                href="#get-started"
-                className="mt-2 inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white"
+                key={link.label}
+                href={link.href}
+                className="rounded-xl px-4 py-3.5 text-lg font-medium text-agro-ink transition-colors hover:bg-agro-mint hover:text-agro-canopy"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Get early access
+                {link.label}
               </a>
-            </nav>
+            ))}
+          </nav>
+
+          <div className="border-t border-agro-clay p-4">
+            <a
+              href="#get-started"
+              className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-agro-canopy px-5 text-base font-semibold text-white transition-colors hover:bg-agro-forest"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Get early access
+            </a>
+            <p className="mt-3 text-center font-mono text-xs tracking-wide text-agro-slate">
+              Built for Pakistan · A product of Aplinode
+            </p>
           </div>
-        )}
-      </header>
+        </aside>
+      </div>
 
       <main className="flex flex-1 flex-col">
         <Hero />
