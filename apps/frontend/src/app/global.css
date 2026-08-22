@@ -1,1 +1,119 @@
 @import 'tailwindcss';
+
+@theme {
+  /* Brand colors — from docs/brand-identity.md */
+  --color-agro-forest: #013b1f;
+  --color-agro-canopy: #1c6428;
+  --color-agro-leaf: #3f8839;
+  --color-agro-sprout: #c1d8c1;
+  --color-agro-earth: #8b6f47;
+  --color-agro-wheat: #d4a843;
+  --color-agro-stone: #f5f2ec;
+  --color-agro-clay: #e8e0d5;
+  --color-agro-ink: #0f172a;
+  --color-agro-slate: #475569;
+  --color-agro-cloud: #94a3b8;
+  --color-agro-paper: #ffffff;
+  --color-agro-night: #05140c;
+  --color-agro-mint: #f0fdf4;
+
+  /* Semantic aliases */
+  --color-primary: var(--color-agro-canopy);
+  --color-primary-foreground: var(--color-agro-paper);
+  --color-accent: var(--color-agro-wheat);
+  --color-accent-foreground: var(--color-agro-paper);
+  --color-background: var(--color-agro-paper);
+  --color-foreground: var(--color-agro-ink);
+  --color-muted: var(--color-agro-mint);
+  --color-muted-foreground: var(--color-agro-slate);
+  --color-border: var(--color-agro-sprout);
+  --color-card: var(--color-agro-paper);
+  --color-card-foreground: var(--color-agro-ink);
+  --color-ring: var(--color-agro-canopy);
+
+  /* Typography */
+  --font-display: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  --font-body: var(--font-dm-sans), 'DM Sans', system-ui, sans-serif;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+
+  /* Radii */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-full: 9999px;
+
+  /* Easings */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Base */
+html,
+body {
+  overflow-x: clip;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-agro-sprout);
+  color: var(--color-agro-forest);
+}
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Scroll reveal animation (used sparingly) */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s var(--ease-out) forwards;
+}
