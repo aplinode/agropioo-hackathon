@@ -2,7 +2,7 @@ import Image from "next/image";
 import logo from "@/references/Agropioo-logo-footer.png";
 
 const pageLinks = [
-  { label: "Why Agropioo", href: "#why" },
+  { label: "Why Agropioo", href: "/why-agropioo" },
   { label: "Features", href: "#features" },
   { label: "How it works", href: "#journey" },
   { label: "Vision", href: "#vision" },
@@ -115,7 +115,7 @@ export default function Footer({ hrefPrefix = "" }: { hrefPrefix?: string }) {
               {pageLinks.map((link) => (
                 <li key={link.label}>
                   <a
-                    href={sectionHref(link.href)}
+                    href={link.href.startsWith("#") ? sectionHref(link.href) : link.href}
                     className="text-sm text-white/70 transition-colors duration-200 hover:text-white"
                   >
                     {link.label}

@@ -35,17 +35,21 @@ export default function ValueProp() {
   return (
     <section
       id="promise"
-      className="w-full bg-agro-night px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-28"
+      className="w-full bg-agro-paper px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
     >
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="eyebrow reveal text-agro-sprout">The promise</p>
-          <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.9rem]">
+          <p className="eyebrow reveal flex items-center justify-center gap-3 text-agro-canopy">
+            <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
+            The promise
+            <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
+          </p>
+          <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
             What to do. When to do it.
             <br />
             And what has been done.
           </h2>
-          <p className="reveal mx-auto mt-5 max-w-xl leading-relaxed text-agro-sprout/85">
+          <p className="reveal mx-auto mt-5 max-w-xl leading-relaxed text-agro-slate">
             Every feature of Agropioo serves one of these three answers —
             that&apos;s how a season of decisions turns into a season of
             confidence.
@@ -56,23 +60,23 @@ export default function ValueProp() {
           {pillars.map((pillar, index) => (
             <article
               key={pillar.heading}
-              className="reveal group rounded-2xl border border-agro-sprout/15 bg-white/[0.04] p-7 transition-all duration-300 hover:-translate-y-1.5 hover:border-agro-sprout/40 hover:bg-white/[0.07] sm:p-8"
+              className="reveal group rounded-2xl border border-agro-sprout/80 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-agro-canopy/50 hover:shadow-xl sm:p-8"
             >
               <div className="flex items-start justify-between">
-                <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl border border-agro-sprout/30 bg-white/5 text-agro-sprout transition-colors duration-300 group-hover:bg-agro-canopy group-hover:text-white">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout transition-colors duration-300 group-hover:bg-agro-canopy group-hover:text-white">
                   {pillar.icon}
                 </span>
                 <span
-                  className="font-mono text-sm font-semibold tracking-widest text-agro-sprout/40 transition-colors duration-300 group-hover:text-agro-sprout"
+                  className="font-mono text-sm font-semibold tracking-widest text-agro-canopy/40 transition-colors duration-300 group-hover:text-agro-canopy"
                   aria-hidden="true"
                 >
                   {String(index + 1).padStart(2, "0")}
                 </span>
               </div>
-              <h3 className="mt-6 font-display text-xl font-medium tracking-tight sm:text-2xl">
+              <h3 className="mt-6 font-display text-xl font-medium tracking-tight text-agro-ink sm:text-2xl">
                 {pillar.heading}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-white/70 sm:text-base">
+              <p className="mt-3 text-sm leading-relaxed text-agro-slate sm:text-base">
                 {pillar.description}
               </p>
             </article>

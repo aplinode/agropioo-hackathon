@@ -45,10 +45,7 @@ export default function SiteHeader({
 
   const navLinks = sections.map((section) => ({
     label: section.label,
-    href:
-      activeSection === section.anchor && section.selfHref && linkBase
-        ? section.selfHref
-        : `${linkBase}${section.anchor}`,
+    href: section.selfHref ?? `${linkBase}${section.anchor}`,
     active: activeSection === section.anchor,
   }));
 

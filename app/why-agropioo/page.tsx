@@ -6,7 +6,6 @@ import Differentiators from "./sections/Differentiators";
 import Lifecycle from "./sections/Lifecycle";
 import ValueProp from "./sections/ValueProp";
 import WhoFor from "./sections/WhoFor";
-import PakistanWorld from "./sections/PakistanWorld";
 import CTA from "../sections/CTA";
 import Footer from "../sections/Footer";
 
@@ -28,7 +27,6 @@ export default function WhyAgropiooPage() {
         <Lifecycle />
         <ValueProp />
         <WhoFor />
-        <PakistanWorld />
         <CTA />
       </main>
 
