@@ -1,78 +1,98 @@
 const tiers = [
   {
+    index: "T1",
     name: "Must-Have",
     badge: "Baseline",
-    badgeColor: "bg-agro-error/10 text-agro-error",
+    accent: "border-agro-cloud",
+    badgeClass: "border-agro-clay text-agro-slate",
     features: [
       {
-        title: "AI Crop Disease Detection",
-        description: "Upload a photo of an affected leaf or plant and get instant disease diagnosis, severity, and treatment recommendations.",
+        title: "AI crop disease detection",
+        description:
+          "Upload a photo of an affected leaf and get instant disease diagnosis, severity, and treatment recommendations.",
       },
       {
-        title: "Satellite Field Monitoring",
-        description: "Mark your field boundary and view NDVI-based crop health zones using free Sentinel-2 satellite imagery.",
+        title: "Satellite field monitoring",
+        description:
+          "Mark your field boundary and view NDVI-based crop health zones from free Sentinel-2 imagery.",
       },
       {
-        title: "Smart Weather Advisory",
-        description: "Hyperlocal weather forecasts combined with your crop and growth stage generate daily, actionable farm advice.",
+        title: "Smart weather advisory",
+        description:
+          "Hyperlocal forecasts combined with your crop and growth stage become daily, actionable advice.",
       },
       {
-        title: "Mandi Price Tracker & Predictor",
-        description: "Track nearby market prices and get AI-powered price trend predictions so you sell at the right time.",
+        title: "Mandi price tracker & predictor",
+        description:
+          "Track nearby market prices with AI trend predictions, so you sell at the right time.",
       },
     ],
   },
   {
+    index: "T2",
     name: "Differentiators",
     badge: "Stand out",
-    badgeColor: "bg-agro-wheat/20 text-agro-earth",
+    accent: "border-agro-wheat",
+    badgeClass: "border-agro-wheat/60 bg-agro-wheat/10 text-agro-earth",
     features: [
       {
-        title: "Regional Language Voice Chatbot",
-        description: "Speak or type in Urdu, Punjabi, Saraiki, and more. Get spoken answers in the language you understand best.",
+        title: "Regional language voice chatbot",
+        description:
+          "Speak or type in Urdu, Punjabi, Saraiki, and more — hear answers in the language you understand best.",
       },
       {
-        title: "Government Scheme Matcher",
-        description: "Enter your profile and discover every government scheme you qualify for, with documents and apply links.",
+        title: "Government scheme matcher",
+        description:
+          "Enter your profile and discover every scheme you qualify for, with documents and apply links.",
       },
       {
-        title: "Crop Recommendation Engine",
-        description: "AI recommends the most profitable crop for your soil, weather, market demand, and budget this season.",
+        title: "Crop recommendation engine",
+        description:
+          "The most profitable crop for your soil, weather, market demand, and budget this season.",
       },
       {
-        title: "Farm Profit/Loss Calculator",
-        description: "Track expected and actual costs, yield, revenue, and profit — with break-even and ROI insights.",
+        title: "Farm profit / loss calculator",
+        description:
+          "Expected and actual costs, yield, revenue, and profit — with break-even and ROI insights.",
       },
       {
-        title: "Community Forum + Expert Connect",
-        description: "Post questions, share photos, and get answers from fellow farmers and verified agricultural experts.",
+        title: "Community forum + expert connect",
+        description:
+          "Post questions, share photos, get answers from fellow farmers and verified agriculture experts.",
       },
     ],
   },
   {
+    index: "T3",
     name: "Wow Factor",
-    badge: "Hackathon winners",
-    badgeColor: "bg-agro-canopy/10 text-agro-canopy",
+    badge: "Ahead of the field",
+    accent: "border-agro-canopy",
+    badgeClass: "border-agro-canopy/40 bg-agro-mint text-agro-canopy",
     features: [
       {
-        title: "Satellite Change Detection",
-        description: "Compare satellite images over time with a time-lapse slider to track growth, damage, or encroachment.",
+        title: "Satellite change detection",
+        description:
+          "Compare satellite images over time with a slider to track growth, damage, or encroachment.",
       },
       {
-        title: "AI Pest Outbreak Prediction",
-        description: "Get early warnings 7 days before likely pest attacks based on weather, crop stage, and historical data.",
+        title: "AI pest outbreak prediction",
+        description:
+          "Early warnings ahead of likely pest attacks, based on weather, crop stage, and history.",
       },
       {
-        title: "Voice-First Phone Call Mode",
-        description: "Dial a toll-free number, speak your question, and hear AI advice in your language — no smartphone needed.",
+        title: "Voice-first phone call mode",
+        description:
+          "Dial a toll-free number, speak your question, hear advice in your language — no smartphone needed.",
       },
       {
-        title: "Carbon Credit Estimator",
-        description: "Log sustainable practices and estimate carbon credits you could earn from voluntary carbon markets.",
+        title: "Carbon credit estimator",
+        description:
+          "Log sustainable practices and estimate carbon credits from voluntary markets.",
       },
       {
-        title: "Offline-First PWA + SMS Alerts",
-        description: "Works offline in the field, syncs when connected, and sends critical alerts via SMS when data is spotty.",
+        title: "Offline-first PWA + SMS alerts",
+        description:
+          "Works offline in the field, syncs when connected, alerts via SMS when data is spotty.",
       },
     ],
   },
@@ -80,41 +100,66 @@ const tiers = [
 
 export default function FeatureMatrix() {
   return (
-    <section className="w-full bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+    <section
+      id="matrix"
+      className="w-full bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
+    >
       <div className="mx-auto max-w-7xl">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-display text-3xl font-bold tracking-tight text-agro-ink sm:text-4xl">
-            Built for every stage of farming
+        <div className="max-w-2xl">
+          <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
+            <span className="inline-block h-px w-8 bg-agro-wheat" aria-hidden="true" />
+            Full capability stack
+          </p>
+          <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
+            From must-haves to marvels
           </h2>
-          <p className="mt-4 text-lg leading-relaxed text-agro-slate">
-            A complete feature stack designed to protect crops, cut costs, and grow income — from must-have basics to future-ready innovations.
+          <p className="reveal mt-5 leading-relaxed text-agro-slate">
+            Every feature protects crops, cuts costs, or grows income. Read it
+            like an almanac — each tier builds on the last.
           </p>
         </div>
 
-        <div className="mt-14 space-y-16">
+        <div className="mt-16 space-y-16">
           {tiers.map((tier) => (
-            <div key={tier.name}>
-              <div className="mb-6 flex items-center gap-3">
-                <h3 className="text-2xl font-bold text-agro-ink">{tier.name}</h3>
-                <span className={`rounded-full px-3 py-1 text-xs font-semibold ${tier.badgeColor}`}>
+            <div
+              key={tier.index}
+              className="reveal grid gap-6 lg:grid-cols-[15rem_1fr] lg:gap-12"
+            >
+              {/* Tier label column */}
+              <div
+                className={`lg:border-l-2 lg:border-t-0 lg:pl-6 ${tier.accent} border-t-2 pt-5 lg:pt-1`}
+              >
+                <p className="font-mono text-xs font-semibold tracking-[0.22em] text-agro-earth">
+                  {tier.index}
+                </p>
+                <h3 className="mt-2 font-display text-2xl font-medium tracking-tight text-agro-ink">
+                  {tier.name}
+                </h3>
+                <span
+                  className={`mt-3 inline-flex items-center rounded-full border px-3 py-1 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.14em] ${tier.badgeClass}`}
+                >
                   {tier.badge}
                 </span>
               </div>
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {tier.features.map((feature) => (
-                  <div
-                    key={feature.title}
-                    className="rounded-2xl border border-agro-sprout bg-agro-paper p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-agro-canopy hover:shadow-md"
-                  >
-                    <h4 className="text-base font-semibold text-agro-ink">
-                      {feature.title}
-                    </h4>
-                    <p className="mt-2 text-sm leading-relaxed text-agro-slate">
-                      {feature.description}
-                    </p>
-                  </div>
+
+              {/* Feature ledger */}
+              <ul className="divide-y divide-agro-clay/80 border-t border-agro-clay/80">
+                {tier.features.map((feature, i) => (
+                  <li key={feature.title} className="group py-4 sm:py-5">
+                    <div className="grid gap-1.5 sm:grid-cols-[2.25rem_13rem_1fr] sm:items-baseline sm:gap-4">
+                      <span className="font-mono text-xs tracking-widest text-agro-cloud transition-colors duration-300 group-hover:text-agro-canopy" aria-hidden="true">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <h4 className="text-base font-semibold tracking-tight text-agro-ink">
+                        {feature.title}
+                      </h4>
+                      <p className="text-sm leading-relaxed text-agro-slate">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           ))}
         </div>
