@@ -44,23 +44,23 @@ export default function Hero() {
         <div className="flex flex-col items-start text-left">
           <p className="eyebrow rise flex items-center gap-3 text-agro-canopy">
             <span className="inline-block h-px w-8 bg-agro-wheat" aria-hidden="true" />
-            AI agriculture advisor · Pakistan-first
+            AI-powered farm intelligence platform
           </p>
 
           <h1
             className="display-heading rise mt-5 font-display text-[2.6rem] font-medium leading-[1.08] tracking-tight text-agro-ink sm:text-6xl lg:text-[4.25rem]"
             style={{ "--rise-delay": "0.08s" } as React.CSSProperties}
           >
-            Ask anything about <span className="text-agro-canopy">your crop.</span>
+            Intelligence for <span className="text-agro-canopy">smarter farming</span>
           </h1>
 
           <p
             className="rise mt-6 max-w-lg text-lg leading-relaxed text-agro-slate"
             style={{ "--rise-delay": "0.16s" } as React.CSSProperties}
           >
-            Agropioo turns your farm&apos;s records, local weather, and
-            satellite data into clear guidance — what to do, and when to do it
-            — in the language you speak.
+            One platform that unites an AI advisor, satellite monitoring,
+            market prices, and your farm&apos;s records — turning data into
+            clear decisions, in the language you speak.
           </p>
 
           <div
