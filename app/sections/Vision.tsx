@@ -14,7 +14,7 @@ export default function Vision() {
   return (
     <section
       id="vision"
-      className="w-full bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
+      className="w-full border-t border-agro-clay/70 bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
     >
       <div className="mx-auto max-w-7xl">
         <div className="max-w-2xl">
@@ -31,20 +31,8 @@ export default function Vision() {
 
         <div className="reveal mt-14 grid gap-5 lg:grid-cols-12">
           {/* Pakistan-first — the wider panel */}
-          <article className="relative overflow-hidden rounded-2xl bg-agro-clay/60 p-7 sm:p-10 lg:col-span-7">
-            <svg
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-28 w-full text-agro-sprout/20"
-              viewBox="0 0 720 110"
-              fill="none"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path d="M0 40C120 24 240 56 360 42C480 28 600 54 720 38" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M0 76C120 60 240 90 360 76C480 62 600 88 720 74" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M0 104C120 92 240 118 360 106C480 94 600 116 720 102" stroke="currentColor" strokeWidth="1" opacity="0.6" />
-            </svg>
-
-            <div className="relative">
+          <article className="rounded-2xl bg-agro-mint p-7 ring-1 ring-agro-sprout sm:p-10 lg:col-span-7">
+            <div>
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-agro-canopy text-white">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -75,19 +63,8 @@ export default function Vision() {
           </article>
 
           {/* Global — the dark counterpoint */}
-          <article className="relative overflow-hidden rounded-2xl bg-agro-forest p-7 text-white sm:p-10 lg:col-span-5">
-            <svg
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-28 w-full text-agro-sprout/10"
-              viewBox="0 0 520 110"
-              fill="none"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path d="M0 44C100 30 200 58 300 46C400 34 470 56 520 44" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M0 82C100 68 200 96 300 84C400 72 470 94 520 82" stroke="currentColor" strokeWidth="1.5" />
-            </svg>
-
-            <div className="relative flex h-full flex-col">
+          <article className="rounded-2xl bg-agro-forest p-7 text-white shadow-lg sm:p-10 lg:col-span-5">
+            <div className="flex h-full flex-col">
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-agro-sprout/30 bg-white/5 text-agro-sprout">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.236m0 0A8.959 8.959 0 013 12c0-.778.099-1.533.284-2.253" />

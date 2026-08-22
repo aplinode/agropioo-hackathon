@@ -20,22 +20,9 @@ export default function Problem() {
   return (
     <section
       id="why"
-      className="relative w-full overflow-hidden bg-agro-forest px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-28"
+      className="w-full bg-agro-forest px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-28"
     >
-      {/* Faint furrow contours in the dark */}
-      <svg
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-56 w-full text-agro-sprout/10"
-        viewBox="0 0 1440 220"
-        fill="none"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path d="M0 80C240 50 480 110 720 82C960 54 1200 108 1440 72" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M0 140C240 112 480 168 720 142C960 116 1200 166 1440 132" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M0 200C240 174 480 226 720 202C960 178 1200 224 1440 192" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-
-      <div className="relative mx-auto max-w-7xl">
+      <div className="mx-auto max-w-7xl">
         <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5">
             <p className="eyebrow reveal flex items-center gap-3 text-agro-sprout">
@@ -57,7 +44,7 @@ export default function Problem() {
               {problems.map((item, index) => (
                 <li
                   key={item.title}
-                  className="reveal group border-t border-agro-sprout/15 py-7 transition-colors duration-300 first:border-t-0 first:pt-0 hover:bg-white/[0.03] sm:first:pt-7 lg:first:border-t lg:first:pt-7"
+                  className="reveal group border-t border-agro-sprout/15 py-7 transition-colors duration-300 first:border-t-0 first:pt-0 hover:bg-white/[0.04] sm:first:pt-7 lg:first:border-t lg:first:pt-7"
                 >
                   <div className="flex gap-6 px-2 sm:gap-8 sm:px-4">
                     <span

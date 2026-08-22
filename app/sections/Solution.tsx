@@ -38,7 +38,7 @@ export default function Solution() {
   return (
     <section
       id="solution"
-      className="w-full bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
+      className="w-full border-t border-agro-clay/70 bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
@@ -60,34 +60,34 @@ export default function Solution() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-0">
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {values.map((item, index) => (
             <article
               key={item.question}
-              className={`reveal group lg:border-l lg:border-agro-clay lg:px-8 ${
-                index === 0 ? "lg:border-l-0 lg:pl-0" : ""
-              }`}
+              className="reveal group flex flex-col rounded-2xl border border-agro-sprout/80 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-agro-canopy/50 hover:shadow-xl sm:p-8"
             >
-              <div className="flex items-center justify-between border-t border-agro-canopy/25 pt-6">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-mint text-agro-canopy transition-colors duration-300 group-hover:bg-agro-canopy group-hover:text-white">
+              <div className="flex items-start justify-between">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout transition-colors duration-300 group-hover:bg-agro-canopy group-hover:text-white">
                   {item.icon}
                 </span>
-                <span className="font-mono text-sm font-semibold tracking-widest text-agro-canopy" aria-hidden="true">
+                <span className="font-mono text-sm font-semibold tracking-widest text-agro-canopy/40 transition-colors duration-300 group-hover:text-agro-canopy" aria-hidden="true">
                   {String(index + 1).padStart(2, "0")}
                 </span>
               </div>
 
-              <h3 className="mt-6 font-display text-[1.7rem] font-medium tracking-tight text-agro-ink">
+              <h3 className="mt-6 font-display text-2xl font-medium tracking-tight text-agro-ink">
                 {item.question}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-agro-slate sm:text-base">
+              <p className="mt-3 flex-1 text-sm leading-relaxed text-agro-slate sm:text-base">
                 {item.description}
               </p>
 
-              <p className="mt-5 flex items-start gap-2 font-mono text-xs leading-relaxed tracking-wide text-agro-canopy">
-                <span aria-hidden="true">→</span>
-                {item.answer}
-              </p>
+              <div className="mt-7">
+                <p className="flex items-start gap-2 rounded-xl bg-agro-mint px-4 py-3 font-mono text-xs leading-relaxed tracking-wide text-agro-forest ring-1 ring-agro-sprout/70">
+                  <span aria-hidden="true">→</span>
+                  {item.answer}
+                </p>
+              </div>
             </article>
           ))}
         </div>

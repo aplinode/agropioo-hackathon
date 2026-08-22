@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import logo from "@/references/logo.png";
+import logo from "@/references/Agropioo-logo-with-text.png";
 import Hero from "./sections/Hero";
 import CapabilityTicker from "./sections/CapabilityTicker";
 import Problem from "./sections/Problem";
@@ -59,18 +59,13 @@ export default function Home() {
         }`}
       >
         <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <a href="#top" className="flex items-center gap-2.5">
+          <a href="#top" className="flex items-center">
             <Image
               src={logo}
-              alt="Agropioo logo"
-              width={40}
-              height={40}
-              className="h-10 w-10"
+              alt="Agropioo"
+              className="h-12 w-auto md:h-14"
               priority
             />
-            <span className="font-display text-[1.7rem] font-semibold leading-none tracking-tight text-agro-forest">
-              Agropioo
-            </span>
           </a>
 
           <nav className="hidden items-center gap-9 md:flex" aria-label="Main">
@@ -144,17 +139,12 @@ export default function Home() {
           }`}
         >
           <div className="flex items-center justify-between border-b border-agro-clay px-5 py-4">
-            <span className="flex items-center gap-2.5">
+            <span className="flex items-center">
               <Image
                 src={logo}
                 alt=""
-                width={36}
-                height={36}
-                className="h-9 w-9"
+                className="h-12 w-auto"
               />
-              <span className="font-display text-2xl font-semibold text-agro-forest">
-                Agropioo
-              </span>
             </span>
             <button
               ref={closeRef}

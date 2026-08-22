@@ -15,7 +15,7 @@ const forecast = [
 ];
 
 const cardClass =
-  "reveal flex flex-col rounded-2xl border border-agro-clay bg-white p-6 shadow-sm transition-all duration-300 hover:border-agro-canopy/40 hover:shadow-lg sm:p-8";
+  "reveal flex flex-col rounded-2xl border border-agro-sprout/80 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-agro-canopy/50 hover:shadow-xl sm:p-8";
 
 function WeatherGlyph({ kind }: { kind: string }) {
   if (kind === "sun") {
@@ -53,7 +53,7 @@ export default function CoreFeatures() {
   return (
     <section
       id="features"
-      className="w-full bg-agro-stone px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
+      className="w-full bg-agro-mint px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
     >
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
@@ -74,7 +74,7 @@ export default function CoreFeatures() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* AI advisor — hero card with example conversation */}
           <article className={`${cardClass} md:col-span-2`}>
             <div className="flex items-center justify-between gap-4">
@@ -232,7 +232,7 @@ export default function CoreFeatures() {
                     <li
                       key={day.day}
                       className={`flex flex-col items-center gap-1.5 rounded-lg px-0.5 py-3 sm:rounded-xl sm:px-1 ${
-                        day.advisory ? "bg-agro-mint ring-1 ring-agro-canopy" : "bg-agro-stone"
+                        day.advisory ? "bg-agro-mint ring-1 ring-agro-canopy" : "bg-white ring-1 ring-agro-clay"
                       }`}
                     >
                       <span className="font-mono text-[0.65rem] uppercase tracking-wider text-agro-slate">

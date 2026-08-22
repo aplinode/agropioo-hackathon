@@ -27,19 +27,6 @@ export default function Hero() {
       id="top"
       className="relative w-full overflow-hidden px-4 pb-20 pt-12 sm:px-6 lg:px-8 lg:pb-28 lg:pt-16"
     >
-      {/* Furrow contours along the base of the section */}
-      <svg
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 w-full text-agro-sprout/60"
-        viewBox="0 0 1440 160"
-        fill="none"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path d="M0 120C240 90 480 140 720 115C960 90 1200 135 1440 105" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M0 140C240 112 480 158 720 136C960 114 1200 152 1440 128" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M0 156C260 132 500 172 740 154C980 136 1220 168 1440 148" stroke="currentColor" strokeWidth="1" opacity="0.6" />
-      </svg>
-
       <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2 lg:gap-8">
         <div className="flex flex-col items-start text-left">
           <p className="eyebrow rise flex items-center gap-3 text-agro-canopy">
@@ -48,27 +35,11 @@ export default function Hero() {
           </p>
 
           <h1
-            className="display-heading rise mt-5 font-display text-[2.6rem] font-medium leading-[1.08] tracking-tight text-agro-ink sm:text-6xl lg:text-[4.25rem]"
+            className="display-heading rise mt-5 font-display text-[2.6rem] font-bold leading-[1.08] tracking-tight text-agro-ink sm:text-6xl lg:text-[4.25rem]"
             style={{ "--rise-delay": "0.08s" } as React.CSSProperties}
           >
-            Intelligence for{" "}
-            <span className="relative inline-block text-agro-canopy">
-              smarter farming
-              <svg
-                className="draw absolute -bottom-1 left-0 h-[0.18em] w-full text-agro-leaf sm:-bottom-1.5"
-                viewBox="0 0 300 12"
-                fill="none"
-                preserveAspectRatio="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M3 8C60 3 140 10 200 6C240 3.5 275 5 297 4"
-                  stroke="currentColor"
-                  strokeWidth="5"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
+            Intelligence For{" "}
+            <span className="text-agro-canopy">Smarter Farming</span>
           </h1>
 
           <p

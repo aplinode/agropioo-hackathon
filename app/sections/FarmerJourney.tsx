@@ -35,21 +35,9 @@ export default function FarmerJourney() {
   return (
     <section
       id="journey"
-      className="relative w-full overflow-hidden bg-agro-mint px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
+      className="w-full border-t border-agro-clay/70 bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
     >
-      {/* Furrow contours along the base */}
-      <svg
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-32 w-full text-agro-sprout/70"
-        viewBox="0 0 1440 130"
-        fill="none"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path d="M0 60C240 38 480 88 720 62C960 36 1200 82 1440 52" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M0 100C240 78 480 124 720 100C960 76 1200 118 1440 92" stroke="currentColor" strokeWidth="1" opacity="0.7" />
-      </svg>
-
-      <div className="relative mx-auto max-w-7xl">
+      <div className="mx-auto max-w-7xl">
         <div className="mx-auto max-w-2xl text-center">
           <p className="eyebrow reveal justify-center text-agro-canopy">
             How it works
@@ -63,17 +51,17 @@ export default function FarmerJourney() {
           </p>
         </div>
 
-        <ol className="relative mx-auto mt-16 max-w-2xl">
-          {/* The furrow rail */}
-          <span
-            className="absolute bottom-3 left-[1.375rem] top-3 w-px bg-gradient-to-b from-agro-canopy via-agro-leaf to-agro-forest"
-            aria-hidden="true"
-          />
-
+        <ol className="mx-auto mt-16 max-w-2xl">
           {steps.map((step, index) => (
-            <li key={step.title} className="reveal relative pb-9 last:pb-0">
+            <li key={step.title} className="reveal relative pb-10 last:pb-0">
+              {index < steps.length - 1 && (
+                <span
+                  className="absolute bottom-0 left-[22px] top-12 w-px bg-agro-sprout"
+                  aria-hidden="true"
+                />
+              )}
               <div className="flex gap-5 sm:gap-7">
-                <span className="z-10 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-agro-canopy bg-white font-mono text-sm font-bold text-agro-canopy shadow-sm">
+                <span className="z-10 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-agro-canopy bg-agro-mint font-mono text-sm font-bold text-agro-canopy">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <div className="pt-1.5">
