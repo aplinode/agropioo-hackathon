@@ -69,7 +69,9 @@ const socials = [
   { label: "YouTube", href: "#", Icon: YoutubeIcon },
 ];
 
-export default function Footer() {
+export default function Footer({ hrefPrefix = "" }: { hrefPrefix?: string }) {
+  const sectionHref = (anchor: string) => `${hrefPrefix}${anchor}`;
+
   return (
     <footer className="w-full bg-agro-night px-4 pt-16 pb-8 text-white sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -77,7 +79,7 @@ export default function Footer() {
         <div className="grid gap-12 border-b border-white/10 pb-12 md:grid-cols-2 lg:grid-cols-12">
           {/* Brand */}
           <div className="lg:col-span-5">
-            <a href="#top" className="inline-flex items-center">
+            <a href={hrefPrefix ? "/" : "#top"} className="inline-flex items-center">
               <Image
                 src={logo}
                 alt="Agropioo"
@@ -113,7 +115,7 @@ export default function Footer() {
               {pageLinks.map((link) => (
                 <li key={link.label}>
                   <a
-                    href={link.href}
+                    href={sectionHref(link.href)}
                     className="text-sm text-white/70 transition-colors duration-200 hover:text-white"
                   >
                     {link.label}
