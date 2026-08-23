@@ -1,11 +1,13 @@
 import Link from "next/link";
+import { getCurrentDictionary } from "@/lib/i18n/server";
+import { localized } from "@/lib/i18n/localized";
 
 function MiniTile({
   label,
   value,
   tone,
 }: {
-  label: string;
+  label: React.ReactNode;
   value: string;
   tone: "leaf" | "info" | "wheat" | "canopy";
 }) {
@@ -28,7 +30,10 @@ function MiniTile({
   );
 }
 
-export default function FeaturesHero() {
+export default async function FeaturesHero() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+
   return (
     <section
       id="features-page"
@@ -38,24 +43,22 @@ export default function FeaturesHero() {
         <div className="flex flex-col items-start text-left">
           <p className="eyebrow rise flex items-center gap-3 text-agro-canopy">
             <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-            Features
+            {L("feat.hero.eyebrow")}
           </p>
 
           <h1
             className="display-heading rise mt-5 font-display text-[2.6rem] font-bold leading-[1.08] tracking-tight text-agro-ink sm:text-6xl lg:text-[4rem]"
             style={{ "--rise-delay": "0.08s" } as React.CSSProperties}
           >
-            Everything your{" "}
-            <span className="text-agro-canopy">season asks for</span>
+            {L("feat.hero.titleLead")}{" "}
+            <span className="text-agro-canopy">{L("feat.hero.titleAccent")}</span>
           </h1>
 
           <p
             className="rise mt-6 max-w-lg text-lg leading-relaxed text-agro-slate"
             style={{ "--rise-delay": "0.16s" } as React.CSSProperties}
           >
-            Fourteen capabilities working as one — scanning leaves, watching
-            fields from orbit, reading the mandi, and speaking your language.
-            Explore what each one does for your farm.
+            {L("feat.hero.subtitle")}
           </p>
 
           <div
@@ -66,13 +69,13 @@ export default function FeaturesHero() {
               href="#get-started"
               className="inline-flex h-12 w-44 cursor-pointer items-center justify-center rounded-lg bg-agro-canopy px-6 text-sm font-semibold whitespace-nowrap text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 sm:w-auto"
             >
-              Get early access
+              {L("feat.hero.ctaPrimary")}
             </a>
             <Link
               href="/#journey"
               className="inline-flex h-12 w-44 cursor-pointer items-center justify-center rounded-lg border border-agro-sprout bg-white px-6 text-sm font-semibold whitespace-nowrap text-agro-forest shadow-sm transition-all duration-200 hover:border-agro-canopy hover:bg-agro-mint sm:w-auto"
             >
-              See how it works
+              {L("feat.hero.ctaSecondary")}
             </Link>
           </div>
 
@@ -80,9 +83,9 @@ export default function FeaturesHero() {
             className="rise mt-9 flex items-center gap-2.5 text-xs text-agro-slate"
             style={{ "--rise-delay": "0.32s" } as React.CSSProperties}
           >
-            <span className="font-mono tracking-wide">Built for Pakistan</span>
+            <span className="font-mono tracking-wide">{L("feat.hero.builtFor")}</span>
             <span className="h-1 w-1 rounded-full bg-agro-leaf" aria-hidden="true" />
-            <span>A product of Aplinode</span>
+            <span>{L("feat.hero.productOf")}</span>
           </p>
         </div>
 
@@ -105,12 +108,12 @@ export default function FeaturesHero() {
 
             <div className="relative grid gap-3">
               <div className="grid grid-cols-2 gap-3">
-                <MiniTile label="Leaf scan" value="94% ok" tone="leaf" />
-                <MiniTile label="Mandi wheat" value="+12%" tone="wheat" />
+                <MiniTile label={L("feat.hero.tile1Label")} value={t("feat.hero.tile1Value").text} tone="leaf" />
+                <MiniTile label={L("feat.hero.tile2Label")} value={t("feat.hero.tile2Value").text} tone="wheat" />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <MiniTile label="NDVI field" value="0.82" tone="canopy" />
-                <MiniTile label="Pest risk" value="Low · 7d" tone="info" />
+                <MiniTile label={L("feat.hero.tile3Label")} value={t("feat.hero.tile3Value").text} tone="canopy" />
+                <MiniTile label={L("feat.hero.tile4Label")} value={t("feat.hero.tile4Value").text} tone="info" />
               </div>
 
               <div className="mt-1 flex items-center gap-3 rounded-xl border border-agro-sprout bg-white px-4 py-3.5 shadow-md">
@@ -121,22 +124,22 @@ export default function FeaturesHero() {
                 </span>
                 <div className="min-w-0">
                   <p className="truncate font-mono text-xs font-semibold uppercase tracking-[0.14em] text-agro-canopy">
-                    Voice advisory ready
+                    {L("feat.hero.voiceReady")}
                   </p>
-                  <p className="truncate text-xs text-agro-slate">Urdu · پنجابی · Saraiki</p>
+                  <p className="truncate text-xs text-agro-slate">{L("feat.hero.voiceLangs")}</p>
                 </div>
                 <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-agro-mint px-2.5 py-1 font-mono text-[0.6rem] font-bold uppercase tracking-wide text-agro-forest ring-1 ring-agro-sprout">
                   <span className="h-1.5 w-1.5 rounded-full bg-agro-success" aria-hidden="true" />
-                  Live
+                  {L("feat.hero.liveBadge")}
                 </span>
               </div>
 
               <div className="flex items-center justify-between rounded-xl bg-agro-forest px-4 py-3 shadow-md">
                 <p className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-sprout">
-                  SMS alert · offline mode
+                  {L("feat.hero.smsLabel")}
                 </p>
                 <p className="font-mono text-xs font-bold text-white">
-                  Barish 3 PM — spray rokein
+                  {L("feat.hero.smsMsg")}
                 </p>
               </div>
             </div>

@@ -1,19 +1,22 @@
+import { getCurrentDictionary } from "@/lib/i18n/server";
+import { localized } from "@/lib/i18n/localized";
+
 function CardShell({
   code,
   title,
   description,
+  included,
   children,
-  className = "",
 }: {
-  code: string;
-  title: string;
-  description: string;
+  code: React.ReactNode;
+  title: React.ReactNode;
+  description: React.ReactNode;
+  included: React.ReactNode;
   children: React.ReactNode;
-  className?: string;
 }) {
   return (
     <article
-      className={`reveal flex flex-col rounded-2xl border border-agro-sprout/80 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-agro-canopy/50 hover:shadow-xl sm:p-8 ${className}`}
+      className="reveal flex flex-col rounded-2xl border border-agro-sprout/80 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-agro-canopy/50 hover:shadow-xl sm:p-8"
     >
       <div className="flex items-center justify-between gap-3">
         <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-canopy">
@@ -23,7 +26,7 @@ function CardShell({
           <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
-          Included
+          {included}
         </span>
       </div>
       <h3 className="mt-4 text-lg font-semibold tracking-tight text-agro-ink">
@@ -37,7 +40,10 @@ function CardShell({
   );
 }
 
-export default function IntelligenceSuite() {
+export default async function IntelligenceSuite() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+
   return (
     <section
       id="intelligence"
@@ -48,29 +54,29 @@ export default function IntelligenceSuite() {
           <div className="lg:col-span-7">
             <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
               <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-              Crop intelligence
+              {L("feat.intel.eyebrow")}
             </p>
             <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
-              See problems before they cost you
+              {L("feat.intel.heading")}
             </h2>
           </div>
           <p className="reveal max-w-md leading-relaxed text-agro-slate lg:col-span-4 lg:col-start-9">
-            Disease, pests, weather, and crop choice — the four decisions that
-            decide a harvest, each backed by its own engine.
+            {L("feat.intel.sub")}
           </p>
         </div>
 
         <div className="mt-14 grid gap-6 md:grid-cols-2">
           {/* AI crop doctor */}
           <CardShell
-            code="F·01 · Vision"
-            title="AI crop doctor"
-            description="Photograph an affected leaf and receive the disease name, severity level, and a treatment plan in seconds."
+            code={L("feat.intel.doctorCode")}
+            title={L("feat.intel.doctorTitle")}
+            description={L("feat.intel.doctorDesc")}
+            included={L("feat.intel.included")}
           >
             <div
               className="flex h-full flex-col justify-between gap-4 rounded-xl bg-agro-mint/60 p-4 ring-1 ring-agro-sprout/70 sm:flex-row sm:items-center"
               role="img"
-              aria-label="Leaf scan result showing yellow rust detected with high confidence"
+              aria-label={t("feat.intel.doctorMock").text}
             >
               <div className="relative inline-flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-agro-sprout bg-white">
                 <svg viewBox="0 0 64 64" fill="none" className="h-16 w-16" aria-hidden="true">
@@ -83,12 +89,12 @@ export default function IntelligenceSuite() {
               </div>
               <ul className="min-w-0 flex-1 space-y-2">
                 <li className="flex items-center justify-between gap-3 rounded-lg bg-white px-3 py-2 ring-1 ring-agro-clay">
-                  <span className="text-sm font-semibold text-agro-ink">Yellow rust</span>
-                  <span className="font-mono text-xs font-bold text-agro-success">94% match</span>
+                  <span className="text-sm font-semibold text-agro-ink">{L("feat.intel.diseaseName")}</span>
+                  <span className="font-mono text-xs font-bold text-agro-success">{L("feat.intel.matchScore")}</span>
                 </li>
                 <li className="flex items-center justify-between gap-3 rounded-lg bg-white px-3 py-2 ring-1 ring-agro-clay">
-                  <span className="text-sm text-agro-slate">Severity</span>
-                  <span className="font-mono text-xs font-bold text-agro-warning">Moderate</span>
+                  <span className="text-sm text-agro-slate">{L("feat.intel.severityLabel")}</span>
+                  <span className="font-mono text-xs font-bold text-agro-warning">{L("feat.intel.severityValue")}</span>
                 </li>
               </ul>
             </div>
@@ -96,14 +102,15 @@ export default function IntelligenceSuite() {
 
           {/* Pest outbreak prediction */}
           <CardShell
-            code="F·02 · Forecast"
-            title="Pest outbreak alerts"
-            description="Weather and crop stage feed a risk model that warns days before conditions favour an attack."
+            code={L("feat.intel.pestCode")}
+            title={L("feat.intel.pestTitle")}
+            description={L("feat.intel.pestDesc")}
+            included={L("feat.intel.included")}
           >
             <div
               className="rounded-xl bg-agro-mint/60 p-4 ring-1 ring-agro-sprout/70"
               role="img"
-              aria-label="Seven day pest risk bars rising to high on day six"
+              aria-label={t("feat.intel.pestMock").text}
             >
               <div className="flex h-28 items-end justify-between gap-1.5">
                 {[
@@ -114,8 +121,8 @@ export default function IntelligenceSuite() {
                   { d: "F", h: 52 },
                   { d: "S", h: 86, alert: true },
                   { d: "S", h: 44 },
-                ].map((bar) => (
-                  <div key={`${bar.d}${bar.h}`} className="flex flex-1 flex-col items-center gap-1.5">
+                ].map((bar, i) => (
+                  <div key={i} className="flex flex-1 flex-col items-center gap-1.5">
                     <div
                       className={`w-full rounded-t-md ${bar.alert ? "bg-agro-error" : "bg-agro-canopy/70"}`}
                       style={{ height: `${bar.h}%` }}
@@ -128,21 +135,22 @@ export default function IntelligenceSuite() {
               </div>
               <p className="mt-3 flex items-center gap-2 rounded-lg bg-white px-3 py-2 font-mono text-xs text-agro-forest ring-1 ring-agro-clay">
                 <span className="h-2 w-2 rounded-full bg-agro-error" aria-hidden="true" />
-                Saturday · locust risk 74% — cover young wheat
+                {L("feat.intel.pestAlert")}
               </p>
             </div>
           </CardShell>
 
           {/* Weather-aware advisory */}
           <CardShell
-            code="F·03 · Weather"
-            title="Weather-aware advisories"
-            description="Hyperlocal forecasts meet your crop and growth stage — advice arrives as a clear instruction, not raw data."
+            code={L("feat.intel.weatherCode")}
+            title={L("feat.intel.weatherTitle")}
+            description={L("feat.intel.weatherDesc")}
+            included={L("feat.intel.included")}
           >
             <div
               className="space-y-3 rounded-xl bg-agro-mint/60 p-4 ring-1 ring-agro-sprout/70"
               role="img"
-              aria-label="Example weather advisory advising delayed irrigation before rain"
+              aria-label={t("feat.intel.weatherMock").text}
             >
               <div className="flex items-start gap-3 rounded-lg border border-agro-warning/50 bg-white px-4 py-3">
                 <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-agro-warning/15 text-agro-warning" aria-hidden="true">
@@ -152,16 +160,15 @@ export default function IntelligenceSuite() {
                 </span>
                 <div>
                   <p className="text-sm font-semibold text-agro-ink">
-                    Delay irrigation today
+                    {L("feat.intel.delayIrrigation")}
                   </p>
                   <p className="mt-0.5 text-xs leading-relaxed text-agro-slate">
-                    Rain expected around 3 PM — let the sky water your field
-                    first.
+                    {L("feat.intel.rainNote")}
                   </p>
                 </div>
               </div>
               <div className="flex items-center justify-between rounded-lg bg-white px-4 py-2.5 ring-1 ring-agro-clay">
-                <span className="font-mono text-xs text-agro-slate">Water saved</span>
+                <span className="font-mono text-xs text-agro-slate">{L("feat.intel.waterSaved")}</span>
                 <span className="font-mono text-sm font-bold text-agro-success">~35%</span>
               </div>
             </div>
@@ -169,22 +176,23 @@ export default function IntelligenceSuite() {
 
           {/* Crop recommendation */}
           <CardShell
-            code="F·04 · Planning"
-            title="Crop recommendation"
-            description="Soil, weather, demand, and your budget are scored together — plant what pays this season."
+            code={L("feat.intel.cropCode")}
+            title={L("feat.intel.cropTitle")}
+            description={L("feat.intel.cropDesc")}
+            included={L("feat.intel.included")}
           >
             <ol
               className="space-y-2.5 rounded-xl bg-agro-mint/60 p-4 ring-1 ring-agro-sprout/70"
               role="img"
-              aria-label="Ranked crop recommendations with wheat first"
+              aria-label={t("feat.intel.cropMock").text}
             >
               {[
-                { rank: "1", crop: "Wheat", score: 92, pick: true },
-                { rank: "2", crop: "Mustard", score: 78, pick: false },
-                { rank: "3", crop: "Gram", score: 65, pick: false },
+                { rank: "1", cropKey: "feat.intel.crop1", score: 92, pick: true },
+                { rank: "2", cropKey: "feat.intel.crop2", score: 78, pick: false },
+                { rank: "3", cropKey: "feat.intel.crop3", score: 65, pick: false },
               ].map((row) => (
                 <li
-                  key={row.crop}
+                  key={row.rank}
                   className={`flex items-center gap-3 rounded-lg px-3 py-2.5 ${
                     row.pick ? "bg-white ring-2 ring-agro-canopy" : "bg-white ring-1 ring-agro-clay"
                   }`}
@@ -193,7 +201,7 @@ export default function IntelligenceSuite() {
                     {row.rank}
                   </span>
                   <span className="min-w-0 flex-1 truncate text-sm font-medium text-agro-ink">
-                    {row.crop}
+                    {L(row.cropKey as Parameters<typeof t>[0])}
                   </span>
                   <div className="hidden w-24 sm:block" aria-hidden="true">
                     <div className="h-1.5 overflow-hidden rounded-full bg-agro-clay">
