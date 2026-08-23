@@ -23,8 +23,8 @@ export type CodeCheckResult =
   | { ok: false; response: Response }
   | { ok: true; email: string; jti: string; row: CheckedCodeRow };
 
-function unauthorized(): Response {
-  return errorResponse("unauthorized", COPY.CODE_REJECTED, 401);
+function unauthorized(message: string): Response {
+  return errorResponse("unauthorized", message, 401);
 }
 
 async function loadNewestCode(
@@ -62,7 +62,12 @@ export async function runCodeCheck(
 
   const pass = await readValidPass(purpose);
   if (!pass || pass.kind === "session") {
-    return { ok: false, response: unauthorized() };
+    // Missing/forged/expired/wrong-type/consumed pass — fatal for the UI,
+    // which ejects on this message (stale-tab rule).
+    return {
+      ok: false,
+      response: unauthorized(COPY.UNAUTHORIZED_GENERIC),
+    };
   }
   const passRow: PassStateRow = pass.row;
   const jti = pass.claims.jti;
@@ -90,7 +95,8 @@ export async function runCodeCheck(
 
   const row = await loadNewestCode(purpose, pass.claims.email);
   if (latestCodeVerdict(row, Date.now()) !== "open") {
-    return { ok: false, response: unauthorized() };
+    // No live code: expired, dead, voided, consumed, or never issued.
+    return { ok: false, response: unauthorized(COPY.CODE_REJECTED) };
   }
   const codeRow = row as CheckedCodeRow;
 
@@ -112,7 +118,7 @@ export async function runCodeCheck(
         ...(next.passNowDead ? { dead_at: nowIso } : {}),
       })
       .eq("jti", jti);
-    return { ok: false, response: unauthorized() };
+    return { ok: false, response: unauthorized(COPY.CODE_REJECTED) };
   }
 
   return { ok: true, email: pass.claims.email, jti, row: codeRow };

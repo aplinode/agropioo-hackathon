@@ -1,10 +1,13 @@
 import type { ReactNode } from "react";
 import AppSidebar from "@/components/shell/app-sidebar";
 import BottomTabBar from "@/components/shell/bottom-tab-bar";
+import { requireSessionPage } from "@/lib/auth/guards";
 
 /* Farmer app shell: desktop sidebar + mobile bottom tab bar.
-   Every farmer-app page renders inside this layout. */
-export default function FarmerAppLayout({ children }: { children: ReactNode }) {
+   Every farmer-app page renders inside this layout. Guests are redirected
+   to /login here — one choke point for the whole app (FR27/FR29). */
+export default async function FarmerAppLayout({ children }: { children: ReactNode }) {
+  await requireSessionPage();
   return (
     <div className="min-h-dvh bg-agro-paper">
       <AppSidebar />

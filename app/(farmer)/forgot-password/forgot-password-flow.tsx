@@ -2,13 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { z } from "zod";
 import AuthShell from "@/components/auth/auth-shell";
-import NewPasswordForm from "@/components/auth/new-password-form";
-import OtpVerify from "@/components/auth/otp-verify";
 import Stepper from "@/components/auth/stepper";
-import { AlertTriangleIcon, ArrowRightIcon, CheckIcon } from "@/components/icons";
+import { AlertTriangleIcon, ArrowRightIcon } from "@/components/icons";
+import { forgotSchema } from "@/lib/validation/auth";
+import { stashDemoCode } from "@/lib/auth/demo-code";
 
-type Phase = "email" | "sent" | "verify" | "new-password" | "success";
+type ForgotValues = z.output<typeof forgotSchema>;
 
 const brandPoints = [
   "Back into your farm in under a minute",
@@ -16,44 +20,55 @@ const brandPoints = [
   "Plain-language steps throughout",
 ];
 
-function stepForPhase(phase: Phase): 1 | 2 | 3 {
-  if (phase === "email") return 1;
-  if (phase === "sent" || phase === "verify") return 2;
-  return 3;
-}
-
+/* Step 1 of password recovery ONLY (plan): posts the real API, shows the
+   byte-stable generic confirmation, then hands off to the shared OTP route.
+   Steps 2 and 3 live on /verify and /reset-password now. */
 export default function ForgotPasswordFlow() {
-  const [phase, setPhase] = useState<Phase>("email");
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading">("idle");
-  const [fieldErrors, setFieldErrors] = useState<{ email?: string }>({});
+  const router = useRouter();
+  const [phase, setPhase] = useState<"email" | "sent">("email");
+  const [submittedEmail, setSubmittedEmail] = useState("");
+  const [serverError, setServerError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ForgotValues>({
+    resolver: zodResolver(forgotSchema),
+    defaultValues: { email: "" },
+  });
 
-  // Generic confirmation auto-advances to the shared verification screen.
+  // Generic confirmation auto-advances to the shared verification screen —
+  // the same neutral copy for every well-formed email (FR23).
   useEffect(() => {
     if (phase !== "sent") return;
-    const timer = setTimeout(() => setPhase("verify"), 2200);
+    const timer = setTimeout(() => router.replace("/verify"), 2200);
     return () => clearTimeout(timer);
-  }, [phase]);
+  }, [phase, router]);
 
-  function handleEmailSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (status === "loading") return;
+  async function onSubmit(values: ForgotValues) {
+    setServerError("");
+    const response = await fetch("/api/auth/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
+    const payload = (await response.json().catch(() => ({}))) as {
+      ok?: boolean;
+      demoCode?: string;
+      error?: { code?: string; message?: string };
+    };
 
-    const value = email.trim();
-    const errors: typeof fieldErrors = {};
-    if (!value) errors.email = "Enter your email address.";
-    else if (!/^\S+@\S+\.\S+$/.test(value)) errors.email = "Enter a valid email address.";
-    setFieldErrors(errors);
-    if (Object.keys(errors).length > 0) return;
-
-    setStatus("loading");
-    // Demo request. Swap for POST /api/auth/forgot-password once wired.
-    // The same neutral confirmation shows for every well-formed email —
-    // never hinting whether an account exists.
-    setTimeout(() => {
-      setStatus("idle");
+    if (response.ok && payload.ok) {
+      stashDemoCode(payload.demoCode);
+      setSubmittedEmail(values.email.trim());
       setPhase("sent");
-    }, 900);
+      return;
+    }
+    if (payload.error?.code === "rate_limited") {
+      setServerError(payload.error.message ?? "Too many attempts.");
+      return;
+    }
+    setServerError(payload.error?.message ?? "Enter a valid email address.");
   }
 
   return (
@@ -92,19 +107,17 @@ export default function ForgotPasswordFlow() {
       }
       brandPoints={brandPoints}
     >
-      {phase !== "success" && (
-        <Link
-          href="/login"
-          className="mb-8 inline-flex h-11 w-fit items-center gap-2 rounded-md px-1 text-sm font-medium text-agro-canopy underline-offset-4 hover:underline"
-        >
-          <span aria-hidden="true">←</span> Back to sign in
-        </Link>
-      )}
+      <Link
+        href="/login"
+        className="mb-8 inline-flex h-11 w-fit items-center gap-2 rounded-md px-1 text-sm font-medium text-agro-canopy underline-offset-4 hover:underline"
+      >
+        <span aria-hidden="true">←</span> Back to sign in
+      </Link>
 
-      <Stepper current={stepForPhase(phase)} />
+      <Stepper current={phase === "email" ? 1 : 2} />
 
       <div className="mt-8 flex flex-1 flex-col">
-        {phase === "email" && (
+        {phase === "email" ? (
           <>
             <p className="eyebrow mt-6 text-agro-canopy">Password help</p>
             <h1 className="display-heading mt-3 font-display text-3xl font-bold tracking-tight text-agro-ink sm:text-4xl">
@@ -115,44 +128,51 @@ export default function ForgotPasswordFlow() {
               verification code.
             </p>
 
-            <form onSubmit={handleEmailSubmit} noValidate className="mt-8 space-y-5">
+            {serverError && (
+              <div
+                className="mt-6 rounded-lg border border-agro-error/30 bg-red-50 px-4 py-3 text-sm text-agro-error"
+                role="alert"
+              >
+                {serverError}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 space-y-5">
               <div>
                 <label htmlFor="recovery-email" className="block text-sm font-semibold text-agro-ink">
                   Email address
                 </label>
                 <input
                   id="recovery-email"
-                  name="email"
                   type="email"
                   autoComplete="email"
                   placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  aria-invalid={Boolean(fieldErrors.email)}
-                  aria-describedby={fieldErrors.email ? "recovery-email-error" : undefined}
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? "recovery-email-error" : undefined}
+                  {...register("email")}
                   className={`focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
-                    fieldErrors.email
+                    errors.email
                       ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
                       : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"
                   }`}
                 />
-                {fieldErrors.email && (
+                {errors.email && (
                   <p
                     id="recovery-email-error"
                     className="mt-1.5 flex items-start gap-1.5 text-sm font-medium text-agro-ink"
                   >
                     <AlertTriangleIcon size={16} className="mt-0.5 shrink-0 text-agro-forest" />
-                    {fieldErrors.email}
+                    {errors.email.message}
                   </p>
                 )}
               </div>
 
               <button
                 type="submit"
-                disabled={status === "loading"}
+                disabled={isSubmitting}
                 className="inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-agro-canopy text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
               >
-                {status === "loading" ? (
+                {isSubmitting ? (
                   <>
                     <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25" />
@@ -169,9 +189,7 @@ export default function ForgotPasswordFlow() {
               </button>
             </form>
           </>
-        )}
-
-        {phase === "sent" && (
+        ) : (
           <div className="flex flex-1 flex-col justify-center py-10" role="status">
             <span
               className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy"
@@ -186,50 +204,11 @@ export default function ForgotPasswordFlow() {
             </h1>
             <p className="mt-3 leading-relaxed text-agro-slate">
               If that email has an Agropioo account, a 6-digit code is on its way
-              to <strong className="font-semibold text-agro-ink">{email}</strong>.
+              to <strong className="font-semibold text-agro-ink">{submittedEmail}</strong>.
             </p>
             <p className="mt-2 font-mono text-xs uppercase tracking-[0.18em] text-agro-cloud">
               Taking you to the code…
             </p>
-          </div>
-        )}
-
-        {phase === "verify" && (
-          <OtpVerify
-            context="reset"
-            email={email}
-            onVerified={() => setPhase("new-password")}
-            escapeLabel="Back"
-            onEscape={() => setPhase("email")}
-          />
-        )}
-
-        {phase === "new-password" && (
-          <NewPasswordForm onSuccess={() => setPhase("success")} />
-        )}
-
-        {phase === "success" && (
-          <div className="flex flex-1 flex-col justify-center py-10">
-            <span
-              className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-canopy text-white"
-              aria-hidden="true"
-            >
-              <CheckIcon size={28} />
-            </span>
-            <h1 className="display-heading mt-6 font-display text-3xl font-bold tracking-tight text-agro-ink sm:text-4xl">
-              Password Updated
-            </h1>
-            <p className="mt-3 leading-relaxed text-agro-slate">
-              Your password has been changed. Use it next time you sign in —
-              your advisor, records, and advisories are waiting.
-            </p>
-            <Link
-              href="/login"
-              className="mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-agro-canopy text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 sm:w-auto sm:px-10"
-            >
-              Sign in
-              <ArrowRightIcon size={16} />
-            </Link>
           </div>
         )}
       </div>
