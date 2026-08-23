@@ -6,7 +6,6 @@ import {
   ChatIcon,
   ChevronRightIcon,
   CloudRainIcon,
-  DocumentIcon,
   GearIcon,
   LeafIcon,
   TagIcon,
@@ -24,7 +23,6 @@ const primaryTools = [
 
 const otherTools = [
   { href: "/prices", label: "Prices", Icon: TagIcon },
-  { href: "/schemes", label: "Schemes", Icon: DocumentIcon },
   { href: "/weather", label: "Weather", Icon: CloudRainIcon },
   { href: "/notifications", label: "Notifications", Icon: BellIcon },
   { href: "/settings", label: "Settings", Icon: GearIcon },
@@ -47,7 +45,7 @@ export default function MorePage() {
           <li key={href}>
             <Link
               href={href}
-              className="group flex min-h-16 items-center gap-3 rounded-2xl border border-agro-clay bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-agro-sprout hover:shadow-md"
+              className="group flex min-h-16 items-center gap-3 rounded-2xl border border-agro-sprout bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-agro-sprout hover:shadow-md"
             >
               <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy transition-colors duration-200 group-hover:bg-agro-canopy group-hover:text-white">
                 <Icon className="h-5 w-5" />
@@ -57,7 +55,7 @@ export default function MorePage() {
                 <span className="block truncate text-xs text-agro-slate">{description}</span>
               </span>
               <ChevronRightIcon
-                className="h-4 w-4 shrink-0 text-agro-cloud transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-agro-canopy"
+                className="h-4 w-4 shrink-0 text-agro-slate transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-agro-canopy"
                 aria-hidden="true"
               />
             </Link>
@@ -77,7 +75,7 @@ export default function MorePage() {
             <li key={href}>
               <Link
                 href={href}
-                className="group flex min-h-20 flex-col items-center justify-center gap-2 rounded-2xl border border-agro-clay bg-white p-2 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-agro-sprout hover:shadow-md"
+                className="group flex min-h-20 flex-col items-center justify-center gap-2 rounded-2xl border border-agro-sprout bg-white p-2 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-agro-sprout hover:shadow-md"
               >
                 <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy transition-colors duration-200 group-hover:bg-agro-canopy group-hover:text-white">
                   <Icon className="h-4 w-4" />

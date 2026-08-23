@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 
 const outcomeChip = {
   treated: "bg-agro-mint text-agro-canopy",
-  monitor: "border border-agro-canopy/30 bg-white text-agro-ink",
-  clear: "bg-agro-stone text-agro-slate",
+  monitor: "border border-agro-sprout bg-white text-agro-ink",
+  clear: "bg-agro-mint/60 text-agro-slate",
 } as const;
 
 export default function DetectPage() {
@@ -23,40 +23,54 @@ export default function DetectPage() {
         description="One photo of a sick leaf is enough — get the likely cause and exactly what to do next."
       />
 
-      <div className="mt-6 max-w-2xl">
-        <DetectUpload />
-      </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-5">
+        {/* Scan flow */}
+        <div className="lg:col-span-3">
+          <DetectUpload />
+        </div>
 
-      {/* Diagnosis history */}
-      <section aria-labelledby="history-heading" className="mt-9">
-        <h2
-          id="history-heading"
-          className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate"
-        >
-          Past scans
-        </h2>
-        <ul className="mt-3 divide-y divide-agro-clay overflow-hidden rounded-2xl border border-agro-clay bg-white">
-          {demoScanHistory.map((scan) => (
-            <li key={scan.id} className="flex items-center gap-3 p-4">
-              <span
-                className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[0.7rem] font-medium ${outcomeChip[scan.outcome]}`}
+        {/* Diagnosis history */}
+        <section aria-labelledby="history-heading" className="lg:col-span-2">
+          <h2
+            id="history-heading"
+            className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate"
+          >
+            Past scans
+          </h2>
+          <ul className="mt-3 space-y-3">
+            {demoScanHistory.map((scan) => (
+              <li
+                key={scan.id}
+                className="rounded-2xl border border-agro-sprout bg-white p-4"
               >
-                {scan.outcome === "clear" && (
-                  <CheckIcon size={12} className="me-1" aria-hidden="true" />
-                )}
-                {scanOutcomeLabel[scan.outcome]}
-              </span>
-              <p className="min-w-0 flex-1 text-sm leading-snug text-agro-ink">
-                <span className="block truncate font-semibold">{scan.finding}</span>
-                <span className="block truncate text-xs text-agro-slate">{scan.crop}</span>
-              </p>
-              <span className="hidden shrink-0 font-mono text-xs text-agro-cloud sm:block">
-                {scan.when}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
+                <div className="flex items-center justify-between gap-3">
+                  <span
+                    className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[0.7rem] font-medium ${outcomeChip[scan.outcome]}`}
+                  >
+                    {scan.outcome === "clear" && (
+                      <CheckIcon size={12} className="me-1" aria-hidden="true" />
+                    )}
+                    {scanOutcomeLabel[scan.outcome]}
+                  </span>
+                  <span className="shrink-0 font-mono text-xs text-agro-slate">
+                    {scan.when}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm font-semibold leading-snug text-agro-ink">
+                  {scan.finding}
+                </p>
+                <p className="mt-0.5 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">
+                  {scan.crop}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-xs leading-relaxed text-agro-slate">
+            Every scan stays in your history, so you can show the advisor what
+            you saw and when.
+          </p>
+        </section>
+      </div>
     </div>
   );
 }

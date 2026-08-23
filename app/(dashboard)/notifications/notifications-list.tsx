@@ -52,7 +52,7 @@ export default function NotificationsList() {
         </button>
       </div>
 
-      <ul className="mt-3 divide-y divide-agro-clay overflow-hidden rounded-2xl border border-agro-clay bg-white">
+      <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
         {demoNotifications.map((item) => {
           const KindIcon = kindIcon[item.kind];
           const read = allRead;
@@ -82,7 +82,7 @@ export default function NotificationsList() {
                   {item.message}
                 </p>
               </div>
-              <span className="hidden shrink-0 font-mono text-xs text-agro-cloud sm:block">
+              <span className="hidden shrink-0 font-mono text-xs text-agro-slate sm:block">
                 {item.relativeTime}
               </span>
             </li>
@@ -90,7 +90,7 @@ export default function NotificationsList() {
         })}
       </ul>
 
-      <p className="mt-6 rounded-xl border border-dashed border-agro-cloud/70 bg-agro-stone px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
+      <p className="mt-6 rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
         DEMO · marking read lasts for this visit only
       </p>
     </div>

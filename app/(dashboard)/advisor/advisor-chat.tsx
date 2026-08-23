@@ -65,7 +65,7 @@ export default function AdvisorChat() {
   return (
     <div className="flex flex-1 flex-col">
       {/* Demo affordance */}
-      <p className="rounded-xl border border-dashed border-agro-cloud/70 bg-agro-stone px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
+      <p className="rounded-xl border border-agro-sprout bg-agro-mint px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
         DEMO · replies are canned samples, no model is connected yet
       </p>
 
@@ -85,7 +85,7 @@ export default function AdvisorChat() {
               className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed sm:max-w-[75%] ${
                 message.role === "farmer"
                   ? "rounded-ee-md bg-agro-canopy text-white"
-                  : "rounded-es-md border border-agro-clay bg-white text-agro-ink"
+                  : "rounded-es-md border border-agro-sprout bg-white text-agro-ink"
               }`}
             >
               {message.text}
@@ -93,7 +93,7 @@ export default function AdvisorChat() {
           </div>
         ))}
         {thinking && (
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-agro-cloud">
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-agro-slate">
             Advisor is writing…
           </p>
         )}
@@ -133,13 +133,14 @@ export default function AdvisorChat() {
         </ul>
       </div>
 
-      {/* Composer */}
+      {/* Composer — the rounded container carries the focus ring so the
+          indicator follows its shape, not a sharp box around the input. */}
       <form
         onSubmit={(event) => {
           event.preventDefault();
           send(draft);
         }}
-        className="sticky bottom-[calc(4.75rem+env(safe-area-inset-bottom))] mt-4 flex items-center gap-2 rounded-2xl border border-agro-clay bg-white/95 p-2 shadow-md backdrop-blur lg:bottom-4"
+        className="sticky bottom-[calc(4.75rem+env(safe-area-inset-bottom))] mt-4 flex items-center gap-2 rounded-2xl border border-agro-sprout bg-white/95 p-2 shadow-md backdrop-blur transition-colors duration-200 focus-within:border-agro-canopy focus-within:ring-2 focus-within:ring-agro-canopy/20 lg:bottom-4"
       >
         <label htmlFor="advisor-input" className="sr-only">
           Ask the advisor
@@ -152,7 +153,7 @@ export default function AdvisorChat() {
           placeholder="Ask anything about your crop…"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
-          className="h-11 min-w-0 flex-1 bg-transparent px-3 text-sm text-agro-ink placeholder:text-agro-cloud focus:outline-none"
+          className="focus-ring-none h-11 min-w-0 flex-1 bg-transparent px-3 text-sm text-agro-ink placeholder:text-agro-cloud outline-none"
         />
         <button
           type="submit"

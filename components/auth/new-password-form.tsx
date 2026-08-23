@@ -48,10 +48,10 @@ export default function NewPasswordForm({ onSuccess }: NewPasswordFormProps) {
   }
 
   const inputClass = (hasError?: string) =>
-    `mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+    `focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
       hasError
         ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
-        : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"
+        : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
     }`;
 
   const toggleClass =

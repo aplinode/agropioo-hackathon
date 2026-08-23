@@ -42,7 +42,7 @@ export default function FarmsPage() {
           <li key={farm.id}>
             <Link
               href={`/farms/${farm.id}`}
-              className="group flex h-full flex-col rounded-2xl border border-agro-clay bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-agro-sprout hover:shadow-md"
+              className="group flex h-full flex-col rounded-2xl border border-agro-sprout bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-agro-sprout hover:shadow-md"
             >
               <div className="flex items-start justify-between gap-2">
                 <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy transition-colors duration-200 group-hover:bg-agro-canopy group-hover:text-white">
@@ -73,10 +73,10 @@ export default function FarmsPage() {
                 <span className="rounded-full bg-agro-mint px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-wide text-agro-canopy">
                   {farm.crops}
                 </span>
-                <span className="rounded-full bg-agro-stone px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">
+                <span className="rounded-full border border-agro-sprout bg-white px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">
                   {farm.stage}
                 </span>
-                <span className="rounded-full bg-agro-stone px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">
+                <span className="rounded-full border border-agro-sprout bg-white px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">
                   {farm.acres} acres
                 </span>
               </div>

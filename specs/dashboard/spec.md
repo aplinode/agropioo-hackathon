@@ -16,7 +16,7 @@ Give the farmer one screen that answers "kya karoon aaj?" — today's most impor
 
 ## Functional requirements
 
-- **FR1 App shell.** Mobile: bottom tab bar with exactly 5 tabs — Dashboard, Farms, Advisor, Detect, More. Desktop (≥ lg): left sidebar listing all tools — Dashboard, Farms, Advisor, Detect, Prices, Schemes, Notifications, Settings — plus logo and sign-out. Active item visually distinct on both.
+- **FR1 App shell.** Mobile: bottom tab bar with exactly 5 tabs — Dashboard, Farms, Advisor, Detect, More. Desktop (≥ lg): left sidebar listing all tools — Dashboard, Farms, Advisor, Detect, Prices, Notifications, Settings — plus logo and sign-out. Active item visually distinct on both. (Schemes removed from the demo by founder decision 2026-08-23.)
 - **FR2 Header.** Top of page: time-neutral greeting with farmer's first name, notification bell with unread badge count, visible language control showing "EN" (placeholder — visibly interactive target but non-functional this release), avatar/profile affordance. Every element ≥44×44px touch target.
 - **FR3 Today's advisory.** One primary card: crop name + growth stage tag, the single recommended action in plain words, a one-line "why", and a link into the advisor. Dated "Today".
 - **FR4 Weather snapshot.** Location name, current temperature °C, condition label with icon, today's high/low, rain-chance line, link to full weather view.
@@ -51,7 +51,7 @@ Give the farmer one screen that answers "kya karoon aaj?" — today's most impor
 ## Acceptance criteria
 
 - [ ] Mobile 320–430px: bottom bar shows exactly 5 tabs, correct active state on `/dashboard`, no page-level horizontal scroll
-- [ ] Desktop ≥1024px: sidebar lists all 8 destinations with active state; bottom bar hidden
+- [ ] Desktop ≥1024px: sidebar lists all 7 destinations with active state; bottom bar hidden
 - [ ] Header contains greeting + bell w/ badge count + EN placeholder + avatar; all ≥44px targets
 - [ ] Advisory, weather, alerts, quick actions (exactly 4), green Detect CTA, farms row, checklist all present in DOM order above
 - [ ] NO non-green hue anywhere: zero `--agro-wheat`/earth/red/teal surfaces; severity and error states use green-intensity tints + icons + labels

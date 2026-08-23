@@ -62,7 +62,7 @@ export default function SettingsView() {
         >
           Profile
         </h2>
-        <div className="mt-3 rounded-2xl border border-agro-clay bg-white p-5">
+        <div className="mt-3 rounded-2xl border border-agro-sprout bg-white p-5">
           <div className="flex items-center gap-4">
             <span
               className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-agro-canopy font-semibold text-white"
@@ -97,7 +97,7 @@ export default function SettingsView() {
         >
           Language
         </h2>
-        <ul className="mt-3 divide-y divide-agro-clay overflow-hidden rounded-2xl border border-agro-clay bg-white">
+        <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
           {languages.map((language) => (
             <li
               key={language.code}
@@ -108,7 +108,7 @@ export default function SettingsView() {
                 className={`text-sm ${
                   language.available
                     ? "font-semibold text-agro-ink"
-                    : "text-agro-cloud"
+                    : "text-agro-slate"
                 }`}
               >
                 {language.name}
@@ -117,7 +117,7 @@ export default function SettingsView() {
                 className={`inline-flex items-center rounded-full px-2.5 py-0.5 font-mono text-[0.7rem] font-semibold ${
                   language.available
                     ? "bg-agro-mint text-agro-canopy"
-                    : "bg-agro-stone text-agro-cloud"
+                    : "border border-agro-sprout bg-white text-agro-slate"
                 }`}
               >
                 {language.available ? language.code : "Soon"}
@@ -139,7 +139,7 @@ export default function SettingsView() {
         >
           Alerts
         </h2>
-        <ul className="mt-3 divide-y divide-agro-clay overflow-hidden rounded-2xl border border-agro-clay bg-white">
+        <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
           {alertRows.map(({ key, label, description, Icon }) => (
             <li key={key} className="flex items-center gap-3 px-4 py-3.5">
               <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy">
@@ -157,7 +157,7 @@ export default function SettingsView() {
                 aria-checked={alertsOn[key]}
                 onClick={() => toggle(key)}
                 className={`relative inline-flex h-8 w-14 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ${
-                  alertsOn[key] ? "bg-agro-canopy" : "bg-agro-clay"
+                  alertsOn[key] ? "bg-agro-canopy" : "bg-agro-sprout"
                 }`}
               >
                 <span className="sr-only">
@@ -173,7 +173,7 @@ export default function SettingsView() {
             </li>
           ))}
         </ul>
-        <p className="mt-2 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-cloud">
+        <p className="mt-2 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
           Demo build · choices last for this visit only
         </p>
       </section>
@@ -181,13 +181,13 @@ export default function SettingsView() {
       {/* Sign out */}
       <Link
         href="/login"
-        className="flex min-h-12 items-center gap-3 rounded-2xl border border-agro-clay bg-white px-5 text-sm font-semibold text-agro-ink transition-colors hover:border-agro-canopy/40 hover:bg-agro-stone"
+        className="flex min-h-12 items-center gap-3 rounded-2xl border border-agro-sprout bg-white px-5 text-sm font-semibold text-agro-ink transition-colors hover:border-agro-canopy/40 hover:bg-agro-mint"
       >
         <LogOutIcon size={18} className="shrink-0" />
         Sign out
       </Link>
 
-      <p className="pb-2 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-cloud">
+      <p className="pb-2 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
         Agropioo demo · v0.1 · a product of Aplinode
       </p>
     </div>

@@ -103,6 +103,14 @@ body {
   outline-offset: 3px;
 }
 
+/* Inputs that carry their own rounded ring: suppress the global sharp
+   outline so the focus indicator follows the field's real shape. */
+input.focus-ring-none:focus-visible,
+textarea.focus-ring-none:focus-visible,
+select.focus-ring-none:focus-visible {
+  outline: none;
+}
+
 .display-heading {
   overflow-wrap: anywhere;
   text-wrap: balance;

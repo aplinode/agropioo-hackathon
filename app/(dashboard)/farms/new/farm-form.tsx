@@ -55,10 +55,10 @@ export default function NewFarmForm() {
   }
 
   const inputClass = (hasError?: string) =>
-    `mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+    `focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
       hasError
         ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
-        : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"
+        : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
     }`;
 
   function fieldError(id: string, message?: string) {
@@ -216,7 +216,7 @@ export default function NewFarmForm() {
         )}
       </button>
 
-      <p className="rounded-xl border border-dashed border-agro-cloud/70 bg-agro-stone px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
+      <p className="rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
         DEMO · saving isn&apos;t wired to a database yet
       </p>
     </form>

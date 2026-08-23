@@ -92,7 +92,7 @@ export default function ResetPasswordForm() {
           </div>
         ) : (
           <>
-            <p className="mt-6 rounded-xl border border-dashed border-agro-cloud/70 bg-agro-stone px-4 py-2.5 font-mono text-xs tracking-wide text-agro-slate">
+            <p className="mt-6 rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 font-mono text-xs tracking-wide text-agro-slate">
               DEMO MODE · opened directly, skipping earlier recovery steps
             </p>
             <div className="mt-6">

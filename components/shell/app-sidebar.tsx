@@ -7,7 +7,6 @@ import {
   BellIcon,
   CameraIcon,
   ChatIcon,
-  DocumentIcon,
   GearIcon,
   HomeIcon,
   LeafIcon,
@@ -26,7 +25,6 @@ const destinations = [
   { href: "/advisor", label: "Advisor", Icon: ChatIcon },
   { href: "/detect", label: "Detect", Icon: CameraIcon },
   { href: "/prices", label: "Prices", Icon: TagIcon },
-  { href: "/schemes", label: "Schemes", Icon: DocumentIcon },
   { href: "/notifications", label: "Notifications", Icon: BellIcon },
   { href: "/settings", label: "Settings", Icon: GearIcon },
 ];

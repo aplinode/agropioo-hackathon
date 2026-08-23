@@ -56,7 +56,7 @@ export default async function FarmRecordsPage({
                   className="absolute start-[27px] top-14 h-[calc(100%-2rem)] w-px bg-agro-sprout"
                 />
               )}
-              <div className="flex items-start gap-3 rounded-2xl border border-agro-clay bg-white p-4">
+              <div className="flex items-start gap-3 rounded-2xl border border-agro-sprout bg-white p-4">
                 <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy">
                   <KindIcon size={18} />
                 </span>
@@ -65,7 +65,7 @@ export default async function FarmRecordsPage({
                     <span className="font-mono text-[0.7rem] font-semibold uppercase tracking-wide text-agro-canopy">
                       {recordTypeLabel[record.type]}
                     </span>
-                    <span className="font-mono text-xs text-agro-cloud">{record.when}</span>
+                    <span className="font-mono text-xs text-agro-slate">{record.when}</span>
                   </div>
                   <p className="mt-0.5 text-sm font-semibold leading-snug text-agro-ink">
                     {record.title}
@@ -80,7 +80,7 @@ export default async function FarmRecordsPage({
         })}
       </ol>
 
-      <p className="mt-6 rounded-xl border border-dashed border-agro-cloud/70 bg-agro-stone px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
+      <p className="mt-6 rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
         DEMO · sample entries only — saving new ones isn&apos;t wired yet
       </p>
     </div>

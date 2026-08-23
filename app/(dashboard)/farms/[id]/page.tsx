@@ -124,7 +124,7 @@ export default async function FarmDetailPage({
                       ? "bg-agro-canopy font-semibold text-white"
                       : done
                         ? "bg-agro-mint text-agro-canopy"
-                        : "border border-agro-clay bg-white text-agro-cloud"
+                        : "border border-agro-sprout bg-white text-agro-slate"
                   }`}
                   {...(current ? { "aria-current": "step" as const } : {})}
                 >
@@ -154,7 +154,7 @@ export default async function FarmDetailPage({
           </Link>
         </div>
 
-        <ul className="mt-3 divide-y divide-agro-clay overflow-hidden rounded-2xl border border-agro-clay bg-white">
+        <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
           {records.map((record) => {
             const KindIcon = recordKindIcon[record.type];
             return (
@@ -170,7 +170,7 @@ export default async function FarmDetailPage({
                     {record.note}
                   </p>
                 </div>
-                <span className="shrink-0 font-mono text-[0.7rem] uppercase tracking-wide text-agro-cloud">
+                <span className="shrink-0 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">
                   {record.when}
                 </span>
               </li>

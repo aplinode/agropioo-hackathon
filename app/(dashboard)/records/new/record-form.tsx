@@ -62,10 +62,10 @@ export default function NewRecordForm() {
   }
 
   const inputClass = (hasError?: string) =>
-    `mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+    `focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
       hasError
         ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
-        : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"
+        : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
     }`;
 
   if (status === "saved") {
@@ -216,7 +216,7 @@ export default function NewRecordForm() {
           name="note"
           rows={3}
           placeholder="Anything worth remembering next week — amounts, weather, how the field looked."
-          className="mt-2 w-full rounded-xl border border-agro-clay bg-white px-4 py-3 text-sm leading-relaxed text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20"
+          className="focus-ring-none mt-2 w-full rounded-xl border border-agro-sprout bg-white px-4 py-3 text-sm leading-relaxed text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20"
         />
       </div>
 
@@ -241,7 +241,7 @@ export default function NewRecordForm() {
         )}
       </button>
 
-      <p className="rounded-xl border border-dashed border-agro-cloud/70 bg-agro-stone px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
+      <p className="rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
         DEMO · saving isn&apos;t wired to a database yet
       </p>
     </form>

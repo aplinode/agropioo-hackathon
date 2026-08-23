@@ -188,7 +188,7 @@ export default function OtpVerify({
       </p>
 
       {/* Demo affordance — removable once real code delivery exists. */}
-      <p className="mt-5 rounded-xl border border-dashed border-agro-cloud/70 bg-agro-stone px-4 py-2.5 font-mono text-xs tracking-wide text-agro-slate">
+      <p className="mt-5 rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 font-mono text-xs tracking-wide text-agro-slate">
         DEMO ONLY · Verification code: <strong className="text-agro-ink">{demoCode}</strong> · no email is sent
       </p>
 
@@ -215,12 +215,12 @@ export default function OtpVerify({
             aria-label={`Digit ${index + 1} of ${CODE_LENGTH}`}
             aria-invalid={status === "error"}
             disabled={status === "locked"}
-            className={`h-14 w-full min-w-0 max-w-14 rounded-xl border-2 bg-white text-center font-mono text-2xl text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+            className={`focus-ring-none h-14 w-full min-w-0 max-w-14 rounded-xl border-2 bg-white text-center font-mono text-2xl text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
               status === "error"
                 ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
                 : status === "locked"
-                  ? "cursor-not-allowed border-agro-clay opacity-60"
-                  : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"
+                  ? "cursor-not-allowed border-agro-sprout opacity-60"
+                  : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
             }`}
           />
         ))}
@@ -282,7 +282,7 @@ export default function OtpVerify({
       <p className="mt-5 text-center text-sm text-agro-slate">
         Didn&apos;t get the code?{" "}
         {cooldown > 0 ? (
-          <span className="font-medium text-agro-cloud">
+          <span className="font-medium text-agro-slate">
             Resend code in <span className="font-mono">{formatCooldown(cooldown)}</span>
           </span>
         ) : (

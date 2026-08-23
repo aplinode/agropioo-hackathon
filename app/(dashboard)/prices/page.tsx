@@ -24,9 +24,30 @@ function trendPoints(trend: number[]): string {
     .join(" ");
 }
 
+/* Close the polyline down to the baseline so it can carry a soft fill. */
+function trendArea(trend: number[]): string {
+  return `${trendPoints(trend)} 98,28 2,28`;
+}
+
+type PriceLike = {
+  changeRs: number;
+  pricePer40kg: number;
+  direction: "up" | "down";
+};
+
+const pctLabel = (item: PriceLike) => {
+  const pct = Math.round((item.changeRs / item.pricePer40kg) * 1000) / 10;
+  return `${item.direction === "up" ? "+" : "−"}${pct}%`;
+};
+
 /* Mandi price tracker: today's rate, the week's direction, and a plain
    sell-or-hold nudge for each crop. Sample rates, labelled as demo. */
 export default function PricesPage() {
+  const bestMover = [...demoPrices].sort(
+    (a, b) =>
+      b.changeRs / b.pricePer40kg - a.changeRs / a.pricePer40kg
+  )[0];
+
   return (
     <div className="pt-1">
       <PageHeader
@@ -35,27 +56,70 @@ export default function PricesPage() {
         description={`Today's ${demoMandi} mandi rates with the week's direction — and a plain word on holding or selling.`}
       />
 
-      <ul className="mt-6 grid gap-3 sm:gap-4 lg:grid-cols-2">
+      {/* Week at a glance */}
+      <section
+        aria-labelledby="glance-heading"
+        className="mt-6 grid gap-3 sm:grid-cols-3"
+      >
+        <h2 id="glance-heading" className="sr-only">
+          This week at a glance
+        </h2>
+        <div className="rounded-2xl border border-agro-sprout bg-white p-4">
+          <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-agro-slate">
+            Crops tracked
+          </p>
+          <p className="mt-1 font-mono text-2xl font-bold text-agro-forest">
+            {demoPrices.length}
+          </p>
+        </div>
+        <div className="rounded-2xl border border-agro-sprout bg-white p-4">
+          <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-agro-slate">
+            Best this week
+          </p>
+          <p className="mt-1 flex items-center gap-2 font-semibold text-agro-ink">
+            {bestMover.crop}
+            <span className="inline-flex items-center rounded-full bg-agro-mint px-2 py-0.5 font-mono text-[0.7rem] font-bold text-agro-canopy">
+              <TrendingUpIcon size={12} className="me-1" aria-hidden="true" />
+              {pctLabel(bestMover)}
+            </span>
+          </p>
+        </div>
+        <div className="rounded-2xl border border-agro-sprout bg-white p-4">
+          <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-agro-slate">
+            Updated
+          </p>
+          <p className="mt-1 flex items-center gap-2 font-semibold text-agro-ink">
+            <span className="inline-flex h-1.5 w-1.5 rounded-full bg-agro-success" aria-hidden="true" />
+            Today · morning
+          </p>
+        </div>
+      </section>
+
+      <ul className="mt-4 grid gap-3 sm:gap-4 lg:grid-cols-2">
         {demoPrices.map((item) => (
           <li
             key={item.id}
-            className="flex h-full flex-col rounded-2xl border border-agro-clay bg-white p-5"
+            className="flex h-full flex-col overflow-hidden rounded-2xl border border-agro-sprout bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
           >
-            <div className="flex items-start justify-between gap-3">
+            {/* Rate header */}
+            <div className="flex items-start justify-between gap-3 p-5 pb-4">
               <div className="min-w-0">
                 <h2 className="truncate text-base font-semibold leading-snug text-agro-ink">
                   {item.crop}{" "}
                   <span className="text-sm font-medium text-agro-slate">{item.urduName}</span>
                 </h2>
-                <p className="mt-0.5 font-mono text-xs uppercase tracking-wide text-agro-cloud">
-                  {demoMandi} mandi · today
+                <p className="mt-1 font-mono text-2xl font-bold tracking-tight text-agro-forest">
+                  Rs {item.pricePer40kg.toLocaleString("en-PK")}
+                  <span className="ms-1.5 align-middle font-sans text-xs font-medium text-agro-slate">
+                    / 40 kg
+                  </span>
                 </p>
               </div>
               <span
                 className={`inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-[0.7rem] font-semibold ${
                   item.direction === "up"
                     ? "bg-agro-mint text-agro-canopy"
-                    : "bg-agro-stone text-agro-ink"
+                    : "border border-agro-sprout bg-white text-agro-ink"
                 }`}
               >
                 {item.direction === "up" ? (
@@ -64,48 +128,55 @@ export default function PricesPage() {
                   <TrendingDownIcon size={14} />
                 )}
                 {item.changeRs > 0 ? "+" : "−"}
-                {Math.abs(item.changeRs).toLocaleString("en-PK")}
+                {Math.abs(item.changeRs).toLocaleString("en-PK")} ·{" "}
+                {pctLabel(item)}
               </span>
             </div>
 
-            <div className="mt-4 flex items-end justify-between gap-4">
-              <p className="font-mono text-3xl font-bold tracking-tight text-agro-forest">
-                Rs {item.pricePer40kg.toLocaleString("en-PK")}
-                <span className="ms-1.5 align-middle font-sans text-xs font-medium text-agro-slate">
-                  / 40 kg
-                </span>
-              </p>
-
-              {/* Seven-session trend */}
-              <svg
-                viewBox="0 0 100 28"
-                className="h-9 w-24 shrink-0 text-agro-canopy"
+            {/* Seven-session trend */}
+            <svg
+              viewBox="0 0 100 30"
+              preserveAspectRatio="none"
+              className="h-16 w-full"
+              role="img"
+              aria-label={`Seven-session trend for ${item.crop}, currently ${item.direction === "up" ? "rising" : "falling"}`}
+            >
+              <polyline
+                points={trendArea(item.trend)}
+                fill="var(--color-agro-mint)"
+                stroke="none"
+              />
+              <polyline
+                points={trendPoints(item.trend)}
                 fill="none"
-                aria-hidden="true"
-              >
-                <polyline
-                  points={trendPoints(item.trend)}
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
+                stroke="var(--color-agro-canopy)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
 
-            <div className="mt-4 rounded-xl bg-agro-mint px-3.5 py-2.5">
-              <span className="font-mono text-[0.7rem] font-bold uppercase tracking-wide text-agro-canopy">
+            {/* Signal strip */}
+            <div className="flex items-center gap-3 border-t border-agro-sprout bg-agro-mint px-5 py-3">
+              <span
+                className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 font-mono text-[0.7rem] font-bold uppercase tracking-wide ${
+                  item.signal === "hold"
+                    ? "bg-agro-canopy text-white"
+                    : "bg-agro-forest text-white"
+                }`}
+              >
                 {item.signal === "hold" ? "Hold" : "Sell soon"}
               </span>
-              <span className="ms-2 text-xs leading-relaxed text-agro-slate">
+              <p className="min-w-0 text-xs leading-relaxed text-agro-slate">
                 {item.signalNote}
-              </span>
+              </p>
             </div>
           </li>
         ))}
       </ul>
 
-      <p className="mt-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-cloud">
+      <p className="mt-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
         Demo build · sample rates for walkthrough only
       </p>
     </div>

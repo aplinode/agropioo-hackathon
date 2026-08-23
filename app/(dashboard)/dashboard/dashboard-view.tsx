@@ -112,7 +112,7 @@ function SectionHead({
       >
         {title}
       </h2>
-      {meta && <span className="font-mono text-xs text-agro-cloud">{meta}</span>}
+      {meta && <span className="font-mono text-xs text-agro-slate">{meta}</span>}
       <span
         aria-hidden="true"
         className="h-px flex-1 bg-gradient-to-r from-agro-sprout to-transparent"
@@ -303,10 +303,10 @@ export default function DashboardView({
                 </p>
               </div>
               <div className="mt-4 flex flex-wrap gap-1.5">
-                <span className="rounded-md bg-agro-stone px-2 py-1 font-mono text-xs text-agro-slate">
+                <span className="rounded-md bg-agro-mint px-2 py-1 font-mono text-xs text-agro-slate">
                   H {demoWeather.highC}°
                 </span>
-                <span className="rounded-md bg-agro-stone px-2 py-1 font-mono text-xs text-agro-slate">
+                <span className="rounded-md bg-agro-mint px-2 py-1 font-mono text-xs text-agro-slate">
                   L {demoWeather.lowC}°
                 </span>
               </div>
@@ -328,7 +328,7 @@ export default function DashboardView({
                 Weather · {demoWeather.location}
               </h2>
               <p className="mt-4 flex items-start gap-3 text-sm leading-relaxed text-agro-slate">
-                <CloudRainIcon className="mt-0.5 h-5 w-5 shrink-0 text-agro-cloud" aria-hidden="true" />
+                <CloudRainIcon className="mt-0.5 h-5 w-5 shrink-0 text-agro-slate" aria-hidden="true" />
                 Weather isn&apos;t loading right now. Check again in a little
                 while — your advisories keep working meanwhile.
               </p>
@@ -346,7 +346,7 @@ export default function DashboardView({
               <span className="rounded-full bg-agro-mint px-3 py-1 text-xs font-semibold text-agro-canopy">
                 Season tip
               </span>
-              <span className="font-mono text-xs uppercase tracking-wide text-agro-cloud">
+              <span className="font-mono text-xs uppercase tracking-wide text-agro-slate">
                 Today
               </span>
             </div>
@@ -391,7 +391,7 @@ export default function DashboardView({
             No alerts today — your crops are calm.
           </p>
         ) : (
-          <ul className="mt-3 divide-y divide-agro-clay overflow-hidden rounded-2xl border border-agro-clay bg-white">
+          <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
             {topAlerts.map((alert) => {
               const KindIcon = alertKindIcon[alert.kind];
               return (
@@ -410,11 +410,11 @@ export default function DashboardView({
                     <p className="min-w-0 flex-1 text-sm leading-snug text-agro-ink">
                       {alert.message}
                     </p>
-                    <span className="hidden shrink-0 font-mono text-xs text-agro-cloud md:block">
+                    <span className="hidden shrink-0 font-mono text-xs text-agro-slate md:block">
                       {alert.relativeTime}
                     </span>
                     <ChevronRightIcon
-                      className="h-4 w-4 shrink-0 text-agro-cloud transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-agro-canopy"
+                      className="h-4 w-4 shrink-0 text-agro-slate transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-agro-canopy"
                       aria-hidden="true"
                     />
                   </Link>
@@ -435,7 +435,7 @@ export default function DashboardView({
               <li key={action.id}>
                 <Link
                   href={action.href}
-                  className="group flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border border-agro-clay bg-white p-2 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-agro-sprout hover:shadow-md"
+                  className="group flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border border-agro-sprout bg-white p-2 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-agro-sprout hover:shadow-md"
                 >
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy transition-colors duration-200 group-hover:bg-agro-canopy group-hover:text-white">
                     <ActionIcon className="h-5 w-5" />
@@ -503,7 +503,7 @@ export default function DashboardView({
               <li key={farm.id} className="w-64 shrink-0 snap-start lg:w-auto">
                 <Link
                   href={`/farms/${farm.id}`}
-                  className="group flex h-full flex-col rounded-2xl border border-agro-clay bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-agro-sprout hover:shadow-md"
+                  className="group flex h-full flex-col rounded-2xl border border-agro-sprout bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-agro-sprout hover:shadow-md"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy transition-colors duration-200 group-hover:bg-agro-canopy group-hover:text-white">
@@ -529,7 +529,7 @@ export default function DashboardView({
                     {farm.name}
                   </h3>
                   <p className="mt-0.5 text-sm text-agro-slate">{farm.crops}</p>
-                  <span className="mt-3 w-fit rounded-full bg-agro-stone px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">
+                  <span className="mt-3 w-fit rounded-full border border-agro-sprout bg-white px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">
                     {farm.stage}
                   </span>
                 </Link>
@@ -601,12 +601,12 @@ export default function DashboardView({
                       {done && <CheckIcon className="h-3.5 w-3.5" />}
                     </span>
                     <span
-                      className={`flex-1 text-sm ${done ? "text-agro-cloud line-through" : "font-medium text-agro-ink"}`}
+                      className={`flex-1 text-sm ${done ? "text-agro-slate line-through" : "font-medium text-agro-ink"}`}
                     >
                       {item.label}
                     </span>
                     <ChevronRightIcon
-                      className="h-4 w-4 shrink-0 text-agro-cloud transition-colors group-hover:text-agro-canopy"
+                      className="h-4 w-4 shrink-0 text-agro-slate transition-colors group-hover:text-agro-canopy"
                       aria-hidden="true"
                     />
                   </Link>
@@ -617,7 +617,7 @@ export default function DashboardView({
         </section>
       )}
 
-      <p className="pb-2 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-cloud">
+      <p className="pb-2 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
         Demo build · sample data only
       </p>
     </div>

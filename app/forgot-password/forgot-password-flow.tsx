@@ -130,7 +130,7 @@ export default function ForgotPasswordFlow() {
                   onChange={(e) => setEmail(e.target.value)}
                   aria-invalid={Boolean(fieldErrors.email)}
                   aria-describedby={fieldErrors.email ? "recovery-email-error" : undefined}
-                  className={`mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+                  className={`focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
                     fieldErrors.email
                       ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
                       : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"

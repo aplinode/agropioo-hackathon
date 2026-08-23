@@ -2,10 +2,22 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AlertTriangleIcon, CameraIcon } from "@/components/icons";
+import { FurrowMotif } from "@/components/FurrowMotif";
+import {
+  AlertTriangleIcon,
+  ArrowRightIcon,
+  CameraIcon,
+  CheckIcon,
+} from "@/components/icons";
 import { sampleDiagnosis } from "./demo-data";
 
 type DetectStage = "idle" | "analyzing" | "result";
+
+const captureTips = [
+  "Fill the frame with one leaf",
+  "Shoot in daylight",
+  "Keep your shadow off it",
+] as const;
 
 /* Crop detection (UI-only demo): pick a photo or run the sample scan,
    watch it analyze, and read a clearly-labelled sample diagnosis. */
@@ -52,26 +64,30 @@ export default function DetectUpload() {
   }
 
   return (
-    <div>
-      <p className="rounded-xl border border-dashed border-agro-cloud/70 bg-agro-stone px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
+    <div className="flex h-full flex-col">
+      <p className="rounded-xl border border-agro-sprout bg-agro-mint px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
         DEMO · every photo returns a labelled sample diagnosis
       </p>
 
       {stage === "idle" && (
-        <div className="mt-5">
+        <div className="mt-5 flex flex-1 flex-col">
           <label
             htmlFor="detect-photo"
-            className="group flex min-h-48 cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-agro-sprout bg-white p-6 text-center transition-colors hover:border-agro-canopy hover:bg-agro-mint"
+            className="group relative flex min-h-64 flex-1 cursor-pointer flex-col items-center justify-center gap-4 overflow-hidden rounded-3xl border-2 border-dashed border-agro-leaf/50 bg-white p-6 text-center transition-colors hover:border-agro-canopy hover:bg-agro-mint"
           >
-            <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy transition-colors duration-200 group-hover:bg-agro-canopy group-hover:text-white">
-              <CameraIcon size={26} />
+            <FurrowMotif
+              tone="ghost"
+              className="pointer-events-none absolute inset-x-0 bottom-0 w-full text-agro-sprout/40"
+            />
+            <span className="relative inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout transition-all duration-200 group-hover:-translate-y-0.5 group-hover:bg-agro-canopy group-hover:text-white">
+              <CameraIcon size={28} />
             </span>
-            <span className="text-sm font-semibold text-agro-ink">
-              Take or choose a photo of the affected leaf
+            <span className="relative max-w-xs font-display text-xl font-bold leading-snug text-agro-forest">
+              Photograph the sick leaf
             </span>
-            <span className="max-w-xs text-xs leading-relaxed text-agro-slate">
-              Fill the frame with one leaf, shoot in daylight, and keep your
-              shadow off it.
+            <span className="relative inline-flex min-h-11 items-center gap-2 rounded-xl bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 group-hover:bg-agro-forest group-hover:shadow-md">
+              <CameraIcon size={16} />
+              Take or choose a photo
             </span>
             <input
               id="detect-photo"
@@ -82,10 +98,31 @@ export default function DetectUpload() {
               className="sr-only"
             />
           </label>
+
+          {/* Capture tips */}
+          <ul className="mt-4 grid grid-cols-3 gap-2">
+            {captureTips.map((tip, index) => (
+              <li
+                key={tip}
+                className="rounded-xl border border-agro-sprout bg-white p-2.5 text-center"
+              >
+                <span
+                  className="mx-auto mb-1 flex h-6 w-6 items-center justify-center rounded-full bg-agro-mint font-mono text-[0.7rem] font-bold text-agro-canopy"
+                  aria-hidden="true"
+                >
+                  {index + 1}
+                </span>
+                <span className="block text-[0.7rem] leading-snug text-agro-slate">
+                  {tip}
+                </span>
+              </li>
+            ))}
+          </ul>
+
           <button
             type="button"
             onClick={() => beginAnalysis("sample-wheat-leaf.jpg")}
-            className="mt-3 inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-xl border border-agro-canopy/30 bg-white px-4 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint sm:w-auto sm:px-6"
+            className="mt-3 inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-agro-canopy/30 bg-white px-4 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint sm:w-auto sm:self-start sm:px-6"
           >
             No photo handy? Run a sample scan
           </button>
@@ -94,7 +131,7 @@ export default function DetectUpload() {
 
       {stage === "analyzing" && (
         <div
-          className="mt-5 flex flex-col items-center gap-4 rounded-3xl border border-agro-sprout bg-white p-8 text-center"
+          className="mt-5 flex flex-1 flex-col items-center justify-center gap-4 rounded-3xl border border-agro-sprout bg-white p-8 text-center"
           role="status"
         >
           {previewUrl ? (
@@ -102,14 +139,14 @@ export default function DetectUpload() {
             <img
               src={previewUrl}
               alt={`Photo being analyzed: ${fileName}`}
-              className="h-40 w-full max-w-sm rounded-2xl border border-agro-clay object-cover"
+              className="h-44 w-full max-w-sm rounded-2xl border border-agro-sprout object-cover"
             />
           ) : (
             <span
-              className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy"
+              className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout"
               aria-hidden="true"
             >
-              <CameraIcon size={26} />
+              <CameraIcon size={28} />
             </span>
           )}
           <svg className="h-5 w-5 animate-spin text-agro-canopy" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -125,22 +162,30 @@ export default function DetectUpload() {
       {stage === "result" && (
         <section
           aria-labelledby="diagnosis-heading"
-          className="mt-5 overflow-hidden rounded-3xl border border-agro-sprout bg-white"
+          className="mt-5 flex flex-1 flex-col overflow-hidden rounded-3xl border border-agro-sprout bg-white"
         >
           {previewUrl ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={previewUrl}
               alt={`Scanned photo: ${fileName}`}
-              className="h-44 w-full border-b border-agro-clay object-cover sm:h-52"
+              className="h-44 w-full border-b border-agro-sprout object-cover sm:h-56"
             />
-          ) : null}
-          <div className="p-5 sm:p-6">
+          ) : (
+            <div className="flex h-28 w-full items-center justify-center gap-3 border-b border-agro-sprout bg-agro-mint">
+              <CameraIcon size={20} className="text-agro-canopy" aria-hidden="true" />
+              <p className="font-mono text-xs uppercase tracking-wide text-agro-canopy">
+                Sample scan · wheat leaf
+              </p>
+            </div>
+          )}
+          <div className="flex flex-1 flex-col p-5 sm:p-6">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-agro-canopy/10 px-3 py-1 text-xs font-semibold text-agro-canopy">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-agro-canopy/10 px-3 py-1 text-xs font-semibold text-agro-canopy">
+                <AlertTriangleIcon size={13} aria-hidden="true" />
                 Watch
               </span>
-              <span className="rounded-full bg-agro-stone px-3 py-1 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">
+              <span className="inline-flex items-center rounded-full bg-agro-mint px-3 py-1 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">
                 Confidence {sampleDiagnosis.confidencePct}% · sample
               </span>
             </div>
@@ -172,27 +217,31 @@ export default function DetectUpload() {
               ))}
             </ol>
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href="/advisor"
-                className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest active:translate-y-0"
-              >
-                Discuss with advisor
-              </Link>
-              <button
-                type="button"
-                onClick={reset}
-                className="inline-flex h-12 flex-1 cursor-pointer items-center justify-center rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint"
-              >
-                Scan another leaf
-              </button>
-            </div>
+            <div className="mt-auto pt-6">
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/advisor"
+                  className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest active:translate-y-0"
+                >
+                  Discuss with advisor
+                  <ArrowRightIcon size={16} />
+                </Link>
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="inline-flex h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint"
+                >
+                  <CheckIcon size={16} aria-hidden="true" />
+                  Scan another leaf
+                </button>
+              </div>
 
-            <p className="mt-4 flex items-start gap-2 text-xs leading-relaxed text-agro-slate">
-              <AlertTriangleIcon size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
-              Sample result for the demo build — always confirm treatment with
-              your local agriculture office before spraying.
-            </p>
+              <p className="mt-4 flex items-start gap-2 text-xs leading-relaxed text-agro-slate">
+                <AlertTriangleIcon size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
+                Sample result for the demo build — always confirm treatment with
+                your local agriculture office before spraying.
+              </p>
+            </div>
           </div>
         </section>
       )}

@@ -131,7 +131,7 @@ export default async function WeatherPage({
           {weather.hourly.map((point) => (
             <li
               key={point.time}
-              className="flex w-24 shrink-0 flex-col items-center gap-1.5 rounded-2xl border border-agro-clay bg-white p-3 text-center"
+              className="flex w-24 shrink-0 flex-col items-center gap-1.5 rounded-2xl border border-agro-sprout bg-white p-3 text-center"
             >
               <span className="font-mono text-xs uppercase tracking-wide text-agro-slate">
                 {point.time}
@@ -156,7 +156,7 @@ export default async function WeatherPage({
         >
           Five days ahead
         </h2>
-        <ul className="mt-3 divide-y divide-agro-clay overflow-hidden rounded-2xl border border-agro-clay bg-white">
+        <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
           {weather.daily.map((day) => (
             <li key={day.day} className="flex items-center gap-3 p-4">
               <span className="w-14 shrink-0 font-semibold text-agro-ink">{day.day}</span>
@@ -175,7 +175,7 @@ export default async function WeatherPage({
         </ul>
       </section>
 
-      <p className="mt-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-cloud">
+      <p className="mt-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
         Demo build · sample forecast only
       </p>
     </div>
