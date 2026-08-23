@@ -6,7 +6,7 @@ import logo from "@/references/Agropioo-logo-with-text.png";
 
 const sections = [
   { label: "Why Agropioo", anchor: "#why", selfHref: "/why-agropioo" },
-  { label: "Features", anchor: "#features" },
+  { label: "Features", anchor: "#features", selfHref: "/features" },
   { label: "How it works", anchor: "#journey" },
   { label: "Vision", anchor: "#vision" },
 ];
