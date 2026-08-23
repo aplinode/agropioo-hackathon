@@ -27,7 +27,7 @@ No expert role. No community feature.
 | `/login` | Sign in *(done)* |
 | `/forgot-password` | Request password reset |
 | `/reset-password` | Set new password via token |
-| `/onboarding` | First-login setup: language pick (Urdu/Punjabi/Saraiki/Pashto/Balochi/Hindko), profile, add first farm |
+| `/onboarding` | First-login setup: language pick (Urdu/Punjabi/Pashto/Sindhi/Saraiki/Balochi/Hindko), profile, add first farm |
 
 ### Farmer app — `(dashboard)` route group
 

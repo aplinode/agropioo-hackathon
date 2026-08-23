@@ -2,12 +2,12 @@
 
 ## Constitution
 
-> Phase 0 — persistent rules above every spec and build. Sources: `docs/Agropioo Tech Stack.md`, `docs/brand-identity.md`, `docs/brand-colors.md`, `docs/information-architecture.md`.
+> Phase 0 — persistent rules above every spec and build. **Detailed authoritative version: `docs/constitution.md`.** Sources: `docs/Agropioo Tech Stack.md`, `docs/brand-identity.md`, `docs/brand-colors.md`, `docs/information-architecture.md`.
 
 ### Principles
 
 - Farmer-first copy: lead with what the farmer does and gains, not technology. Plain language over cleverness.
-- Pakistan-first: Urdu, Punjabi, Saraiki, Pashto, Balochi, Hindko support is a product requirement, not an i18n afterthought.
+- Pakistan-first: seven confirmed languages — Urdu, Punjabi, Pashto, Sindhi, Saraiki, Balochi, Hindko (`docs/constitution.md` §2 for shares and rollout order). English is the default UI language; a language switcher lives in the nav everywhere; Urdu/Pashto render RTL when they ship.
 - Reuse before adding: existing components, tokens, and libraries win; propose new dependencies, never silently add them.
 - Every feature ships with its spec in `specs/<feature>/spec.md`. The spec is the source of truth; code is its output.
 
@@ -29,7 +29,7 @@
 - Behaviour matches the spec including edge cases; acceptance criteria actually checked (tests or manual run-through).
 - `npm run lint` and `npm run build` pass.
 - A human has reviewed the diff against the spec before merge.
-- After every completed change, commit AND push immediately. Never end a turn with uncommitted work.
+- After every completed change, commit. Push at feature milestones (hybrid branching: tiny fixes direct to main, multi-file features via branch + PR; solo review). Never end a session with uncommitted work.
 - Atomic commits only: one commit = one logical unit of work. A single feature across many files (code + its spec/tests) is ONE commit; an unrelated fix, refactor, or dependency bump made alongside it is its OWN commit. Revert test: if reverting one part would break the others, they belong together; if each stands alone, split.
 - Meaningful messages, imperative mood (`feat: add farm record form`), describing the change not the activity. Never "update", "changes", "fix stuff". Never mix unrelated files.
 
