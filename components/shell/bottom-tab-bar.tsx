@@ -10,7 +10,8 @@ import {
   LeafIcon,
 } from "@/components/icons";
 
-/* Mobile bottom tab bar — exactly five tabs per the dashboard spec. */
+/* Mobile bottom tab bar — exactly five tabs per the dashboard spec.
+   Active tab gets a solid canopy chip: unmistakable in outdoor light. */
 const tabs = [
   { href: "/dashboard", label: "Dashboard", Icon: HomeIcon },
   { href: "/farms", label: "Farms", Icon: LeafIcon },
@@ -40,7 +41,7 @@ export default function BottomTabBar() {
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={`relative flex min-h-16 flex-col items-center justify-center gap-1 py-2 text-[0.7rem] transition-colors ${
-                  active ? "font-semibold text-agro-canopy" : "font-medium text-agro-slate"
+                  active ? "font-semibold text-agro-forest" : "font-medium text-agro-slate"
                 }`}
               >
                 {active && (
@@ -50,11 +51,11 @@ export default function BottomTabBar() {
                   />
                 )}
                 <span
-                  className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${
-                    active ? "bg-agro-mint" : ""
+                  className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+                    active ? "bg-agro-canopy text-white" : ""
                   }`}
                 >
-                  <Icon className={`h-[22px] w-[22px] ${active ? "text-agro-canopy" : "text-agro-slate"}`} />
+                  <Icon size={18} />
                 </span>
                 {label}
                 <span className="sr-only">{active ? " (current page)" : ""}</span>

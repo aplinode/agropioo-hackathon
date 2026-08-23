@@ -31,6 +31,8 @@ export const demoFarmer = {
   firstName: "Ahmad",
   initials: "MA",
   location: "Multan, Punjab",
+  /** Static demo date shown beside the location in the header. */
+  todayLabel: "Sunday, 23 Aug",
   /** ALL unread notifications — the bell badge reflects this total,
       even when the alerts strip shows only the top 3. */
   unreadCount: 5,

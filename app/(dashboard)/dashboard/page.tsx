@@ -14,6 +14,12 @@ export default async function DashboardPage({
 }) {
   const params = await searchParams;
   const emptyView = params.view === "empty";
+  const weatherOff = params.weather === "off";
 
-  return <DashboardView variant={emptyView ? "empty" : "default"} />;
+  return (
+    <DashboardView
+      variant={emptyView ? "empty" : "default"}
+      weatherAvailable={!weatherOff}
+    />
+  );
 }

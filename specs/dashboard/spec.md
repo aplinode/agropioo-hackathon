@@ -22,7 +22,7 @@ Give the farmer one screen that answers "kya karoon aaj?" — today's most impor
 - **FR4 Weather snapshot.** Location name, current temperature °C, condition label with icon, today's high/low, rain-chance line, link to full weather view.
 - **FR5 Alerts strip.** Active alerts sorted by severity (critical → warning → info); each row: type icon, message, relative time. Show top 3 maximum, then "View all alerts".
 - **FR6 Quick actions.** Exactly 4 shortcuts: Add record, Ask advisor, Scan crop (detect), Check prices. Icon + label each, ≥44px targets, evenly weighted.
-- **FR7 Detect CTA (the gold moment).** Full-width card in harvest gold (`--agro-wheat`) with dark forest text — photo-upload pitch for disease detection linking to `/detect`. This is the page's ONLY gold surface.
+- **FR7 Detect CTA (the one strong moment).** Full-width card in deep brand green (forest/canopy family) with light text — photo-upload pitch for disease detection linking to `/detect`. This is the page's single high-emphasis surface. Founder decision 2026-08-23: palette is restricted to greens + whites/neutrals for this release — no harvest gold, no earth tones, no non-green hues anywhere on farmer-app screens; alert severity and errors are expressed through green-intensity tints, icons, and text labels instead of colour hue.
 - **FR8 My farms overview.** Card per farm: farm name, crops grown, growth stage, simple health indicator. Horizontal scroll on mobile, grid on desktop. Final tile = "+ Add farm". Tap → farm detail.
 - **FR9 Setup checklist.** Card shown while items are incomplete: add first farm, ask the advisor once, run first detection. Shows progress count; dismissible via close icon.
 - **FR10 Empty states.** (a) No farms: welcome hero + "Add your first farm" primary CTA + checklist; hide FR3 crop-specifics and FR5 list (show calm message). (b) No alerts: "No alerts today — your crops are calm." (c) Weather unavailable: explanatory fallback line, not an error dump.
@@ -53,8 +53,8 @@ Give the farmer one screen that answers "kya karoon aaj?" — today's most impor
 - [ ] Mobile 320–430px: bottom bar shows exactly 5 tabs, correct active state on `/dashboard`, no page-level horizontal scroll
 - [ ] Desktop ≥1024px: sidebar lists all 8 destinations with active state; bottom bar hidden
 - [ ] Header contains greeting + bell w/ badge count + EN placeholder + avatar; all ≥44px targets
-- [ ] Advisory, weather, alerts, quick actions (exactly 4), gold Detect CTA, farms row, checklist all present in DOM order above
-- [ ] Exactly ONE `--agro-wheat` surface on the page (Detect CTA) with dark forest text
+- [ ] Advisory, weather, alerts, quick actions (exactly 4), green Detect CTA, farms row, checklist all present in DOM order above
+- [ ] NO non-green hue anywhere: zero `--agro-wheat`/earth/red/teal surfaces; severity and error states use green-intensity tints + icons + labels
 - [ ] No-farms variant renders welcome hero + add-farm CTA + calm alert/weather fallbacks
 - [ ] No-alerts and weather-unavailable fallback strings render correctly
 - [ ] All colours come from `--color-agro-*` tokens; no inline hex
