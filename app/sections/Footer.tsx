@@ -3,8 +3,8 @@ import logo from "@/references/Agropioo-logo-footer.png";
 
 const pageLinks = [
   { label: "Why Agropioo", href: "/why-agropioo" },
-  { label: "Features", href: "#features" },
-  { label: "How it works", href: "#journey" },
+  { label: "Features", href: "/features" },
+  { label: "How it works", href: "/how-it-works" },
   { label: "Vision", href: "#vision" },
   { label: "Get early access", href: "#get-started" },
 ];
