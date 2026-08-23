@@ -1,20 +1,6 @@
 import Image from "next/image";
 import logo from "@/references/Agropioo-logo-footer.png";
-
-const pageLinks = [
-  { label: "Why Agropioo", href: "/why-agropioo" },
-  { label: "Features", href: "/features" },
-  { label: "How it works", href: "/how-it-works" },
-  { label: "Vision", href: "/vision" },
-  { label: "Get early access", href: "#get-started" },
-];
-
-const legalLinks = [
-  { label: "Privacy Policy", href: "#" },
-  { label: "Terms of Service", href: "#" },
-  { label: "Cookie Policy", href: "#" },
-  { label: "Disclaimer", href: "#" },
-];
+import { getCurrentDictionary } from "@/lib/i18n/server";
 
 function FacebookIcon() {
   return (
@@ -55,7 +41,7 @@ function LinkedinIcon() {
 function YoutubeIcon() {
   return (
     <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.33z" />
+      <path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.33z" />
       <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 15.02l5.75-3.27-5.75-3.27z" />
     </svg>
   );
@@ -69,8 +55,24 @@ const socials = [
   { label: "YouTube", href: "#", Icon: YoutubeIcon },
 ];
 
-export default function Footer({ hrefPrefix = "" }: { hrefPrefix?: string }) {
+export default async function Footer({ hrefPrefix = "" }: { hrefPrefix?: string }) {
+  const { t } = await getCurrentDictionary();
   const sectionHref = (anchor: string) => `${hrefPrefix}${anchor}`;
+
+  const pageLinks = [
+    { label: t("nav.whyAgropioo").text, href: "/why-agropioo" },
+    { label: t("nav.features").text, href: "/features" },
+    { label: t("nav.howItWorks").text, href: "/how-it-works" },
+    { label: t("nav.vision").text, href: "/vision" },
+    { label: t("nav.getEarlyAccess").text, href: "#get-started" },
+  ];
+
+  const legalLinks = [
+    { label: t("home.footer.privacy").text, href: "#" },
+    { label: t("home.footer.terms").text, href: "#" },
+    { label: t("home.footer.cookies").text, href: "#" },
+    { label: t("home.footer.disclaimer").text, href: "#" },
+  ];
 
   return (
     <footer className="w-full bg-agro-night px-4 pt-16 pb-8 text-white sm:px-6 lg:px-8">
@@ -87,9 +89,7 @@ export default function Footer({ hrefPrefix = "" }: { hrefPrefix?: string }) {
               />
             </a>
             <p className="mt-5 max-w-sm leading-relaxed text-white/70">
-              The AI-powered farm intelligence platform. Advisory, satellite
-              monitoring, market prices, and records — soil and signal,
-              together.
+              {t("home.footer.tagline").text}
             </p>
 
             <div className="mt-6 flex items-center gap-3">
@@ -109,11 +109,11 @@ export default function Footer({ hrefPrefix = "" }: { hrefPrefix?: string }) {
           </div>
 
           {/* Pages */}
-          <nav className="lg:col-span-2" aria-label="Footer pages">
-            <h3 className="eyebrow text-agro-sprout">Pages</h3>
+          <nav className="lg:col-span-2" aria-label={t("home.footer.pagesNavLabel").text}>
+            <h3 className="eyebrow text-agro-sprout">{t("home.footer.pagesHeading").text}</h3>
             <ul className="mt-5 space-y-3">
               {pageLinks.map((link) => (
-                <li key={link.label}>
+                <li key={link.href}>
                   <a
                     href={link.href.startsWith("#") ? sectionHref(link.href) : link.href}
                     className="text-sm text-white/70 transition-colors duration-200 hover:text-white"
@@ -126,8 +126,8 @@ export default function Footer({ hrefPrefix = "" }: { hrefPrefix?: string }) {
           </nav>
 
           {/* Legal */}
-          <nav className="lg:col-span-2" aria-label="Legal">
-            <h3 className="eyebrow text-agro-sprout">Legal</h3>
+          <nav className="lg:col-span-2" aria-label={t("home.footer.legalNavLabel").text}>
+            <h3 className="eyebrow text-agro-sprout">{t("home.footer.legalHeading").text}</h3>
             <ul className="mt-5 space-y-3">
               {legalLinks.map((link) => (
                 <li key={link.label}>
@@ -144,7 +144,7 @@ export default function Footer({ hrefPrefix = "" }: { hrefPrefix?: string }) {
 
           {/* Contact */}
           <div className="lg:col-span-3">
-            <h3 className="eyebrow text-agro-sprout">Get in touch</h3>
+            <h3 className="eyebrow text-agro-sprout">{t("home.footer.contactHeading").text}</h3>
             <ul className="mt-5 space-y-3 text-sm text-white/70">
               <li>
                 <a
@@ -154,16 +154,15 @@ export default function Footer({ hrefPrefix = "" }: { hrefPrefix?: string }) {
                   hello@agropioo.com
                 </a>
               </li>
-              <li>Pakistan</li>
+              <li>{t("home.footer.country").text}</li>
               <li>
-                A product of{" "}
                 <a
                   href="http://aplinode.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-medium text-white underline-offset-4 transition-colors hover:text-agro-sprout hover:underline"
                 >
-                  Aplinode
+                  {t("common.productOfAplinode").text}
                 </a>
               </li>
             </ul>
@@ -173,10 +172,10 @@ export default function Footer({ hrefPrefix = "" }: { hrefPrefix?: string }) {
         {/* Bottom bar */}
         <div className="flex flex-col items-center justify-between gap-3 pt-8 sm:flex-row">
           <p className="text-sm text-white/60">
-            © {new Date().getFullYear()} Agropioo. All rights reserved.
+            {t("home.footer.copyright", { year: String(new Date().getFullYear()) }).text}
           </p>
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-white/50">
-            Built for Pakistan · Ready for the world
+            {t("home.footer.motto").text}
           </p>
         </div>
       </div>

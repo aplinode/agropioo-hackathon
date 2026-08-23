@@ -1,16 +1,20 @@
-const pakistanPoints = [
-  "Local crop and climate knowledge",
-  "Urdu, Punjabi, Saraiki, Pashto, Balochi, Hindko",
-  "Refined through real farmer feedback",
-];
+import { getCurrentDictionary } from "@/lib/i18n/server";
 
-const globalPoints = [
-  "Country-specific agricultural knowledge",
-  "Additional languages and local crops",
-  "Deeper data integrations and analytics",
-];
+export default async function Vision() {
+  const { t } = await getCurrentDictionary();
 
-export default function Vision() {
+  const pakistanPoints = [
+    t("home.vision.pkPoint1").text,
+    t("home.vision.pkPoint2").text,
+    t("home.vision.pkPoint3").text,
+  ];
+
+  const globalPoints = [
+    t("home.vision.worldPoint1").text,
+    t("home.vision.worldPoint2").text,
+    t("home.vision.worldPoint3").text,
+  ];
+
   return (
     <section
       id="vision"
@@ -20,12 +24,12 @@ export default function Vision() {
         <div className="max-w-2xl">
           <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
             <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-            The vision
+            {t("home.vision.eyebrow").text}
           </p>
           <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
-            Built for Pakistan.
+            {t("home.vision.titleA").text}
             <br />
-            Ready for the world.
+            {t("home.vision.titleB").text}
           </h2>
         </div>
 
@@ -40,12 +44,10 @@ export default function Vision() {
                 </svg>
               </span>
               <h3 className="mt-5 font-display text-2xl font-medium tracking-tight text-agro-ink sm:text-[1.75rem]">
-                Pakistan-first approach
+                {t("home.vision.pkTitle").text}
               </h3>
               <p className="mt-3 max-w-xl leading-relaxed text-agro-slate">
-                Version one is designed for Pakistan&apos;s fields: local crops,
-                regional languages, real farming practices, real field
-                conditions.
+                {t("home.vision.pkBody").text}
               </p>
               <ul className="mt-6 space-y-3">
                 {pakistanPoints.map((point) => (
@@ -71,12 +73,10 @@ export default function Vision() {
                 </svg>
               </span>
               <h3 className="mt-5 font-display text-2xl font-medium tracking-tight sm:text-[1.75rem]">
-                Global expansion vision
+                {t("home.vision.worldTitle").text}
               </h3>
               <p className="mt-3 leading-relaxed text-agro-sprout/80">
-                Built to adapt. As the platform matures it scales to new
-                countries, languages, crops, and climates — without rebuilding
-                from scratch.
+                {t("home.vision.worldBody").text}
               </p>
               <ul className="mt-auto space-y-3 pt-8">
                 {globalPoints.map((point) => (
