@@ -9,7 +9,7 @@ import {
 import { notFound } from "next/navigation";
 import { SuggestionChip } from "@/components/suggestion-chip";
 import { isLocale, LOCALES, LOCALE_REGISTRY } from "@/lib/i18n/config";
-import "../globals.css";
+import "../../globals.css";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],

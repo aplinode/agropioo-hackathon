@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   demoAdvisory,
   demoFarmer,
-} from "@/app/(dashboard)/dashboard/demo-data";
+} from "@/app/(farmer)/(dashboard)/dashboard/demo-data";
 import {
   advisorReplies,
   defaultReply,

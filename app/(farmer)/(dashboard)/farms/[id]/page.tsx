@@ -11,7 +11,7 @@ import {
   AlertTriangleIcon,
   ArrowRightIcon,
 } from "@/components/icons";
-import { demoFarms } from "@/app/(dashboard)/dashboard/demo-data";
+import { demoFarms } from "@/app/(farmer)/(dashboard)/dashboard/demo-data";
 import { recordsForFarm } from "../demo-data";
 
 export const metadata: Metadata = {

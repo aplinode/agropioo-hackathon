@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { demoFarms } from "@/app/(dashboard)/dashboard/demo-data";
+import { demoFarms } from "@/app/(farmer)/(dashboard)/dashboard/demo-data";
 import PageHeader from "@/components/shell/page-header";
 import {
   ChevronRightIcon,

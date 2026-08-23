@@ -13,7 +13,7 @@ import {
   BugIcon,
   WheatIcon,
 } from "@/components/icons";
-import { demoFarms } from "@/app/(dashboard)/dashboard/demo-data";
+import { demoFarms } from "@/app/(farmer)/(dashboard)/dashboard/demo-data";
 
 const recordTypes = [
   { id: "irrigation", label: "Irrigation", Icon: CloudRainIcon },
