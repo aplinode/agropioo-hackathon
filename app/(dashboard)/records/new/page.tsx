@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import ToolPlaceholder from "@/components/shell/tool-placeholder";
+import PageHeader from "@/components/shell/page-header";
+import NewRecordForm from "./record-form";
 
 export const metadata: Metadata = {
   title: "New record — Agropioo",
@@ -7,10 +8,15 @@ export const metadata: Metadata = {
 
 export default function NewRecordPage() {
   return (
-    <ToolPlaceholder
-      eyebrow="Farm records"
-      title="Log what happened in the field"
-      description="Irrigation, fertilizer, pesticide, disease, and harvest entries — your farm's memory, one line at a time."
-    />
+    <div className="pt-1">
+      <PageHeader
+        eyebrow="Farm records"
+        title="Log what happened in the field"
+        description="Irrigation, fertilizer, pesticide, disease, and harvest entries — your farm's memory, one line at a time."
+      />
+      <div className="mt-8 max-w-xl">
+        <NewRecordForm />
+      </div>
+    </div>
   );
 }

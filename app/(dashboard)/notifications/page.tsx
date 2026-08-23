@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import ToolPlaceholder from "@/components/shell/tool-placeholder";
+import PageHeader from "@/components/shell/page-header";
+import NotificationsList from "./notifications-list";
 
 export const metadata: Metadata = {
   title: "Notifications — Agropioo",
@@ -7,10 +8,15 @@ export const metadata: Metadata = {
 
 export default function NotificationsPage() {
   return (
-    <ToolPlaceholder
-      eyebrow="Notifications"
-      title="Everything that needs your eye"
-      description="Weather warnings, pest outbreak alerts, and price spikes for your crops — collected in one place."
-    />
+    <div className="pt-1">
+      <PageHeader
+        eyebrow="Notifications"
+        title="Everything that needs your eye"
+        description="Weather warnings, pest outbreaks, and price moves for your crops — newest first, worst first."
+      />
+      <div className="mt-6">
+        <NotificationsList />
+      </div>
+    </div>
   );
 }

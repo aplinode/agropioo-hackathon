@@ -313,3 +313,45 @@ export function ChevronRightIcon(props: IconProps) {
     </svg>
   );
 }
+
+/* ---- Farmer tool icons (prices, records, advisor) ---- */
+
+export function DropletIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 3.25s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11Z" />
+    </svg>
+  );
+}
+
+export function TrendingDownIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M2.25 6L9 12.75l4.306-4.307a11.95 11.95 0 0 1 5.814 5.519l2.74 1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+    </svg>
+  );
+}
+
+export function FlaskIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M9.5 3h5" />
+      <path d="M10 3v6.2L5.8 17a3 3 0 0 0 2.7 4.3h7a3 3 0 0 0 2.7-4.3L14 9.2V3" />
+      <path d="M7.6 14.5h8.8" />
+    </svg>
+  );
+}
+
+export function WheatIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 21v-8" />
+      <path d="M12 13c-2.4 0-4.2-1.7-4.6-4.3C9.9 9 11.6 10.5 12 13Z" />
+      <path d="M12 13c2.4 0 4.2-1.7 4.6-4.3C14.1 9 12.4 10.5 12 13Z" />
+      <path d="M12 9c-2.4 0-4.2-1.7-4.6-4.3C9.9 5 11.6 6.5 12 9Z" />
+      <path d="M12 9c2.4 0 4.2-1.7 4.6-4.3C14.1 5 12.4 6.5 12 9Z" />
+      <path d="M12 21c-2 0-3.6-1.3-4-3.4 2 .2 3.4 1.4 4 3.4Z" />
+      <path d="M12 21c2 0 3.6-1.3 4-3.4-2 .2-3.4 1.4-4 3.4Z" />
+    </svg>
+  );
+}

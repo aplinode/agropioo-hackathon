@@ -16,6 +16,9 @@ export type DemoAlert = {
 export type DemoFarm = {
   id: string;
   name: string;
+  location: string;
+  acres: number;
+  sownOn: string;
   crops: string;
   stage: string;
   health: FarmHealth;
@@ -87,6 +90,9 @@ export const demoFarms: DemoFarm[] = [
   {
     id: "farm-khalilpur",
     name: "Khalilpur Farm",
+    location: "Khalilpur, Multan",
+    acres: 12.5,
+    sownOn: "20 Nov 2025",
     crops: "Wheat",
     stage: "Vegetative",
     health: "good",
@@ -94,6 +100,9 @@ export const demoFarms: DemoFarm[] = [
   {
     id: "farm-sahiwal",
     name: "Sahiwal Plot",
+    location: "Depalpur Road, Sahiwal",
+    acres: 8,
+    sownOn: "15 May 2026",
     crops: "Cotton",
     stage: "Squaring",
     health: "watch",
@@ -101,6 +110,9 @@ export const demoFarms: DemoFarm[] = [
   {
     id: "farm-chak62",
     name: "Chak 62 GB",
+    location: "Chak 62 GB, Faisalabad",
+    acres: 15,
+    sownOn: "10 Mar 2026",
     crops: "Sugarcane",
     stage: "Tillering",
     health: "good",
