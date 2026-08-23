@@ -1,20 +1,12 @@
-const capabilities = [
-  "AI crop doctor",
-  "Satellite NDVI monitoring",
-  "Mandi price intelligence",
-  "Weather-aware advisories",
-  "Digital farm records",
-  "Voice in 6 languages",
-  "Pest outbreak alerts",
-  "Offline-first + SMS",
-];
+import { localized } from "@/lib/i18n/localized";
+import { getCurrentDictionary } from "@/lib/i18n/server";
 
-function TickerContent() {
+function TickerContent({ items }: { items: React.ReactNode[] }) {
   return (
     <div className="flex shrink-0 items-center">
-      {capabilities.map((item) => (
+      {items.map((item, index) => (
         <span
-          key={item}
+          key={index}
           className="flex items-center gap-6 pr-6 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-agro-sprout sm:gap-8 sm:pr-8 sm:text-sm"
         >
           {item}
@@ -27,22 +19,36 @@ function TickerContent() {
   );
 }
 
-export default function CapabilityTicker() {
+export default async function CapabilityTicker() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+
+  const capabilities = [
+    L("home.ticker.cropDoctor"),
+    L("home.ticker.satelliteNdvi"),
+    L("home.ticker.mandiPrices"),
+    L("home.ticker.weatherAdvisories"),
+    L("home.ticker.farmRecords"),
+    L("home.ticker.advisoryLanguages"),
+    L("home.ticker.pestAlerts"),
+    L("home.ticker.offlineSms"),
+  ];
+
   return (
     <div
       className="relative w-full overflow-hidden border-y border-agro-canopy/40 bg-agro-forest py-4"
-      aria-label="Agropioo platform capabilities"
+      aria-label={t("home.ticker.ariaLabel").text}
     >
       <div className="marquee-track flex w-max">
-        <TickerContent />
-        <TickerContent />
-        <TickerContent />
-        <TickerContent />
+        <TickerContent items={capabilities} />
+        <TickerContent items={capabilities} />
+        <TickerContent items={capabilities} />
+        <TickerContent items={capabilities} />
       </div>
 
-      {/* Edge fades */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-agro-forest to-transparent sm:w-24" aria-hidden="true" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-agro-forest to-transparent sm:w-24" aria-hidden="true" />
+      {/* Edge fades — logical start/end sides mirror under RTL */}
+      <div className="pointer-events-none absolute inset-y-0 start-0 w-16 bg-gradient-to-r from-agro-forest to-transparent rtl:bg-gradient-to-l sm:w-24" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-y-0 end-0 w-16 bg-gradient-to-l from-agro-forest to-transparent rtl:bg-gradient-to-r sm:w-24" aria-hidden="true" />
     </div>
   );
 }

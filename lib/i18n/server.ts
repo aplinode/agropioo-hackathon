@@ -58,9 +58,13 @@ export const getDictionary = cache(async (localeCode: Locale): Promise<Dictionar
         if (row.locale === localeCode) localizedRows.push(row);
         else englishRows.push(row);
       }
-      primary = buildTable(localizedRows);
+      // DB rows overlay the drafted baseline — they can override copy but a
+      // missing/empty DB (or locale gap) must never erase the catalog.
+      primary = {
+        ...fallbackTableFor(localeCode),
+        ...buildTable(localizedRows),
+      };
       const dbEnglish = buildTable(englishRows);
-      // Prefer DB English when present; keep catalog entries as extra safety.
       english = { ...ENGLISH_TABLE, ...dbEnglish };
     }
   } catch {

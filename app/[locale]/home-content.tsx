@@ -1,5 +1,3 @@
-"use client";
-
 import SiteHeader from "@/components/SiteHeader";
 import type { SiteHeaderStrings } from "@/components/SiteHeader";
 import Hero from "./sections/Hero";

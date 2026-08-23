@@ -1,22 +1,25 @@
-const problems = [
-  {
-    title: "Uncertain timing",
-    description:
-      "Irrigation, fertiliser, pesticide, planting, harvest — critical moments are still guessed, costing yield and wasted inputs.",
-  },
-  {
-    title: "Lost farm history",
-    description:
-      "Seasons of knowledge live in memory or scattered notebooks. What worked last year is impossible to learn from this year.",
-  },
-  {
-    title: "Fragmented advice",
-    description:
-      "Neighbours, vendors, and videos all offer answers — few match the farmer's crop, soil, weather, or location.",
-  },
-];
+import { localized } from "@/lib/i18n/localized";
+import { getCurrentDictionary } from "@/lib/i18n/server";
 
-export default function Problem() {
+export default async function Problem() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+
+  const problems = [
+    {
+      title: L("home.problem.item1Title"),
+      description: L("home.problem.item1Body"),
+    },
+    {
+      title: L("home.problem.item2Title"),
+      description: L("home.problem.item2Body"),
+    },
+    {
+      title: L("home.problem.item3Title"),
+      description: L("home.problem.item3Body"),
+    },
+  ];
+
   return (
     <section
       id="why"
@@ -27,15 +30,13 @@ export default function Problem() {
           <div className="lg:col-span-5">
             <p className="eyebrow reveal flex items-center gap-3 text-agro-sprout">
               <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-              The problem
+              {L("home.problem.eyebrow")}
             </p>
             <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.9rem]">
-              Farming decisions shouldn&apos;t be a guessing game
+              {L("home.problem.title")}
             </h2>
             <p className="reveal mt-5 max-w-md leading-relaxed text-agro-sprout/85">
-              Across Pakistan, farmers make high-stakes choices with tradition,
-              local advice, and scattered information. The cost is paid at
-              harvest.
+              {L("home.problem.subtitle")}
             </p>
           </div>
 
@@ -43,7 +44,7 @@ export default function Problem() {
             <ul>
               {problems.map((item, index) => (
                 <li
-                  key={item.title}
+                  key={index}
                   className="reveal group border-t border-agro-sprout/15 py-7 transition-colors duration-300 first:border-t-0 first:pt-0 hover:bg-white/[0.04] sm:first:pt-7 lg:first:border-t lg:first:pt-7"
                 >
                   <div className="flex gap-6 px-2 sm:gap-8 sm:px-4">
@@ -69,7 +70,7 @@ export default function Problem() {
             <div className="reveal mt-8 flex items-center gap-3 px-2 sm:px-4">
               <span className="hidden h-px flex-1 bg-agro-sprout/15 sm:block" aria-hidden="true" />
               <p className="font-mono text-xs uppercase leading-relaxed tracking-[0.18em] text-agro-sprout/60">
-                The cost of guessing is paid at harvest
+                {L("home.problem.kicker")}
               </p>
             </div>
           </div>

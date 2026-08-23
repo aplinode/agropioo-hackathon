@@ -1,54 +1,62 @@
 import Image from "next/image";
 
-const readings = [
-  {
-    label: "Crop health",
-    value: "92%",
-    note: "Excellent",
-    position: "left-[2%] top-[18%] sm:left-[6%] lg:left-[7%]",
-  },
-  {
-    label: "Weather",
-    value: "24°C",
-    note: "Clear sky",
-    position: "bottom-[24%] left-0 lg:left-[1%]",
-  },
-  {
-    label: "Soil moisture",
-    value: "65%",
-    note: "Optimal",
-    position: "bottom-[8%] right-[4%] sm:right-[22%] lg:right-[28%]",
-  },
-];
+import { localized } from "@/lib/i18n/localized";
+import { getCurrentDictionary } from "@/lib/i18n/server";
+import { formatNumber } from "@/lib/i18n/format";
 
-export default function Hero() {
+export default async function Hero() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+
+  const readings = [
+    {
+      label: L("home.hero.readingCrop"),
+      value: formatNumber(92, locale),
+      suffix: "%",
+      note: L("home.hero.noteExcellent"),
+      position: "left-[2%] top-[18%] sm:left-[6%] lg:left-[7%]",
+    },
+    {
+      label: L("home.hero.readingWeather"),
+      value: formatNumber(24, locale),
+      suffix: "°C",
+      note: L("home.hero.noteClearSky"),
+      position: "bottom-[24%] left-0 lg:left-[1%]",
+    },
+    {
+      label: L("home.hero.readingSoil"),
+      value: formatNumber(65, locale),
+      suffix: "%",
+      note: L("home.hero.noteOptimal"),
+      position: "bottom-[8%] right-[4%] sm:right-[22%] lg:right-[28%]",
+    },
+  ];
+
   return (
     <section
       id="top"
       className="relative w-full overflow-hidden px-4 pb-20 pt-12 sm:px-6 lg:px-8 lg:pb-28 lg:pt-16"
     >
       <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2 lg:gap-8">
-        <div className="flex flex-col items-start text-left">
+        <div className="flex flex-col items-start text-start">
           <p className="eyebrow rise flex items-center gap-3 text-agro-canopy">
             <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-            AI-powered farm intelligence platform
+            {L("home.hero.eyebrow")}
           </p>
 
           <h1
             className="display-heading rise mt-5 font-display text-[2.6rem] font-bold leading-[1.08] tracking-tight text-agro-ink sm:text-6xl lg:text-[4.25rem]"
             style={{ "--rise-delay": "0.08s" } as React.CSSProperties}
           >
-            Intelligence For{" "}
-            <span className="text-agro-canopy">Smarter Farming</span>
+            {L("home.hero.titleLead")}{" "}
+            <span className="text-agro-canopy">{L("home.hero.titleAccent")}</span>
           </h1>
 
           <p
             className="rise mt-6 max-w-lg text-lg leading-relaxed text-agro-slate"
             style={{ "--rise-delay": "0.16s" } as React.CSSProperties}
           >
-            One platform that unites an AI advisor, satellite monitoring,
-            market prices, and your farm&apos;s records — turning data into
-            clear decisions, in the language you speak.
+            {L("home.hero.subtitle")}
           </p>
 
           <div
@@ -59,13 +67,13 @@ export default function Hero() {
               href="#get-started"
               className="inline-flex h-12 cursor-pointer items-center justify-center rounded-lg bg-agro-canopy px-7 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0"
             >
-              Get early access
+              {L("nav.getEarlyAccess")}
             </a>
             <a
               href="#journey"
               className="inline-flex h-12 cursor-pointer items-center justify-center rounded-lg border border-agro-sprout bg-white px-7 text-sm font-semibold text-agro-forest shadow-sm transition-all duration-200 hover:border-agro-canopy hover:bg-agro-mint"
             >
-              See how it works
+              {L("home.hero.ctaSecondary")}
             </a>
           </div>
 
@@ -73,9 +81,9 @@ export default function Hero() {
             className="rise mt-9 flex items-center gap-2.5 text-xs text-agro-slate"
             style={{ "--rise-delay": "0.32s" } as React.CSSProperties}
           >
-            <span className="font-mono tracking-wide">Built for Pakistan</span>
+            <span className="font-mono tracking-wide">{L("common.builtForPakistan")}</span>
             <span className="h-1 w-1 rounded-full bg-agro-leaf" aria-hidden="true" />
-            <span>A product of Aplinode</span>
+            <span>{L("common.productOfAplinode")}</span>
           </p>
         </div>
 
@@ -98,7 +106,7 @@ export default function Hero() {
               <div className="absolute inset-0 overflow-hidden rounded-full">
                 <Image
                   src="/hero-farmer.png"
-                  alt="Farmer using Agropioo on a tablet in the field"
+                  alt={t("home.hero.imageAlt").text}
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover object-center"
@@ -108,7 +116,7 @@ export default function Hero() {
 
               {readings.map((reading, index) => (
                 <div
-                  key={reading.label}
+                  key={`${index}`}
                   className={`rise absolute z-10 w-[7.5rem] rounded-xl border border-agro-clay/70 bg-white/95 p-2.5 shadow-lg backdrop-blur-sm sm:w-36 sm:p-4 ${reading.position}`}
                   style={{ "--rise-delay": `${0.4 + index * 0.12}s` } as React.CSSProperties}
                 >
@@ -118,6 +126,7 @@ export default function Hero() {
                   </p>
                   <p className="mt-1.5 font-mono text-2xl font-bold tracking-tight text-agro-ink sm:text-[1.75rem]">
                     {reading.value}
+                    {reading.suffix}
                   </p>
                   <p className="text-xs font-medium text-agro-slate">{reading.note}</p>
                 </div>
