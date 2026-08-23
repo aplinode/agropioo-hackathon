@@ -109,6 +109,8 @@ Full course: `docs/spec-drvien-dev.md`. Thesis: **the spec is the source of trut
 
 **Phase order is strict and non-negotiable: research findings (`specs/<feature>/research.md`) → `spec.md` → clarify-by-interview (answers folded back into the spec) → `plan.md` → task breakdown → implement one task at a time.** Never start building before the spec is clarified and the plan is approved; never write code during research or specify phases.
 
+**Phase gates are founder-gated: advancing to the next SDD phase requires the founder's explicit permission, every time.** Present the completed artifact, stop, and wait for clear sign-off (e.g. "approved", "proceed"). Silence, partial answers, or enthusiasm are not approval. If the founder asks for changes, revise and re-present before moving on. This applies at every boundary: research → specify, specify → clarify, clarify → plan, plan → tasks, tasks → implementation.
+
 1. **Research before writing.** Never spec from a blank page. Investigate separately: how this is usually done, main approaches + trade-offs, what in this repo it must fit (read the code, respect Next.js conventions in the block below), failure modes/edge cases. Output = findings doc (`specs/<feature>/research.md`). No design, no code.
 2. **Specify (`spec.md`)** — six sections, always:
    - Goal (the why, 2–3 sentences)
