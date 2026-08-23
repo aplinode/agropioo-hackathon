@@ -39,8 +39,8 @@ export default function BottomTabBar() {
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`relative flex min-h-16 flex-col items-center justify-center gap-1 py-2 text-[0.7rem] font-medium transition-colors ${
-                  active ? "text-agro-canopy" : "text-agro-slate"
+                className={`relative flex min-h-16 flex-col items-center justify-center gap-1 py-2 text-[0.7rem] transition-colors ${
+                  active ? "font-semibold text-agro-canopy" : "font-medium text-agro-slate"
                 }`}
               >
                 {active && (
@@ -49,7 +49,13 @@ export default function BottomTabBar() {
                     aria-hidden="true"
                   />
                 )}
-                <Icon className={`h-6 w-6 ${active ? "text-agro-canopy" : "text-agro-leaf"}`} />
+                <span
+                  className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${
+                    active ? "bg-agro-mint" : ""
+                  }`}
+                >
+                  <Icon className={`h-[22px] w-[22px] ${active ? "text-agro-canopy" : "text-agro-slate"}`} />
+                </span>
                 {label}
                 <span className="sr-only">{active ? " (current page)" : ""}</span>
               </Link>
