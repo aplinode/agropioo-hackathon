@@ -103,6 +103,14 @@ body {
   outline-offset: 3px;
 }
 
+/* Inputs that carry their own rounded ring: suppress the global sharp
+   outline so the focus indicator follows the field's real shape. */
+input.focus-ring-none:focus-visible,
+textarea.focus-ring-none:focus-visible,
+select.focus-ring-none:focus-visible {
+  outline: none;
+}
+
 .display-heading {
   overflow-wrap: anywhere;
   text-wrap: balance;
@@ -114,6 +122,20 @@ body {
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
+}
+
+/* Field-pass ticket: punched notches where the dashed perforation meets the card edges.
+   --ticket-stub must match the stub footer height set by the consumer. */
+.field-ticket {
+  --ticket-stub: 4rem;
+  -webkit-mask:
+    radial-gradient(circle 10px at 0 calc(100% - var(--ticket-stub)), transparent 98%, #000) ,
+    radial-gradient(circle 10px at 100% calc(100% - var(--ticket-stub)), transparent 98%, #000);
+  -webkit-mask-composite: source-in;
+  mask:
+    radial-gradient(circle 10px at 0 calc(100% - var(--ticket-stub)), transparent 98%, #000),
+    radial-gradient(circle 10px at 100% calc(100% - var(--ticket-stub)), transparent 98%, #000);
+  mask-composite: intersect;
 }
 
 @keyframes rise-in {
