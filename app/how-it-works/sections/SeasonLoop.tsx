@@ -28,7 +28,7 @@ export default function SeasonLoop() {
   return (
     <section
       id="loop"
-      className="w-full border-t border-agro-clay/70 bg-agro-stone px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
+      className="w-full border-t border-agro-clay/70 bg-agro-paper px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
     >
       <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2">
         <div>
