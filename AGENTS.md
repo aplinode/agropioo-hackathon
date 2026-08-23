@@ -29,7 +29,9 @@
 - Behaviour matches the spec including edge cases; acceptance criteria actually checked (tests or manual run-through).
 - `npm run lint` and `npm run build` pass.
 - A human has reviewed the diff against the spec before merge.
-- After every completed change — even a small one — commit AND push immediately. Never end a turn with uncommitted work. Every commit must be meaningful: one logical change, a descriptive message (`type: what changed` — feat/fix/docs/style/refactor), never "update", "changes", or mixed unrelated files in one commit.
+- After every completed change, commit AND push immediately. Never end a turn with uncommitted work.
+- Atomic commits only: one commit = one logical unit of work. A single feature across many files (code + its spec/tests) is ONE commit; an unrelated fix, refactor, or dependency bump made alongside it is its OWN commit. Revert test: if reverting one part would break the others, they belong together; if each stands alone, split.
+- Meaningful messages, imperative mood (`feat: add farm record form`), describing the change not the activity. Never "update", "changes", "fix stuff". Never mix unrelated files.
 
 ## Spec-Driven Development (SDD)
 
