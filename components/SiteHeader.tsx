@@ -2,25 +2,43 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import logo from "@/references/Agropioo-logo-with-text.png";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-const sections = [
-  { label: "Why Agropioo", anchor: "#why", selfHref: "/why-agropioo" },
-  { label: "Features", anchor: "#features", selfHref: "/features" },
-  { label: "How it works", anchor: "#journey", selfHref: "/how-it-works" },
-  { label: "Vision", anchor: "#vision", selfHref: "/vision" },
-];
+import logo from "@/references/Agropioo-logo-with-text.png";
+import { splitLocalePrefix } from "@/lib/i18n/logic";
+
+import { LanguageSwitcher } from "./language-switcher";
+
+export interface SiteHeaderStrings {
+  whyAgropioo: string;
+  features: string;
+  howItWorks: string;
+  vision: string;
+  signIn: string;
+  getEarlyAccess: string;
+  openMenu: string;
+  closeMenu: string;
+  languageSwitcher: string;
+}
 
 export default function SiteHeader({
   linkBase = "",
   activeSection,
+  strings,
 }: {
   linkBase?: string;
   activeSection?: string;
+  strings: SiteHeaderStrings;
 }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname() || "";
+
+  // Locale prefix for all cross-page links so /ur/features links stay Urdu.
+  const { locale } = splitLocalePrefix(pathname);
+  const prefix = locale ? `/${locale}` : "";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -43,13 +61,22 @@ export default function SiteHeader({
     };
   }, [mobileMenuOpen]);
 
+  const sections = [
+    { label: strings.whyAgropioo, anchor: "#why", selfHref: "/why-agropioo" },
+    { label: strings.features, anchor: "#features", selfHref: "/features" },
+    { label: strings.howItWorks, anchor: "#journey", selfHref: "/how-it-works" },
+    { label: strings.vision, anchor: "#vision", selfHref: "/vision" },
+  ];
+
   const navLinks = sections.map((section) => ({
     label: section.label,
-    href: section.selfHref ?? `${linkBase}${section.anchor}`,
+    href: section.selfHref ? `${prefix}${section.selfHref}` : `${prefix}${linkBase}${section.anchor}`,
     active: activeSection === section.anchor,
   }));
 
-  const ctaHref = "#get-started";
+  // The conversion section lives on the homepage; anchor home when elsewhere.
+  const ctaHref = `${prefix}${linkBase}#get-started`;
+  const homeHref = prefix ? prefix : linkBase ? "/" : "#top";
 
   return (
     <>
@@ -60,19 +87,19 @@ export default function SiteHeader({
             : "border-b border-transparent bg-white/60 backdrop-blur-sm"
         }`}
       >
-        <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <a href={linkBase ? "/" : "#top"} className="flex items-center">
+        <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+          <Link href={homeHref} className="flex items-center">
             <Image
               src={logo}
               alt="Agropioo"
               className="h-12 w-auto md:h-14"
               priority
             />
-          </a>
+          </Link>
 
           <nav className="hidden items-center gap-9 md:flex" aria-label="Main">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
                 href={link.href}
                 aria-current={link.active ? "page" : undefined}
@@ -83,48 +110,52 @@ export default function SiteHeader({
                 }`}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
-          <div className="hidden items-center gap-5 md:flex">
-            <a
-              href="/login"
+          <div className="hidden items-center gap-4 md:flex">
+            <LanguageSwitcher label={strings.languageSwitcher} />
+            <Link
+              href={`${prefix}/login`}
               className="text-lg font-medium text-agro-slate underline-offset-8 transition-colors hover:text-agro-canopy hover:underline hover:decoration-agro-sprout hover:decoration-2"
             >
-              Sign in
-            </a>
-            <a
+              {strings.signIn}
+            </Link>
+            <Link
               href={ctaHref}
               className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-6 text-base font-semibold whitespace-nowrap text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0"
             >
-              Get early access
-            </a>
+              {strings.getEarlyAccess}
+            </Link>
           </div>
 
-          <button
-            type="button"
-            className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-agro-forest transition-colors hover:bg-agro-mint md:hidden"
-            onClick={() => setMobileMenuOpen(true)}
-            aria-expanded={mobileMenuOpen}
-            aria-haspopup="dialog"
-            aria-label="Open menu"
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              aria-hidden="true"
+          <div className="flex items-center gap-2 md:hidden">
+            <LanguageSwitcher label={strings.languageSwitcher} />
+            <button
+              type="button"
+              className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-agro-forest transition-colors hover:bg-agro-mint"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-expanded={mobileMenuOpen}
+              aria-haspopup="dialog"
+              aria-label={strings.openMenu}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -147,8 +178,8 @@ export default function SiteHeader({
           role="dialog"
           aria-modal="true"
           aria-label="Site menu"
-          className={`absolute right-0 top-0 flex h-full w-[19rem] max-w-[86vw] flex-col bg-white shadow-2xl transition-transform duration-300 ease-out ${
-            mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          className={`absolute end-0 top-0 flex h-full w-[19rem] max-w-[86vw] flex-col bg-white shadow-2xl transition-transform duration-300 ease-out ${
+            mobileMenuOpen ? "translate-x-0" : "translate-x-full rtl:-translate-x-full"
           }`}
         >
           <div className="flex items-center justify-between border-b border-agro-clay px-5 py-4">
@@ -164,7 +195,7 @@ export default function SiteHeader({
               type="button"
               onClick={() => setMobileMenuOpen(false)}
               className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-agro-forest transition-colors hover:bg-agro-mint"
-              aria-label="Close menu"
+              aria-label={strings.closeMenu}
             >
               <svg
                 className="h-6 w-6"
@@ -185,7 +216,7 @@ export default function SiteHeader({
 
           <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-4" aria-label="Sidebar">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
                 href={link.href}
                 aria-current={link.active ? "page" : undefined}
@@ -195,25 +226,25 @@ export default function SiteHeader({
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
           <div className="border-t border-agro-clay p-4">
-            <a
+            <Link
               href={ctaHref}
               className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-agro-canopy px-5 text-base font-semibold text-white transition-colors hover:bg-agro-forest"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Get early access
-            </a>
-            <a
-              href="/login"
+              {strings.getEarlyAccess}
+            </Link>
+            <Link
+              href={`${prefix}/login`}
               className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-lg px-5 text-base font-medium text-agro-canopy transition-colors hover:bg-agro-mint"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Sign in
-            </a>
+              {strings.signIn}
+            </Link>
             <p className="mt-3 text-center font-mono text-xs tracking-wide text-agro-slate">
               Built for Pakistan · A product of Aplinode
             </p>
