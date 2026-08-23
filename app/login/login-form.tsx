@@ -3,10 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import OtpVerify from "@/components/auth/otp-verify";
 import logoOnDark from "@/references/Agropioo-logo-footer.png";
 import logoOnLight from "@/references/Agropioo-logo-withoutbg-text.png";
 
-type FormStatus = "idle" | "loading" | "error" | "success";
+type FormStatus = "idle" | "loading" | "otp" | "error" | "success";
 
 const platformPoints = [
   "AI advisor in your own language",
@@ -16,6 +17,7 @@ const platformPoints = [
 
 export default function LoginForm() {
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [submittedEmail, setSubmittedEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<{
@@ -45,7 +47,9 @@ export default function LoginForm() {
     // const supabase = getSupabase();
     // const { error } = await supabase.auth.signInWithPassword({ email, password });
     await new Promise((resolve) => setTimeout(resolve, 1200));
-    setStatus("success");
+    // First sign-in on a new device asks for email verification (flow A).
+    setSubmittedEmail(email);
+    setStatus("otp");
   }
 
   return (
@@ -159,7 +163,23 @@ export default function LoginForm() {
             </div>
           )}
 
-          {status === "success" ? (
+          {status === "otp" ? (
+            <>
+              <p className="eyebrow mt-6 text-agro-canopy">Step 2 of 2 · Security check</p>
+              <div className="mt-6">
+                <OtpVerify
+                  context="signin"
+                  email={submittedEmail}
+                  onVerified={() => setStatus("success")}
+                  escapeLabel="Use a different account"
+                  onEscape={() => {
+                    setSubmittedEmail("");
+                    setStatus("idle");
+                  }}
+                />
+              </div>
+            </>
+          ) : status === "success" ? (
             <div
               className="mt-8 flex items-center gap-3 rounded-xl border border-agro-sprout bg-agro-mint px-5 py-4"
               role="status"
@@ -267,12 +287,12 @@ export default function LoginForm() {
                   />
                   Remember me
                 </label>
-                <a
-                  href="mailto:hello@agropioo.com?subject=Password%20reset%20—%20Agropioo"
+                <Link
+                  href="/forgot-password"
                   className="text-sm font-medium text-agro-canopy underline-offset-4 transition-colors hover:text-agro-forest hover:underline"
                 >
                   Forgot password?
-                </a>
+                </Link>
               </div>
 
               <button
