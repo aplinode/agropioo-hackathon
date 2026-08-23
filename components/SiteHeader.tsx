@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import logo from "@/references/Agropioo-logo-with-text.png";
 
 const sections = [
@@ -88,12 +89,12 @@ export default function SiteHeader({
           </nav>
 
           <div className="hidden items-center gap-5 md:flex">
-            <a
+            <Link
               href="/login"
               className="text-lg font-medium text-agro-slate underline-offset-8 transition-colors hover:text-agro-canopy hover:underline hover:decoration-agro-sprout hover:decoration-2"
             >
               Sign in
-            </a>
+            </Link>
             <a
               href={ctaHref}
               className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-6 text-base font-semibold whitespace-nowrap text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0"
@@ -207,13 +208,13 @@ export default function SiteHeader({
             >
               Get early access
             </a>
-            <a
+            <Link
               href="/login"
               className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-lg px-5 text-base font-medium text-agro-canopy transition-colors hover:bg-agro-mint"
               onClick={() => setMobileMenuOpen(false)}
             >
               Sign in
-            </a>
+            </Link>
             <p className="mt-3 text-center font-mono text-xs tracking-wide text-agro-slate">
               Built for Pakistan · A product of Aplinode
             </p>

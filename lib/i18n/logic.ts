@@ -5,8 +5,10 @@
 
 import {
   DEFAULT_LOCALE,
+  LOCALE_REGISTRY,
   localeBySlug,
   type Locale,
+  type LocalizedLocale,
 } from "./config";
 
 export interface ParsedPath {
@@ -43,21 +45,11 @@ function normalizePath(path: string): string {
  */
 export function localeHref(locale: Locale, path: string): string {
   if (locale === DEFAULT_LOCALE) return normalizePath(path);
-  const entry = LOCALE_SLUGS[locale];
+  const slug = LOCALE_REGISTRY[locale].urlSlug;
   const normalized = normalizePath(path);
-  if (normalized === "/") return `/${entry}`;
-  return `/${entry}${normalized}`;
+  if (normalized === "/") return `/${slug}`;
+  return `/${slug}${normalized}`;
 }
-
-const LOCALE_SLUGS: Readonly<Record<LocalizedLocale, string>> = {
-  ur: "ur",
-  pa: "pa",
-  ps: "ps",
-  sd: "sd",
-  skr: "skr",
-  bal: "bal",
-  hno: "hno",
-};
 
 /**
  * The pathname to navigate to when switching `target` from `currentPathname`
