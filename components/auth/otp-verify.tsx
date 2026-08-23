@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRightIcon } from "@/components/icons";
+import { ArrowRightIcon, AlertTriangleIcon } from "@/components/icons";
 
 const CODE_LENGTH = 6;
 const MAX_ATTEMPTS = 5;
@@ -40,7 +40,9 @@ function generateDemoCode(): string {
 /* Shared 6-digit verification screen (UI-only demo build).
    Used by first-login verification (context "signin") and as step 2 of
    password recovery (context "reset"). A labelled demo banner reveals the
-   code so the flow can be walked without an inbox. */
+   code so the flow can be walked without an inbox.
+   Greens + whites/neutrals only: wrong-code states lean on deep-forest
+   borders, an alert icon, and words — never a second hue. */
 export default function OtpVerify({
   context,
   email,
@@ -173,7 +175,10 @@ export default function OtpVerify({
 
   return (
     <div>
-      <h1 className="display-heading font-display text-3xl font-bold tracking-tight text-agro-ink sm:text-4xl">
+      <p className="eyebrow text-agro-canopy">
+        {context === "signin" ? "Security check" : "Step 2 · Verification"}
+      </p>
+      <h1 className="display-heading mt-3 font-display text-3xl font-bold tracking-tight text-agro-ink sm:text-4xl">
         {heading}
       </h1>
       <p className="mt-3 leading-relaxed text-agro-slate">
@@ -183,7 +188,7 @@ export default function OtpVerify({
       </p>
 
       {/* Demo affordance — removable once real code delivery exists. */}
-      <p className="mt-5 rounded-lg border border-dashed border-agro-earth bg-agro-stone px-4 py-2.5 font-mono text-xs tracking-wide text-agro-slate">
+      <p className="mt-5 rounded-xl border border-dashed border-agro-cloud/70 bg-agro-stone px-4 py-2.5 font-mono text-xs tracking-wide text-agro-slate">
         DEMO ONLY · Verification code: <strong className="text-agro-ink">{demoCode}</strong> · no email is sent
       </p>
 
@@ -210,25 +215,35 @@ export default function OtpVerify({
             aria-label={`Digit ${index + 1} of ${CODE_LENGTH}`}
             aria-invalid={status === "error"}
             disabled={status === "locked"}
-            className={`h-14 w-full min-w-0 max-w-14 rounded-lg border bg-white text-center font-mono text-xl text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 ${
+            className={`h-14 w-full min-w-0 max-w-14 rounded-xl border-2 bg-white text-center font-mono text-2xl text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
               status === "error"
-                ? "border-agro-error focus:border-agro-error focus:ring-agro-error/20"
-                : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"
-            } ${status === "locked" ? "cursor-not-allowed opacity-60" : ""}`}
+                ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
+                : status === "locked"
+                  ? "cursor-not-allowed border-agro-clay opacity-60"
+                  : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"
+            }`}
           />
         ))}
       </div>
 
       {/* Announcements */}
-      <div className="min-h-12 mt-4" aria-live="polite">
+      <div className="mt-4 min-h-12" aria-live="polite">
         {status === "error" && (
-          <p className="text-sm text-agro-error" role="alert">
+          <p
+            className="flex items-start gap-2 rounded-xl border border-agro-forest/25 bg-agro-mint px-3.5 py-3 text-sm font-medium text-agro-forest"
+            role="alert"
+          >
+            <AlertTriangleIcon size={16} className="mt-0.5 shrink-0" />
             That code didn&apos;t match. Please try again. ({attemptsLeft}{" "}
             {attemptsLeft === 1 ? "attempt" : "attempts"} left)
           </p>
         )}
         {status === "locked" && (
-          <p className="rounded-lg border border-agro-error/30 bg-red-50 px-4 py-3 text-sm text-agro-error" role="alert">
+          <p
+            className="flex items-start gap-2 rounded-xl bg-agro-forest px-4 py-3 text-sm font-medium text-white"
+            role="alert"
+          >
+            <AlertTriangleIcon size={16} className="mt-0.5 shrink-0 text-agro-sprout" />
             Too many incorrect attempts. Request a new code below to continue.
           </p>
         )}
@@ -259,7 +274,7 @@ export default function OtpVerify({
         ) : (
           <>
             Verify code
-            <ArrowRightIcon className="h-4 w-4" />
+            <ArrowRightIcon size={16} />
           </>
         )}
       </button>

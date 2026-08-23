@@ -6,19 +6,34 @@ type StepperProps = {
   current: 1 | 2 | 3;
 };
 
-/* Three-step progress indicator for password recovery.
-   Completed steps ticked, current highlighted, future muted. */
+/* Three-step progress indicator for password recovery, drawn as a furrow
+   line: completed steps ticked, current step highlighted, future muted. */
 export default function Stepper({ current }: StepperProps) {
   return (
-    <ol className="flex items-center gap-2" aria-label="Password recovery progress">
+    <ol
+      className="flex items-start"
+      aria-label="Password recovery progress"
+    >
       {steps.map((label, index) => {
         const stepNumber = index + 1;
         const isComplete = stepNumber < current;
         const isCurrent = stepNumber === current;
         return (
-          <li key={label} className="flex min-w-0 flex-1 items-center gap-2">
+          <li
+            key={label}
+            className="relative flex min-w-0 flex-1 flex-col items-center gap-2"
+          >
+            {/* Furrow segment running to the next step */}
+            {index < steps.length - 1 && (
+              <span
+                aria-hidden="true"
+                className={`absolute top-[15px] start-[calc(50%+22px)] w-[calc(100%-44px)] border-t border-dashed ${
+                  isComplete ? "border-agro-canopy" : "border-agro-clay"
+                }`}
+              />
+            )}
             <span
-              className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${
+              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition-colors ${
                 isComplete
                   ? "border-agro-canopy bg-agro-canopy text-white"
                   : isCurrent
@@ -27,22 +42,16 @@ export default function Stepper({ current }: StepperProps) {
               }`}
               aria-hidden="true"
             >
-              {isComplete ? <CheckIcon className="h-3.5 w-3.5" /> : stepNumber}
+              {isComplete ? <CheckIcon size={14} /> : stepNumber}
             </span>
             <span
-              className={`truncate text-xs font-medium sm:text-sm ${
-                isCurrent ? "text-agro-ink" : "text-agro-slate"
+              className={`max-w-full truncate text-xs font-medium sm:text-sm ${
+                isCurrent ? "font-semibold text-agro-forest" : "text-agro-slate"
               }`}
               {...(isCurrent ? { "aria-current": "step" as const } : {})}
             >
               {label}
             </span>
-            {index < steps.length - 1 && (
-              <span
-                className={`hidden h-px w-6 shrink-0 sm:block ${isComplete ? "bg-agro-canopy" : "bg-agro-clay"}`}
-                aria-hidden="true"
-              />
-            )}
           </li>
         );
       })}

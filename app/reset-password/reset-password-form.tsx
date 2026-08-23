@@ -69,7 +69,7 @@ export default function ResetPasswordForm() {
         {updated ? (
           <div className="flex flex-1 flex-col justify-center py-10">
             <span
-              className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-agro-canopy text-white"
+              className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-canopy text-white"
               aria-hidden="true"
             >
               <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -92,7 +92,7 @@ export default function ResetPasswordForm() {
           </div>
         ) : (
           <>
-            <p className="mt-6 rounded-lg border border-dashed border-agro-earth bg-agro-stone px-4 py-2.5 font-mono text-xs tracking-wide text-agro-slate">
+            <p className="mt-6 rounded-xl border border-dashed border-agro-cloud/70 bg-agro-stone px-4 py-2.5 font-mono text-xs tracking-wide text-agro-slate">
               DEMO MODE · opened directly, skipping earlier recovery steps
             </p>
             <div className="mt-6">

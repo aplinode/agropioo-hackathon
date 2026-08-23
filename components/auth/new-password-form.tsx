@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AlertTriangleIcon, CheckIcon } from "@/components/icons";
 
 type NewPasswordFormProps = {
   /** Called after a valid new password is submitted — parent owns what follows. */
@@ -9,7 +10,9 @@ type NewPasswordFormProps = {
 
 /* Step 3 of password recovery: new password + confirm password.
    Rules shown before typing; show/hide toggles on both fields;
-   inline errors for empty / too short / mismatch. */
+   inline errors for empty / too short / mismatch.
+   Field problems use a deep-forest border + alert icon + ink text —
+   this build stays greens + whites/neutrals. */
 export default function NewPasswordForm({ onSuccess }: NewPasswordFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading">("idle");
@@ -45,14 +48,24 @@ export default function NewPasswordForm({ onSuccess }: NewPasswordFormProps) {
   }
 
   const inputClass = (hasError?: string) =>
-    `mt-2 h-12 w-full rounded-lg border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+    `mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
       hasError
-        ? "border-agro-error focus:border-agro-error focus:ring-agro-error/20"
+        ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
         : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"
     }`;
 
   const toggleClass =
     "absolute inset-y-0 right-1 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy";
+
+  function fieldError(id: string, message?: string) {
+    if (!message) return null;
+    return (
+      <p id={id} className="mt-1.5 flex items-start gap-1.5 text-sm font-medium text-agro-ink">
+        <AlertTriangleIcon size={16} className="mt-0.5 shrink-0 text-agro-forest" />
+        {message}
+      </p>
+    );
+  }
 
   function eyeIcon(show: boolean) {
     return show ? (
@@ -78,7 +91,8 @@ export default function NewPasswordForm({ onSuccess }: NewPasswordFormProps) {
       </p>
 
       <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-5">
-        <p className="rounded-lg border border-agro-sprout bg-agro-mint px-4 py-2.5 text-sm text-agro-slate">
+        <p className="flex items-start gap-2.5 rounded-xl border border-agro-sprout bg-agro-mint px-4 py-3 text-sm leading-relaxed text-agro-slate">
+          <CheckIcon size={16} className="mt-0.5 shrink-0 text-agro-canopy" aria-hidden="true" />
           Your password needs <strong className="font-semibold text-agro-ink">at least 8 characters</strong>.
         </p>
 
@@ -107,11 +121,7 @@ export default function NewPasswordForm({ onSuccess }: NewPasswordFormProps) {
               {eyeIcon(showPassword)}
             </button>
           </div>
-          {fieldErrors.password && (
-            <p id="new-password-error" className="mt-1.5 text-sm text-agro-error">
-              {fieldErrors.password}
-            </p>
-          )}
+          {fieldError("new-password-error", fieldErrors.password)}
         </div>
 
         <div>
@@ -139,11 +149,7 @@ export default function NewPasswordForm({ onSuccess }: NewPasswordFormProps) {
               {eyeIcon(showPassword)}
             </button>
           </div>
-          {fieldErrors.confirmPassword && (
-            <p id="confirm-password-error" className="mt-1.5 text-sm text-agro-error">
-              {fieldErrors.confirmPassword}
-            </p>
-          )}
+          {fieldError("confirm-password-error", fieldErrors.confirmPassword)}
         </div>
 
         <button

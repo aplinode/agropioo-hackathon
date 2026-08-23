@@ -6,6 +6,7 @@ import AuthShell from "@/components/auth/auth-shell";
 import NewPasswordForm from "@/components/auth/new-password-form";
 import OtpVerify from "@/components/auth/otp-verify";
 import Stepper from "@/components/auth/stepper";
+import { AlertTriangleIcon, ArrowRightIcon, CheckIcon } from "@/components/icons";
 
 type Phase = "email" | "sent" | "verify" | "new-password" | "success";
 
@@ -66,7 +67,7 @@ export default function ForgotPasswordFlow() {
       }
       brandPreview={
         <div
-          className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5"
+          className="mt-8 rounded-2xl border border-white/10 bg-white/[0.06] p-4 sm:p-5"
           role="img"
           aria-label="Preview of the three recovery steps: your email, a 6-digit code, and a new password"
         >
@@ -75,15 +76,15 @@ export default function ForgotPasswordFlow() {
           </p>
           <ul className="mt-3 divide-y divide-white/10">
             <li className="flex items-center justify-between gap-3 py-2.5">
-              <span className="text-xs uppercase tracking-wide text-white/60">Step 1</span>
+              <span className="text-xs uppercase tracking-wide text-white/55">Step 1</span>
               <span className="font-mono text-sm font-semibold text-white">Your email</span>
             </li>
             <li className="flex items-center justify-between gap-3 py-2.5">
-              <span className="text-xs uppercase tracking-wide text-white/60">Step 2</span>
+              <span className="text-xs uppercase tracking-wide text-white/55">Step 2</span>
               <span className="font-mono text-sm font-semibold text-white">6-digit code</span>
             </li>
             <li className="flex items-center justify-between gap-3 py-2.5">
-              <span className="text-xs uppercase tracking-wide text-white/60">Step 3</span>
+              <span className="text-xs uppercase tracking-wide text-white/55">Step 3</span>
               <span className="font-mono text-sm font-semibold text-white">New password</span>
             </li>
           </ul>
@@ -129,14 +130,18 @@ export default function ForgotPasswordFlow() {
                   onChange={(e) => setEmail(e.target.value)}
                   aria-invalid={Boolean(fieldErrors.email)}
                   aria-describedby={fieldErrors.email ? "recovery-email-error" : undefined}
-                  className={`mt-2 h-12 w-full rounded-lg border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+                  className={`mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
                     fieldErrors.email
-                      ? "border-agro-error focus:border-agro-error focus:ring-agro-error/20"
+                      ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
                       : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"
                   }`}
                 />
                 {fieldErrors.email && (
-                  <p id="recovery-email-error" className="mt-1.5 text-sm text-agro-error">
+                  <p
+                    id="recovery-email-error"
+                    className="mt-1.5 flex items-start gap-1.5 text-sm font-medium text-agro-ink"
+                  >
+                    <AlertTriangleIcon size={16} className="mt-0.5 shrink-0 text-agro-forest" />
                     {fieldErrors.email}
                   </p>
                 )}
@@ -156,7 +161,10 @@ export default function ForgotPasswordFlow() {
                     Sending code…
                   </>
                 ) : (
-                  "Send verification code"
+                  <>
+                    Send verification code
+                    <ArrowRightIcon size={16} />
+                  </>
                 )}
               </button>
             </form>
@@ -166,7 +174,7 @@ export default function ForgotPasswordFlow() {
         {phase === "sent" && (
           <div className="flex flex-1 flex-col justify-center py-10" role="status">
             <span
-              className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-agro-mint text-agro-canopy"
+              className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy"
               aria-hidden="true"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
@@ -180,7 +188,9 @@ export default function ForgotPasswordFlow() {
               If that email has an Agropioo account, a 6-digit code is on its way
               to <strong className="font-semibold text-agro-ink">{email}</strong>.
             </p>
-            <p className="mt-2 text-sm text-agro-cloud">Taking you to the code…</p>
+            <p className="mt-2 font-mono text-xs uppercase tracking-[0.18em] text-agro-cloud">
+              Taking you to the code…
+            </p>
           </div>
         )}
 
@@ -201,12 +211,10 @@ export default function ForgotPasswordFlow() {
         {phase === "success" && (
           <div className="flex flex-1 flex-col justify-center py-10">
             <span
-              className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-agro-canopy text-white"
+              className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-canopy text-white"
               aria-hidden="true"
             >
-              <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-              </svg>
+              <CheckIcon size={28} />
             </span>
             <h1 className="display-heading mt-6 font-display text-3xl font-bold tracking-tight text-agro-ink sm:text-4xl">
               Password Updated
@@ -217,9 +225,10 @@ export default function ForgotPasswordFlow() {
             </p>
             <Link
               href="/login"
-              className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-lg bg-agro-canopy text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 sm:w-auto sm:px-10"
+              className="mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-agro-canopy text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 sm:w-auto sm:px-10"
             >
               Sign in
+              <ArrowRightIcon size={16} />
             </Link>
           </div>
         )}
