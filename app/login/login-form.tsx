@@ -298,10 +298,10 @@ export default function LoginForm() {
           <p className="mt-8 text-sm leading-relaxed text-agro-slate">
             No account yet? Early access is rolling out region by region —{" "}
             <Link
-              href="/#get-started"
+              href="/signup"
               className="font-semibold text-agro-canopy underline-offset-4 hover:underline"
             >
-              join the list
+              create your account
             </Link>
             .
           </p>
