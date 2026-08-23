@@ -10,11 +10,13 @@ import SeasonLoop from "./sections/SeasonLoop";
 import CTA from "../sections/CTA";
 import Footer from "../sections/Footer";
 
-export const metadata: Metadata = {
-  title: "How it works — Agropioo",
-  description:
-    "From a one-minute farm profile to a season loop that keeps improving: see how Agropioo turns questions, activity, and records into personalised farming guidance.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getCurrentDictionary();
+  return {
+    title: t("hiw.meta.title").text,
+    description: t("hiw.meta.description").text,
+  };
+}
 
 export default async function HowItWorksPage() {
   const { t } = await getCurrentDictionary();
