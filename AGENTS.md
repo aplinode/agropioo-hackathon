@@ -1,5 +1,36 @@
 # Project Rules — agropioo
 
+## Constitution
+
+> Phase 0 — persistent rules above every spec and build. Sources: `docs/Agropioo Tech Stack.md`, `docs/brand-identity.md`, `docs/brand-colors.md`, `docs/information-architecture.md`.
+
+### Principles
+
+- Farmer-first copy: lead with what the farmer does and gains, not technology. Plain language over cleverness.
+- Pakistan-first: Urdu, Punjabi, Saraiki, Pashto, Balochi, Hindko support is a product requirement, not an i18n afterthought.
+- Reuse before adding: existing components, tokens, and libraries win; propose new dependencies, never silently add them.
+- Every feature ships with its spec in `specs/<feature>/spec.md`. The spec is the source of truth; code is its output.
+
+### Constraints
+
+- Stack is fixed: full-stack Next.js (Route Handlers ARE the API layer — no separate Express backend), TypeScript, Tailwind CSS v4.
+- Supabase is the PostgreSQL database ONLY. Data access always flows Client → Route Handler → Supabase; never client-to-DB directly.
+- Chosen libraries for upcoming features (do not substitute): auth hashing `bcryptjs`, JWT `jose`, email `nodemailer` + SMTP provider, validation `zod`, forms `react-hook-form` + `@hookform/resolvers`.
+- Zod validates every route-handler input before it reaches the database. Passwords are hashed, never stored plaintext.
+- Secrets live only in env vars, read server-side only. Never commit secrets; never log them.
+- Colors come only from `--color-agro-*` tokens (`docs/brand-colors.md`) — never inline hex. Light mode; greens dominate; exactly ONE harvest-gold (`--agro-wheat`) conversion moment per page, with dark forest text on it (white fails contrast).
+- Typography: Playfair Display sparingly (one–two display moments/page), DM Sans body, IBM Plex Mono/JetBrains Mono for data. Headings roman, sentence case.
+- Accessibility is outdoor-mobile: body text ≥ 4.5:1 contrast, touch targets ≥ 44×44px, visible focus rings, `prefers-reduced-motion` respected, no horizontal scroll at 320px.
+- UI honesty: no invented metrics, testimonials, logos, or fabricated stats. Icons from the shared SVG set (`components/icons.tsx`); no emoji as icons.
+- This is NOT stock Next.js — read the relevant guide in `node_modules/next/dist/docs/` before writing any code (see block below).
+
+### Definition of done
+
+- Behaviour matches the spec including edge cases; acceptance criteria actually checked (tests or manual run-through).
+- `npm run lint` and `npm run build` pass.
+- A human has reviewed the diff against the spec before merge.
+- After every completed change — even a small one — commit AND push immediately. Never end a turn with uncommitted work.
+
 ## Spec-Driven Development (SDD)
 
 Full course: `docs/spec-drvien-dev.md`. Thesis: **the spec is the source of truth; code is a build output.** Agree on the **what** before generating the **how**.
