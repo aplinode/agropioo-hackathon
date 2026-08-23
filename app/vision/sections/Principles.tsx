@@ -1,55 +1,90 @@
 const commitments = [
-  "Lead with the farmer's benefit, never the technology",
-  "Every screen, every answer — in the farmer's language",
-  "Readable under the midday sun, not just in an office",
-  "Plain words a neighbour could explain to a neighbour",
-  "Built for phones first — that is where farming lives now",
-  "Motion and design that feel natural, never mechanical",
+  {
+    title: "Farmer benefit leads",
+    description: "Every feature starts from the field's need — never from the technology.",
+  },
+  {
+    title: "Language first",
+    description: "Every screen and every answer arrives in the farmer's own language.",
+  },
+  {
+    title: "Sunlight readable",
+    description: "High contrast designed for the midday sun, not just the office.",
+  },
+  {
+    title: "Plain words",
+    description: "Simple enough that one neighbour can explain it to another.",
+  },
+  {
+    title: "Phones before everything",
+    description: "Mobile-first, big touch targets — farming lives on phones now.",
+  },
+  {
+    title: "Natural by design",
+    description: "Motion and layout that feel organic — growth, never machinery.",
+  },
 ];
 
 export default function Principles() {
   return (
     <section
       id="principles"
-      className="w-full bg-agro-forest px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-28"
+      className="w-full border-t border-agro-clay/70 bg-agro-paper px-4 py-20 sm:px-6 lg:px-8 lg:py-28"
     >
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-5">
-            <p className="eyebrow reveal flex items-center gap-3 text-agro-sprout">
-              <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-              Non-negotiables
-            </p>
-            <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.9rem]">
-              Promises we build by
-            </h2>
-            <p className="reveal mt-5 max-w-md leading-relaxed text-agro-sprout/85">
-              Vision fails in the details. These commitments apply to every
-              feature, every page, every release — starting today.
-            </p>
+        <div className="grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="lg:sticky lg:top-28">
+              <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
+                <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
+                Non-negotiables
+              </p>
+              <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
+                Promises we build by
+              </h2>
+              <p className="reveal mt-5 max-w-sm leading-relaxed text-agro-slate">
+                Vision fails in the details. These commitments apply to every
+                feature, every page, every release — starting today.
+              </p>
+            </div>
           </div>
 
-          <ul className="grid content-start gap-x-10 sm:grid-cols-2 lg:col-span-7">
-            {commitments.map((commitment) => (
+          <ul className="grid content-start gap-4 sm:grid-cols-2 lg:col-span-8">
+            {commitments.map((commitment, index) => (
               <li
-                key={commitment}
-                className="reveal flex items-start gap-3.5 border-b border-agro-sprout/15 py-5 text-sm leading-relaxed text-white/90 sm:text-base"
+                key={commitment.title}
+                className={`reveal group rounded-2xl border border-agro-sprout/80 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-agro-canopy/50 hover:bg-white hover:shadow-xl ${
+                  index % 2 === 0 ? "bg-white shadow-sm" : "bg-agro-mint/60 ring-1 ring-agro-sprout/60"
+                }`}
               >
-                <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-agro-canopy text-white" aria-hidden="true">
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                </span>
-                {commitment}
+                <div className="flex items-start justify-between gap-3">
+                  <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout transition-colors duration-300 group-hover:bg-agro-canopy group-hover:text-white">
+                    <svg className="h-4.5 w-4.5 h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                  </span>
+                  <span
+                    className="font-mono text-xs font-semibold tracking-widest text-agro-canopy/40 transition-colors duration-300 group-hover:text-agro-canopy"
+                    aria-hidden="true"
+                  >
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <h3 className="mt-4 text-base font-semibold tracking-tight text-agro-ink sm:text-lg">
+                  {commitment.title}
+                </h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-agro-slate">
+                  {commitment.description}
+                </p>
               </li>
             ))}
           </ul>
         </div>
 
-        <p className="reveal mt-14 flex items-center justify-center gap-4 border-t border-agro-sprout/15 pt-10 text-center font-mono text-xs uppercase tracking-[0.18em] text-agro-sprout/60">
-          <span className="hidden h-px w-10 bg-agro-sprout/20 sm:inline-block" aria-hidden="true" />
+        <p className="reveal mt-16 flex items-center justify-center gap-4 border-t border-agro-clay/70 pt-10 text-center font-mono text-xs uppercase tracking-[0.18em] text-agro-canopy">
+          <span className="hidden h-px w-10 bg-agro-clay sm:inline-block" aria-hidden="true" />
           Soil and signal — growing together
-          <span className="hidden h-px w-10 bg-agro-sprout/20 sm:inline-block" aria-hidden="true" />
+          <span className="hidden h-px w-10 bg-agro-clay sm:inline-block" aria-hidden="true" />
         </p>
       </div>
     </section>

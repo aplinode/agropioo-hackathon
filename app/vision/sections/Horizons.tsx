@@ -26,9 +26,9 @@ const horizons = [
 ];
 
 const styleMap: Record<string, string> = {
-  "panel-mint": "bg-agro-mint ring-1 ring-agro-sprout",
-  "panel-line": "border border-agro-clay/80 bg-white shadow-sm",
-  "panel-forest": "bg-agro-forest text-white shadow-lg",
+  "panel-mint": "bg-agro-mint ring-1 ring-agro-sprout before:bg-agro-canopy",
+  "panel-line": "border border-agro-clay/80 bg-white shadow-sm before:bg-agro-sprout",
+  "panel-forest": "bg-agro-forest text-white shadow-lg before:bg-agro-leaf",
 };
 
 export default function Horizons() {
@@ -48,15 +48,15 @@ export default function Horizons() {
           </h2>
         </div>
 
-        <div className="mt-14 space-y-6 lg:space-y-5">
+        <div className="mt-14 space-y-4 lg:space-y-3">
           {horizons.map((horizon, index) => (
-            <article
-              key={horizon.tag}
-              className={`reveal overflow-hidden rounded-3xl p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-10 ${
-                styleMap[horizon.style]
-              } ${index === 1 ? "lg:ml-14" : ""} ${index === 2 ? "lg:ml-28" : ""}`}
-            >
-              <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
+            <div key={horizon.tag}>
+              <article
+                className={`reveal relative overflow-hidden rounded-3xl p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl before:absolute before:inset-y-0 before:left-0 before:w-1.5 sm:p-10 ${
+                  styleMap[horizon.style]
+                } ${index === 1 ? "lg:ml-14" : ""} ${index === 2 ? "lg:ml-28" : ""}`}
+              >
+                <div className="grid gap-8 pl-4 lg:grid-cols-12 lg:items-center">
                 <div className="lg:col-span-4">
                   <p
                     className={`font-mono text-xs font-semibold uppercase tracking-[0.22em] ${
@@ -107,7 +107,25 @@ export default function Horizons() {
                 </ul>
               </div>
             </article>
-          ))}
+
+            {index < horizons.length - 1 && (
+              <div
+                className="flex items-center justify-center py-3 lg:justify-start"
+                aria-hidden="true"
+              >
+                <span
+                  className={`inline-flex h-9 w-9 rotate-90 items-center justify-center rounded-full border border-agro-sprout bg-white text-agro-canopy shadow-sm lg:ml-24 ${
+                    index === 1 ? "lg:ml-40" : ""
+                  }`}
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </span>
+              </div>
+            )}
+          </div>
+        ))}
         </div>
       </div>
     </section>

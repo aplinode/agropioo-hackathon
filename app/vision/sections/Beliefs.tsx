@@ -67,17 +67,20 @@ export default function Beliefs() {
           {beliefs.map((belief, index) => (
             <li
               key={belief.title}
-              className={`reveal group rounded-2xl border border-agro-sprout/80 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-agro-canopy/50 hover:shadow-xl ${
+              className={`reveal group relative rounded-2xl border border-agro-sprout/80 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-agro-canopy/50 hover:shadow-xl ${
                 index === 0 ? "sm:col-span-2 lg:col-span-1" : ""
               }`}
             >
+              <span
+                className="absolute right-5 top-5 font-mono text-xs font-semibold tracking-widest text-agro-canopy/40 transition-colors duration-300 group-hover:text-agro-canopy"
+                aria-hidden="true"
+              >
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout transition-colors duration-300 group-hover:bg-agro-canopy group-hover:text-white">
                 {belief.icon}
               </span>
-              <p className="mt-5 font-mono text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-agro-canopy/60" aria-hidden="true">
-                Belief {String(index + 1).padStart(2, "0")}
-              </p>
-              <h3 className="mt-1.5 font-display text-xl font-medium tracking-tight text-agro-ink">
+              <h3 className="mt-5 font-display text-xl font-medium tracking-tight text-agro-ink">
                 {belief.title}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-agro-slate">

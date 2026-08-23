@@ -61,11 +61,17 @@ export default function Outcomes() {
         </div>
 
         <ul className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-agro-sprout bg-agro-sprout shadow-sm sm:grid-cols-2">
-          {outcomes.map((outcome) => (
+          {outcomes.map((outcome, index) => (
             <li
               key={outcome.title}
-              className="reveal group flex items-start gap-5 bg-agro-paper p-7 transition-colors duration-300 hover:bg-white sm:p-9"
+              className="reveal group relative flex items-start gap-5 bg-agro-paper p-7 transition-colors duration-300 hover:bg-white sm:p-9"
             >
+              <span
+                className="absolute right-6 top-6 font-mono text-xs font-semibold tracking-widest text-agro-canopy/40 transition-colors duration-300 group-hover:text-agro-canopy"
+                aria-hidden="true"
+              >
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout transition-colors duration-300 group-hover:bg-agro-canopy group-hover:text-white">
                 {outcome.icon}
               </span>
