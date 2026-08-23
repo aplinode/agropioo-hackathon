@@ -1,18 +1,30 @@
-const languages = ["اردو", "پنجابی", "سرائیکی", "پشتو", "بلوچی", "ہندکو"];
+import { localized } from "@/lib/i18n/localized";
+import { getCurrentDictionary } from "@/lib/i18n/server";
+
+// All seven constitutional local languages, incl. Sindhi (FR-25).
+const languages = [
+  { name: "اردو", lang: "ur" },
+  { name: "پنجابی", lang: "pa-Arab" },
+  { name: "سنڌي", lang: "sd" },
+  { name: "سرائیکی", lang: "skr" },
+  { name: "پښتو", lang: "ps" },
+  { name: "بلوچی", lang: "bal" },
+  { name: "ہندکو", lang: "hno" },
+];
 
 const recordRows = [
-  { date: "12 Aug", activity: "Irrigation", detail: "Canal · 40 min" },
-  { date: "09 Aug", activity: "Urea 46% N", detail: "25 kg / acre" },
-  { date: "05 Aug", activity: "Leaf scan", detail: "No disease found" },
-];
+  { date: "12 Aug", activityKey: "home.features.record1Activity", detailKey: "home.features.record1Detail" },
+  { date: "09 Aug", activityKey: "home.features.record2Activity", detailKey: "home.features.record2Detail" },
+  { date: "05 Aug", activityKey: "home.features.record3Activity", detailKey: "home.features.record3Detail" },
+] as const;
 
 const forecast = [
-  { day: "Mon", condition: "sun" },
-  { day: "Tue", condition: "sun" },
-  { day: "Wed", condition: "cloud" },
-  { day: "Thu", condition: "rain", advisory: true },
-  { day: "Fri", condition: "sun" },
-];
+  { dayKey: "home.features.dayMon", condition: "sun" },
+  { dayKey: "home.features.dayTue", condition: "sun" },
+  { dayKey: "home.features.dayWed", condition: "cloud" },
+  { dayKey: "home.features.dayThu", condition: "rain", advisory: true },
+  { dayKey: "home.features.dayFri", condition: "sun" },
+] as const;
 
 const cardClass =
   "reveal flex flex-col rounded-2xl border border-agro-sprout/80 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-agro-canopy/50 hover:shadow-xl sm:p-8";
@@ -49,7 +61,10 @@ function CardIcon({ path }: { path: string }) {
   );
 }
 
-export default function CoreFeatures() {
+export default async function CoreFeatures() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+
   return (
     <section
       id="features"
@@ -60,17 +75,16 @@ export default function CoreFeatures() {
           <div className="lg:col-span-7">
             <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
               <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-              Inside the platform
+              {L("home.features.eyebrow")}
             </p>
             <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
-              Multiple engines,
+              {L("home.features.titleA")}
               <br />
-              one intelligence platform
+              {L("home.features.titleB")}
             </h2>
           </div>
           <p className="reveal max-w-md leading-relaxed text-agro-slate lg:col-span-4 lg:col-start-9">
-            From a single question in your own words to a season-long record —
-            each capability feeds the next.
+            {L("home.features.subtitle")}
           </p>
         </div>
 
@@ -82,29 +96,29 @@ export default function CoreFeatures() {
                 <CardIcon path="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
                 <div>
                   <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-canopy">
-                    Module 01 · Advisor
+                    {L("home.features.advisorModule")}
                   </p>
                   <h3 className="text-lg font-semibold tracking-tight text-agro-ink">
-                    AI agriculture advisor
+                    {L("home.features.advisorTitle")}
                   </h3>
                   <p className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-agro-slate">
-                    Irrigation · fertiliser · pest &amp; disease · harvest
+                    {L("home.features.advisorTopics")}
                   </p>
                 </div>
               </div>
               <span className="hidden shrink-0 items-center rounded-full border border-agro-sprout bg-agro-mint px-3 py-1 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-agro-canopy sm:inline-flex">
-                Roman Urdu
+                {L("home.features.advisorBadge")}
               </span>
             </div>
 
             <div
               className="mt-6 flex-1 space-y-4 rounded-xl bg-agro-mint/60 p-4 sm:p-6"
               role="img"
-              aria-label="Example conversation with the Agropioo advisor about yellowing wheat leaves"
+              aria-label={t("home.features.advisorMockAria").text}
             >
               <div className="flex justify-end">
                 <div className="max-w-[85%] rounded-2xl rounded-br-md bg-agro-canopy px-4 py-3 text-sm leading-relaxed text-white shadow-sm sm:max-w-[70%]">
-                  Meri gandum ki pattiyan peeli ho rahi hain — kya karoon?
+                  {L("home.features.advisorUserMsg")}
                   <span className="mt-1 block text-right font-mono text-[0.6rem] text-white/60">
                     08:14
                   </span>
@@ -114,28 +128,27 @@ export default function CoreFeatures() {
               <div className="flex justify-start">
                 <div className="max-w-[92%] rounded-2xl rounded-bl-md border border-agro-sprout bg-white px-4 py-3.5 text-sm leading-relaxed text-agro-ink shadow-sm sm:max-w-[78%]">
                   <p className="font-semibold text-agro-canopy">
-                    Peeli pattiyan — do common causes:
+                    {L("home.features.advisorReplyTitle")}
                   </p>
                   <ul className="mt-2 space-y-1.5">
                     <li className="flex gap-2">
                       <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-agro-leaf" aria-hidden="true" />
-                      <span><strong className="font-semibold">Water stress</strong> — irrigate in the cool hours, before 9 AM.</span>
+                      <span><strong className="font-semibold">{L("home.features.advisorReplyCause1")}</strong> {L("home.features.advisorReplyCause1Rest")}</span>
                     </li>
                     <li className="flex gap-2">
                       <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-agro-leaf" aria-hidden="true" />
-                      <span><strong className="font-semibold">Nitrogen shortage</strong> — check the oldest leaves first; feed urea if needed.</span>
+                      <span><strong className="font-semibold">{L("home.features.advisorReplyCause2")}</strong> {L("home.features.advisorReplyCause2Rest")}</span>
                     </li>
                   </ul>
                   <p className="mt-2 text-agro-slate">
-                    Agar pattiyon ke neeche peeli dhariyan nazar aayein, photo
-                    bhejein — main bimari ki tashkhees kar dunga.
+                    {L("home.features.advisorReplyFooter")}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 rounded-full border border-agro-sprout bg-white py-2 pl-4 pr-2 shadow-sm">
+              <div className="flex items-center gap-3 rounded-full border border-agro-sprout bg-white py-2 ps-4 pe-2 shadow-sm">
                 <span className="flex-1 truncate text-sm text-agro-canopy/60">
-                  Apna sawal likhein ya bolein…
+                  {L("home.features.advisorInputPlaceholder")}
                 </span>
                 <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-agro-canopy text-white" aria-hidden="true">
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -146,7 +159,7 @@ export default function CoreFeatures() {
             </div>
 
             <p className="mt-4 font-mono text-xs leading-relaxed tracking-wide text-agro-slate">
-              Ask anything about your crop — everyday questions welcome.
+              {L("home.features.advisorFooter")}
             </p>
           </article>
 
@@ -154,27 +167,26 @@ export default function CoreFeatures() {
           <article className={cardClass}>
             <CardIcon path="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
             <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-canopy">
-              Module 02 · Records
+              {L("home.features.recordsModule")}
             </p>
             <h3 className="text-lg font-semibold tracking-tight text-agro-ink">
-              Digital farm record
+              {L("home.features.recordsTitle")}
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-agro-slate">
-              Every activity logged and structured — so advice learns from your
-              own land.
+              {L("home.features.recordsDesc")}
             </p>
 
             <ul className="mt-6 flex-1 divide-y divide-agro-clay/70 border-y border-agro-clay/70">
               {recordRows.map((row) => (
                 <li key={row.date} className="flex items-baseline justify-between gap-2 py-3 sm:gap-3">
                   <span className="shrink-0 font-mono text-xs text-agro-slate">{row.date}</span>
-                  <span className="min-w-0 flex-1 text-sm font-medium text-agro-ink">{row.activity}</span>
-                  <span className="max-w-28 text-right font-mono text-xs text-agro-slate sm:max-w-none">{row.detail}</span>
+                  <span className="min-w-0 flex-1 text-sm font-medium text-agro-ink">{L(row.activityKey)}</span>
+                  <span className="max-w-28 text-right font-mono text-xs text-agro-slate sm:max-w-none">{L(row.detailKey)}</span>
                 </li>
               ))}
             </ul>
             <p className="mt-4 font-mono text-xs tracking-wide text-agro-slate">
-              Wheat · Rabi season
+              {L("home.features.recordsCropTag")}
             </p>
           </article>
 
@@ -182,24 +194,24 @@ export default function CoreFeatures() {
           <article className={cardClass}>
             <CardIcon path="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" />
             <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-canopy">
-              Module 03 · Language
+              {L("home.features.languageModule")}
             </p>
             <h3 className="text-lg font-semibold tracking-tight text-agro-ink">
-              Your language, your words
+              {L("home.features.languageTitle")}
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-agro-slate">
-              Speak or type the way you think — no technical English required.
+              {L("home.features.languageDesc")}
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2">
               {languages.map((lang) => (
                 <span
-                  key={lang}
+                  key={lang.lang}
                   className="rounded-full border border-agro-sprout bg-agro-mint px-3.5 py-1.5 text-base leading-none text-agro-forest"
                   dir="rtl"
-                  lang="ur"
+                  lang={lang.lang}
                 >
-                  {lang}
+                  {lang.name}
                 </span>
               ))}
             </div>
@@ -211,48 +223,53 @@ export default function CoreFeatures() {
               <div className="max-w-sm">
                 <CardIcon path="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
                 <p className="mt-5 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-agro-canopy">
-                  Module 04 · Weather
+                  {L("home.features.weatherModule")}
                 </p>
                 <h3 className="mt-1.5 text-lg font-semibold tracking-tight text-agro-ink">
-                  Weather-aware guidance
+                  {L("home.features.weatherTitle")}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-agro-slate">
-                  Advice checks real conditions before it reaches you — spray
-                  before rain and you have washed your inputs away.
+                  {L("home.features.weatherDesc")}
                 </p>
               </div>
 
               <div
                 className="min-w-56 flex-1"
                 role="img"
-                aria-label="Five-day forecast strip highlighting Thursday as a no-spray advisory day"
+                aria-label={t("home.features.weatherMockAria").text}
               >
                 <ol className="grid grid-cols-5 gap-1.5 sm:gap-2">
                   {forecast.map((day) => (
                     <li
-                      key={day.day}
+                      key={day.dayKey}
                       className={`flex flex-col items-center gap-1.5 rounded-lg px-0.5 py-3 sm:rounded-xl sm:px-1 ${
-                        day.advisory ? "bg-agro-mint ring-1 ring-agro-canopy" : "bg-white ring-1 ring-agro-clay"
+                        "advisory" in day && day.advisory ? "bg-agro-mint ring-1 ring-agro-canopy" : "bg-white ring-1 ring-agro-clay"
                       }`}
                     >
                       <span className="font-mono text-[0.65rem] uppercase tracking-wider text-agro-slate">
-                        {day.day}
+                        {t(day.dayKey).text}
                       </span>
                       <WeatherGlyph kind={day.condition} />
                       <span
                         className={`text-center font-mono text-[0.6rem] uppercase leading-tight tracking-wide ${
-                          day.advisory ? "font-bold text-agro-forest" : "text-transparent"
+                          "advisory" in day && day.advisory ? "font-bold text-agro-forest" : "text-transparent"
                         }`}
                       >
-                        <span className="sm:hidden">{day.advisory ? "!" : "·"}</span>
-                        <span className="hidden sm:inline">{day.advisory ? "Hold spray" : "·"}</span>
+                        {"advisory" in day && day.advisory ? (
+                          <>
+                            <span className="sm:hidden">!</span>
+                            <span className="hidden sm:inline">{t("home.features.holdSpray").text}</span>
+                          </>
+                        ) : (
+                          "·"
+                        )}
                       </span>
                     </li>
                   ))}
                 </ol>
                 <p className="mt-3 flex items-center gap-2 font-mono text-xs text-agro-slate">
                   <span className="inline-block h-2 w-2 rounded-sm bg-agro-leaf ring-1 ring-agro-canopy" aria-hidden="true" />
-                  Advisory day flagged from hyperlocal forecast
+                  {L("home.features.weatherLegend")}
                 </p>
               </div>
             </div>
@@ -264,8 +281,8 @@ export default function CoreFeatures() {
           className="reveal group mt-10 inline-flex items-center gap-3 font-mono text-sm font-semibold tracking-wide text-agro-canopy transition-colors hover:text-agro-forest"
         >
           <span className="inline-block h-2 w-2 rounded-full bg-agro-leaf transition-transform duration-300 group-hover:scale-125" aria-hidden="true" />
-          The platform keeps growing — see the full capability stack
-          <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">↓</span>
+          {L("home.features.moreLink")}
+          <span className="transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180" aria-hidden="true">↓</span>
         </a>
       </div>
     </section>

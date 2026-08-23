@@ -1,37 +1,19 @@
-const steps = [
-  {
-    title: "Add your farm",
-    description:
-      "Enter your location, crop, and basic details to create a digital farm profile.",
-  },
-  {
-    title: "Ask the AI",
-    description:
-      "Type or speak your question in the language you are most comfortable with.",
-  },
-  {
-    title: "Get guidance",
-    description:
-      "Receive advice grounded in your crop, weather, location, and farm history.",
-  },
-  {
-    title: "Record activity",
-    description:
-      "Log irrigation, fertiliser, pesticide, or disease with a few taps.",
-  },
-  {
-    title: "Build history",
-    description:
-      "Every record makes future recommendations smarter and more relevant.",
-  },
-  {
-    title: "Keep monitoring",
-    description:
-      "Review records and track progress through the whole season.",
-  },
-];
+import { localized } from "@/lib/i18n/localized";
+import { getCurrentDictionary } from "@/lib/i18n/server";
 
-export default function FarmerJourney() {
+export default async function FarmerJourney() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+
+  const steps = [
+    { title: L("home.journey.step1Title"), description: L("home.journey.step1Body") },
+    { title: L("home.journey.step2Title"), description: L("home.journey.step2Body") },
+    { title: L("home.journey.step3Title"), description: L("home.journey.step3Body") },
+    { title: L("home.journey.step4Title"), description: L("home.journey.step4Body") },
+    { title: L("home.journey.step5Title"), description: L("home.journey.step5Body") },
+    { title: L("home.journey.step6Title"), description: L("home.journey.step6Body") },
+  ];
+
   return (
     <section
       id="journey"
@@ -40,23 +22,22 @@ export default function FarmerJourney() {
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto max-w-2xl text-center">
           <p className="eyebrow reveal justify-center text-agro-canopy">
-            How it works
+            {L("home.journey.eyebrow")}
           </p>
           <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
-            One question starts the season
+            {L("home.journey.title")}
           </h2>
           <p className="reveal mt-5 leading-relaxed text-agro-slate">
-            A simple path from your first question to a complete, intelligent
-            farm history.
+            {L("home.journey.subtitle")}
           </p>
         </div>
 
         <ol className="mx-auto mt-16 max-w-2xl">
           {steps.map((step, index) => (
-            <li key={step.title} className="reveal relative pb-10 last:pb-0">
+            <li key={index} className="reveal relative pb-10 last:pb-0">
               {index < steps.length - 1 && (
                 <span
-                  className="absolute bottom-0 left-[22px] top-12 w-px bg-agro-sprout"
+                  className="absolute bottom-0 start-[22px] top-12 w-px bg-agro-sprout"
                   aria-hidden="true"
                 />
               )}
