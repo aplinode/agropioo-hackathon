@@ -7,6 +7,7 @@ import {
   Noto_Sans_Arabic,
 } from "next/font/google";
 import { notFound } from "next/navigation";
+import { SuggestionChip } from "@/components/suggestion-chip";
 import { isLocale, LOCALES, LOCALE_REGISTRY } from "@/lib/i18n/config";
 import "../globals.css";
 
@@ -77,7 +78,10 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale.htmlLang} dir={locale.dir} className={`${fontVariables} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        {children}
+        {!isLocalized && <SuggestionChip />}
+      </body>
     </html>
   );
 }
