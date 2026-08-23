@@ -29,7 +29,7 @@
 - Behaviour matches the spec including edge cases; acceptance criteria actually checked (tests or manual run-through).
 - `npm run lint` and `npm run build` pass.
 - A human has reviewed the diff against the spec before merge.
-- After every completed change — even a small one — commit AND push immediately. Never end a turn with uncommitted work.
+- After every completed change — even a small one — commit AND push immediately. Never end a turn with uncommitted work. Every commit must be meaningful: one logical change, a descriptive message (`type: what changed` — feat/fix/docs/style/refactor), never "update", "changes", or mixed unrelated files in one commit.
 
 ## Spec-Driven Development (SDD)
 
