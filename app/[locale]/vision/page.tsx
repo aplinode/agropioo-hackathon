@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
+import { getCurrentDictionary, siteHeaderStrings } from "@/lib/i18n/server";
 import VisionHero from "./sections/VisionHero";
 import Beliefs from "./sections/Beliefs";
 import Horizons from "./sections/Horizons";
@@ -14,10 +15,11 @@ export const metadata: Metadata = {
     "Agropioo's vision: intelligent agricultural guidance in every farmer's pocket — starting with Pakistan, built on five beliefs, three horizons, and promises that never bend.",
 };
 
-export default function VisionPage() {
+export default async function VisionPage() {
+  const { t } = await getCurrentDictionary();
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden">
-      <SiteHeader linkBase="/" activeSection="#vision" />
+      <SiteHeader linkBase="/" activeSection="#vision" strings={siteHeaderStrings(t)} />
 
       <main className="flex flex-1 flex-col">
         <VisionHero />

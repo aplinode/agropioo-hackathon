@@ -1,8 +1,10 @@
 import "server-only";
 
 import { cache } from "react";
+import { locale as rootLocale } from "next/root-params";
 
 import { CATALOG, ENGLISH_TABLE, type CatalogKey } from "@/catalog";
+import { isLocale } from "./config";
 import { getSupabase } from "@/lib/supabase";
 
 import type { Locale } from "./config";
@@ -83,4 +85,28 @@ function fallbackTableFor(localeCode: Locale): StringTable {
     if (typeof value === "string" && value.trim() !== "") table[key] = value;
   }
   return table;
+}
+
+/**
+ * Dictionary for whichever locale the URL carries — the standard entry point
+ * for pages under app/[locale]. Unprefixed rewrites resolve to "en".
+ */
+export async function getCurrentDictionary(): Promise<Dictionary> {
+  const raw = await rootLocale();
+  return getDictionary(isLocale(raw) ? raw : "en");
+}
+
+/** Flat prop bundle for the client SiteHeader (functions can't cross the RSC boundary). */
+export function siteHeaderStrings(t: Translator) {
+  return {
+    whyAgropioo: t("nav.whyAgropioo").text,
+    features: t("nav.features").text,
+    howItWorks: t("nav.howItWorks").text,
+    vision: t("nav.vision").text,
+    signIn: t("nav.signIn").text,
+    getEarlyAccess: t("nav.getEarlyAccess").text,
+    openMenu: t("nav.openMenu").text,
+    closeMenu: t("nav.closeMenu").text,
+    languageSwitcher: t("common.languageSwitcherLabel").text,
+  };
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
+import { getCurrentDictionary, siteHeaderStrings } from "@/lib/i18n/server";
 import HiwHero from "./sections/HiwHero";
 import SetupFarm from "./sections/SetupFarm";
 import AskFlow from "./sections/AskFlow";
@@ -15,10 +16,11 @@ export const metadata: Metadata = {
     "From a one-minute farm profile to a season loop that keeps improving: see how Agropioo turns questions, activity, and records into personalised farming guidance.",
 };
 
-export default function HowItWorksPage() {
+export default async function HowItWorksPage() {
+  const { t } = await getCurrentDictionary();
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden">
-      <SiteHeader linkBase="/" activeSection="#journey" />
+      <SiteHeader linkBase="/" activeSection="#journey" strings={siteHeaderStrings(t)} />
 
       <main className="flex flex-1 flex-col">
         <HiwHero />
