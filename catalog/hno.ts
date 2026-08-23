@@ -11,4 +11,7 @@ export const hno: Partial<Record<CatalogKey, string>> = {
   "nav.openMenu": "مینیو کھولو",
   "nav.closeMenu": "مینیو بند کرو",
   "common.languageSwitcherLabel": "بولی بدلو",
+  "notFound.title": "صفہ موجود نئیں",
+  "notFound.body": "تساں جیہڑا صفہ لبھیا اودو موجود نئیں یا منتقل ہو گیا اے۔",
+  "notFound.backHome": "اگروپیو دے گھر واپس جاؤ",
 };

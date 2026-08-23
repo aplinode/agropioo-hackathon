@@ -47,6 +47,11 @@ export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
 
+// Pages read live copy from the translations table; rendering dynamically keeps
+// founder SQL edits visible on the very next request (spec AC-6). Revisit with
+// admin-triggered revalidation if traffic ever demands caching.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Agropioo — AI-Powered Farm Intelligence Platform",
   description:

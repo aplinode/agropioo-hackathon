@@ -11,4 +11,7 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "nav.openMenu": "مینو پرانیستل",
   "nav.closeMenu": "مینو بندول",
   "common.languageSwitcherLabel": "ژبه بدله کړئ",
+  "notFound.title": "پاڼه نه موندل شوه",
+  "notFound.body": "هغه پاڼه چې تاسو یې لټوې موجوده نشته یا لیږدول شوې ده.",
+  "notFound.backHome": "بېرته اګروپیو کور ته",
 };

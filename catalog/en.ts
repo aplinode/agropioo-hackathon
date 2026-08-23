@@ -14,6 +14,9 @@ export const en = {
   "nav.openMenu": "Open menu",
   "nav.closeMenu": "Close menu",
   "common.languageSwitcherLabel": "Change language",
+  "notFound.title": "Page not found",
+  "notFound.body": "The page you are looking for does not exist or may have moved.",
+  "notFound.backHome": "Back to Agropioo home",
 } as const;
 
 export type CatalogKey = keyof typeof en;

@@ -8,6 +8,8 @@ import { sd } from "./sd.ts";
 import { skr } from "./skr.ts";
 import { ur } from "./ur.ts";
 
+export type { CatalogKey } from "./en.ts";
+
 /**
  * The typed translation catalog — authoring source of truth for every string
  * (plan K2). Synced into the Supabase `translations` table by

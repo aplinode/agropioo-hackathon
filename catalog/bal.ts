@@ -11,4 +11,7 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "nav.openMenu": "مینیو گُش کن",
   "nav.closeMenu": "مینیو بند کن",
   "common.languageSwitcherLabel": "زبان بدیل کنیت",
+  "notFound.title": "صفحه نه پیدہ بوتگنت",
+  "notFound.body": "ای صفحه کہ تئی تلاش کنیت اے ما وجود انت یا منتقل بوتگانت.",
+  "notFound.backHome": "گراں اگروپیو ئی سر",
 };

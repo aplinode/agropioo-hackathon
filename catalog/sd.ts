@@ -11,4 +11,7 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "nav.openMenu": "مينيو کوليو",
   "nav.closeMenu": "مينيو بند ڪريو",
   "common.languageSwitcherLabel": "ٻولي مٽايو",
+  "notFound.title": "صفحو موجود ناهي",
+  "notFound.body": "جيڪو صفحو توهان ڳوليو پئو اهو موجود ناهي يا منتقل ٿي ويو آهي.",
+  "notFound.backHome": "واپس اگروپيو گهر ڏانهن",
 };
