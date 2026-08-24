@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, useState } from "react";
 import Link from "next/link";
 import { FurrowMotif } from "@/components/FurrowMotif";
 import {
@@ -63,7 +63,6 @@ const checklistStore = {
     for (const listener of this.listeners) listener();
   },
 };
-
 /* Severity expressed as a green-intensity ladder + icon + word — never a
    second hue (this build is greens + whites/neutrals only). */
 const severityChip = {
@@ -138,13 +137,14 @@ export default function DashboardView({
   weatherAvailable = true,
 }: DashboardViewProps) {
   const isEmpty = variant === "empty";
+  const completedCount = isEmpty ? 0 : 1;
   const checklistDismissed = useSyncExternalStore(
     checklistStore.subscribe.bind(checklistStore),
     checklistStore.getSnapshot,
     checklistStore.getServerSnapshot
   );
 
-  const completedCount = isEmpty ? 0 : 1;
+  const [showProfile, setShowProfile] = useState(false);
   const advisory = isEmpty ? demoSeasonTip : demoAdvisory;
   const topAlerts = demoAlerts.slice(0, 3);
 
@@ -157,7 +157,7 @@ export default function DashboardView({
             {demoFarmer.todayLabel}
           </p>
           <h1 className="display-heading mt-2 font-display text-[1.75rem] font-semibold leading-tight tracking-tight text-agro-forest sm:text-4xl">
-            Assalam-o-Alaikum, {demoFarmer.firstName}
+            Hello, {demoFarmer.firstName}
           </h1>
           <p className="mt-2 flex items-center gap-1.5 text-sm text-agro-slate">
             <MapPinIcon size={16} className="shrink-0 text-agro-canopy" />
@@ -165,17 +165,42 @@ export default function DashboardView({
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <Link
-            href="/notifications"
-            aria-label={`Notifications, ${demoFarmer.unreadCount} unread`}
-            className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-agro-sprout bg-white text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
+          <div
+            onClick={() => setShowProfile(!showProfile)}
+            role="button"
+            aria-label="Profile menu"
+            className="relative inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-canopy font-semibold text-white transition-colors hover:bg-agro-forest"
           >
-            <BellIcon className="h-5 w-5" />
-            {demoFarmer.unreadCount > 0 && (
-              <span className="absolute -right-1 -top-1 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-agro-forest px-1 font-mono text-[0.65rem] font-semibold leading-none text-white ring-2 ring-white">
-                {demoFarmer.unreadCount}
-              </span>
-            )}
+            <span style={{ fontWeight: "bold", color: "white" }}>
+              {demoFarmer.firstName ? demoFarmer.firstName[0] : ""}
+            </span>
+          </div>
+          {showProfile && (
+            <div
+              className="absolute right-0 mt-2 w-48 rounded-md bg-white py-2 shadow-lg border border-agro-sprout/20 z-50 min-w-[160px]"
+            >
+              <div className="px-4 py-3 text-sm text-agro-forest">
+                <div className="font-medium">{demoFarmer.firstName}</div>
+                <div className="text-agro-slate text-xs">{demoFarmer.firstName?.toLowerCase() ?? ""}@agropioo.com</div>
+              </div>
+              <hr className="border-b border-agro-sprout/10" />
+              <div className="px-4 py-2">
+                <button
+                  onClick={() => window.location.href="/logout"}
+                  className="w-full text-left text-agro-forest text-sm font-medium hover:text-agro-green"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          )}
+          <Link
+            href="/settings"
+            aria-label="Your profile and settings"
+            className="inline-flex h-11 items-center gap-1.5 rounded-full border border-agro-sprout bg-white text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
+          >
+            <ArrowRightIcon size={12} className="h-4 w-4 shrink-0" />
+            Settings
           </Link>
           <button
             type="button"
@@ -186,13 +211,6 @@ export default function DashboardView({
             <GlobeIcon size={16} />
             EN
           </button>
-          <Link
-            href="/settings"
-            aria-label="Your profile and settings"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-canopy font-semibold text-white transition-colors hover:bg-agro-forest"
-          >
-            {demoFarmer.initials}
-          </Link>
         </div>
       </header>
 

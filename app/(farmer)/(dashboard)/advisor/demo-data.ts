@@ -40,4 +40,4 @@ export const defaultReply =
 
 /* Opening message shown in every fresh session. */
 export const openingMessage =
-  "Assalam-o-Alaikum Ahmad. I have your three farms and this week's weather in front of me. Ask me anything about your crop.";
+  "Hello Ahmad. I have your three farms and this week's weather in front of me. Ask me anything about your crop.";
