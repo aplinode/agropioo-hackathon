@@ -169,7 +169,7 @@ export default function DashboardView({
             onClick={() => setShowProfile(!showProfile)}
             role="button"
             aria-label="Profile menu"
-            className="relative inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-canopy font-semibold text-white transition-colors hover:bg-agro-forest"
+            className={`relative inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-canopy font-semibold text-white transition-colors ${showProfile ? "border-2 border-agro-sprout" : ""} hover:bg-agro-forest`}
           >
             <span style={{ fontWeight: "bold", color: "white" }}>
               {demoFarmer.firstName ? demoFarmer.firstName[0] : ""}
@@ -182,15 +182,6 @@ export default function DashboardView({
               <div className="px-4 py-3 text-sm text-agro-forest">
                 <div className="font-medium">{demoFarmer.firstName}</div>
                 <div className="text-agro-slate text-xs">{demoFarmer.firstName?.toLowerCase() ?? ""}@agropioo.com</div>
-              </div>
-              <hr className="border-b border-agro-sprout/10" />
-              <div className="px-4 py-2">
-                <button
-                  onClick={() => window.location.href="/logout"}
-                  className="w-full text-left text-agro-forest text-sm font-medium hover:text-agro-green"
-                >
-                  Logout
-                </button>
               </div>
             </div>
           )}

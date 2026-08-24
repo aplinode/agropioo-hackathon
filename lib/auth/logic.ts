@@ -104,10 +104,9 @@ export function isResendInCooldown(
   return now - created < RESEND_COOLDOWN_MS;
 }
 
-/** Login redirect decision (plan pin): every fresh login goes to /onboarding
- * until an onboarding-completed flag exists; flip here later in one place. */
-export function decideLoginRedirect(): "/onboarding" {
-  return "/onboarding";
+/** Login redirect decision: verified farmers land directly on farm dashboard. */
+export function decideLoginRedirect(): "/dashboard" {
+  return "/dashboard";
 }
 
 export type SessionRowLike = {
