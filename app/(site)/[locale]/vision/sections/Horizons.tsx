@@ -1,29 +1,5 @@
-const horizons = [
-  {
-    tag: "Horizon 01",
-    phase: "Now",
-    status: "In the fields",
-    body: "Pakistan first. The core advisor, digital farm records, weather-aware guidance, and six regional languages — refined through real farmer feedback before anything else.",
-    points: ["Core advisor + records", "Six languages", "Real-farmer refinement"],
-    style: "panel-mint",
-  },
-  {
-    tag: "Horizon 02",
-    phase: "Next",
-    status: "Broadening",
-    body: "Deeper and wider at home — more crops and regions across Pakistan, richer integrations with agricultural data sources, and analytics that personalise every recommendation further.",
-    points: ["More crops & regions", "Data integrations", "Advanced analytics"],
-    style: "panel-line",
-  },
-  {
-    tag: "Horizon 03",
-    phase: "Later",
-    status: "Global",
-    body: "The platform adapts to new countries, climates, crops, languages, and practices — a globally adaptable agricultural intelligence built without starting from scratch.",
-    points: ["New countries", "New languages & climates", "Global platform"],
-    style: "panel-forest",
-  },
-];
+import { getCurrentDictionary } from "@/lib/i18n/server";
+import { localized } from "@/lib/i18n/localized";
 
 const styleMap: Record<string, string> = {
   "panel-mint": "bg-agro-mint ring-1 ring-agro-sprout before:bg-agro-canopy",
@@ -31,7 +7,37 @@ const styleMap: Record<string, string> = {
   "panel-forest": "bg-agro-forest text-white shadow-lg before:bg-agro-leaf",
 };
 
-export default function Horizons() {
+export default async function Horizons() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+
+  const horizons = [
+    {
+      tag: L("vp.horizons.h1Tag"),
+      phase: L("vp.horizons.h1Phase"),
+      status: L("vp.horizons.h1Status"),
+      body: L("vp.horizons.h1Body"),
+      points: [L("vp.horizons.h1P1"), L("vp.horizons.h1P2"), L("vp.horizons.h1P3")],
+      style: "panel-mint",
+    },
+    {
+      tag: L("vp.horizons.h2Tag"),
+      phase: L("vp.horizons.h2Phase"),
+      status: L("vp.horizons.h2Status"),
+      body: L("vp.horizons.h2Body"),
+      points: [L("vp.horizons.h2P1"), L("vp.horizons.h2P2"), L("vp.horizons.h2P3")],
+      style: "panel-line",
+    },
+    {
+      tag: L("vp.horizons.h3Tag"),
+      phase: L("vp.horizons.h3Phase"),
+      status: L("vp.horizons.h3Status"),
+      body: L("vp.horizons.h3Body"),
+      points: [L("vp.horizons.h3P1"), L("vp.horizons.h3P2"), L("vp.horizons.h3P3")],
+      style: "panel-forest",
+    },
+  ];
+
   return (
     <section
       id="horizons"
@@ -41,16 +47,16 @@ export default function Horizons() {
         <div className="max-w-2xl">
           <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
             <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-            The road ahead
+            {L("vp.horizons.eyebrow")}
           </p>
           <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
-            Three horizons, one direction
+            {L("vp.horizons.heading")}
           </h2>
         </div>
 
         <div className="mt-14 space-y-4 lg:space-y-3">
           {horizons.map((horizon, index) => (
-            <div key={horizon.tag}>
+            <div key={index}>
               <article
                 className={`reveal relative overflow-hidden rounded-3xl p-7 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl before:absolute before:inset-y-0 before:left-0 before:w-1.5 sm:p-10 ${
                   styleMap[horizon.style]
@@ -88,9 +94,9 @@ export default function Horizons() {
                 </p>
 
                 <ul className="flex flex-col gap-2 lg:col-span-3">
-                  {horizon.points.map((point) => (
+                  {horizon.points.map((point, pi) => (
                     <li
-                      key={point}
+                      key={pi}
                       className={`flex items-center gap-2.5 text-sm ${
                         horizon.style === "panel-forest" ? "text-white/90" : "text-agro-ink"
                       }`}

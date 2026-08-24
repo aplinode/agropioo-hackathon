@@ -9,11 +9,13 @@ import ManageGrow from "./sections/ManageGrow";
 import CTA from "../sections/CTA";
 import Footer from "../sections/Footer";
 
-export const metadata: Metadata = {
-  title: "Features — Agropioo",
-  description:
-    "Explore every Agropioo capability: AI crop doctor, satellite NDVI monitoring, mandi price prediction, voice advisory in local languages, offline access with SMS alerts, and more.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getCurrentDictionary();
+  return {
+    title: t("feat.meta.title").text,
+    description: t("feat.meta.description").text,
+  };
+}
 
 export default async function FeaturesPage() {
   const { t } = await getCurrentDictionary();

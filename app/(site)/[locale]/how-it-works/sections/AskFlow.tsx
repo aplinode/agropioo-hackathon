@@ -1,11 +1,17 @@
-const contextChips = [
-  { label: "Crop", value: "Wheat · tillering" },
-  { label: "District", value: "Multan" },
-  { label: "Weather", value: "26°C · dry week" },
-  { label: "History", value: "Urea 9 days ago" },
-];
+import { localized } from "@/lib/i18n/localized";
+import { getCurrentDictionary } from "@/lib/i18n/server";
 
-export default function AskFlow() {
+export default async function AskFlow() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+
+  const chips = [
+    { label: L("hiw.ask.chipCrop"), value: L("hiw.ask.chipValCrop") },
+    { label: L("hiw.ask.chipDistrict"), value: L("hiw.ask.chipValDistrict") },
+    { label: L("hiw.ask.chipWeather"), value: L("hiw.ask.chipValWeather") },
+    { label: L("hiw.ask.chipHistory"), value: L("hiw.ask.chipValHistory") },
+  ];
+
   return (
     <section
       id="ask"
@@ -17,17 +23,15 @@ export default function AskFlow() {
             <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-agro-canopy font-mono text-xs font-bold text-white">
               02
             </span>
-            Ask anything
+            {L("hiw.ask.eyebrow")}
           </p>
           <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight sm:text-4xl lg:text-[2.9rem]">
-            One question in.
+            {L("hiw.ask.titleA")}
             <br />
-            Your whole farm answers.
+            {L("hiw.ask.titleB")}
           </h2>
           <p className="reveal mx-auto mt-5 max-w-xl leading-relaxed text-agro-sprout/85">
-            The same question means different things on different farms. So
-            before replying, Agropioo reads the question against everything it
-            already knows about yours.
+            {L("hiw.ask.body")}
           </p>
         </div>
 
@@ -35,26 +39,26 @@ export default function AskFlow() {
         <div className="reveal mx-auto mt-14 max-w-3xl">
           <div
             role="img"
-            aria-label="A farmer question is combined with crop, district, weather and history context to produce a personalised answer"
+            aria-label={t("hiw.ask.pipelineLabel").text}
           >
             <div className="flex justify-center">
               <p className="max-w-md rounded-2xl rounded-br-md bg-white/10 px-5 py-3.5 text-sm leading-relaxed text-white ring-1 ring-white/10 sm:text-base">
-                &ldquo;Ab pani dena chahiye ya thora intezar?&rdquo;
+                &ldquo;{L("hiw.ask.question")}&rdquo;
               </p>
             </div>
 
             <div className="my-5 flex items-center gap-3" aria-hidden="true">
               <span className="h-px flex-1 border-t border-dashed border-agro-sprout/30" />
               <span className="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-agro-sprout/70">
-                Checked against
+                {L("hiw.ask.checkedAgainst")}
               </span>
               <span className="h-px flex-1 border-t border-dashed border-agro-sprout/30" />
             </div>
 
             <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-              {contextChips.map((chip) => (
+              {chips.map((chip, i) => (
                 <li
-                  key={chip.label}
+                  key={i}
                   className="rounded-xl border border-agro-sprout/25 bg-white/5 px-3 py-2.5 text-center"
                 >
                   <p className="font-mono text-[0.6rem] uppercase tracking-[0.16em] text-agro-sprout/70">
@@ -78,18 +82,17 @@ export default function AskFlow() {
             <div className="flex justify-center">
               <div className="max-w-lg rounded-2xl rounded-bl-md bg-agro-canopy px-6 py-4 shadow-lg">
                 <p className="text-sm leading-relaxed text-white sm:text-base">
-                  Do din rukein — barish ka chance hai, aur urea ke baad zameen
-                  abhi geeli hai. Jumma tak check karna kaafi hai.
+                  {L("hiw.ask.answer")}
                 </p>
                 <p className="mt-2 font-mono text-[0.65rem] uppercase tracking-widest text-agro-sprout/80">
-                  Personalised · wheat, day 9 after urea
+                  {L("hiw.ask.answerMeta")}
                 </p>
               </div>
             </div>
           </div>
 
           <p className="mt-10 text-center font-mono text-xs uppercase tracking-[0.18em] text-agro-sprout/60">
-            Type it, speak it, or call it in — the answer stays personal
+            {L("hiw.ask.footnote")}
           </p>
         </div>
       </div>

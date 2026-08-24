@@ -9,11 +9,13 @@ import Principles from "./sections/Principles";
 import CTA from "../sections/CTA";
 import Footer from "../sections/Footer";
 
-export const metadata: Metadata = {
-  title: "Vision — Agropioo",
-  description:
-    "Agropioo's vision: intelligent agricultural guidance in every farmer's pocket — starting with Pakistan, built on five beliefs, three horizons, and promises that never bend.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getCurrentDictionary();
+  return {
+    title: t("vp.meta.title").text,
+    description: t("vp.meta.description").text,
+  };
+}
 
 export default async function VisionPage() {
   const { t } = await getCurrentDictionary();

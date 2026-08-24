@@ -1,6 +1,11 @@
 import Link from "next/link";
+import { getCurrentDictionary } from "@/lib/i18n/server";
+import { localized } from "@/lib/i18n/localized";
 
-export default function VisionHero() {
+export default async function VisionHero() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+
   return (
     <section
       id="vision-page"
@@ -27,39 +32,36 @@ export default function VisionHero() {
       <div className="relative mx-auto max-w-4xl">
         <p className="eyebrow rise flex items-center gap-3 text-agro-canopy">
           <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-          Our vision
+          {L("vp.hero.eyebrow")}
         </p>
 
         <h1
           className="display-heading rise mt-6 font-display text-[2.5rem] font-medium leading-[1.12] tracking-tight text-agro-ink sm:text-6xl lg:text-[4.2rem]"
           style={{ "--rise-delay": "0.08s" } as React.CSSProperties}
         >
-          A trusted advisor in{" "}
-          <span className="text-agro-canopy">every farmer&apos;s pocket</span>.
+          {L("vp.hero.titleLead")}{" "}
+          <span className="text-agro-canopy">{L("vp.hero.titleAccent")}</span>
         </h1>
 
         <p
           className="rise mt-7 max-w-2xl text-lg leading-relaxed text-agro-slate sm:text-xl"
           style={{ "--rise-delay": "0.16s" } as React.CSSProperties}
         >
-          Intelligent guidance should not depend on wealth, literacy, or
-          language. Agropioo exists so that any farmer — on any phone, in any
-          village — farms with the same confidence as an expert standing
-          beside them.
+          {L("vp.hero.sub")}
         </p>
 
         <div
           className="rise mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-agro-clay/70 pt-6 font-mono text-xs uppercase tracking-[0.16em] text-agro-slate"
           style={{ "--rise-delay": "0.24s" } as React.CSSProperties}
         >
-          <span>Start where the need is greatest</span>
+          <span>{L("vp.hero.tagStart")}</span>
           <span className="hidden h-1 w-1 rounded-full bg-agro-leaf sm:inline-block" aria-hidden="true" />
-          <span>Then earn the world</span>
+          <span>{L("vp.hero.tagThen")}</span>
           <Link
             href="/features"
             className="group ml-auto inline-flex items-center gap-2 font-semibold text-agro-canopy transition-colors hover:text-agro-forest"
           >
-            See what we built
+            {L("vp.hero.ctaLink")}
             <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
           </Link>
         </div>

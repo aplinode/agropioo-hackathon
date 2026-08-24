@@ -1,30 +1,37 @@
-const loopSteps = [
-  { n: "1", label: "Ask", x: 220, y: 80, lx: 220, ly: 40, anchor: "middle" as const },
-  { n: "2", label: "Act", x: 344, y: 170, lx: 396, ly: 175, anchor: "start" as const },
-  { n: "3", label: "Record", x: 296, y: 315, lx: 296, ly: 372, anchor: "middle" as const },
-  { n: "4", label: "Learn", x: 144, y: 315, lx: 144, ly: 372, anchor: "middle" as const },
-  { n: "5", label: "Improve", x: 96, y: 170, lx: 44, ly: 175, anchor: "end" as const },
+import { localized } from "@/lib/i18n/localized";
+import { getCurrentDictionary } from "@/lib/i18n/server";
+
+const stepPos = [
+  { n: "1", x: 220, y: 80, lx: 220, ly: 40, anchor: "middle" as const },
+  { n: "2", x: 344, y: 170, lx: 396, ly: 175, anchor: "start" as const },
+  { n: "3", x: 296, y: 315, lx: 296, ly: 372, anchor: "middle" as const },
+  { n: "4", x: 144, y: 315, lx: 144, ly: 372, anchor: "middle" as const },
+  { n: "5", x: 96, y: 170, lx: 44, ly: 175, anchor: "end" as const },
 ];
 
-const loopBenefits = [
-  {
-    title: "Advice compounds",
-    description:
-      "Last season's disease, doses, and dates shape this season's first answer.",
-  },
-  {
-    title: "Nothing gets repeated",
-    description:
-      "The advisor knows what was already sprayed or fed — no double dosing.",
-  },
-  {
-    title: "Every season documented",
-    description:
-      "A clean history stays ready for loans, buyers, insurance, or the next crop decision.",
-  },
-];
+export default async function SeasonLoop() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
 
-export default function SeasonLoop() {
+  // Latin-only typographic tracking; letter-spacing breaks Arabic-script joining.
+  const latinOnly = locale === "en";
+  const stepSpacing = latinOnly ? "2.5" : undefined;
+  const centerSpacing = latinOnly ? "3" : undefined;
+
+  const loopSteps = [
+    { ...stepPos[0], label: t("hiw.route.stop2").text },
+    { ...stepPos[1], label: t("hiw.route.stop4").text },
+    { ...stepPos[2], label: t("hiw.route.stop5").text },
+    { ...stepPos[3], label: t("hiw.loop.stepLearn").text },
+    { ...stepPos[4], label: t("hiw.loop.stepImprove").text },
+  ];
+
+  const loopBenefits = [
+    { title: L("hiw.loop.benefit1Title"), description: L("hiw.loop.benefit1Desc") },
+    { title: L("hiw.loop.benefit2Title"), description: L("hiw.loop.benefit2Desc") },
+    { title: L("hiw.loop.benefit3Title"), description: L("hiw.loop.benefit3Desc") },
+  ];
+
   return (
     <section
       id="loop"
@@ -36,22 +43,20 @@ export default function SeasonLoop() {
             <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-agro-canopy font-mono text-xs font-bold text-white">
               05
             </span>
-            The season loop
+            {L("hiw.loop.eyebrow")}
           </p>
           <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
-            It doesn&apos;t end at harvest.
+            {L("hiw.loop.titleA")}
             <br />
-            It starts there.
+            {L("hiw.loop.titleB")}
           </h2>
           <p className="reveal mt-5 max-w-md leading-relaxed text-agro-slate">
-            Ask, act, record — repeat. Each turn of the loop feeds what the
-            platform knows about your land, so the next season begins ahead of
-            the last one.
+            {L("hiw.loop.body")}
           </p>
 
           <ul className="reveal mt-9 space-y-5">
             {loopBenefits.map((benefit, index) => (
-              <li key={benefit.title} className="flex gap-4">
+              <li key={index} className="flex gap-4">
                 <span className="font-mono text-sm font-semibold tracking-widest text-agro-canopy/50" aria-hidden="true">
                   {String(index + 1).padStart(2, "0")}
                 </span>
@@ -74,7 +79,7 @@ export default function SeasonLoop() {
             viewBox="0 0 440 400"
             fill="none"
             role="img"
-            aria-label="Circular loop diagram: ask, act, record, learn, improve"
+            aria-label={t("hiw.loop.diagramLabel").text}
             className="h-auto w-full"
           >
             <circle cx="220" cy="210" r="130" stroke="var(--color-agro-sprout)" strokeWidth="2" strokeDasharray="6 10" />
@@ -108,7 +113,7 @@ export default function SeasonLoop() {
                   fontFamily="var(--font-geist-mono), monospace"
                   fontSize="12"
                   fontWeight="600"
-                  letterSpacing="2.5"
+                  letterSpacing={stepSpacing}
                   fill="var(--color-agro-slate)"
                 >
                   {step.label.toUpperCase()}
@@ -124,10 +129,10 @@ export default function SeasonLoop() {
               fontFamily="var(--font-geist-mono), monospace"
               fontSize="11"
               fontWeight="600"
-              letterSpacing="3"
+              letterSpacing={centerSpacing}
               fill="var(--color-agro-canopy)"
             >
-              SEASON
+              {t("hiw.loop.centerSeason").text.toUpperCase()}
             </text>
             <text
               x="220"
@@ -136,15 +141,15 @@ export default function SeasonLoop() {
               fontFamily="var(--font-geist-mono), monospace"
               fontSize="11"
               fontWeight="600"
-              letterSpacing="3"
+              letterSpacing={centerSpacing}
               fill="var(--color-agro-canopy)"
             >
-              LOOP
+              {t("hiw.loop.centerLoop").text.toUpperCase()}
             </text>
           </svg>
 
           <p className="mt-6 text-center font-mono text-xs uppercase tracking-[0.18em] text-agro-canopy">
-            Har season, pichle se behtar
+            {L("hiw.loop.caption")}
           </p>
         </div>
       </div>
