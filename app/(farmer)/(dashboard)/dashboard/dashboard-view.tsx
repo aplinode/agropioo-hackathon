@@ -20,6 +20,7 @@ import {
   TagIcon,
   TrendingUpIcon,
   XIcon,
+  LogOutIcon,
 } from "@/components/icons";
 import {
   checklistItems,
@@ -31,6 +32,7 @@ import {
   demoWeather,
   quickActions,
 } from "./demo-data";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 const CHECKLIST_DISMISS_KEY = "agropioo-checklist-dismissed";
 
@@ -63,6 +65,18 @@ const checklistStore = {
     for (const listener of this.listeners) listener();
   },
 };
+
+function signOut() {
+  try {
+    window.sessionStorage.clear();
+    window.localStorage.clear();
+    document.cookie = "agro_session=; path=/; max-age=0; samesite=lax";
+    document.cookie = "agro_verify=; path=/; max-age=0; samesite=lax";
+    document.cookie = "agro_reset=; path=/; max-age=0; samesite=lax";
+  } catch {}
+  window.location.href = "/login";
+}
+
 /* Severity expressed as a green-intensity ladder + icon + word — never a
    second hue (this build is greens + whites/neutrals only). */
 const severityChip = {
@@ -172,7 +186,7 @@ export default function DashboardView({
             className={`relative inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-canopy font-semibold text-white transition-colors ${showProfile ? "border-2 border-agro-sprout" : ""} hover:bg-agro-forest`}
           >
             <span style={{ fontWeight: "bold", color: "white" }}>
-              {demoFarmer.firstName ? demoFarmer.firstName[0] : ""}
+              {demoFarmer.firstName}
             </span>
           </div>
           {showProfile && (
@@ -180,28 +194,23 @@ export default function DashboardView({
               className="absolute right-0 mt-2 w-48 rounded-md bg-white py-2 shadow-lg border border-agro-sprout/20 z-50 min-w-[160px]"
             >
               <div className="px-4 py-3 text-sm text-agro-forest">
-                <div className="font-medium">{demoFarmer.firstName}</div>
-                <div className="text-agro-slate text-xs">{demoFarmer.firstName?.toLowerCase() ?? ""}@agropioo.com</div>
+                <div className="font-medium">{demoFarmer.firstName} {demoFarmer.lastName}</div>
+                <div className="text-agro-slate text-xs">
+                  {demoFarmer.email}
+                </div>
               </div>
             </div>
           )}
-          <Link
-            href="/settings"
-            aria-label="Your profile and settings"
-            className="inline-flex h-11 items-center gap-1.5 rounded-full border border-agro-sprout bg-white text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
-          >
-            <ArrowRightIcon size={12} className="h-4 w-4 shrink-0" />
-            Settings
-          </Link>
           <button
             type="button"
-            title="Language switching coming soon"
-            aria-label="Change language (coming soon)"
+            onClick={signOut}
+            aria-label="Sign out"
             className="inline-flex h-11 items-center gap-1.5 rounded-full border border-agro-sprout bg-white px-3 font-mono text-sm font-semibold text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
           >
-            <GlobeIcon size={16} />
-            EN
+            <LogOutIcon size={12} className="h-4 w-4 shrink-0" />
+            Sign out
           </button>
+          <LanguageSwitcher label="Language" />
         </div>
       </header>
 

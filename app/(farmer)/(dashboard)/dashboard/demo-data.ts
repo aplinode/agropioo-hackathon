@@ -32,6 +32,7 @@ export type DemoChecklistItem = {
 
 export const demoFarmer = {
   firstName: "Ahmad",
+  lastName: "Ali",
   initials: "MA",
   location: "Multan, Punjab",
   /** Static demo date shown beside the location in the header. */
@@ -39,6 +40,7 @@ export const demoFarmer = {
   /** ALL unread notifications — the bell badge reflects this total,
       even when the alerts strip shows only the top 3. */
   unreadCount: 5,
+  email: "ahmad.ali@agropioo.com",
 };
 
 export const demoAdvisory = {
