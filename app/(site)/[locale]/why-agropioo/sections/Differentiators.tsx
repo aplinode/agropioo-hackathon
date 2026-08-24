@@ -1,3 +1,6 @@
+import { getCurrentDictionary } from "@/lib/i18n/server";
+import { localized } from "@/lib/i18n/localized";
+
 const languages = ["اردو", "پنجابی", "سرائیکی", "پشتو", "بلوچی", "ہندکو"];
 
 function ChipIcon({ children }: { children: React.ReactNode }) {
@@ -39,7 +42,11 @@ const pinIcon = (
   </svg>
 );
 
-export default function Differentiators() {
+export default async function Differentiators() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+  const chips = (["wy.diff.chip1", "wy.diff.chip2", "wy.diff.chip3", "wy.diff.chip4"] as Parameters<typeof t>[0][]).map(L);
+
   return (
     <section
       id="different"
@@ -49,16 +56,15 @@ export default function Differentiators() {
         <div className="max-w-2xl">
           <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
             <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-            What makes it different
+            {L("wy.diff.eyebrow")}
           </p>
           <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
-            Not another advice app.
+            {L("wy.diff.heading1")}
             <br />
-            A farm intelligence platform.
+            {L("wy.diff.heading2")}
           </h2>
           <p className="reveal mt-5 leading-relaxed text-agro-slate">
-            Most tools answer questions. Agropioo learns your farm — and gets
-            more useful with every activity you record.
+            {L("wy.diff.sub")}
           </p>
         </div>
 
@@ -67,26 +73,22 @@ export default function Differentiators() {
           <article className="reveal group flex flex-col rounded-2xl bg-agro-mint p-7 ring-1 ring-agro-sprout transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl md:col-span-2 sm:p-9">
             <ChipIcon>{sparkIcon}</ChipIcon>
             <h3 className="mt-5 font-display text-2xl font-medium tracking-tight text-agro-ink">
-              Personalised, not generic
+              {L("wy.diff.personalTitle")}
             </h3>
             <p className="mt-3 max-w-lg text-sm leading-relaxed text-agro-slate sm:text-base">
-              Recommendations are built from your crop, your location, live
-              weather, and your farm&apos;s own history — never one-size-fits-all
-              advice.
+              {L("wy.diff.personalDesc")}
             </p>
 
             <ul className="mt-7 flex flex-wrap gap-2.5">
-              {["Your crop", "Your district", "This week's weather", "Your last season"].map(
-                (chip) => (
-                  <li
-                    key={chip}
-                    className="inline-flex items-center gap-2 rounded-full border border-agro-sprout bg-white px-4 py-2 font-mono text-xs font-medium tracking-wide text-agro-forest"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-agro-leaf" aria-hidden="true" />
-                    {chip}
-                  </li>
-                ),
-              )}
+              {chips.map((chip) => (
+                <li
+                  key={String(chip)}
+                  className="inline-flex items-center gap-2 rounded-full border border-agro-sprout bg-white px-4 py-2 font-mono text-xs font-medium tracking-wide text-agro-forest"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-agro-leaf" aria-hidden="true" />
+                  {chip}
+                </li>
+              ))}
             </ul>
           </article>
 
@@ -98,11 +100,10 @@ export default function Differentiators() {
               </svg>
             </ChipIcon>
             <h3 className="mt-5 font-display text-xl font-medium tracking-tight text-agro-ink sm:text-2xl">
-              Speaks your language
+              {L("wy.diff.langTitle")}
             </h3>
             <p className="mt-3 text-sm leading-relaxed text-agro-slate">
-              Ask and understand in the way you actually speak — no technical
-              English required.
+              {L("wy.diff.langDesc")}
             </p>
             <div className="mt-auto flex flex-wrap gap-2 pt-6" dir="rtl" lang="ur">
               {languages.map((lang) => (
@@ -120,12 +121,10 @@ export default function Differentiators() {
           <article className="reveal group flex flex-col rounded-2xl bg-agro-mint p-7 ring-1 ring-agro-sprout transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl sm:p-8">
             <ChipIcon>{bookIcon}</ChipIcon>
             <h3 className="mt-5 font-display text-xl font-medium tracking-tight text-agro-ink sm:text-2xl">
-              A memory for every farm
+              {L("wy.diff.memoryTitle")}
             </h3>
             <p className="mt-3 text-sm leading-relaxed text-agro-slate">
-              Irrigation, inputs, disease, expenses, harvest — every activity
-              kept as a structured record, so each season starts smarter than
-              the last.
+              {L("wy.diff.memoryDesc")}
             </p>
           </article>
 
@@ -133,11 +132,10 @@ export default function Differentiators() {
           <article className="reveal group flex flex-col rounded-2xl bg-agro-mint p-7 ring-1 ring-agro-sprout transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl sm:p-8">
             <ChipIcon>{cloudIcon}</ChipIcon>
             <h3 className="mt-5 font-display text-xl font-medium tracking-tight text-agro-ink sm:text-2xl">
-              Weather-aware by default
+              {L("wy.diff.weatherTitle")}
             </h3>
             <p className="mt-3 text-sm leading-relaxed text-agro-slate">
-              Guidance reads real conditions before it reaches you — so a
-              spray isn&apos;t suggested hours before the rain washes it away.
+              {L("wy.diff.weatherDesc")}
             </p>
           </article>
 
@@ -145,11 +143,10 @@ export default function Differentiators() {
           <article className="reveal group flex flex-col rounded-2xl bg-agro-mint p-7 ring-1 ring-agro-sprout transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl sm:p-8">
             <ChipIcon>{gridIcon}</ChipIcon>
             <h3 className="mt-5 font-display text-xl font-medium tracking-tight text-agro-ink sm:text-2xl">
-              One platform, whole season
+              {L("wy.diff.platformTitle")}
             </h3>
             <p className="mt-3 text-sm leading-relaxed text-agro-slate">
-              Advisor, records, weather guidance, and advisories work together
-              instead of living in separate apps and notebooks.
+              {L("wy.diff.platformDesc")}
             </p>
           </article>
 
@@ -161,17 +158,15 @@ export default function Differentiators() {
               </span>
               <div>
                 <h3 className="font-display text-xl font-medium tracking-tight sm:text-2xl">
-                  Pakistan-first
+                  {L("wy.diff.pakTitle")}
                 </h3>
                 <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-white/85">
-                  Local crops, regional practices, and real field conditions
-                  are designed in from day one — not adapted as an
-                  afterthought.
+                  {L("wy.diff.pakDesc")}
                 </p>
               </div>
             </div>
             <span className="shrink-0 rounded-full border border-white/30 px-4 py-2 font-mono text-xs uppercase tracking-[0.16em] text-white">
-              Built here first
+              {L("wy.diff.pakBadge")}
             </span>
           </article>
         </div>

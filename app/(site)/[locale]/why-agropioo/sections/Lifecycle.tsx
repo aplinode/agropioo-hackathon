@@ -1,35 +1,21 @@
-const advisorScope = [
-  {
-    title: "Irrigation timing",
-    description: "Know when to water — and when to wait.",
-  },
-  {
-    title: "Crop planning",
-    description: "Choose crops and sowing windows suited to your land.",
-  },
-  {
-    title: "Fertiliser & pesticide guidance",
-    description: "The right input, at the right dose, at the right moment.",
-  },
-  {
-    title: "Pest & disease support",
-    description: "Spot problems early and act before they spread.",
-  },
-  {
-    title: "Harvest timing",
-    description: "Pick at the moment that protects yield and quality.",
-  },
-  {
-    title: "Weather-aware recommendations",
-    description: "Every advisory reads today's conditions first.",
-  },
-  {
-    title: "Everyday questions",
-    description: "Ask anything about your crop, any day of the season.",
-  },
-];
+import { getCurrentDictionary } from "@/lib/i18n/server";
+import { localized } from "@/lib/i18n/localized";
 
-export default function Lifecycle() {
+export default async function Lifecycle() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+  const advisorScope = ([
+    { titleKey: "wy.life.s1Title", descKey: "wy.life.s1Desc" },
+    { titleKey: "wy.life.s2Title", descKey: "wy.life.s2Desc" },
+    { titleKey: "wy.life.s3Title", descKey: "wy.life.s3Desc" },
+    { titleKey: "wy.life.s4Title", descKey: "wy.life.s4Desc" },
+    { titleKey: "wy.life.s5Title", descKey: "wy.life.s5Desc" },
+    { titleKey: "wy.life.s6Title", descKey: "wy.life.s6Desc" },
+    { titleKey: "wy.life.s7Title", descKey: "wy.life.s7Desc" },
+  ] as { titleKey: Parameters<typeof t>[0]; descKey: Parameters<typeof t>[0] }[]).map(
+    (s) => ({ ...s, title: L(s.titleKey), description: L(s.descKey) }),
+  );
+
   return (
     <section
       id="guidance"
@@ -40,21 +26,20 @@ export default function Lifecycle() {
           <div className="lg:col-span-5">
             <p className="eyebrow reveal flex items-center gap-3 text-agro-canopy">
               <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-              What the advisor covers
+              {L("wy.life.eyebrow")}
             </p>
             <h2 className="display-heading reveal mt-5 font-display text-3xl font-medium leading-[1.15] tracking-tight text-agro-ink sm:text-4xl lg:text-[2.9rem]">
-              Guidance for every decision in the cycle
+              {L("wy.life.heading")}
             </h2>
             <p className="reveal mt-5 max-w-md leading-relaxed text-agro-slate">
-              One advisor walks the whole crop lifecycle with you — from
-              planning the season to bringing the harvest home.
+              {L("wy.life.sub")}
             </p>
           </div>
 
           <ul className="lg:col-span-7">
             {advisorScope.map((item, index) => (
               <li
-                key={item.title}
+                key={item.titleKey}
                 className="reveal group flex items-start gap-5 border-b border-agro-sprout/80 py-6 transition-colors duration-300 last:border-b-0 sm:gap-7"
               >
                 <span

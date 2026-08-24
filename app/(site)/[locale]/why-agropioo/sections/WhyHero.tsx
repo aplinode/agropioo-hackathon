@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { getCurrentDictionary } from "@/lib/i18n/server";
+import { localized } from "@/lib/i18n/localized";
 
 const furrowCurves = [
   { d: "M-20 268C110 208 250 330 560 244", width: 2, opacity: 0.9 },
@@ -8,7 +10,10 @@ const furrowCurves = [
   { d: "M-20 428C150 384 330 482 560 412", width: 1, opacity: 0.18 },
 ];
 
-export default function WhyHero() {
+export default async function WhyHero() {
+  const { locale, t } = await getCurrentDictionary();
+  const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
+
   return (
     <section
       id="why"
@@ -18,25 +23,22 @@ export default function WhyHero() {
         <div className="flex flex-col items-start text-left">
           <p className="eyebrow rise flex items-center gap-3 text-agro-canopy">
             <span className="inline-block h-px w-8 bg-agro-leaf" aria-hidden="true" />
-            Why Agropioo
+            {L("wy.hero.eyebrow")}
           </p>
 
           <h1
             className="display-heading rise mt-5 font-display text-[2.6rem] font-bold leading-[1.08] tracking-tight text-agro-ink sm:text-6xl lg:text-[4rem]"
             style={{ "--rise-delay": "0.08s" } as React.CSSProperties}
           >
-            Where soil meets{" "}
-            <span className="text-agro-canopy">signal</span>
+            {L("wy.hero.titleLead")}{" "}
+            <span className="text-agro-canopy">{L("wy.hero.titleAccent")}</span>
           </h1>
 
           <p
             className="rise mt-6 max-w-lg text-lg leading-relaxed text-agro-slate"
             style={{ "--rise-delay": "0.16s" } as React.CSSProperties}
           >
-            Farming decisions are too important for guesswork. Agropioo puts an
-            AI advisor, your farm&apos;s records, weather-aware guidance, and
-            your own language into one platform — so every choice is grounded
-            in your land&apos;s reality.
+            {L("wy.hero.sub")}
           </p>
 
           <div
@@ -47,13 +49,13 @@ export default function WhyHero() {
               href="#get-started"
               className="inline-flex h-12 w-44 cursor-pointer items-center justify-center rounded-lg bg-agro-canopy px-6 text-sm font-semibold whitespace-nowrap text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 sm:w-auto"
             >
-              Get early access
+              {L("wy.hero.ctaPrimary")}
             </a>
             <Link
               href="/#features"
               className="inline-flex h-12 w-44 cursor-pointer items-center justify-center rounded-lg border border-agro-sprout bg-white px-6 text-sm font-semibold whitespace-nowrap text-agro-forest shadow-sm transition-all duration-200 hover:border-agro-canopy hover:bg-agro-mint sm:w-auto"
             >
-              Explore the platform
+              {L("wy.hero.ctaSecondary")}
             </Link>
           </div>
 
@@ -61,9 +63,9 @@ export default function WhyHero() {
             className="rise mt-9 flex items-center gap-2.5 text-xs text-agro-slate"
             style={{ "--rise-delay": "0.32s" } as React.CSSProperties}
           >
-            <span className="font-mono tracking-wide">Built for Pakistan</span>
+            <span className="font-mono tracking-wide">{L("wy.hero.tagStart")}</span>
             <span className="h-1 w-1 rounded-full bg-agro-leaf" aria-hidden="true" />
-            <span>A product of Aplinode</span>
+            <span>{L("wy.hero.tagThen")}</span>
           </p>
         </div>
 
@@ -77,7 +79,7 @@ export default function WhyHero() {
               fill="none"
               className="h-auto w-full"
               role="img"
-              aria-label="Stylised furrow curves rolling across a field"
+              aria-label={t("wy.hero.svgLabel").text}
             >
               {furrowCurves.map((curve) => (
                 <path

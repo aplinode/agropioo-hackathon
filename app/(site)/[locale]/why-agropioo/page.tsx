@@ -10,11 +10,13 @@ import WhoFor from "./sections/WhoFor";
 import CTA from "../sections/CTA";
 import Footer from "../sections/Footer";
 
-export const metadata: Metadata = {
-  title: "Why Agropioo — AI-Powered Farm Intelligence",
-  description:
-    "Farming decisions are too important for guesswork. See why Agropioo unites an AI advisor, farm records, weather-aware guidance, and local languages on one Pakistan-first platform.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getCurrentDictionary();
+  return {
+    title: t("wy.meta.title").text,
+    description: t("wy.meta.description").text,
+  };
+}
 
 export default async function WhyAgropiooPage() {
   const { t } = await getCurrentDictionary();
