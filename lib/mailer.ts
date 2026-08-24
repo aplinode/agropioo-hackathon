@@ -4,7 +4,7 @@
    (FR17) — either condition missing means codes NEVER render anywhere. */
 
 import nodemailer, { type Transporter } from "nodemailer";
-import { EMAIL_COPY } from "@/lib/auth/copy";
+import { EMAIL_TEMPLATE } from "@/lib/auth/copy";
 
 let transporter: Transporter | null = null;
 
@@ -65,15 +65,15 @@ export async function sendCode(
   if (!mailer) return { delivered: false };
 
   try {
+    const body = purpose === "verify"
+      ? EMAIL_TEMPLATE.verifyBody(code)
+      : EMAIL_TEMPLATE.resetBody(code);
+
     await mailer.sendMail({
       from: process.env.EMAIL_FROM,
       to: email,
-      subject:
-        purpose === "verify" ? EMAIL_COPY.verifySubject : EMAIL_COPY.resetSubject,
-      text:
-        purpose === "verify"
-          ? EMAIL_COPY.verifyBody(code)
-          : EMAIL_COPY.resetBody(code),
+      subject: purpose === "verify" ? EMAIL_TEMPLATE.verifySubject : EMAIL_TEMPLATE.resetSubject,
+      html: body,
     });
     return { delivered: true };
   } catch (error) {
