@@ -1,11 +1,10 @@
 import type { ReactNode } from "react";
+import { requireGuestPage } from "@/lib/auth/guards";
 
 export const dynamic = "force-dynamic";
 
-/* Login page: always visible, no session check needed.
-   If a session happens to be present (e.g. from missed cleanup),
-   the user stays on login rather than being bounced, avoiding
-   hydration mismatch after signout. */
-export default function LoginLayout({ children }: { children: ReactNode }) {
+/* Login page: signed-in visitors are pushed to /dashboard (FR28). */
+export default async function LoginLayout({ children }: { children: ReactNode }) {
+  await requireGuestPage();
   return <>{children}</>;
 }

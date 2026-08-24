@@ -66,7 +66,12 @@ const checklistStore = {
   },
 };
 
-function signOut() {
+async function signOut() {
+  try {
+    const res = await fetch("/api/auth/logout", { method: "POST" });
+    const data = await res.json();
+    if (!data.ok) throw new Error("logout failed");
+  } catch {}
   try {
     window.sessionStorage.clear();
     window.localStorage.clear();
@@ -186,7 +191,7 @@ export default function DashboardView({
             className={`relative inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-canopy font-semibold text-white transition-colors ${showProfile ? "border-2 border-agro-sprout" : ""} hover:bg-agro-forest`}
           >
             <span style={{ fontWeight: "bold", color: "white" }}>
-              {demoFarmer.firstName}
+              {demoFarmer.firstName[0]}
             </span>
           </div>
           {showProfile && (
@@ -201,12 +206,12 @@ export default function DashboardView({
               </div>
             </div>
           )}
-          <button
-            type="button"
-            onClick={signOut}
-            aria-label="Sign out"
-            className="inline-flex h-11 items-center gap-1.5 rounded-full border border-agro-sprout bg-white px-3 font-mono text-sm font-semibold text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
-          >
+<button
+  type="button"
+  onClick={() => signOut()}
+  aria-label="Sign out"
+  className="inline-flex h-11 items-center gap-1.5 rounded-full border border-agro-sprout bg-white px-3 font-mono text-sm font-semibold text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
+>
             <LogOutIcon size={12} className="h-4 w-4 shrink-0" />
             Sign out
           </button>
