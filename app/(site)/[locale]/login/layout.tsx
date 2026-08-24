@@ -1,15 +1,11 @@
 import type { ReactNode } from "react";
-import { readValidPass } from "@/lib/auth/pass";
-import MemberBounce from "@/components/auth/member-bounce";
 
 export const dynamic = "force-dynamic";
 
-/* Signed-out-only zone (FR28). This route is served through the locale
-   rewriter, where this build swallows server-side redirect()s — so the
-   DB-backed session check here renders a client bounce for members
-   instead. Non-proxied auth routes keep plain server redirects. */
-export default async function LoginLayout({ children }: { children: ReactNode }) {
-  const pass = await readValidPass("session");
-  if (pass) return <MemberBounce target="/dashboard" />;
+/* Login page: always visible, no session check needed.
+   If a session happens to be present (e.g. from missed cleanup),
+   the user stays on login rather than being bounced, avoiding
+   hydration mismatch after signout. */
+export default function LoginLayout({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
