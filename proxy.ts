@@ -21,7 +21,10 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
+  // Farmer-app and auth-app paths are REAL routes outside [locale] (English
+  // at launch) — excluding them keeps them off the locale rewriter entirely;
+  // a rewritten /verify would fall into the [...rest] catch-all instead.
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|dashboard|farms|advisor|detect|prices|notifications|settings|more|records|forgot-password|reset-password).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|dashboard|farms|advisor|detect|prices|notifications|settings|more|records|forgot-password|reset-password|verify|weather|onboarding).*)",
   ],
 };

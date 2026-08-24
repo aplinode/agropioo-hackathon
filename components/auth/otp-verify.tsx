@@ -4,16 +4,30 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRightIcon, AlertTriangleIcon } from "@/components/icons";
 
 const CODE_LENGTH = 6;
-const MAX_ATTEMPTS = 5;
-const RESEND_COOLDOWN_SECONDS = 30;
+const MAX_ATTEMPTS = 5; // cosmetic mirror of the server-side per-code cap
+const RESEND_COOLDOWN_SECONDS = 60;
 
-type VerifyStatus = "idle" | "loading" | "error" | "locked";
+export type OtpSubmitResult =
+  | { status: "ok" }
+  | { status: "retry"; message?: string }
+  | { status: "eject" };
+
+export type OtpResendResult =
+  | { status: "ok"; demoCode?: string }
+  | { status: "retry"; message?: string }
+  | { status: "eject" };
 
 type OtpVerifyProps = {
-  /** "signin" = first-login verification · "reset" = password-reset step */
-  context: "signin" | "reset";
-  /** Destination shown masked, e.g. a***@gmail.com */
+  /** "signup" = email verification after sign-up · "reset" = password-reset step */
+  context: "signup" | "reset";
+  /** Destination shown masked, e.g. a•••@gmail.com */
   email: string;
+  /** Checks the code against the real Route Handler; fatal results eject. */
+  submitCode: (code: string) => Promise<OtpSubmitResult>;
+  /** Requests a fresh code from the real resend endpoint. */
+  resendCode: () => Promise<OtpResendResult>;
+  /** Rendered ONLY when the FR17 demo gate produced it — never otherwise. */
+  demoCode?: string;
   /** Called after the correct code is verified — parent owns the hand-off. */
   onVerified: () => void;
   /** Escape-hatch label, e.g. "Use a different account" or "Back". */
@@ -21,41 +35,31 @@ type OtpVerifyProps = {
   onEscape: () => void;
 };
 
-export function maskEmail(email: string): string {
-  const atIndex = email.indexOf("@");
-  if (atIndex <= 0) return `•••@${email}`;
-  const local = email.slice(0, atIndex);
-  const domain = email.slice(atIndex);
-  return `${local[0]}•••${domain}`;
-}
-
 function formatCooldown(seconds: number): string {
   return `0:${String(seconds).padStart(2, "0")}`;
 }
 
-function generateDemoCode(): string {
-  return String(Math.floor(100000 + Math.random() * 900000));
-}
-
-/* Shared 6-digit verification screen (UI-only demo build).
-   Used by first-login verification (context "signin") and as step 2 of
-   password recovery (context "reset"). A labelled demo banner reveals the
-   code so the flow can be walked without an inbox.
+/* Shared 6-digit verification screen serving BOTH purposes (FR12): signup
+   verification and step 2 of password recovery. Layout, inputs, and rules
+   are identical; context copy and escape hatches switch per purpose.
    Greens + whites/neutrals only: wrong-code states lean on deep-forest
    borders, an alert icon, and words — never a second hue. */
 export default function OtpVerify({
   context,
   email,
+  submitCode,
+  resendCode,
+  demoCode,
   onVerified,
   escapeLabel,
   onEscape,
 }: OtpVerifyProps) {
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
-  const [status, setStatus] = useState<VerifyStatus>("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "error" | "locked">("idle");
   const [attempts, setAttempts] = useState(0);
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
-  const [demoCode, setDemoCode] = useState(() => "482913");
-  const [resentNotice, setResentNotice] = useState(false);
+  const [bannerCode, setBannerCode] = useState<string | undefined>(demoCode);
+  const [notice, setNotice] = useState<string | null>(null);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -73,7 +77,6 @@ export default function OtpVerify({
   const code = digits.join("");
   const isComplete = digits.every((digit) => digit !== "");
   const attemptsLeft = MAX_ATTEMPTS - attempts;
-  const maskedEmail = maskEmail(email);
 
   function focusBox(index: number) {
     const clamped = Math.min(Math.max(index, 0), CODE_LENGTH - 1);
@@ -83,23 +86,24 @@ export default function OtpVerify({
 
   function clearBoxes(focusFirst: boolean) {
     setDigits(Array(CODE_LENGTH).fill(""));
+    setNotice(null);
     if (focusFirst) {
       requestAnimationFrame(() => focusBox(0));
     }
   }
 
-  async function submitCode(candidate: string) {
-    if (candidate.length !== CODE_LENGTH || status === "loading" || status === "locked") return;
+  async function checkCode(candidate: string) {
+    if (candidate.length !== CODE_LENGTH || status === "loading") return;
     setStatus("loading");
-    // Demo verification. Swap for the Route Handler call once wired.
-    await new Promise((resolve) => setTimeout(resolve, 700));
-    if (candidate === demoCode) {
+    const result = await submitCode(candidate);
+    if (result.status === "ok") {
       onVerified();
       return;
     }
+    if (result.status === "eject") return; // parent navigated away
     const nextAttempts = attempts + 1;
     setAttempts(nextAttempts);
-    if (nextAttempts >= MAX_ATTEMPTS) {
+    if (nextAttempts >= MAX_ATTEMPTS || result.message === "dead") {
       setStatus("locked");
       return;
     }
@@ -119,7 +123,7 @@ export default function OtpVerify({
     if (index < CODE_LENGTH - 1) {
       focusBox(index + 1);
     } else if (next.every((digit) => digit !== "")) {
-      void submitCode(next.join(""));
+      void checkCode(next.join(""));
     }
   }
 
@@ -146,7 +150,7 @@ export default function OtpVerify({
     setDigits(next);
     const filledCount = Math.min(clean.length, CODE_LENGTH);
     if (clean.length >= CODE_LENGTH) {
-      void submitCode(next.join(""));
+      void checkCode(next.join(""));
     } else {
       requestAnimationFrame(() => focusBox(filledCount));
     }
@@ -158,39 +162,47 @@ export default function OtpVerify({
       focusBox(firstEmpty === -1 ? 0 : firstEmpty);
       return;
     }
-    void submitCode(code);
+    void checkCode(code);
   }
 
-  function handleResend() {
+  async function handleResend() {
     if (cooldown > 0 || status === "loading") return;
-    setDemoCode(generateDemoCode());
+    setStatus("loading");
+    const result = await resendCode();
+    if (result.status === "eject") return; // parent navigated away
+    if (result.status === "retry") {
+      setStatus("idle");
+      setNotice(result.message ?? "Couldn’t send a new code yet — try again shortly.");
+      return;
+    }
+    if (result.demoCode) setBannerCode(result.demoCode);
     setAttempts(0);
     setStatus("idle");
-    setResentNotice(true);
+    setNotice("A fresh code is on its way.");
     setCooldown(RESEND_COOLDOWN_SECONDS);
     clearBoxes(true);
   }
 
-  const heading = context === "signin" ? "Verify it’s you" : "Check your email";
+  const heading = context === "signup" ? "Verify Your Email" : "Check Your Email";
+  const eyebrow = context === "signup" ? "Email verification" : "Step 2 · Verification";
 
   return (
     <div>
-      <p className="eyebrow text-agro-canopy">
-        {context === "signin" ? "Security check" : "Step 2 · Verification"}
-      </p>
+      <p className="eyebrow text-agro-canopy">{eyebrow}</p>
       <h1 className="display-heading mt-3 font-display text-3xl font-bold tracking-tight text-agro-ink sm:text-4xl">
         {heading}
       </h1>
       <p className="mt-3 leading-relaxed text-agro-slate">
-        {context === "signin"
-          ? `We sent a 6-digit code to ${maskedEmail}. Enter it below to secure your sign-in.`
-          : `We sent a 6-digit code to ${maskedEmail}. Enter it below to continue.`}
+        We sent a 6-digit code to <strong className="font-semibold text-agro-ink">{email}</strong>.
+        Enter it below to continue.
       </p>
 
-      {/* Demo affordance — removable once real code delivery exists. */}
-      <p className="mt-5 rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 font-mono text-xs tracking-wide text-agro-slate">
-        DEMO ONLY · Verification code: <strong className="text-agro-ink">{demoCode}</strong> · no email is sent
-      </p>
+      {/* Demo affordance — renders ONLY when the FR17 gate delivered a code. */}
+      {bannerCode && (
+        <p className="mt-5 rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 font-mono text-xs tracking-wide text-agro-slate">
+          DEMO ONLY · Verification code: <strong className="text-agro-ink">{bannerCode}</strong> · no email was sent
+        </p>
+      )}
 
       <div
         className="mt-6 flex items-center justify-between gap-2 sm:gap-3"
@@ -247,8 +259,8 @@ export default function OtpVerify({
             Too many incorrect attempts. Request a new code below to continue.
           </p>
         )}
-        {status !== "error" && status !== "locked" && resentNotice && (
-          <p className="text-sm text-agro-canopy">A fresh code is on its way.</p>
+        {status !== "error" && status !== "locked" && notice && (
+          <p className="text-sm text-agro-canopy">{notice}</p>
         )}
       </div>
 
@@ -288,7 +300,7 @@ export default function OtpVerify({
         ) : (
           <button
             type="button"
-            onClick={handleResend}
+            onClick={() => void handleResend()}
             className="inline-flex h-11 min-w-11 cursor-pointer items-center justify-center rounded-md px-1 font-semibold text-agro-canopy underline-offset-4 transition-colors hover:text-agro-forest hover:underline"
           >
             Resend code
