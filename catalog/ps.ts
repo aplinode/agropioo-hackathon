@@ -314,7 +314,7 @@ export const ps: Partial<Record<CatalogKey, string>> = {
     "پاک تاریخچه د پورونو، پیرودونکو، بیمې یا راتلونکي فصلي پرېکړې لپاره چمتو پاتې کیږي.",
     "hiw.loop.stepLearn": "زده کړه",
   "hiw.loop.stepImprove": "ښه کړه",
-"hiw.loop.diagramLabel": "کړۍ ډیاګرام: پوښتنه، کار، ثبت، زده کړه، ښه کول",
+  "hiw.loop.diagramLabel": "کړۍ ډیاګرام: پوښتنه، کار، ثبت، زده کړه، ښه کول",
   "hiw.loop.centerSeason": "فصل",
   "hiw.loop.centerLoop": "سایکل",
   "hiw.loop.caption": "هر فصل، له تېري څخه غوره",

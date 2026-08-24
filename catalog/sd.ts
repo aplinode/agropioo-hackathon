@@ -314,7 +314,7 @@ export const sd: Partial<Record<CatalogKey, string>> = {
     "صاف تاريخ قرضن، خريدارن، بيمي يا ايندڙ فصل جي فيصلي لاءِ تيار رهي ٿي.",
     "hiw.loop.stepLearn": "سکھو",
   "hiw.loop.stepImprove": "بھتر ڪريو",
-"hiw.loop.diagramLabel": "گول چڪر خاڪو: پڇو، ڪم ڪريو، رڪارڈ ڪريو، سکو، بھتر ڪريو",
+  "hiw.loop.diagramLabel": "گول چڪر خاڪو: پڇو، ڪم ڪريو، رڪارڈ ڪريو، سکو، بھتر ڪريو",
   "hiw.loop.centerSeason": "موسم",
   "hiw.loop.centerLoop": "چڪر",
   "hiw.loop.caption": "هر موسم، پوئتي کان بھتر",

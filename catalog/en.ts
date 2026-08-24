@@ -316,7 +316,7 @@ export const en = {
     "A clean history stays ready for loans, buyers, insurance, or the next crop decision.",
     "hiw.loop.stepLearn": "Learn",
   "hiw.loop.stepImprove": "Improve",
-"hiw.loop.diagramLabel": "Circular loop diagram: ask, act, record, learn, improve",
+  "hiw.loop.diagramLabel": "Circular loop diagram: ask, act, record, learn, improve",
   "hiw.loop.centerSeason": "SEASON",
   "hiw.loop.centerLoop": "LOOP",
   "hiw.loop.caption": "Har season, pichle se behtar",

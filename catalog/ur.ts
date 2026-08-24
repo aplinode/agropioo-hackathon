@@ -314,7 +314,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
     "صاف تاریخ قرضے، خریدار، انشورنس یا اگلی فصل کے فیصلے کے لیے تیار رہتی ہے۔",
     "hiw.loop.stepLearn": "سیکھیں",
   "hiw.loop.stepImprove": "بہتر بنائیں",
-"hiw.loop.diagramLabel": "گول چکر خاکہ: پوچھیں، کام کریں، ریکارڈ کریں، سیکھیں، بہتر بنائیں",
+  "hiw.loop.diagramLabel": "گول چکر خاکہ: پوچھیں، کام کریں، ریکارڈ کریں، سیکھیں، بہتر بنائیں",
   "hiw.loop.centerSeason": "موسم",
   "hiw.loop.centerLoop": "چکر",
   "hiw.loop.caption": "ہر موسم، پچھلے سے بہتر",

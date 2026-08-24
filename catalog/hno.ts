@@ -314,7 +314,7 @@ export const hno: Partial<Record<CatalogKey, string>> = {
     "صاف تاریخ قرضے، خریدار، بیمہ یا اگلی فصل دے فیصلے لئی تیار راہندا اے۔",
     "hiw.loop.stepLearn": "سکھو",
   "hiw.loop.stepImprove": "بہتر کرو",
-"hiw.loop.diagramLabel": "گول چکر خاکہ: پچھو، کم کرو، ریکارڈ کرو، سکھو، بہتر کرو",
+  "hiw.loop.diagramLabel": "گول چکر خاکہ: پچھو، کم کرو، ریکارڈ کرو، سکھو، بہتر کرو",
   "hiw.loop.centerSeason": "سیزن",
   "hiw.loop.centerLoop": "چکر",
   "hiw.loop.caption": "ہر سیزن، پچھلے توں بہتر",
