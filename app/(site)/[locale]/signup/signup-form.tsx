@@ -3,42 +3,106 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { signupSchema } from "@/lib/validation/auth";
-import { COPY } from "@/lib/auth/copy";
 import { stashDemoCode } from "@/lib/auth/demo-code";
+import { splitLocalePrefix } from "@/lib/i18n/logic";
 import logoOnDark from "@/references/Agropioo-logo-footer.png";
 import logoOnLight from "@/references/Agropioo-logo-withoutbg-text.png";
+
+export type SignupErrorCopy = {
+  nameRequired: string;
+  emailRequired: string;
+  emailInvalid: string;
+  passwordRequired: string;
+  passwordMin: string;
+  passwordMax: string;
+  phoneInvalid: string;
+  confirmRequired: string;
+  termsRequired: string;
+  passwordMismatch: string;
+  tooManyAttempts: string;
+  serverError: string;
+};
+
+export type SignupCopy = {
+  productOf: string;
+  brandHeadingA: string;
+  brandHeadingB: string;
+  profileAria: string;
+  profileBadge: string;
+  profileRows: { label: string; value: string }[];
+  includedPoints: [string, string, string];
+  backHome: string;
+  eyebrow: string;
+  heading: string;
+  sub: string;
+  registeredTitle: string;
+  registeredBody: string;
+  signIn: string;
+  resetPassword: string;
+  nameLabel: string;
+  namePlaceholder: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  phoneLabel: string;
+  phoneOptional: string;
+  phonePlaceholder: string;
+  phoneNote: string;
+  passwordLabel: string;
+  passwordPlaceholder: string;
+  confirmPasswordLabel: string;
+  confirmPasswordPlaceholder: string;
+  showPassword: string;
+  hidePassword: string;
+  strengthLabels: [string, string, string, string];
+  termsPrefix: string;
+  termsTos: string;
+  termsAnd: string;
+  termsPrivacy: string;
+  termsEnd: string;
+  submit: string;
+  submitting: string;
+  haveAccount: string;
+  footerStrip: string;
+  errors: SignupErrorCopy;
+};
 
 type SignupInput = z.input<typeof signupSchema>;
 type SignupOutput = z.output<typeof signupSchema>;
 
-const profileRows = [
-  { label: "District", value: "Multan" },
-  { label: "Crop", value: "Wheat · Rabi" },
-  { label: "Advisory language", value: "Roman Urdu" },
-];
+/* Zod schemas are shared with the Route Handlers and speak English literals
+   (plan K6/K11); this table maps each literal to its translated string. The
+   English literal itself is the fallback when no entry matches. */
+const ERROR_KEYS: Record<string, keyof Omit<SignupErrorCopy, "tooManyAttempts" | "serverError">> = {
+  "Enter your full name.": "nameRequired",
+  "Enter your email address.": "emailRequired",
+  "Enter a valid email address.": "emailInvalid",
+  "Choose a password.": "passwordRequired",
+  "Use at least 8 characters.": "passwordMin",
+  "Use at most 64 characters.": "passwordMax",
+  "Enter a valid phone number.": "phoneInvalid",
+  "Repeat your password.": "confirmRequired",
+  "Please accept the terms to continue.": "termsRequired",
+  "Passwords do not match.": "passwordMismatch",
+};
 
-const includedPoints = [
-  "Personalised advisor from day one",
-  "Weather-aware guidance for your district",
-  "Farm records that sharpen every season",
-];
-
-function strengthOf(password: string): { score: number; label: string } {
+function strengthOf(password: string): number {
   let score = 0;
   if (password.length >= 8) score += 1;
   if (/[A-Za-z]/.test(password) && /\d/.test(password)) score += 1;
   if (/[^A-Za-z0-9]/.test(password) && password.length >= 10) score += 1;
-  const labels = ["Too short", "Okay", "Good", "Strong"];
-  return { score, label: labels[score] };
+  return score;
 }
 
-export default function SignupForm() {
+export default function SignupForm({ copy }: { copy: SignupCopy }) {
   const router = useRouter();
+  const pathname = usePathname() || "";
+  const { locale } = splitLocalePrefix(pathname);
+  const prefix = locale ? `/${locale}` : "";
   const [registered, setRegistered] = useState(false);
   const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -61,6 +125,9 @@ export default function SignupForm() {
 
   const password = watch("password");
   const strength = useMemo(() => strengthOf(password ?? ""), [password]);
+
+  const errorText = (message?: string) =>
+    (message && ERROR_KEYS[message] ? copy.errors[ERROR_KEYS[message]] : message) ?? "";
 
   async function onSubmit(values: SignupOutput) {
     setServerError("");
@@ -86,10 +153,10 @@ export default function SignupForm() {
       return;
     }
     if (payload.error?.code === "rate_limited") {
-      setServerError(COPY.TOO_MANY_ATTEMPTS);
+      setServerError(copy.errors.tooManyAttempts);
       return;
     }
-    setServerError(payload.error?.message ?? COPY.SERVER_ERROR);
+    setServerError(payload.error?.message ?? copy.errors.serverError);
   }
 
   const inputClass = (hasError?: { message?: string }) =>
@@ -123,31 +190,31 @@ export default function SignupForm() {
         </svg>
 
         <div className="relative">
-          <Link href="/" className="inline-flex items-center">
+          <Link href={prefix ? prefix : "/"} className="inline-flex items-center">
             <Image src={logoOnDark} alt="Agropioo" className="h-14 w-auto" />
           </Link>
           <p className="mt-2 font-mono text-xs uppercase tracking-[0.22em] text-agro-sprout/80">
-            A product of Aplinode
+            {copy.productOf}
           </p>
         </div>
 
         <div className="relative max-w-md">
           <h2 className="display-heading font-display text-4xl font-bold leading-[1.25] tracking-tight xl:text-[2.9rem]">
-            Start Your Season
+            {copy.brandHeadingA}
             <br />
-            With Intelligence.
+            {copy.brandHeadingB}
           </h2>
 
           <div
             className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5"
             role="img"
-            aria-label="Preview of the farm profile created after sign up"
+            aria-label={copy.profileAria}
           >
             <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-agro-sprout">
-              Farm profile · ready in a minute
+              {copy.profileBadge}
             </p>
             <ul className="mt-3 divide-y divide-white/10">
-              {profileRows.map((row) => (
+              {copy.profileRows.map((row) => (
                 <li key={row.label} className="flex items-baseline justify-between gap-3 py-2.5">
                   <span className="text-xs uppercase tracking-wide text-white/60">{row.label}</span>
                   <span className="font-mono text-sm font-semibold text-white">{row.value}</span>
@@ -157,7 +224,7 @@ export default function SignupForm() {
           </div>
 
           <ul className="mt-8 space-y-3">
-            {includedPoints.map((point) => (
+            {copy.includedPoints.map((point) => (
               <li key={point} className="flex items-center gap-3 text-agro-sprout/90">
                 <span
                   className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-agro-canopy"
@@ -174,34 +241,31 @@ export default function SignupForm() {
         </div>
 
         <p className="relative font-mono text-xs uppercase tracking-[0.18em] text-agro-sprout/70">
-          Built for Pakistan · Ready for the world
+          {copy.footerStrip}
         </p>
       </aside>
 
       {/* Form panel */}
       <main className="flex flex-col bg-white px-5 py-8 sm:px-10 lg:px-14 xl:px-20">
         <div className="flex items-center justify-between lg:hidden">
-          <Link href="/" className="inline-flex items-center">
+          <Link href={prefix ? prefix : "/"} className="inline-flex items-center">
             <Image src={logoOnLight} alt="Agropioo" className="h-12 w-auto" />
           </Link>
         </div>
 
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-14 lg:py-0">
           <Link
-            href="/"
+            href={prefix ? prefix : "/"}
             className="mb-10 inline-flex w-fit items-center gap-2 text-sm font-medium text-agro-canopy underline-offset-4 hover:underline"
           >
-            <span aria-hidden="true">←</span> Back to home
+            <span aria-hidden="true">←</span> {copy.backHome}
           </Link>
 
-          <p className="eyebrow text-agro-canopy">Create account</p>
+          <p className="eyebrow text-agro-canopy">{copy.eyebrow}</p>
           <h1 className="display-heading mt-3 font-display text-3xl font-bold tracking-tight text-agro-ink sm:text-4xl">
-            Bring Your Farm To Agropioo
+            {copy.heading}
           </h1>
-          <p className="mt-3 leading-relaxed text-agro-slate">
-            One account for your advisor, records, and every advisory this
-            season.
-          </p>
+          <p className="mt-3 leading-relaxed text-agro-slate">{copy.sub}</p>
 
           {registered ? (
             /* Explicit registered-message block with working links (FR2). */
@@ -209,25 +273,22 @@ export default function SignupForm() {
               className="mt-8 rounded-xl border border-agro-clay bg-agro-paper px-5 py-5"
               role="alert"
             >
-              <p className="text-sm font-semibold text-agro-ink">
-                This email is already registered.
-              </p>
+              <p className="text-sm font-semibold text-agro-ink">{copy.registeredTitle}</p>
               <p className="mt-1.5 text-sm leading-relaxed text-agro-slate">
-                Sign in instead, or reset your password if you&apos;ve forgotten
-                it — your farm is waiting where you left it.
+                {copy.registeredBody}
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <Link
-                  href="/login"
+                  href={`${prefix}/login`}
                   className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-agro-forest"
                 >
-                  Sign in
+                  {copy.signIn}
                 </Link>
                 <Link
-                  href="/forgot-password"
+                  href={`${prefix}/forgot-password`}
                   className="inline-flex h-11 items-center justify-center rounded-lg border border-agro-clay px-5 text-sm font-semibold text-agro-canopy transition-colors hover:border-agro-canopy hover:bg-agro-mint"
                 >
-                  Reset password
+                  {copy.resetPassword}
                 </Link>
               </div>
             </div>
@@ -245,13 +306,13 @@ export default function SignupForm() {
               <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 space-y-5">
                 <div>
                   <label htmlFor="signup-name" className="block text-sm font-semibold text-agro-ink">
-                    Full name
+                    {copy.nameLabel}
                   </label>
                   <input
                     id="signup-name"
                     type="text"
                     autoComplete="name"
-                    placeholder="e.g. Muhammad Ahmad"
+                    placeholder={copy.namePlaceholder}
                     aria-invalid={Boolean(errors.name)}
                     aria-describedby={errors.name ? "signup-name-error" : undefined}
                     {...register("name")}
@@ -259,20 +320,21 @@ export default function SignupForm() {
                   />
                   {errors.name && (
                     <p id="signup-name-error" className="mt-1.5 text-sm text-agro-error">
-                      {errors.name.message}
+                      {errorText(errors.name.message)}
                     </p>
                   )}
                 </div>
 
                 <div>
                   <label htmlFor="signup-email" className="block text-sm font-semibold text-agro-ink">
-                    Email address
+                    {copy.emailLabel}
                   </label>
                   <input
                     id="signup-email"
                     type="email"
+                    dir="ltr"
                     autoComplete="email"
-                    placeholder="you@example.com"
+                    placeholder={copy.emailPlaceholder}
                     aria-invalid={Boolean(errors.email)}
                     aria-describedby={errors.email ? "signup-email-error" : undefined}
                     {...register("email")}
@@ -280,21 +342,22 @@ export default function SignupForm() {
                   />
                   {errors.email && (
                     <p id="signup-email-error" className="mt-1.5 text-sm text-agro-error">
-                      {errors.email.message}
+                      {errorText(errors.email.message)}
                     </p>
                   )}
                 </div>
 
                 <div>
                   <label htmlFor="signup-phone" className="block text-sm font-semibold text-agro-ink">
-                    Phone number{" "}
-                    <span className="font-normal text-agro-slate">(optional)</span>
+                    {copy.phoneLabel}{" "}
+                    <span className="font-normal text-agro-slate">{copy.phoneOptional}</span>
                   </label>
                   <input
                     id="signup-phone"
                     type="tel"
+                    dir="ltr"
                     autoComplete="tel"
-                    placeholder="+92 3XX XXXXXXX"
+                    placeholder={copy.phonePlaceholder}
                     aria-invalid={Boolean(errors.phone)}
                     aria-describedby={errors.phone ? "signup-phone-error" : undefined}
                     {...register("phone")}
@@ -302,25 +365,24 @@ export default function SignupForm() {
                   />
                   {errors.phone ? (
                     <p id="signup-phone-error" className="mt-1.5 text-sm text-agro-error">
-                      {errors.phone.message}
+                      {errorText(errors.phone.message)}
                     </p>
                   ) : (
-                    <p className="mt-1.5 text-xs text-agro-slate">
-                      For SMS alerts when you are offline.
-                    </p>
+                    <p className="mt-1.5 text-xs text-agro-slate">{copy.phoneNote}</p>
                   )}
                 </div>
 
                 <div>
                   <label htmlFor="signup-password" className="block text-sm font-semibold text-agro-ink">
-                    Password
+                    {copy.passwordLabel}
                   </label>
                   <div className="relative mt-2">
                     <input
                       id="signup-password"
                       type={showPassword ? "text" : "password"}
+                      dir="ltr"
                       autoComplete="new-password"
-                      placeholder="At least 8 characters"
+                      placeholder={copy.passwordPlaceholder}
                       aria-invalid={Boolean(errors.password)}
                       aria-describedby="signup-password-hint"
                       {...register("password")}
@@ -331,7 +393,7 @@ export default function SignupForm() {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute inset-y-0 right-1 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy"
                       aria-pressed={showPassword}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={showPassword ? copy.hidePassword : copy.showPassword}
                     >
                       {showPassword ? (
                         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
@@ -353,7 +415,7 @@ export default function SignupForm() {
                           className={`h-1 flex-1 rounded-full ${
                             password?.length === 0
                               ? "bg-agro-clay"
-                              : segment < strength.score
+                              : segment < strength
                                 ? "bg-agro-success"
                                 : "bg-agro-clay"
                           }`}
@@ -361,23 +423,24 @@ export default function SignupForm() {
                       ))}
                     </div>
                     <span className="w-16 text-right font-mono text-[0.65rem] uppercase tracking-wide text-agro-slate">
-                      {strength.label}
+                      {copy.strengthLabels[strength]}
                     </span>
                   </div>
                   {errors.password && (
-                    <p className="mt-1.5 text-sm text-agro-error">{errors.password.message}</p>
+                    <p className="mt-1.5 text-sm text-agro-error">{errorText(errors.password.message)}</p>
                   )}
                 </div>
 
                 <div>
                   <label htmlFor="signup-confirm" className="block text-sm font-semibold text-agro-ink">
-                    Confirm password
+                    {copy.confirmPasswordLabel}
                   </label>
                   <input
                     id="signup-confirm"
                     type={showPassword ? "text" : "password"}
+                    dir="ltr"
                     autoComplete="new-password"
-                    placeholder="Repeat your password"
+                    placeholder={copy.confirmPasswordPlaceholder}
                     aria-invalid={Boolean(errors.confirmPassword)}
                     aria-describedby={errors.confirmPassword ? "signup-confirm-error" : undefined}
                     {...register("confirmPassword")}
@@ -385,7 +448,7 @@ export default function SignupForm() {
                   />
                   {errors.confirmPassword && (
                     <p id="signup-confirm-error" className="mt-1.5 text-sm text-agro-error">
-                      {errors.confirmPassword.message}
+                      {errorText(errors.confirmPassword.message)}
                     </p>
                   )}
                 </div>
@@ -399,19 +462,19 @@ export default function SignupForm() {
                       {...register("terms")}
                     />
                     <span>
-                      I agree to the{" "}
+                      {copy.termsPrefix}{" "}
                       <a href="#" className="font-medium text-agro-canopy underline-offset-4 hover:underline">
-                        Terms of Service
+                        {copy.termsTos}
                       </a>{" "}
-                      and{" "}
+                      {copy.termsAnd}{" "}
                       <a href="#" className="font-medium text-agro-canopy underline-offset-4 hover:underline">
-                        Privacy Policy
+                        {copy.termsPrivacy}
                       </a>
-                      .
+                      {copy.termsEnd}
                     </span>
                   </label>
                   {errors.terms && (
-                    <p className="mt-1.5 text-sm text-agro-error">{errors.terms.message}</p>
+                    <p className="mt-1.5 text-sm text-agro-error">{errorText(errors.terms.message)}</p>
                   )}
                 </div>
 
@@ -426,10 +489,10 @@ export default function SignupForm() {
                         <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25" />
                         <path fill="currentColor" opacity="0.75" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                       </svg>
-                      Creating account…
+                      {copy.submitting}
                     </>
                   ) : (
-                    "Create my account"
+                    copy.submit
                   )}
                 </button>
               </form>
@@ -438,12 +501,12 @@ export default function SignupForm() {
 
           {!registered && (
             <p className="mt-8 text-sm leading-relaxed text-agro-slate">
-              Already have an account?{" "}
+              {copy.haveAccount}{" "}
               <Link
-                href="/login"
+                href={`${prefix}/login`}
                 className="font-semibold text-agro-canopy underline-offset-4 hover:underline"
               >
-                Sign in
+                {copy.signIn}
               </Link>
             </p>
           )}
