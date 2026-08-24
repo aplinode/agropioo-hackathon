@@ -8,7 +8,6 @@ import { COPY } from "@/lib/auth/copy";
 import { isResendInCooldown } from "@/lib/auth/logic";
 import { RATE_RULES, hitLimiter } from "@/lib/auth/rate-limit";
 import { readValidPass, type PassStateRow } from "@/lib/auth/pass";
-import type { CheckedCodeRow } from "@/lib/auth/code-check";
 import { deliverCode, issueVerificationCode } from "@/lib/auth/code-flow";
 
 export async function POST(): Promise<Response> {

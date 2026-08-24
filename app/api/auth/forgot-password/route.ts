@@ -18,8 +18,6 @@ import { forgotSchema } from "@/lib/validation/auth";
 import { mintPass, setPassCookie } from "@/lib/auth/pass";
 import { deliverCode, issueVerificationCode } from "@/lib/auth/code-flow";
 
-type UserRow = { id: string };
-
 export async function POST(request: Request): Promise<Response> {
   try {
     const parsed = forgotSchema.safeParse(await readJsonBody(request));

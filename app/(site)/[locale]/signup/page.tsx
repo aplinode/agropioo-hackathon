@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { locale } from "next/root-params";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { requireGuestPage } from "@/lib/auth/guards";
 import { isLocale, type Locale as LocaleCode } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/server";
 import SignupForm from "./signup-form";
@@ -14,9 +13,6 @@ export const metadata: Metadata = {
 };
 
 export default async function SignupPage() {
-  // Signed-in visitors are pushed to the dashboard (FR28).
-  await requireGuestPage();
-
   const raw = await locale();
   const current: LocaleCode = isLocale(raw) ? raw : "en";
   const { t } = await getDictionary(current);

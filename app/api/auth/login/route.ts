@@ -23,7 +23,6 @@ import { decideLoginRedirect } from "@/lib/auth/logic";
 import { deliverCode, issueVerificationCode } from "@/lib/auth/code-flow";
 import bcrypt from "bcryptjs";
 
-const BCRYPT_COST = 10;
 /** Fixed hash of an unrelated secret string — never matches user input by
  * accident; exists purely to equalize timing for unknown emails (K8). */
 const DUMMY_HASH = "$2b$10$gEVyLdwve7Sp00tYKm9tzueaS6qTARdH0tMp2ZV1kVtC/1ZOvEQOS";

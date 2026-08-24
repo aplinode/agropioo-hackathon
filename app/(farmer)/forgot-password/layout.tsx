@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
+
+export const dynamic = "force-dynamic";
 import { requireGuestPage } from "@/lib/auth/guards";
 
 /* Signed-out-only zone (FR23/FR28): arriving with a valid session bounces
@@ -7,3 +9,4 @@ export default async function ForgotPasswordLayout({ children }: { children: Rea
   await requireGuestPage();
   return <>{children}</>;
 }
+

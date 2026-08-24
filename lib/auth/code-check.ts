@@ -61,7 +61,7 @@ export async function runCodeCheck(
   }
 
   const pass = await readValidPass(purpose);
-  if (!pass || pass.kind === "session") {
+  if (!pass) {
     // Missing/forged/expired/wrong-type/consumed pass — fatal for the UI,
     // which ejects on this message (stale-tab rule).
     return {
@@ -106,14 +106,14 @@ export async function runCodeCheck(
     const supabase = getSupabase();
     await supabase
       .from("verification_codes")
-      .set({
+      .update({
         wrong_count: next.nextCodeWrongCount,
         ...(next.codeNowDead ? { dead_at: nowIso } : {}),
       })
       .eq("id", codeRow.id);
     await supabase
       .from("pass_states")
-      .set({
+      .update({
         wrong_total: next.nextPassWrongTotal,
         ...(next.passNowDead ? { dead_at: nowIso } : {}),
       })

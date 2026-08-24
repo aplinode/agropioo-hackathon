@@ -13,7 +13,8 @@ import { stashDemoCode } from "@/lib/auth/demo-code";
 import logoOnDark from "@/references/Agropioo-logo-footer.png";
 import logoOnLight from "@/references/Agropioo-logo-withoutbg-text.png";
 
-type SignupValues = z.output<typeof signupSchema>;
+type SignupInput = z.input<typeof signupSchema>;
+type SignupOutput = z.output<typeof signupSchema>;
 
 const profileRows = [
   { label: "District", value: "Multan" },
@@ -46,7 +47,7 @@ export default function SignupForm() {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<SignupValues>({
+  } = useForm<SignupInput, unknown, SignupOutput>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
       name: "",
@@ -61,7 +62,7 @@ export default function SignupForm() {
   const password = watch("password");
   const strength = useMemo(() => strengthOf(password ?? ""), [password]);
 
-  async function onSubmit(values: SignupValues) {
+  async function onSubmit(values: SignupOutput) {
     setServerError("");
     const response = await fetch("/api/auth/signup", {
       method: "POST",
@@ -91,9 +92,9 @@ export default function SignupForm() {
     setServerError(payload.error?.message ?? COPY.SERVER_ERROR);
   }
 
-  const inputClass = (hasError?: string) =>
+  const inputClass = (hasError?: { message?: string }) =>
     `mt-2 h-12 w-full rounded-lg border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
-      hasError
+      hasError?.message
         ? "border-agro-error focus:border-agro-error focus:ring-agro-error/20"
         : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"
     }`;

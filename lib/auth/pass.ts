@@ -7,6 +7,7 @@
 
 import { randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { SignJWT, jwtVerify } from "jose";
 import { getSupabase } from "@/lib/supabase";
 import { sessionRowIsActive } from "@/lib/auth/logic";
@@ -68,18 +69,9 @@ function signingKey(): Uint8Array {
   return new TextEncoder().encode(secret);
 }
 
-async function signToken(claims: PassClaims, ttlSeconds: number): Promise<string> {
-  const issuedAt = Math.floor(Date.now() / 1000);
-  return new SignJWT({ email: claims.email, typ: claims.typ })
-    .setProtectedHeader({ alg: "HS256" })
-    .setSubject(claims.sub)
-    .setJti(claims.jti)
-    .setIssuedAt(issuedAt)
-    .setExpirationTime(issuedAt + ttlSeconds)
-    .sign(signingKey());
-}
-
-async function decodeToken(
+/** Signature + type + expiry check with 30 s skew leeway; null on any
+ * failure. Exported so tests pin the real contract (K12). */
+export async function decodePassToken(
   token: string,
   kind: PassKind,
 ): Promise<PassClaims | null> {
@@ -96,6 +88,21 @@ async function decodeToken(
   }
 }
 
+/** Exposed for tests and internal minting; routes go through mintPass(). */
+export async function signPassToken(
+  claims: PassClaims,
+  ttlSeconds: number,
+): Promise<string> {
+  const issuedAt = Math.floor(Date.now() / 1000);
+  return new SignJWT({ email: claims.email, typ: claims.typ })
+    .setProtectedHeader({ alg: "HS256" })
+    .setSubject(claims.sub)
+    .setJti(claims.jti)
+    .setIssuedAt(issuedAt)
+    .setExpirationTime(issuedAt + ttlSeconds)
+    .sign(signingKey());
+}
+
 /**
  * Mints a pass of `kind`, persists its state row, and returns the signed
  * token. Reset passes carry ONLY the submitted email (K3) — account binding
@@ -108,7 +115,7 @@ export async function mintPass(
   const supabase = getSupabase();
   const jti = randomUUID();
   const expiresAt = new Date(Date.now() + PASS_TTL_SECONDS[kind] * 1000);
-  const token = await signToken(
+  const token = await signPassToken(
     {
       sub: kind === "reset" ? input.email : (input.accountId ?? ""),
       email: input.email,
@@ -176,7 +183,7 @@ async function loadLiveSessionRow(
     .eq("id", claims.jti)
     .maybeSingle();
   const row = data as SessionRow | null;
-  if (!sessionRowIsActive(row, Date.now())) return null;
+  if (!row || !sessionRowIsActive(row, Date.now())) return null;
   const { data: account } = await supabase
     .from("users")
     .select("id")
@@ -186,14 +193,30 @@ async function loadLiveSessionRow(
   return row;
 }
 
-/** Full guard chain for a pass of exactly `kind`; null means rejected. */
+/** Full guard chain for a pass of exactly `kind`; null means rejected.
+ * Overloads let TypeScript narrow the row type per kind at call sites. */
+export async function readValidPass(
+  kind: "verify",
+): Promise<Extract<VerifiedPass, { kind: "verify" }> | null>;
+export async function readValidPass(
+  kind: "reset",
+): Promise<Extract<VerifiedPass, { kind: "reset" }> | null>;
+export async function readValidPass(
+  kind: "verify" | "reset",
+): Promise<Extract<VerifiedPass, { kind: "verify" | "reset" }> | null>;
+export async function readValidPass(
+  kind: "session",
+): Promise<Extract<VerifiedPass, { kind: "session" }> | null>;
 export async function readValidPass(kind: PassKind): Promise<VerifiedPass | null> {
   try {
+    // Auth checks are per-request by definition: stop any prerender/static
+    // pass here so a cached shell can never bypass the guard.
+    await connection();
     const cookieStore = await cookies();
     const token = cookieStore.get(PASS_COOKIE_NAMES[kind])?.value;
     if (!token) return null;
 
-    const claims = await decodeToken(token, kind);
+    const claims = await decodePassToken(token, kind);
     if (!claims) return null;
 
     if (kind === "session") {

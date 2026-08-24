@@ -58,9 +58,9 @@ export default function ResetPasswordForm() {
     setServerError(payload.error?.message ?? COPY.SERVER_ERROR);
   }
 
-  const inputClass = (hasError?: string) =>
+  const inputClass = (hasError?: { message?: string }) =>
     `focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 pr-14 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
-      hasError
+      hasError?.message
         ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
         : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
     }`;
