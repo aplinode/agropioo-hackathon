@@ -3,26 +3,70 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { loginSchema } from "@/lib/validation/auth";
-import { COPY } from "@/lib/auth/copy";
 import { stashDemoCode } from "@/lib/auth/demo-code";
+import { splitLocalePrefix } from "@/lib/i18n/logic";
 import logoOnDark from "@/references/Agropioo-logo-footer.png";
 import logoOnLight from "@/references/Agropioo-logo-withoutbg-text.png";
 
+export type AuthErrorCopy = {
+  emailRequired: string;
+  emailInvalid: string;
+  loginPasswordRequired: string;
+  tooManyAttempts: string;
+  invalidCredentials: string;
+  serverError: string;
+};
+
+export type LoginCopy = {
+  productOf: string;
+  brandHeadingA: string;
+  brandHeadingB: string;
+  demoAria: string;
+  demoUser: string;
+  demoAdvisorLabel: string;
+  demoAdvisorBody: string;
+  points: [string, string, string];
+  backHome: string;
+  eyebrow: string;
+  heading: string;
+  sub: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  passwordLabel: string;
+  passwordPlaceholder: string;
+  showPassword: string;
+  hidePassword: string;
+  forgot: string;
+  submit: string;
+  submitting: string;
+  noAccount: string;
+  noAccountEnd: string;
+  createAccount: string;
+  footerStrip: string;
+  errors: AuthErrorCopy;
+};
+
 type LoginValues = z.output<typeof loginSchema>;
 
-const platformPoints = [
-  "AI advisor in your own language",
-  "Satellite crop health monitoring",
-  "Digital records for every season",
-];
+/* Zod schemas are shared with the Route Handlers and speak English literals
+   (plan K6/K11); this table maps each literal to its translated string. The
+   English literal itself is the fallback when no entry matches. */
+const ERROR_KEYS: Record<string, keyof Omit<AuthErrorCopy, "tooManyAttempts" | "invalidCredentials" | "serverError">> = {
+  "Enter your email address.": "emailRequired",
+  "Enter a valid email address.": "emailInvalid",
+  "Enter your password.": "loginPasswordRequired",
+};
 
-export default function LoginForm() {
+export default function LoginForm({ copy }: { copy: LoginCopy }) {
   const router = useRouter();
+  const pathname = usePathname() || "";
+  const { locale } = splitLocalePrefix(pathname);
+  const prefix = locale ? `/${locale}` : "";
   const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const {
@@ -33,6 +77,9 @@ export default function LoginForm() {
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
+
+  const errorText = (message?: string) =>
+    (message && ERROR_KEYS[message] ? copy.errors[ERROR_KEYS[message]] : message) ?? "";
 
   async function onSubmit(values: LoginValues) {
     setServerError("");
@@ -53,11 +100,11 @@ export default function LoginForm() {
       return;
     }
     if (payload.error?.code === "rate_limited") {
-      setServerError(COPY.TOO_MANY_ATTEMPTS);
+      setServerError(copy.errors.tooManyAttempts);
       return;
     }
     // Unknown email vs wrong password vs malformed body — ONE generic line.
-    setServerError(COPY.INVALID_CREDENTIALS);
+    setServerError(copy.errors.invalidCredentials);
   }
 
   return (
@@ -82,41 +129,40 @@ export default function LoginForm() {
           <circle cx="200" cy="200" r="180" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 10" />
         </svg>
         <div className="relative">
-          <Link href="/" className="inline-flex items-center">
+          <Link href={prefix ? prefix : "/"} className="inline-flex items-center">
             <Image src={logoOnDark} alt="Agropioo" className="h-14 w-auto" />
           </Link>
           <p className="mt-2 font-mono text-xs uppercase tracking-[0.22em] text-agro-sprout/80">
-            A product of Aplinode
+            {copy.productOf}
           </p>
         </div>
 
         <div className="relative max-w-md">
           <h2 className="display-heading font-display text-4xl font-bold leading-[1.25] tracking-tight xl:text-[2.9rem]">
-            Your Farm&apos;s Intelligence,
+            {copy.brandHeadingA}
             <br />
-            Waiting Where You Left It.
+            {copy.brandHeadingB}
           </h2>
 
           <div
             className="mt-8 space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5"
             role="img"
-            aria-label="Preview of an Agropioo advisor conversation"
+            aria-label={copy.demoAria}
           >
             <div className="flex justify-end">
               <p className="max-w-[85%] rounded-xl rounded-br-sm bg-agro-canopy px-3.5 py-2.5 text-sm leading-relaxed shadow-sm">
-                Meri gandum ki pattiyan peeli ho rahi hain — kya karoon?
+                {copy.demoUser}
               </p>
             </div>
             <div className="flex justify-start">
               <p className="max-w-[92%] rounded-xl rounded-bl-sm border border-white/10 bg-white/10 px-3.5 py-2.5 text-sm leading-relaxed text-white/90">
-                <span className="font-semibold text-agro-sprout">Do causes:</span>{" "}
-                water stress ya nitrogen ki kami. Pehle subah cool hours mein
-                pani dein.
+                <span className="font-semibold text-agro-sprout">{copy.demoAdvisorLabel}</span>{" "}
+                {copy.demoAdvisorBody}
               </p>
             </div>
           </div>
           <ul className="mt-8 space-y-3">
-            {platformPoints.map((point) => (
+            {copy.points.map((point) => (
               <li key={point} className="flex items-center gap-3 text-agro-sprout/90">
                 <span
                   className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-agro-canopy"
@@ -133,7 +179,7 @@ export default function LoginForm() {
         </div>
 
         <p className="relative font-mono text-xs uppercase tracking-[0.18em] text-agro-sprout/70">
-          Built for Pakistan · Ready for the world
+          {copy.footerStrip}
         </p>
       </aside>
 
@@ -141,26 +187,24 @@ export default function LoginForm() {
       <main className="flex flex-col bg-white px-5 py-8 sm:px-10 lg:px-14 xl:px-20">
         {/* Compact brand header for mobile */}
         <div className="flex items-center justify-between lg:hidden">
-          <Link href="/" className="inline-flex items-center">
+          <Link href={prefix ? prefix : "/"} className="inline-flex items-center">
             <Image src={logoOnLight} alt="Agropioo" className="h-12 w-auto" />
           </Link>
         </div>
 
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-14 lg:py-0">
           <Link
-            href="/"
+            href={prefix ? prefix : "/"}
             className="mb-10 inline-flex w-fit items-center gap-2 text-sm font-medium text-agro-canopy underline-offset-4 hover:underline"
           >
-            <span aria-hidden="true">←</span> Back to home
+            <span aria-hidden="true">←</span> {copy.backHome}
           </Link>
 
-          <p className="eyebrow text-agro-canopy">Sign in</p>
+          <p className="eyebrow text-agro-canopy">{copy.eyebrow}</p>
           <h1 className="display-heading mt-3 font-display text-3xl font-bold tracking-tight text-agro-ink sm:text-4xl">
-            Welcome Back To Your Farm
+            {copy.heading}
           </h1>
-          <p className="mt-3 leading-relaxed text-agro-slate">
-            Sign in to reach your farm&apos;s advisor, records, and advisories.
-          </p>
+          <p className="mt-3 leading-relaxed text-agro-slate">{copy.sub}</p>
 
           {serverError && (
             <div
@@ -177,13 +221,14 @@ export default function LoginForm() {
                 htmlFor="login-email"
                 className="block text-sm font-semibold text-agro-ink"
               >
-                Email address
+                {copy.emailLabel}
               </label>
               <input
                 id="login-email"
                 type="email"
+                dir="ltr"
                 autoComplete="email"
-                placeholder="you@example.com"
+                placeholder={copy.emailPlaceholder}
                 aria-invalid={Boolean(errors.email)}
                 aria-describedby={errors.email ? "login-email-error" : undefined}
                 {...register("email")}
@@ -195,7 +240,7 @@ export default function LoginForm() {
               />
               {errors.email && (
                 <p id="login-email-error" className="mt-1.5 text-sm text-agro-error">
-                  {errors.email.message}
+                  {errorText(errors.email.message)}
                 </p>
               )}
             </div>
@@ -205,14 +250,15 @@ export default function LoginForm() {
                 htmlFor="login-password"
                 className="block text-sm font-semibold text-agro-ink"
               >
-                Password
+                {copy.passwordLabel}
               </label>
               <div className="relative mt-2">
                 <input
                   id="login-password"
                   type={showPassword ? "text" : "password"}
+                  dir="ltr"
                   autoComplete="current-password"
-                  placeholder="Your password"
+                  placeholder={copy.passwordPlaceholder}
                   aria-invalid={Boolean(errors.password)}
                   aria-describedby={errors.password ? "login-password-error" : undefined}
                   {...register("password")}
@@ -227,7 +273,7 @@ export default function LoginForm() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-1 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy"
                   aria-pressed={showPassword}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-label={showPassword ? copy.hidePassword : copy.showPassword}
                 >
                   {showPassword ? (
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
@@ -243,17 +289,17 @@ export default function LoginForm() {
               </div>
               {errors.password && (
                 <p id="login-password-error" className="mt-1.5 text-sm text-agro-error">
-                  {errors.password.message}
+                  {errorText(errors.password.message)}
                 </p>
               )}
             </div>
 
             <div className="flex items-center justify-end">
               <Link
-                href="/forgot-password"
+                href={`${prefix}/forgot-password`}
                 className="text-sm font-medium text-agro-canopy underline-offset-4 transition-colors hover:text-agro-forest hover:underline"
               >
-                Forgot password?
+                {copy.forgot}
               </Link>
             </div>
 
@@ -268,23 +314,23 @@ export default function LoginForm() {
                     <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25" />
                     <path fill="currentColor" opacity="0.75" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                   </svg>
-                  Signing in…
+                  {copy.submitting}
                 </>
               ) : (
-                "Sign in"
+                copy.submit
               )}
             </button>
           </form>
 
           <p className="mt-8 text-sm leading-relaxed text-agro-slate">
-            No account yet? Early access is rolling out region by region —{" "}
+            {copy.noAccount}{" "}
             <Link
-              href="/signup"
+              href={`${prefix}/signup`}
               className="font-semibold text-agro-canopy underline-offset-4 hover:underline"
             >
-              create your account
+              {copy.createAccount}
             </Link>
-            .
+            {copy.noAccountEnd}
           </p>
         </div>
       </main>
