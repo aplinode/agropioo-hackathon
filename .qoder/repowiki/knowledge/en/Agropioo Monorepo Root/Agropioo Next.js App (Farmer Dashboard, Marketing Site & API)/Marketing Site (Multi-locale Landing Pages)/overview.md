@@ -1,0 +1,1 @@
+Next.js App Router marketing site providing multi-locale landing pages for Agropioo's home, features, how-it-works, vision, why-agropioo routes plus login/signup flows.

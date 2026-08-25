@@ -1,0 +1,1 @@
+Next.js App Router with route groups `(farmer)` and `(dashboard)`, React Server Components (async page functions, `searchParams`/`params` as Promises), Tailwind CSS utility classes, Google Fonts loaded via `next/font`, and Next.js `Metadata` exports per page.

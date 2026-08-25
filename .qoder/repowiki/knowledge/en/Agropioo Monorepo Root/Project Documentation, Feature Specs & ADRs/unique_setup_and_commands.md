@@ -1,0 +1,1 @@
+No build or test commands exist for this module. The intended workflow is to author specs under `specs/<feature>/` following the four-phase loop (Research → Specify → Clarify → Build) described in `docs/spec-drvien-dev.md`, then keep `adrs/` updated when cross-cutting decisions change.

@@ -1,0 +1,8 @@
+The module is organized as a flat collection of reusable sub-packages consumed by route handlers and React components:
+- `lib/auth/` — pure decision logic (`logic.ts`) with no DB/request coupling (deterministic functions like `latestCodeVerdict`, `applyWrongEntry`, `sessionRowIsActive`), guarded by tests; `code-check.ts`, `pass.ts`, `rate-limit.ts`, `guards.ts`, and `copy.ts` build on it to orchestrate code issuance, verification, resend cooldowns, and rate limiting.
+- `lib/i18n/` — server-only dictionary loader (`server.ts`) that fetches translated strings from Supabase, merges them over a build-time English catalog via `react.cache()` per-request, and exposes a `t(key, params)` translator plus a `siteHeaderStrings` prop bundle for RSC boundaries; `format.ts`/`logic.ts` handle ICU-style message formatting and string resolution.
+- `lib/validation/auth.ts` — single source of truth for all auth form schemas (signup, login, forgot, code, reset password) using Zod, with normalized email trimming/lowercasing applied before any comparison or storage.
+- `lib/http.ts` — uniform response envelope `{ error: { code, message } }`, JSON helpers, IP extraction for rate limiting, and Zod issue flattening.
+- `lib/mailer.ts` — singleton nodemailer transporter gated by SMTP env vars; `sendCode` returns `{ delivered, demoCode? }` and supports a `DEMO_MODE` fallback that echoes codes in a banner instead of sending.
+- `lib/supabase.ts` — lazy-initialized `getSupabase()` (anon key) and `getSupabaseAdmin()` (service-role key, bypasses RLS, server-only) clients with required env enforcement.
+Dependency direction is one-way: higher layers (auth, i18n) depend on these primitives; nothing in this module imports application routes or UI components.

@@ -1,0 +1,1 @@
+Locale routing requires a valid locale segment matching `LOCALES`; unknown locales trigger `notFound()`. All pages are rendered dynamically (`dynamic = 'force-dynamic'`) so changes to the translations database surface without rebuilds.

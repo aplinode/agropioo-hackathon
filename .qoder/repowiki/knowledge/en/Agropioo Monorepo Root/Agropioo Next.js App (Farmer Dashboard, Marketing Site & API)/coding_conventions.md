@@ -1,0 +1,4 @@
+- Route groups are used to isolate the authenticated farmer app (`(farmer)`) from the public marketing site (`(site)`), each with its own root `layout.tsx`.
+- Each feature page lives alongside its view component and optional `demo-data.ts`, keeping route, UI, and mock data colocated.
+- Marketing pages under `[locale]/...` follow a section-based composition pattern where `page.tsx` imports composable section components from a `sections/` folder.
+- Auth flows are implemented as paired server route handlers in `api/auth/*` plus corresponding client forms/layouts in `(farmer)/...` or `(site)/...`.

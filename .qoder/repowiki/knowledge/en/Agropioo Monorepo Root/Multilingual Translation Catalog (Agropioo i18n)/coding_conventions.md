@@ -1,0 +1,5 @@
+- Each locale file exports a single named object (e.g. `bal`, `ur`, `en`) typed as `Partial<Record<CatalogKey, string>>` and grouped by page/module prefixes like `home.*`, `auth.*`, `hiw.*`, `feat.*`, `vp.*`, `wy.*`.
+- The English file is the authoritative source of truth and uses `as const` on its dictionary literal to derive `CatalogKey = keyof typeof en`; other locales mirror the same key set instead of defining their own types.
+- Keys are dot-namespaced strings that encode both page and component context (e.g. `home.hero.titleLead`, `auth.err.passwordMin`, `hiw.record.actionIrrigation`) rather than flat identifiers.
+- Localized files use natural-language comments in the target script (e.g. Balochi, Urdu, Sindhi) above the exported object to describe authoring status such as 'AI-drafted, founder-reviewed copy'.
+- No locale may introduce keys absent from `en.ts`; coverage is enforced by the Vitest suite which rejects stray keys and missing or placeholder (`TODO`) values.

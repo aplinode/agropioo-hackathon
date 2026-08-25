@@ -1,0 +1,1 @@
+Next.js App Router route handlers exposing password-based authentication, verification code flows, and a database health check endpoint backed by Supabase.

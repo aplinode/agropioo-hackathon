@@ -1,0 +1,1 @@
+Run `vitest` against `catalog/catalog.test.ts` to enforce catalog completeness; after editing `en.ts` or any locale file, run `scripts/sync-translations.mts` to push the updated keys/values into the Supabase `translations` table so the live app picks up changes without a redeploy.

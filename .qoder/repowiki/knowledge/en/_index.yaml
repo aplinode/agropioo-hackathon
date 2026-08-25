@@ -1,0 +1,123 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: en-US
+branch: main
+nodes_managed: true
+exported_at: "2026-08-25T17:12:55Z"
+modules:
+    "":
+        dir_name: Agropioo Monorepo Root
+        title: Agropioo Monorepo Root
+        scope:
+            - README.md
+            - AGENTS.md
+            - CLAUDE.md
+            - .gitignore
+            - package.json
+            - next.config.ts
+            - tsconfig.json
+            - eslint.config.mjs
+            - postcss.config.mjs
+            - vitest.config.ts
+            - proxy.ts
+            - opencode.json
+            - skills-lock.json
+            - .env.example
+            - package-lock.json
+        source_files: []
+        children:
+            - app
+            - catalog
+            - docs_and_specs
+            - lib
+        depends_on: []
+        related_to: []
+    app:
+        dir_name: Agropioo Next.js App (Farmer Dashboard, Marketing Site & API)
+        title: Agropioo Next.js App (Farmer Dashboard, Marketing Site & API)
+        scope:
+            - app/
+            - components/
+        source_files: []
+        children:
+            - app/api_routes
+            - app/farmer_dashboard
+            - app/marketing_site
+            - app/shared_components
+        depends_on: []
+        related_to: []
+    app/api_routes:
+        dir_name: Auth & Health API Routes
+        title: Auth & Health API Routes
+        scope:
+            - app/api/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app/farmer_dashboard
+            - path: lib
+    app/farmer_dashboard:
+        dir_name: Farmer Dashboard & Auth Flows (Next.js App Router)
+        title: Farmer Dashboard & Auth Flows (Next.js App Router)
+        scope:
+            - app/(farmer)/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app/api_routes
+            - path: app/shared_components
+    app/marketing_site:
+        dir_name: Marketing Site (Multi-locale Landing Pages)
+        title: Marketing Site (Multi-locale Landing Pages)
+        scope:
+            - app/(site)/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app/shared_components
+            - path: catalog
+    app/shared_components:
+        dir_name: Agropioo Shared UI Components
+        title: Agropioo Shared UI Components
+        scope:
+            - components/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app/farmer_dashboard
+            - path: app/marketing_site
+    catalog:
+        dir_name: Multilingual Translation Catalog (Agropioo i18n)
+        title: Multilingual Translation Catalog (Agropioo i18n)
+        scope:
+            - catalog/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app/marketing_site
+    docs_and_specs:
+        dir_name: Project Documentation, Feature Specs & ADRs
+        title: Project Documentation, Feature Specs & ADRs
+        scope:
+            - docs/
+            - specs/
+            - adrs/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    lib:
+        dir_name: Shared Application Libraries (Auth, i18n, Validation, HTTP, Mailer, Supabase)
+        title: Shared Application Libraries (Auth, i18n, Validation, HTTP, Mailer, Supabase)
+        scope:
+            - lib/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: app/api_routes

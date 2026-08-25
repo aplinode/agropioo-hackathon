@@ -1,0 +1,1 @@
+Zod for schema validation, @supabase/supabase-js for database access (with separate anon/service-role clients), nodemailer for SMTP email delivery, Node `crypto` for SHA-256 hashing and `randomInt` for code generation, and React `cache()` for per-request i18n dictionary memoization.

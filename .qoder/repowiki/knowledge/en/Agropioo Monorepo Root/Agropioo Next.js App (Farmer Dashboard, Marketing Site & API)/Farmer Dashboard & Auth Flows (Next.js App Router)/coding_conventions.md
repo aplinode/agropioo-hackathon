@@ -1,0 +1,6 @@
+- Each feature page lives in its own folder with a thin `page.tsx` that composes a co-located view component (e.g., `dashboard-view.tsx`, `detect-upload.tsx`, `farm-form.tsx`, `record-form.tsx`).
+- Pages export a `Metadata` object with a localized title string for SEO and browser tab display.
+- Server components consume `params` and `searchParams` as Promises using `await` destructuring rather than reading them synchronously.
+- Missing dynamic resources (e.g., unknown farm id) are handled by calling `notFound()` from `next/navigation` instead of returning error UI inline.
+- Auth boundaries are enforced in layout files via `requireSessionPage()` for authenticated zones and `requireGuestPage()` for sign-in/reset zones, keeping routing guards out of page logic.
+- Mock/demo data is isolated into sibling `demo-data.ts` modules imported by pages, separating presentation from sample datasets.

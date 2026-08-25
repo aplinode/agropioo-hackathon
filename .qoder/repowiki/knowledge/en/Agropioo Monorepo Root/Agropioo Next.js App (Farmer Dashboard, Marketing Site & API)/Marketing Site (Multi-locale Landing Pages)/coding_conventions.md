@@ -1,0 +1,5 @@
+- Each page is an async component that calls `await getCurrentDictionary()` at the top and passes the resulting `t` into child section components or header/footer props.
+- Localized strings are accessed via `t('...')` and wrapped with `localized(t(key), locale)` when passed to client-facing text, while numbers use `formatNumber(value, locale)`.
+- Route-specific visual sections are grouped under a sibling `sections/` directory next to the page file, and pages compose those sections sequentially inside a `<main>` block.
+- Layouts declare `export const dynamic = 'force-dynamic'` and perform server-side auth checks (e.g. `requireGuestPage()`) before rendering children.
+- Fonts are registered once in the root `[locale]/layout.tsx` using `next/font/google` with CSS variables and applied via the `<html>` className, with Arabic font families gated behind `isLocalized`.

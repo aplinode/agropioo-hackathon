@@ -1,0 +1,1 @@
+Requires environment variables: `SUPABASE_URL` + `SUPABASE_ANON_KEY` for the client, `SUPABASE_SERVICE_ROLE_KEY` for admin operations, `SMTP_HOST/PORT/USER/PASSWORD` + `EMAIL_FROM` to enable real email delivery, and `DEMO_MODE=true` to surface generated codes in a banner when SMTP is unconfigured.

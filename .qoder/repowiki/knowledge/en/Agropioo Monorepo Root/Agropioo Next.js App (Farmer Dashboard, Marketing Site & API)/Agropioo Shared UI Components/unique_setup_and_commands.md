@@ -1,0 +1,1 @@
+None beyond standard Next.js development; components rely on project-level Tailwind theme configuration and the `@/references/` image assets for branding logos.

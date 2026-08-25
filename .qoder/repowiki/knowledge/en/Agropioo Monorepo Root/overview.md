@@ -1,0 +1,1 @@
+Root of the Agropioo Next.js project that wires the app, shared libraries, translation catalog, and docs into a single monorepo with unified build, lint, test, and locale routing.

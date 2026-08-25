@@ -1,0 +1,1 @@
+React Server Components with selective `'use client'` boundaries; Next.js `Image`/`Link`/`navigation`; Tailwind CSS with custom agro-themed color tokens and typography utilities; no UI library — icons are inline SVGs in `icons.tsx`.

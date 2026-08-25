@@ -1,0 +1,1 @@
+Next.js App Router route group that renders the authenticated farmer dashboard shell plus sign-in, OTP verify, and password-reset flows for the Agropioo mobile-first web app.

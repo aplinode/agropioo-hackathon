@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: app/farmer_dashboard
+title: Farmer Dashboard & Auth Flows (Next.js App Router)
+scope:
+    - app/(farmer)/
+source_files: []
+depends_on: []
+related_to:
+    - path: app/api_routes
+    - path: app/shared_components

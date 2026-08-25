@@ -1,0 +1,1 @@
+Reusable React/Next.js components for the Agropioo marketing pages, farmer app shell, and authentication flows, built with Tailwind CSS and a shared design token system.

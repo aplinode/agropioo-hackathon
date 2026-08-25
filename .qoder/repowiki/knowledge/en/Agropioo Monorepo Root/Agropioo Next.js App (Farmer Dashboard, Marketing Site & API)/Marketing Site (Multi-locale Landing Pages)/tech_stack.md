@@ -1,0 +1,1 @@
+Next.js App Router with React Server Components, Next Font for Playfair Display / DM Sans / Geist Mono / Noto Nastaliq Urdu / Noto Sans Arabic, Tailwind CSS utility classes, and the project's `@/lib/i18n/server` dictionary system for multi-language content.
