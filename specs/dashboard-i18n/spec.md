@@ -1,10 +1,12 @@
 # Spec — Farmer-app localization
 
-Status: draft v1 for founder review. Findings basis: `research.md` (this folder). No implementation choices here — those belong to `plan.md`.
+Status: v2 — clarified with founder 2026-08-25 (all seven open questions answered; answers folded in below). Findings basis: `research.md` (this folder). No implementation choices here — those belong to `plan.md`.
 
 ## Goal
 
 A farmer who prefers Urdu, Punjabi, Pashto, Sindhi, Saraiki, Balochi, or Hindko can use the entire logged-in app — every label, message, sample advisory, and number — in that language, with layouts that mirror correctly and never clip their script. Today only the marketing site and login/signup are localized; the app a farmer sees after signing in is English-only and its language controls are broken.
+
+Scope ruling (founder): the **whole farmer app ships in one release** — no phased rollout, because partially-localized screens inside a localized app read as unfinished.
 
 ## User scenarios
 
@@ -17,8 +19,8 @@ A farmer who prefers Urdu, Punjabi, Pashto, Sindhi, Saraiki, Balochi, or Hindko 
 ## Functional requirements
 
 - **FR-1 Full-surface coverage:** every farmer-app screen renders all farmer-visible text in the currently selected language — navigation, headings, buttons, labels, empty states, placeholders, confirmation messages, tooltips, page titles/metadata, and accessibility labels (aria-labels, alt-style descriptions such as chart trend labels).
-- **FR-2 Sample content counts:** demo/sample content that farmers read — advisories, alerts, weather summaries, farm names/stages, price entries, chat replies — renders in the selected language like any other text. *(Assumed: demo content is product-shaped text; confirm in review.)*
-- **FR-3 Visible switcher everywhere:** a language switcher is reachable on every farmer-app screen (nav on desktop, equivalent access on mobile), per the constitution. Selecting a language re-renders the app in that language **on the spot** — the farmer stays on the screen they were on.
+- **FR-2 Sample content counts:** demo/sample content that farmers read — advisories, alerts, weather summaries, farm names/stages, price entries — renders in the selected language like any other text *(confirmed by founder)*.
+- **FR-3 Visible switcher everywhere:** a language switcher is reachable on every farmer-app screen (nav on desktop, equivalent access on mobile), per the constitution; the collaborator's dashboard-header placement is retained. Selecting a language re-renders the app in that language **on the spot** — the farmer stays on the screen they were on.
 - **FR-4 Persistence:** the selected language persists across sessions. Returning farmers land in their last chosen language without re-selecting.
 - **FR-5 Auth-adjacent surfaces included:** verify-code, forgot-password, reset-password, and onboarding screens honor the selected language.
 - **FR-6 Safe default:** absent, unknown, or malformed language preference resolves to English everywhere in the app.
@@ -32,6 +34,8 @@ A farmer who prefers Urdu, Punjabi, Pashto, Sindhi, Saraiki, Balochi, or Hindko 
 - **FR-14 Mixed-direction integrity:** Latin fragments inside RTL sentences (e.g., the Agropioo name, crop codes) remain readable and correctly ordered.
 - **FR-15 Accurate language lists:** any surface listing languages (settings, onboarding) shows exactly the eight registry languages with correct native names and scripts — no "coming soon" flags for shipped languages, no invented codes.
 - **FR-16 Honest controls:** every language control in the app either works or does not exist — no control may navigate to a 404.
+- **FR-17 Onboarding wired:** onboarding is fixed and becomes a real post-signup step — new signups land on it after account creation, with the language chosen during signup pre-selected (constitution rule), its language list matching FR-15, and completion continuing into the app. Existing users signing in continue straight to the dashboard as merged in PR #16.
+- **FR-18 Advisor works per locale:** the advisor's canned replies render in the active language, and trigger-word matching recognizes keywords authored for that locale — so a farmer typing in Urdu gets a relevant Urdu reply, not the fallback.
 
 ## Edge cases & rules
 
@@ -49,7 +53,7 @@ A farmer who prefers Urdu, Punjabi, Pashto, Sindhi, Saraiki, Balochi, or Hindko 
 - Voice input/output (constitution exclusion stands).
 - Any language beyond the current eight-locale registry.
 - Localized URL path segments (routes stay canonical; no `/ur/dashboard`-style URLs inside the app).
-- Real backend data, real advisory generation, or making the advisor's keyword matching multilingual beyond translating its existing sample replies and trigger words.
+- Real advisory intelligence beyond the finite canned reply set — smarter intent handling, free-form answer generation, or memory of past chats. Per-locale replies and trigger keywords are in scope; anything beyond that is not.
 - Dark mode, SMS/IVR channels, expert roles, community features.
 - Re-translating marketing pages (done in prior groups).
 
@@ -62,7 +66,8 @@ A farmer who prefers Urdu, Punjabi, Pashto, Sindhi, Saraiki, Balochi, or Hindko 
 5. Submit the farm form empty in Urdu → error text is Urdu; correct the input → success flow completes in Urdu.
 6. Follow a localized forgot-password link from `/ur/login` → reset flow renders in Urdu end-to-end (fixes the current 404).
 7. Settings language list matches the registry exactly (8 languages, correct names/scripts, no false "Soon"); choosing one switches immediately.
-8. Onboarding screen (if retained) shows the same accurate list and honors the signup-carried pre-selection per the constitution.
+8. Create a new account with the site language set to Urdu → onboarding appears post-signup with Urdu pre-selected and an accurate 8-language list; completing it enters the dashboard in Urdu. Signing in again as that user goes straight to the dashboard.
 9. Inspect rendered Urdu text in a Chromium browser: joined cursive letters show no injected gaps (letter-spacing neutralized); no Nastaliq descenders clipped on dashboard cards, chips, or truncated contexts at 320px, 375px, 768px widths.
-10. Automated checks pass for: preference resolution rules (absent/unknown/corrupt → English), digit formatting per locale, and dictionary completeness (every new key present × 8 locales before merge).
-11. `npm run lint` and `npm run build` pass; all existing tests stay green.
+10. In the Urdu advisor, type a translated trigger keyword → the relevant canned reply arrives in Urdu; unknown input gets the localized fallback reply.
+11. Automated checks pass for: preference resolution rules (absent/unknown/corrupt → English), digit formatting per locale, advisor trigger matching per locale, and dictionary completeness (every new key present × 8 locales before merge).
+12. `npm run lint` and `npm run build` pass; all existing tests stay green.
