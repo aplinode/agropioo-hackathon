@@ -37,6 +37,7 @@
 - Commit after every completed change; push at feature milestones. Never end a working session with uncommitted changes.
 - Atomic commits only: one commit = one logical unit of work. A single feature across many files (code + its spec/tests) is ONE commit; an unrelated fix, refactor, or dependency bump made alongside it is its OWN commit. Revert test: if reverting one part would break the others, they belong together; if each stands alone, split.
 - Meaningful messages, imperative mood (`feat: add farm record form`), describing the change not the activity. Never "update", "changes", "fix stuff". Never mix unrelated files.
+- Pull before every commit-and-push, strictly: run `git pull --rebase origin main` before committing/pushing — every time, even for one-line docs. If the pull surfaces conflicts with collaborator work, merge safely: never override, rewrite, or revert their merged commits; reconcile around their intent (on collision, their version wins and ours adapts), then verify gates before pushing.
 
 ### Stack & architecture (fixed)
 
