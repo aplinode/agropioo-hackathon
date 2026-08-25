@@ -33,6 +33,7 @@ import {
   quickActions,
 } from "./demo-data";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import type { Locale } from "@/lib/i18n/config";
 
 const CHECKLIST_DISMISS_KEY = "agropioo-checklist-dismissed";
 
@@ -144,6 +145,8 @@ type DashboardViewProps = {
   variant: "default" | "empty";
   /** Demo toggle (?weather=off) so the unavailable-weather fallback can be shown. */
   weatherAvailable?: boolean;
+  /** Cookie-resolved locale threaded from the server page (ADR 0004 / FR-3). */
+  appLocale?: Locale;
 };
 
 /* Farmer home screen — answers "kya karoon aaj?" in one scan.
@@ -154,6 +157,7 @@ type DashboardViewProps = {
 export default function DashboardView({
   variant,
   weatherAvailable = true,
+  appLocale,
 }: DashboardViewProps) {
   const isEmpty = variant === "empty";
   const completedCount = isEmpty ? 0 : 1;
@@ -215,7 +219,7 @@ export default function DashboardView({
             <LogOutIcon size={12} className="h-4 w-4 shrink-0" />
             Sign out
           </button>
-          <LanguageSwitcher label="Language" />
+          <LanguageSwitcher label="Language" currentLocale={appLocale} />
         </div>
       </header>
 

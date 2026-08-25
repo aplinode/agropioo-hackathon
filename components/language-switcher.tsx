@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
-import { LOCALES, LOCALE_REGISTRY, type Locale } from "@/lib/i18n/config";
+import { APP_LOCALE_COOKIE, LOCALES, LOCALE_REGISTRY, type Locale } from "@/lib/i18n/config";
 import { splitLocalePrefix, switchedPathname } from "@/lib/i18n/logic";
 import { CheckIcon, LanguagesIcon } from "./icons";
 
@@ -23,17 +23,27 @@ function navigateToLocale(target: Locale) {
 
 /** Remembers the explicit choice (FR-21); the cookie never overrides URLs. */
 function persistChoice(target: Locale) {
-  document.cookie = `agro_locale=${target}; path=/; max-age=31536000; samesite=lax`;
+  document.cookie = `${APP_LOCALE_COOKIE}=${target}; path=/; max-age=31536000; samesite=lax`;
 }
 
-export function LanguageSwitcher({ label }: { label: string }) {
+export function LanguageSwitcher({
+  label,
+  currentLocale,
+}: {
+  label: string;
+  /** App mode (dashboard-i18n FR-3): the server passes the cookie-resolved
+   * locale — bare app URLs carry no slug, so URL parsing would always read
+   * "en". Switching then reloads the SAME path; the group layout re-emits
+   * <html> from the freshly written cookie. */
+  currentLocale?: Locale;
+}) {
   const pathname = usePathname() || "/";
   const [open, setOpen] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const currentSlug = splitLocalePrefix(pathname).locale;
+  const currentSlug = currentLocale ?? splitLocalePrefix(pathname).locale;
   const current = LOCALE_REGISTRY[currentSlug ?? "en"];
 
   useEffect(() => {
@@ -59,8 +69,14 @@ export function LanguageSwitcher({ label }: { label: string }) {
     if (target === current.code || leaving) return;
     setLeaving(true);
     persistChoice(target);
-    navigateToLocale(target);
-  }, [current.code, leaving]);
+    if (currentLocale) {
+      // App mode: the cookie updated; a same-path full reload lets the
+      // server re-read it and re-emit <html lang/dir/fonts> (ADR 0004).
+      window.location.assign(window.location.pathname + window.location.search + window.location.hash);
+    } else {
+      navigateToLocale(target);
+    }
+  }, [current.code, leaving, currentLocale]);
 
   return (
     <div ref={rootRef} className="relative">

@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
-import { connection } from "next/server";
 import {
   Playfair_Display,
   DM_Sans,
@@ -9,9 +7,8 @@ import {
   Noto_Sans_Arabic,
 } from "next/font/google";
 
-import { APP_LOCALE_COOKIE, LOCALE_REGISTRY, type Locale } from "@/lib/i18n/config";
-import { resolveAppLocale } from "@/lib/i18n/logic";
-import { getDictionary } from "@/lib/i18n/server";
+import { LOCALE_REGISTRY } from "@/lib/i18n/config";
+import { getAppLocale, getDictionary } from "@/lib/i18n/server";
 import "../globals.css";
 
 /* Root layout for the farmer-app route group. Route groups each carry their
@@ -54,19 +51,12 @@ const arabicUi = Noto_Sans_Arabic({
 });
 
 /* Reading cookies makes every farmer route dynamic (dashboard-i18n D1):
-   language must be known before <html> is emitted. connection() + cookies()
-   mirrors the auth pass-read pattern so a prerendered shell can never leak
-   the wrong direction/fonts. */
+   language must be known before <html> is emitted. getAppLocale() resolves
+   once per request and is shared with pages under this group. */
 export const dynamic = "force-dynamic";
 
-async function resolvedLocale(): Promise<Locale> {
-  await connection();
-  const cookieStore = await cookies();
-  return resolveAppLocale(cookieStore.get(APP_LOCALE_COOKIE)?.value);
-}
-
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await resolvedLocale();
+  const locale = await getAppLocale();
   const { t } = await getDictionary(locale);
   return {
     title: t("app.shell.metadataTitle").text,
@@ -79,7 +69,7 @@ export const viewport: Viewport = {
 };
 
 export default async function FarmerAppLayout({ children }: LayoutProps<"/">) {
-  const localeCode = await resolvedLocale();
+  const localeCode = await getAppLocale();
   const entry = LOCALE_REGISTRY[localeCode];
   const isLocalized = localeCode !== "en";
 

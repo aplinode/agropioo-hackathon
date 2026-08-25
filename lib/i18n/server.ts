@@ -1,15 +1,17 @@
 import "server-only";
 
 import { cache } from "react";
+import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { locale as rootLocale } from "next/root-params";
 
 import { CATALOG, ENGLISH_TABLE, type CatalogKey } from "@/catalog";
-import { isLocale } from "./config";
+import { APP_LOCALE_COOKIE, isLocale } from "./config";
 import { getSupabase } from "@/lib/supabase";
 
 import type { Locale } from "./config";
 import { formatMessage } from "./logic";
-import { resolveString, type ResolvedString, type StringTable } from "./logic";
+import { resolveAppLocale, resolveString, type ResolvedString, type StringTable } from "./logic";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -99,6 +101,17 @@ export async function getCurrentDictionary(): Promise<Dictionary> {
   const raw = await rootLocale();
   return getDictionary(isLocale(raw) ? raw : "en");
 }
+
+/**
+ * Farmer-app display language, resolved once per request from the persisted
+ * preference (ADR 0004): absent/unknown cookie values fall back to English.
+ * Cached like getDictionary so a layout and its pages share one resolution.
+ */
+export const getAppLocale = cache(async (): Promise<Locale> => {
+  await connection();
+  const cookieStore = await cookies();
+  return resolveAppLocale(cookieStore.get(APP_LOCALE_COOKIE)?.value);
+});
 
 /** Flat prop bundle for the client SiteHeader (functions can't cross the RSC boundary). */
 export function siteHeaderStrings(t: Translator) {
