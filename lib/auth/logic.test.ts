@@ -108,8 +108,8 @@ describe("isResendInCooldown", () => {
 });
 
 describe("decideLoginRedirect", () => {
-  it("pins every fresh login to /onboarding until the flag exists", () => {
-    expect(decideLoginRedirect()).toBe("/onboarding");
+  it("sends verified farmers straight to the farm dashboard (PR #16)", () => {
+    expect(decideLoginRedirect()).toBe("/dashboard");
   });
 });
 
