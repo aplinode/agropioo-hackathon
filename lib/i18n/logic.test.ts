@@ -10,6 +10,7 @@ import {
 import {
   formatMessage,
   localeHref,
+  resolveAppLocale,
   resolveString,
   splitLocalePrefix,
   switchedPathname,
@@ -128,5 +129,25 @@ describe("formatMessage", () => {
 
   it("leaves unknown placeholders visible rather than crashing", () => {
     expect(formatMessage("Hello {name}", {})).toBe("Hello {name}");
+  });
+});
+
+describe("resolveAppLocale", () => {
+  it.each([
+    ["undefined cookie", undefined],
+    ["null cookie", null],
+    ["empty value", ""],
+    ["whitespace value", "   "],
+    ["wrong case (UR)", "UR"],
+    ["retired/unknown code", "fr"],
+    ["injected garbage", "ur; Path=/; HttpOnly"],
+  ])("falls back to English for %s", (_label, value) => {
+    expect(resolveAppLocale(value as string | null | undefined)).toBe(DEFAULT_LOCALE);
+  });
+
+  it("accepts every registry code verbatim", () => {
+    for (const code of LOCALES) {
+      expect(resolveAppLocale(code)).toBe(code);
+    }
   });
 });

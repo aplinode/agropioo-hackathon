@@ -698,4 +698,7 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "su.submit": "منهنجو اڪائونٽ ٺاهيو",
   "su.submitting": "اڪائونٽ ٺاهيو پيو وڃي…",
   "su.haveAccount": "اڳ ئي اڪائونٽ آهي؟",
+  "app.shell.metadataTitle": "اگروپيو — مصنوعي ذھانت سان هلندڙ فارم ذھانت جو پليٽ فارم",
+  "app.shell.metadataDescription":
+    "اڄ جي رهنمائي، موسم، الرٽس ۽ اگروپيو جو هر اوزار — پاڪستان لاءِ ٺاهيو ويو. اپلينوڊ جي پروڊڪٽ.",
 };

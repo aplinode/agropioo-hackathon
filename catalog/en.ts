@@ -702,6 +702,9 @@ export const en = {
   "su.submit": "Create my account",
   "su.submitting": "Creating account…",
   "su.haveAccount": "Already have an account?",
+  "app.shell.metadataTitle": "Agropioo — AI-Powered Farm Intelligence Platform",
+  "app.shell.metadataDescription":
+    "Today's advisory, weather, alerts, and every Agropioo tool — built for Pakistan. A product of Aplinode.",
 } as const;
 
 export type CatalogKey = keyof typeof en;

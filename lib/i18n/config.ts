@@ -108,6 +108,14 @@ export const LOCALE_REGISTRY: Readonly<Record<Locale, LocaleEntry>> = {
 
 export const DEFAULT_LOCALE: Locale = "en";
 
+/**
+ * Cookie carrying the farmer-app language choice (dashboard-i18n spec FR-3/FR-4).
+ * Written by LanguageSwitcher on every switch; read server-side by the
+ * (farmer) layout to resolve lang/dir/fonts. Marketing pages ignore it —
+ * URLs alone decide there (lang-compat FR-4).
+ */
+export const APP_LOCALE_COOKIE = "agro_locale";
+
 export const LOCALIZED_LOCALES: readonly LocalizedLocale[] = LOCALES.filter(
   (code): code is LocalizedLocale => code !== "en",
 );

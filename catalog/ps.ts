@@ -698,4 +698,7 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "su.submit": "زما اکاونټ جوړ کړه",
   "su.submitting": "اکاونټ جوړېږي…",
   "su.haveAccount": "دمخه اکاونټ لرئ؟",
+  "app.shell.metadataTitle": "اګروپیو — د مصنوعي ځیرکتیا پر بنسټ د کروندې پوهاوی پلیټفارم",
+  "app.shell.metadataDescription":
+    "د نن ورځې مشوره، هوا، خبرتیاوې او د اګروپیو هره وسیله — د پاکستان لپاره جوړه شوې. د اپلینوډ محصول.",
 };

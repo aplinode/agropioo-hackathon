@@ -698,4 +698,7 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "su.submit": "می ئی اکاؤنٹ ئا جوڑ کنے",
   "su.submitting": "اکاؤنٹ جوڑ بیتانت…",
   "su.haveAccount": "پہلے ئی سرا اکاؤنٹ ئے؟",
+  "app.shell.metadataTitle": "اگروپیو — کاشتکاری ئی باتئ AI ئی معلومات ئی پلیٹ فارم",
+  "app.shell.metadataDescription":
+    "اج ئی مشورہ، موسم، خبرداری ة اگروپیو ئی ہر اوزار — پاکستان ئے خاطر رچ کورتہ۔ اپلینوڈ ئی مہصول۔",
 };

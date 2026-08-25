@@ -698,4 +698,7 @@ export const pa: Partial<Record<CatalogKey, string>> = {
   "su.submit": "میرا اکاؤنٹ بناؤ",
   "su.submitting": "اکاؤنٹ بن رہیا اے…",
   "su.haveAccount": "پہلاں توں اکاؤنٹ اے؟",
+  "app.shell.metadataTitle": "اگروپیو — مصنوعی ذہانت تے مبنی فارم انٹیلیجنس پلیٹ فارم",
+  "app.shell.metadataDescription":
+    "اَج دی رہنمائی، موسم، الرٹ تے اگروپیو دا ہر آلہ — پاکستان لئی۔ اپلینوڈ دی پروڈکٹ۔",
 };
