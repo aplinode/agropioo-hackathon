@@ -1,43 +1,45 @@
-# Plan — Farmer-app localization
+# Plan — Farmer-app localization (rev 2)
 
-Basis: `spec.md` v2 (clarified) + `research.md`. This doc owns HOW. Every task ends verified against spec and committed.
+Basis: `spec.md` v2 (clarified) + `research.md`, verified line-by-line against the codebase 2026-08-25. Rev 2 corrects assumptions found during verification (login/signup live in `(site)/[locale]/`; ADR numbering convention; no relative-time formatter exists yet). This doc owns HOW. Every task ends verified against spec and committed.
 
 ## Architecture decisions
 
-**D1 — Route model (cookie-driven, Approach B).** Bare URLs stay. `(farmer)/layout.tsx` resolves locale server-side from the `agro_locale` cookie via a new pure function `resolveAppLocale(value)` (invalid/absent ⇒ `en`), then emits `<html lang/dir>` and attaches Nastaliq + Noto Sans Arabic font variables for non-English locales — mirroring the proven site-layout pattern. No URL changes anywhere. Recorded in `adrs/app-cookie-locale.md`.
+**D1 — Route model (cookie-driven, Approach B).** Bare URLs stay; **the proxy matcher's hardcoded exclusion list is untouched** — cookie resolution needs zero routing-infrastructure change. `app/(farmer)/layout.tsx` resolves locale server-side from the `agro_locale` cookie via a new pure function `resolveAppLocale(value)` in `lib/i18n/logic.ts` (invalid/absent ⇒ `en`), then emits `<html lang/dir>`, attaches Nastaliq + Noto Sans Arabic font variables for non-English locales (mirroring the proven site-layout pattern), fixes its now-stale "English at launch" comment, and serves a localized default `<title>` via `generateMetadata`. Login/signup are site-group routes and are not affected. Recorded in `adrs/0004-app-cookie-locale.md`.
 
-**D2 — Dictionary delivery.** Same pipeline as the site: keys authored in `catalog/*.ts` (typed source of truth), synced to Supabase, served via `getDictionary(locale)` with English fallback. Client views receive typed prop bundles from their thin server shells (group-4e `LoginCopy` pattern). New keys live under an `app.*` namespace: `app.shell.*`, `app.dashboard.*`, `app.farms.*`, `app.detect.*`, `app.records.*`, `app.prices.*`, `app.weather.*`, `app.notifications.*`, `app.settings.*`, `app.more.*`, `app.advisor.*`, `app.auth.*` (verify/forgot/reset/onboarding).
+**D2 — Dictionary delivery.** Same pipeline as the site: keys authored in `catalog/*.ts` (typed source of truth; the coverage test already fails until every locale mirrors EN keys, and partial locales are legal while drafting), synced to Supabase, served via `getDictionary(locale)` with English fallback. Client views receive typed prop bundles from thin server shells (group-4e `LoginCopy` pattern). New keys under an `app.*` namespace: `app.shell.*`, `app.dashboard.*`, `app.farms.*`, `app.detect.*`, `app.records.*`, `app.prices.*`, `app.weather.*`, `app.notifications.*`, `app.settings.*`, `app.more.*`, `app.advisor.*`, `app.auth.*`. Parameterized copy (greetings, counts) uses the existing `formatMessage("{name}")` placeholder helper.
 
-**D3 — Advisor data model.** Each canned reply gets per-locale `body` plus per-locale `triggers` lists; matcher checks the active locale's triggers (English triggers always included as floor). Replies move into catalog under `app.advisor.replies.<id>.body|triggers`; demo-data holds only ids/order.
+**D3 — Advisor data model.** Each canned reply keeps its id/order in demo-data; per-locale `body` plus per-locale `triggers` lists move into catalog under `app.advisor.replies.<id>.body|triggers` (existing English keywords incl. roman-Urdu variants seed the EN list). Matcher checks the active locale's triggers, with EN triggers always included as floor.
 
-**D4 — Numbers.** All rendering goes through `lib/i18n/format.ts`; every `toLocaleString("en-PK")` and hand-written relative time in app code is replaced. Mono contexts get `"Noto Sans Arabic"` appended to the font fallback chain so Eastern digits resolve consistently (visual QA item, R3).
+**D4 — Numbers & times.** All rendering goes through `lib/i18n/format.ts`; every `toLocaleString("en-PK")` and hand-written relative time ("2 hours ago") in app code is replaced. **New pure helper `formatRelativeTime(value, locale)` lands first (T3.5) with unit tests** — format.ts today has only `formatNumber`/`formatCount`. Mono contexts get `"Noto Sans Arabic"` appended to the font fallback chain so Eastern digits resolve consistently (visual QA item).
 
-**D5 — Script-safe typography.** CSS-level guard: inside `[dir="rtl"]`, `letter-spacing` is forced to normal (covers ~60 farmer instances + the 2 shipped login-form eyebrow violations without touching each file). Nastaliq leading tokens (`[lang="ur"]` line-height ≥ 1.9 for body-size text); audit removes `truncate`/`line-clamp` + fixed-height combos on translated strings (R2).
+**D5 — Script-safe typography.** CSS-level guard: inside `[dir="rtl"]`, `letter-spacing` is forced to normal (covers ~60 farmer instances + the 2 shipped login-form eyebrow violations without touching each file). Nastaliq leading tokens (`[lang="ur"]` line-height ≥ 1.9 for body-size text); audit removes `truncate`/`line-clamp` + fixed-height combos on translated strings.
 
 **D6 — Validation errors.** farm-form/record-form/detect-upload error messages move onto the existing literal→key map pattern (`ERROR_KEYS` from group 4e); Zod schemas stay put.
 
 **D7 — Auth-adjacent fixes riding along.**
-- Login/signup cross-links point to **bare** `/forgot-password` `/reset-password` `/verify` (they're app surfaces now; kills the `/ur/forgot-password` 404 family).
+- Site-group login/signup cross-links point to **bare** `/forgot-password` `/reset-password` `/verify` (they're app surfaces under `(farmer)`; kills the `/ur/forgot-password` 404 family).
 - Signup success redirects to `/onboarding`; existing-user login keeps PR #16's `/dashboard`.
 - Onboarding rebuilt: registry-driven 8-language grid, pre-selected from cookie, `localStorage["agropioo-language"]` deleted.
 - Settings language list derived from registry (no "Soon" flags, no invented codes).
+- Every app surface owns a locale-aware `generateMetadata` title.
 
 ## Task breakdown (each = one commit, verified)
 
 | # | Task | Verify | Est. keys |
 |---|---|---|---|
-| T1 | ADR + `resolveAppLocale()` (+tests) + farmer layout emits lang/dir/fonts from resolved locale | tsc·tests·smoke: cookie `ur` ⇒ `dir=rtl`+fonts, `en` pixel-unchanged | 0 |
-| T2 | In-place app switcher (cookie write + reload same path; dropdown works, no 404) | manual smoke all 8 · unit for path logic | 0 |
+| T1 | ADR `0004` + `resolveAppLocale()` (+tests) + farmer layout emits lang/dir/fonts from resolved locale + stale-comment fix + localized default metadata | tsc·tests·smoke: cookie `ur` ⇒ `dir=rtl`+fonts, `en` pixel-unchanged | ~2 |
+| T2 | Switcher `variant="app"`: current locale passed as prop by server parent (URL parsing is the 404 root cause); same-path reload; `persistChoice` reused | manual smoke all 8 · unit for path logic | 0 |
 | T3 | Typography guards: RTL tracking kill-switch, Nastaliq leading tokens, mono digit fallback, login-form eyebrow fix | grep audits zero remaining violations · visual smoke | 0 |
-| T4 | Shell + dashboard: `app.shell.*`/`app.dashboard.*` EN authoring + 7 translations; sidebar/tabs/header/dashboard-view/demo-data consume bundles; digits via format helpers | catalog tests · smoke ur dashboard fully RTL | ~115 |
+| T3.5 | `formatRelativeTime(value, locale)` in format.ts (+tests) | vitest green | 0 |
+| T4 | Shell + dashboard: `app.shell.*`/`app.dashboard.*` EN authoring + 7 translations; sidebar/tabs/header/dashboard-view/demo-data consume bundles; digits/times via format helpers; dashboard metadata | catalog tests · smoke ur dashboard fully RTL | ~115 |
 | T5 | Farms suite: list/new/detail/records + farm-form + record-form (D6 error maps) | forms exercise EN+UR error paths | ~155 |
 | T6 | Detect + notifications | smoke both locales | ~50 |
 | T7 | Prices + weather: format-helper migration, mixed-direction isolation (FR-14) | digit assertions · smoke | ~80 |
 | T8 | Advisor: D3 restructure + matcher per-locale + chat UI | unit tests: ur trigger → ur reply; unknown → localized fallback | ~40 |
 | T9 | Settings + More: registry-derived list (D7), remaining copy | list matches registry exactly | ~40 |
 | T10 | Verify/forgot/reset/onboarding: bundles + rebuild onboarding + signup→onboarding redirect + bare-link fixes (D7) | AC-8 flow run-through | ~60 |
-| T11 | Full DB sync + counts ((671+N)×8) + MD5 spot-verification | sync script output + SQL checks | — |
-| T12 | Gates: tsc/lint/tests/build + automated AC-11 checks (resolution rules, per-locale matching, digit formatting) | all green | — |
+| T11 | Full DB sync + counts ((671+N)×8) + MD5 spot-verification (coverage test already enforces ×8) | sync output + SQL checks | — |
+| T12 | Gates: tsc/lint/tests/build + automated AC checks (resolution rules, per-locale matching, digit formatting) | all green | — |
 | T13 | Manual acceptance run-through (AC 1–10) documented in `specs/dashboard-i18n/verification.md`; Chromium cursive inspection; 320px RTL sweep | checklist signed | — |
 
 Sync runs incrementally after each catalog-expanding task (missing rows fall back to English, so partial states never break).
@@ -46,7 +48,8 @@ Sync runs incrementally after each catalog-expanding task (missing rows fall bac
 
 - **Translation volume is the long pole** (~540 keys × 7). Mitigation: EN authored per task, translations batched per phase, sync incremental.
 - **Nastaliq clipping** may surface component-level fixes during T13 QA beyond planned audits — handled as spec-compliant adjustments, not scope creep.
-- **Collaborator overlap**: PRs may land mid-feature; standing constitution rule applies (pull-rebase first, their merged intent wins on collision).
+- **Site regression risk is low**: T1 touches only `(farmer)/layout.tsx`; login/signup/marketing live elsewhere and keep URL-driven behavior.
+- **Collaborator overlap**: PRs may land mid-feature; standing constitution rule applies (pull-rebase before every push, their merged intent wins on collision).
 
 ## Out of plan (per spec)
 
