@@ -8,6 +8,7 @@ import {
   MapPinIcon,
   PlusIcon,
 } from "@/components/icons";
+import { getFarmsBundle } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
   title: "Farms — Agropioo",
@@ -19,20 +20,22 @@ const healthChip = {
 } as const;
 
 /* Farm list: every farm with crop, stage, and health at a glance. */
-export default function FarmsPage() {
+export default async function FarmsPage() {
+  const bundle = await getFarmsBundle();
+
   return (
     <div className="pt-1">
       <PageHeader
-        eyebrow="Farms"
-        title="All your farms, one list"
-        description="Every farm with its crops, growth stage, and health at a glance. Tap a farm for its full story."
+        eyebrow={bundle.eyebrow}
+        title={bundle.list.heading}
+        description={bundle.list.description}
         action={
           <Link
             href="/farms/new"
             className="inline-flex min-h-11 items-center gap-1 rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline lg:hidden"
           >
             <PlusIcon className="h-4 w-4" />
-            Add
+            {bundle.list.addLink}
           </Link>
         }
       />
@@ -57,7 +60,7 @@ export default function FarmsPage() {
                     }`}
                     aria-hidden="true"
                   />
-                  {farm.health === "good" ? "Good" : "Watch"}
+                  {farm.health === "good" ? bundle.healthGood : bundle.healthWatch}
                 </span>
               </div>
 
@@ -77,12 +80,12 @@ export default function FarmsPage() {
                   {farm.stage}
                 </span>
                 <span className="rounded-full border border-agro-sprout bg-white px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">
-                  {farm.acres} acres
+                  {farm.acres} {bundle.unitsAcres}
                 </span>
               </div>
 
               <span className="mt-4 inline-flex min-h-11 items-center gap-1 pt-1 text-sm font-semibold text-agro-canopy underline-offset-4 group-hover:underline">
-                Open farm
+                {bundle.list.openFarm}
                 <ChevronRightIcon
                   className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
                   aria-hidden="true"
@@ -98,7 +101,7 @@ export default function FarmsPage() {
             className="flex h-full min-h-44 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-agro-sprout p-4 text-agro-canopy transition-colors hover:border-agro-canopy hover:bg-agro-mint"
           >
             <PlusIcon className="h-5 w-5" />
-            <span className="text-sm font-semibold">Add a new farm</span>
+            <span className="text-sm font-semibold">{bundle.list.addNewFarm}</span>
           </Link>
         </li>
       </ul>

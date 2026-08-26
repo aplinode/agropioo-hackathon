@@ -799,6 +799,126 @@ export const en = {
   "app.dashboard.demo.actionScan": "Scan crop",
   "app.dashboard.demo.actionPrices": "Check prices",
   "app.dashboard.demo.actionRecord": "Add record",
+
+  /* ── Farms common ───────────────────────────────────── */
+  "app.farms.eyebrow": "Farms",
+  "app.farms.health.good": "Good",
+  "app.farms.health.watch": "Watch",
+  "app.farms.units.acres": "acres",
+  "app.farms.stages.sowing": "Sowing",
+  "app.farms.stages.tillering": "Tillering",
+  "app.farms.stages.vegetative": "Vegetative",
+  "app.farms.stages.grainFilling": "Grain filling",
+  "app.farms.stages.ready": "Ready",
+  "app.farms.stages.squaring": "Squaring",
+  "app.farms.stages.flowering": "Flowering",
+  "app.farms.stages.bollFilling": "Boll filling",
+  "app.farms.stages.grandGrowth": "Grand growth",
+  "app.farms.stages.ripening": "Ripening",
+  "app.farms.stages.harvest": "Harvest",
+
+  /* ── Districts & crops ──────────────────────────────── */
+  "app.farms.districts.multan": "Multan",
+  "app.farms.districts.sahiwal": "Sahiwal",
+  "app.farms.districts.faisalabad": "Faisalabad",
+  "app.farms.districts.vehari": "Vehari",
+  "app.farms.districts.bahawalpur": "Bahawalpur",
+  "app.farms.districts.lodhran": "Lodhran",
+  "app.farms.crops.wheat": "Wheat",
+  "app.farms.crops.cotton": "Cotton",
+  "app.farms.crops.sugarcane": "Sugarcane",
+  "app.farms.crops.maize": "Maize",
+  "app.farms.crops.rice": "Rice",
+
+  /* ── Farms list ─────────────────────────────────────── */
+  "app.farms.list.pageTitle": "Farms \u2014 Agropioo",
+  "app.farms.list.heading": "All your farms, one list",
+  "app.farms.list.description":
+    "Every farm with its crops, growth stage, and health at a glance. Tap a farm for its full story.",
+  "app.farms.list.addLink": "Add",
+  "app.farms.list.openFarm": "Open farm",
+  "app.farms.list.addNewFarm": "Add a new farm",
+
+  /* ── Farms new ──────────────────────────────────────── */
+  "app.farms.new.pageTitle": "Add a farm \u2014 Agropioo",
+  "app.farms.new.heading": "Add a farm",
+  "app.farms.new.description":
+    "Tell Agropioo about your land \u2014 location, crop, and size \u2014 so every advisory is shaped around it.",
+  "app.farms.new.fields.name": "Farm name",
+  "app.farms.new.placeholders.name": "e.g. Khalilpur Farm",
+  "app.farms.new.fields.district": "District",
+  "app.farms.new.placeholders.district": "Choose district",
+  "app.farms.new.fields.crop": "Main crop",
+  "app.farms.new.placeholders.crop": "Choose crop",
+  "app.farms.new.fields.acres": "Area (acres)",
+  "app.farms.new.placeholders.acres": "e.g. 12.5",
+  "app.farms.new.buttons.saving": "Saving\u2026",
+  "app.farms.new.buttons.save": "Save farm",
+  "app.farms.new.demoNotice": "DEMO \u00b7 saving isn\u2019t wired to a database yet",
+  "app.farms.new.success.heading": "Farm saved in demo",
+  "app.farms.new.success.description":
+    "In the full build this farm would now appear on your dashboard and start shaping your advisories.",
+  "app.farms.new.success.goToFarms": "Go to my farms",
+  "app.farms.new.success.backToDashboard": "Back to dashboard",
+  "app.farms.new.errors.nameRequired": "Give your farm a name.",
+  "app.farms.new.errors.districtRequired": "Pick the district.",
+  "app.farms.new.errors.cropRequired": "Pick the main crop.",
+  "app.farms.new.errors.acresRequired": "Enter the area in acres.",
+
+  /* ── Farm detail ────────────────────────────────────── */
+  "app.farms.detail.pageTitle": "Farm details \u2014 Agropioo",
+  "app.farms.detail.heroEyebrow": "Farm details",
+  "app.farms.detail.goodHealth": "Good health",
+  "app.farms.detail.needsWatching": "Needs watching",
+  "app.farms.detail.sownLabel": "Sown",
+  "app.farms.detail.seasonHeading": "Where the crop stands",
+  "app.farms.detail.activityHeading": "Field activity",
+  "app.farms.detail.viewAllRecords": "View all records",
+  "app.farms.detail.logFieldEvent": "Log a field event",
+  "app.farms.detail.scanCrop": "Scan this crop",
+
+  /* ── Records common ─────────────────────────────────── */
+  "app.records.eyebrow": "Farm records",
+  "app.records.types.irrigation": "Irrigation",
+  "app.records.types.fertilizer": "Fertilizer",
+  "app.records.types.pesticide": "Pesticide",
+  "app.records.types.disease": "Disease",
+  "app.records.types.harvest": "Harvest",
+
+  /* ── Records list ───────────────────────────────────── */
+  "app.records.farmRecords.pageTitle": "Farm records \u2014 Agropioo",
+  "app.records.farmRecords.heading": "The farm\u2019s memory",
+  "app.records.farmRecords.description":
+    "Every irrigation, spray, and treatment written down \u2014 so decisions next week don\u2019t rely on memory.",
+  "app.records.farmRecords.demoNotice":
+    "DEMO \u00b7 sample entries only \u2014 saving new ones isn\u2019t wired yet",
+
+  /* ── Records new ────────────────────────────────────── */
+  "app.records.new.pageTitle": "New record \u2014 Agropioo",
+  "app.records.new.heading": "Log what happened in the field",
+  "app.records.new.description":
+    "Irrigation, fertilizer, pesticide, disease, and harvest entries \u2014 your farm\u2019s memory, one line at a time.",
+  "app.records.new.fields.type": "What happened?",
+  "app.records.new.fields.farm": "Farm",
+  "app.records.new.placeholders.farm": "Choose farm",
+  "app.records.new.fields.date": "Date",
+  "app.records.new.fields.title": "Short title",
+  "app.records.new.fields.optional": "(optional)",
+  "app.records.new.placeholders.titleIrrigation": "e.g. Canal turn \u00b7 full field",
+  "app.records.new.placeholders.titleOther": "Second dose along ridges",
+  "app.records.new.fields.details": "Details",
+  "app.records.new.placeholders.details":
+    "Anything worth remembering next week \u2014 amounts, weather, how the field looked.",
+  "app.records.new.buttons.saving": "Saving\u2026",
+  "app.records.new.buttons.save": "Save record",
+  "app.records.new.demoNotice": "DEMO \u00b7 saving isn\u2019t wired to a database yet",
+  "app.records.new.success.heading": "Record saved in demo",
+  "app.records.new.success.description":
+    "In the full build this entry would appear in your farm\u2019s record log and sharpen future advisories.",
+  "app.records.new.success.backToDashboard": "Back to dashboard",
+  "app.records.new.success.viewFarms": "View my farms",
+  "app.records.new.errors.farmRequired": "Pick which farm this happened on.",
+  "app.records.new.errors.dateRequired": "Pick the date.",
 } as const;
 
 export type CatalogKey = keyof typeof en;

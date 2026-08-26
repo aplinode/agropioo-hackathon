@@ -794,4 +794,124 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.dashboard.demo.actionScan": "پله اسڪين ڪريو",
   "app.dashboard.demo.actionPrices": "قيمتون چيڪ ڪريو",
   "app.dashboard.demo.actionRecord": "ریڪارڊ شامل ڪريو",
+
+  /* ── کيثر عام ────────────────────────────────────────── */
+  "app.farms.eyebrow": "کيثر",
+  "app.farms.health.good": "چڱو",
+  "app.farms.health.watch": "خبردار",
+  "app.farms.units.acres": "ایکڙ",
+  "app.farms.stages.sowing": "بирования",
+  "app.farms.stages.tillering": "شاخون",
+  "app.farms.stages.vegetative": "نباتاتي",
+  "app.farms.stages.grainFilling": "ڌان ڀرائڻ",
+  "app.farms.stages.ready": "تيار",
+  "app.farms.stages.squaring": "پھل باندھڻ",
+  "app.farms.stages.flowering": "پھول آڻڻ",
+  "app.farms.stages.bollFilling": "تہائي ڀرائڻ",
+  "app.farms.stages.grandGrowth": "ويسو ش.effects",
+  "app.farms.stages.ripening": "پکڻ",
+  "app.farms.stages.harvest": "ڪٹائي",
+
+  /* ── ضلعو ۽ فصلون ───────────────────────────────────── */
+  "app.farms.districts.multan": "ملتان",
+  "app.farms.districts.sahiwal": "سahiوال",
+  "app.farms.districts.faisalabad": "فيصل آباد",
+  "app.farms.districts.vehari": "وehari",
+  "app.farms.districts.bahawalpur": "bahawalpur",
+  "app.farms.districts.lodhran": "lodhran",
+  "app.farms.crops.wheat": "گندم",
+  "app.farms.crops.cotton": "ڪپاس",
+  "app.farms.crops.sugarcane": "گنا",
+  "app.farms.crops.maize": "مکئي",
+  "app.farms.crops.rice": "چاول",
+
+  /* ── کيثرن جي فهرست ──────────────────────────────────── */
+  "app.farms.list.pageTitle": "کيثر — اگروپيو",
+  "app.farms.list.heading": "توهان جا سڀ کيثر، هڪ فهرست",
+  "app.farms.list.description":
+    "هر کيثر پنهنجن فصلن، نشوونما جي مرحلي ۽ صحت سان — هڪ ڏيکھ ۾. کيثر جي بشپړ ڪهاڻي لاءِ ٽيپ ڪريو.",
+  "app.farms.list.addLink": "شامل ڪريو",
+  "app.farms.list.openFarm": "کيثر کوليو",
+  "app.farms.list.addNewFarm": "نئون کيثر شامل ڪريو",
+
+  /* ── نئون کيثر ────────────────────────────────────────── */
+  "app.farms.new.pageTitle": "کيثر شامل ڪريو — اگروپيو",
+  "app.farms.new.heading": "کيثر شامل ڪريو",
+  "app.farms.new.description":
+    "اگروپيو کان پنهنجي زمين بار ۾ آcoes — مقام، فصل ۽ اندازه — ته جيئن هر هدايت تنهن جي مطابق هجي.",
+  "app.farms.new.fields.name": "کيثر جو نالو",
+  "app.farms.new.placeholders.name": "مثال طور خليل پور کيثر",
+  "app.farms.new.fields.district": "ضلعو",
+  "app.farms.new.placeholders.district": "ضلعو ڏيڪھيو",
+  "app.farms.new.fields.crop": "بنيادي فصل",
+  "app.farms.new.placeholders.crop": "فصل ڏيڪھيو",
+  "app.farms.new.fields.acres": "اندازه (ایکڙ)",
+  "app.farms.new.placeholders.acres": "مثال طور ۱۲.۵",
+  "app.farms.new.buttons.saving": "خوندي ٿي رهيو آهي…",
+  "app.farms.new.buttons.save": "کيثر خوندي ڪريو",
+  "app.farms.new.demoNotice": "ڊيمو — خوندي ڪرڻ هن وقت ڊيٽابیس سان نه جوڑي",
+  "app.farms.new.success.heading": "کيثر ڊيمو ۾ خوندي ٿيو",
+  "app.farms.new.success.description":
+    "بشپړ بلڊ ۾ هن کيثر توهان جي ڊيش بورڊ تي ڏيکارو ۽ هدايتون شکل اخیستل شروع ڪنن.",
+  "app.farms.new.success.goToFarms": "منھنجا کيثر تي وڃو",
+  "app.farms.new.success.backToDashboard": "واپس ڊيش بورڊ تي",
+  "app.farms.new.errors.nameRequired": "کيثر کان نالو ڏيو.",
+  "app.farms.new.errors.districtRequired": "ضلعو ڏيڪھيو.",
+  "app.farms.new.errors.cropRequired": "بنيادي فصل ڏيڪھيو.",
+  "app.farms.new.errors.acresRequired": "اندازه ڪريو.",
+
+  /* ── کيثر جي تفصيلون ─────────────────────────────────── */
+  "app.farms.detail.pageTitle": "کيثر جي تفصيلون — اگروپيو",
+  "app.farms.detail.heroEyebrow": "کيثر جي تفصيلون",
+  "app.farms.detail.goodHealth": "چڱي صحت",
+  "app.farms.detail.needsWatching": " uwag دستور",
+  "app.farms.detail.sownLabel": "بиров",
+  "app.farms.detail.seasonHeading": "فصل کيئن آهي",
+  "app.farms.detail.activityHeading": "کيثر جي سرگرمي",
+  "app.farms.detail.viewAllRecords": "سڀ رڪارڊ ڏيڪھو",
+  "app.farms.detail.logFieldEvent": "کيثر جو واقعو درج ڪريو",
+  "app.farms.detail.scanCrop": "فصل اسڪين ڪريو",
+
+  /* ── رڪارڊ عام ───────────────────────────────────────── */
+  "app.records.eyebrow": "کيثر جا رڪارڊ",
+  "app.records.types.irrigation": "آبپاشي",
+  "app.records.types.fertilizer": "کوڙ",
+  "app.records.types.pesticide": "حشره مار",
+  "app.records.types.disease": "بيماري",
+  "app.records.types.harvest": "کٹائي",
+
+  /* ── رڪارڊن جي فهرست ─────────────────────────────────── */
+  "app.records.farmRecords.pageTitle": "کيثر جا رڪارڊ — اگروپيو",
+  "app.records.farmRecords.heading": "کيثر جي يادداشت",
+  "app.records.farmRecords.description":
+    "هر آبپاشي، اسپري ۽ علاج لکييل — ته جيئن راتلونڪي ھفتا يادداشت تي منحصر نه ٿي.",
+  "app.records.farmRecords.demoNotice":
+    "ڊيمو — صرف نمونا اندراجات — نئون خوندي ڪرڻ هن وقت نه جوڑي",
+
+  /* ── نئون رڪارڊ ──────────────────────────────────────── */
+  "app.records.new.pageTitle": "نئون رڪارڊ — اگروپيو",
+  "app.records.new.heading": "کيثر ۾ جي ٿييُو آهي ان کي درج ڪريو",
+  "app.records.new.description":
+    "آبپاشي، کوڙ، حشره مار، بيماري ۽ کٹائي جا اندراجات — توهان جي کيثر جي يادداشت، هڪ لڪير هڪ ڪري.",
+  "app.records.new.fields.type": "ڇا ٿييُو آهي؟",
+  "app.records.new.fields.farm": "کيثر",
+  "app.records.new.placeholders.farm": "کيثر ڏيڪھيو",
+  "app.records.new.fields.date": "تاريخ",
+  "app.records.new.fields.title": "لنڊ عنوان",
+  "app.records.new.fields.optional": "(اختیاری)",
+  "app.records.new.placeholders.titleIrrigation": "مثال طور نهري پاني — بشپړو کيثر",
+  "app.records.new.placeholders.titleOther": "ٻيو اسپري پتوارن تي",
+  "app.records.new.fields.details": "تفصيلون",
+  "app.records.new.placeholders.details":
+    "راتلونڪي ھفتا لاءِ جيڪو ڳ travelled ڌاريو وڃي — مقدار، موسم، کيثر جي حالت.",
+  "app.records.new.buttons.saving": "خوندي ٿي رهيو آهي…",
+  "app.records.new.buttons.save": "رڪارڊ خوندي ڪريو",
+  "app.records.new.demoNotice": "ڊيمو — خوندي ڪرڻ هن وقت ڊيٽابیس سان نه جوڑي",
+  "app.records.new.success.heading": "رڪارڊ ڊيمو ۾ خوندي ٿيو",
+  "app.records.new.success.description":
+    "بشپړ بلڊ ۾ هن اندراج توهان جي کيثر جي رڪارڊ ۾ شامل ٿي جيڳو ۽ راتلونڪي هدايتون تيز ٿي ان.",
+  "app.records.new.success.backToDashboard": "واپس ڊيش بورڊ تي",
+  "app.records.new.success.viewFarms": "منھنجا کيثر ڏيڪھو",
+  "app.records.new.errors.farmRequired": "ڏيڪھيو ڇا هن کيثر تي ٿييُو آهي.",
+  "app.records.new.errors.dateRequired": "تاريخ ڏيڪھيو.",
 };

@@ -793,4 +793,124 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.dashboard.demo.actionScan": "زبڼه اسکین کړئ",
   "app.dashboard.demo.actionPrices": "قیمتونه وګورئ",
   "app.dashboard.demo.actionRecord": "ریکارډ اضافه کړئ",
+
+  /* ── کډې عمومي ──────────────────────────────────────── */
+  "app.farms.eyebrow": "کډې",
+  "app.farms.health.good": "چنګه",
+  "app.farms.health.watch": "خبردار",
+  "app.farms.units.acres": "ایکړ",
+  "app.farms.stages.sowing": "کشت",
+  "app.farms.stages.tillering": "شاخونه",
+  "app.farms.stages.vegetative": "نباتاتي",
+  "app.farms.stages.grainFilling": "دانه ډکول",
+  "app.farms.stages.ready": "چمتو",
+  "app.farms.stages.squaring": "میوه بستل",
+  "app.farms.stages.flowering": "Reviewed په لمر کې",
+  "app.farms.stages.bollFilling": "د پاټه ډکول",
+  "app.farms.stages.grandGrowth": "لویه پهuppez",
+  "app.farms.stages.ripening": "رسیدل",
+  "app.farms.stages.harvest": "haust",
+
+  /* ── ولسوالي او زبڼه ────────────────────────────────── */
+  "app.farms.districts.multan": "ملتان",
+  "app.farms.districts.sahiwal": "سahiوال",
+  "app.farms.districts.faisalabad": "فیصل آباد",
+  "app.farms.districts.vehari": "وehari",
+  "app.farms.districts.bahawalpur": "بahawalpur",
+  "app.farms.districts.lodhran": "لودhran",
+  "app.farms.crops.wheat": "غنم",
+  "app.farms.crops.cotton": "پاټه",
+  "app.farms.crops.sugarcane": "شکره",
+  "app.farms.crops.maize": "جوار",
+  "app.farms.crops.rice": "רשּׁו",
+
+  /* ── د کډو لیست ──────────────────────────────────────── */
+  "app.farms.list.pageTitle": "کډې — اګروپیو",
+  "app.farms.list.heading": "ستا ټولې کډې، یو لیست",
+  "app.farms.list.description":
+    "هر کډه په خپله زبونه، د پهuppez مرحله او روغتیا سره په یو نظر کې. د کډو بشپړ کیسه لپاره ټیپ وکړئ.",
+  "app.farms.list.addLink": "اضافه کړئ",
+  "app.farms.list.openFarm": "کډه خلاصه کړئ",
+  "app.farms.list.addNewFarm": "نوې کډه اضافه کړئ",
+
+  /* ── نوې کډه ─────────────────────────────────────────── */
+  "app.farms.new.pageTitle": "کډه اضافه کړئ — اګروپیو",
+  "app.farms.new.heading": "کډه اضافه کړئ",
+  "app.farms.new.description":
+    "اګروپیو ته د خپلې ځمکې په اړه وایئ — ځای، زبڼه او اندازه — ترڅو هره رهنماي په هغه مطابق وشي.",
+  "app.farms.new.fields.name": "د کډو نوم",
+  "app.farms.new.placeholders.name": "لکه خلیل پور کډه",
+  "app.farms.new.fields.district": "ولسوالۍ",
+  "app.farms.new.placeholders.district": "ولسوالۍ وټاکئ",
+  "app.farms.new.fields.crop": "اصلي زبڼه",
+  "app.farms.new.placeholders.crop": "زبڼه وټاکئ",
+  "app.farms.new.fields.acres": "اندازه (ایکړ)",
+  "app.farms.new.placeholders.acres": "لکه ۱۲.۵",
+  "app.farms.new.buttons.saving": "خونديږي…",
+  "app.farms.new.buttons.save": "کډه خوندي کړئ",
+  "app.farms.new.demoNotice": "ډیمو — خوندي کول اوسه د ډیټابیس سره نه لري",
+  "app.farms.new.success.heading": "کډه په ډیمو کې خوندي شوې",
+  "app.farms.new.success.description":
+    "په بشپړ بلډ کې دا کډه ستا د ډیشبورډ په مخ کې ښکاره کیږي او رهنمايونه شکل اخیستل پیل کوي.",
+  "app.farms.new.success.goToFarms": "زما کډې ته ورکړئ",
+  "app.farms.new.success.backToDashboard": "بیرته ډیشبورډ ته",
+  "app.farms.new.errors.nameRequired": "د کډو نوم ورکړئ.",
+  "app.farms.new.errors.districtRequired": "ولسوالۍ وټاکئ.",
+  "app.farms.new.errors.cropRequired": "اصلي زبڼه وټاکئ.",
+  "app.farms.new.errors.acresRequired": "اندازه په ایکړ کې ولیکه.",
+
+  /* ── د کډو تفصیلات ───────────────────────────────────── */
+  "app.farms.detail.pageTitle": "د کډو تفصیلات — اګروپیو",
+  "app.farms.detail.heroEyebrow": "د کډو تفصیلات",
+  "app.farms.detail.goodHealth": "ښه روغتیا",
+  "app.farms.detail.needsWatching": "د لید ته اړین دی",
+  "app.farms.detail.sownLabel": "کشت",
+  "app.farms.detail.seasonHeading": "زبڼه چېرته ده",
+  "app.farms.detail.activityHeading": "د کړو فعالیت",
+  "app.farms.detail.viewAllRecords": "ټولې ثبتونه وګورئ",
+  "app.farms.detail.logFieldEvent": "د کړو واقعه ثبت کړئ",
+  "app.farms.detail.scanCrop": "زبڼه اسکین کړئ",
+
+  /* ── ثبتونه عمومي ─────────────────────────────────────── */
+  "app.records.eyebrow": "د کړو ثبتونه",
+  "app.records.types.irrigation": "آبپاشي",
+  "app.records.types.fertilizer": "کود",
+  "app.records.types.pesticide": "حشره کش",
+  "app.records.types.disease": "ناروغۍ",
+  "app.records.types.harvest": "haust",
+
+  /* ── د ثبتونو لیست ───────────────────────────────────── */
+  "app.records.farmRecords.pageTitle": "د کړو ثبتونه — اګروپیو",
+  "app.records.farmRecords.heading": "د کړو یاددونکي",
+  "app.records.farmRecords.description":
+    "هر آبپاشي، اسپری او علاج لیکل شوی — ترڅو راتلونکۍ اونۍ په یاددونکي ته ملاتړ مه شي.",
+  "app.records.farmRecords.demoNotice":
+    "ډیمو — یوازې نمونه اندراجات — نوو خوندي کول اوسه نه لري",
+
+  /* ── نوې ثبت ──────────────────────────────────────────── */
+  "app.records.new.pageTitle": "نوې ثبت — اګروپیو",
+  "app.records.new.heading": "د کړو څه شوې ولیکه",
+  "app.records.new.description":
+    "آبپاشي، کود، حشره کش، ناروغۍ او حاصل ثبتونه — ستا د کړو یاددونکي، یو لیکه په یوخته.",
+  "app.records.new.fields.type": "څه شوې؟",
+  "app.records.new.fields.farm": "کډه",
+  "app.records.new.placeholders.farm": "کډه وټاکئ",
+  "app.records.new.fields.date": "نیټه",
+  "app.records.new.fields.title": "لنډ سرلیک",
+  "app.records.new.fields.optional": "(اختیاري)",
+  "app.records.new.placeholders.titleIrrigation": "لکه د نړی پاني — بشپړه کډه",
+  "app.records.new.placeholders.titleOther": "دویمه څرکنه په پټونو پر",
+  "app.records.new.fields.details": "تفصیلات",
+  "app.records.new.placeholders.details":
+    "د راتلونکۍ اونۍ لپاره څه هغه چې یاد راتلونکی وي — اندازه، هوا، د کړو حالت.",
+  "app.records.new.buttons.saving": "خونديږي…",
+  "app.records.new.buttons.save": "ثبت خوندي کړئ",
+  "app.records.new.demoNotice": "ډیمو — خوندي کول اوسه د ډیټابیس سره نه لري",
+  "app.records.new.success.heading": "ثبت په ډیمو کې خوندي شوی",
+  "app.records.new.success.description":
+    "په بشپړ بلډ کې دا اندراج ستا د کړو د ثبت کې شامل کیږي او راتلونکۍ رهنماي تیز کوي.",
+  "app.records.new.success.backToDashboard": "بیرته ډیشبورډ ته",
+  "app.records.new.success.viewFarms": "زما کډې وګورئ",
+  "app.records.new.errors.farmRequired": "وټاکئ چې دا څنګه یو کډه کې شوې.",
+  "app.records.new.errors.dateRequired": "نیټه وټاکئ.",
 };

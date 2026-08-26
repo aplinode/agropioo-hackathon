@@ -792,4 +792,125 @@ export const skr: Partial<Record<CatalogKey, string>> = {
   "app.dashboard.demo.actionAdvisor": "مشیر نال پوچھو",
   "app.dashboard.demo.actionScan": "فصل اسکین کرو",
   "app.dashboard.demo.actionPrices": "قیمتاں چیک کرو",
+  "app.dashboard.demo.actionRecord": "ریکارڈ شامل کرو",
+
+  /* ── کھیت عام ──────────────────────────────────────── */
+  "app.farms.eyebrow": "کھیت",
+  "app.farms.health.good": "چنگا",
+  "app.farms.health.watch": "خبردار",
+  "app.farms.units.acres": "ایکڑ",
+  "app.farms.stages.sowing": "بوئی",
+  "app.farms.stages.tillering": "شاخاں کا نکلنا",
+  "app.farms.stages.vegetative": "نباتاتی",
+  "app.farms.stages.grainFilling": "دنہاں بھرنا",
+  "app.farms.stages.ready": "تیار",
+  "app.farms.stages.squaring": "فال بندی",
+  "app.farms.stages.flowering": "پھول آنا",
+  "app.farms.stages.bollFilling": "تہائی بھرنا",
+  "app.farms.stages.grandGrowth": "عریض نشوونما",
+  "app.farms.stages.ripening": "پکنا",
+  "app.farms.stages.harvest": "کٹائی",
+
+  /* ── ضلع تے فصلیں ──────────────────────────────────── */
+  "app.farms.districts.multan": "ملتان",
+  "app.farms.districts.sahiwal": "سہیوال",
+  "app.farms.districts.faisalabad": "فیصل آباد",
+  "app.farms.districts.vehari": "وہاڑی",
+  "app.farms.districts.bahawalpur": "بہاولپور",
+  "app.farms.districts.lodhran": "لودھراں",
+  "app.farms.crops.wheat": "گندم",
+  "app.farms.crops.cotton": "کپاس",
+  "app.farms.crops.sugarcane": "گنا",
+  "app.farms.crops.maize": "مکئی",
+  "app.farms.crops.rice": "چاول",
+
+  /* ── کھیتاں دی فہرست ────────────────────────────────── */
+  "app.farms.list.pageTitle": "کھیت — اگروپیو",
+  "app.farms.list.heading": "تہاݙے سارے کھیت، اک فہرست",
+  "app.farms.list.description":
+    "ہر کھیت اپنیاں فصلیں، نشوونما دے مرحلے تے صحت دے ساتھ — اک نظر وِچ۔ کھیت دی مکمل کہانی کیتے ٹیپ کرو۔",
+  "app.farms.list.addLink": "شامل کرو",
+  "app.farms.list.openFarm": "کھیت کھولو",
+  "app.farms.list.addNewFarm": "نیا کھیت شامل کرو",
+
+  /* ── نیا کھیت ────────────────────────────────────────── */
+  "app.farms.new.pageTitle": "کھیت شامل کرو — اگروپیو",
+  "app.farms.new.heading": "کھیت شامل کرو",
+  "app.farms.new.description":
+    "اگروپیو نوں اپنی زمین بارے وِچ دسو — مقام، فصل تے رقبہ — تاں جو ہر رہنمائی اُس دے مطابق ہووے۔",
+  "app.farms.new.fields.name": "کھیت دا ناں",
+  "app.farms.new.placeholders.name": "مثلاً خلیل پور کھیت",
+  "app.farms.new.fields.district": "ضلع",
+  "app.farms.new.placeholders.district": "ضلع چنو",
+  "app.farms.new.fields.crop": "بنیادی فصل",
+  "app.farms.new.placeholders.crop": "فصل چنو",
+  "app.farms.new.fields.acres": "رقبہ (ایکڑ)",
+  "app.farms.new.placeholders.acres": "مثلاً ۱۲.۵",
+  "app.farms.new.buttons.saving": "محفوظ ہو رہا اے…",
+  "app.farms.new.buttons.save": "کھیت محفوظ کرو",
+  "app.farms.new.demoNotice": "ڈیمو — محفوظ کرنا ہُن ڈیٹابیس نال نہیں جُڑیا",
+  "app.farms.new.success.heading": "کھیت ڈیمو وِچ محفوظ ہو گیا",
+  "app.farms.new.success.description":
+    "مکمل بلڈ وِچ اِہ کھیت تہاݙے ڈیش بورڈ تے دکھائے گا تے رہنمائیاں شکل لینا شروع کریں گیاں۔",
+  "app.farms.new.success.goToFarms": "میرے کھیتاں تے جاؤ",
+  "app.farms.new.success.backToDashboard": "واپس ڈیش بورڈ تے",
+  "app.farms.new.errors.nameRequired": "کھیت نوں ناں دیو۔",
+  "app.farms.new.errors.districtRequired": "ضلع چنو۔",
+  "app.farms.new.errors.cropRequired": "بنیادی فصل چنو۔",
+  "app.farms.new.errors.acresRequired": "رقبہ ایکڑ وِچ درج کرو۔",
+
+  /* ── کھیت دی تفصیل ──────────────────────────────────── */
+  "app.farms.detail.pageTitle": "کھیت دی تفصیل — اگروپیو",
+  "app.farms.detail.heroEyebrow": "کھیت دی تفصیل",
+  "app.farms.detail.goodHealth": "چنگی صحت",
+  "app.farms.detail.needsWatching": "توجہ لاگم",
+  "app.farms.detail.sownLabel": "بوئی",
+  "app.farms.detail.seasonHeading": "فصل کِتھے اے",
+  "app.farms.detail.activityHeading": "کھیت دی سرگرمی",
+  "app.farms.detail.viewAllRecords": "سارے ریکارڈ ویکھو",
+  "app.farms.detail.logFieldEvent": "کھیت دا واقعہ درج کرو",
+  "app.farms.detail.scanCrop": "فصل اسکین کرو",
+
+  /* ── ریکارڈ عام ──────────────────────────────────────── */
+  "app.records.eyebrow": "کھیت دے ریکارڈ",
+  "app.records.types.irrigation": "آبپاشی",
+  "app.records.types.fertilizer": "کھاد",
+  "app.records.types.pesticide": "کیڑے مار",
+  "app.records.types.disease": "بیماری",
+  "app.records.types.harvest": "کٹائی",
+
+  /* ── ریکارڈاں دی فہرست ──────────────────────────────── */
+  "app.records.farmRecords.pageTitle": "کھیت دے ریکارڈ — اگروپیو",
+  "app.records.farmRecords.heading": "کھیت دی یادداشت",
+  "app.records.farmRecords.description":
+    "ہر آبپاشی، اسپرے تے علاج لکھیا ہویا — تاں جو اگلے ہفتے دے فیصلے یادداشت تے منحصر نہ ہوں۔",
+  "app.records.farmRecords.demoNotice":
+    "ڈیمو — صرف نمونہ اندراجات — نئے محفوظ کرنا ہُن نہیں جُڑیا",
+
+  /* ── نیا ریکارڈ ──────────────────────────────────────── */
+  "app.records.new.pageTitle": "نیا ریکارڈ — اگروپیو",
+  "app.records.new.heading": "کھیت وِچ جو ہویا اُہ درج کرو",
+  "app.records.new.description":
+    "آبپاشی، کھاد، کیڑے مار، بیماری تے کٹائی دے اندراجات — تہاݙے کھیت دی یادداشت، اِک اِک لائن۔",
+  "app.records.new.fields.type": "کیا ہویا؟",
+  "app.records.new.fields.farm": "کھیت",
+  "app.records.new.placeholders.farm": "کھیت چنو",
+  "app.records.new.fields.date": "تاریخ",
+  "app.records.new.fields.title": "مختصر عنوان",
+  "app.records.new.fields.optional": "(اختیاری)",
+  "app.records.new.placeholders.titleIrrigation": "مثلاً نہری پانی — مکمل کھیت",
+  "app.records.new.placeholders.titleOther": "دوسرا چھڑکاؤ پتواروں تے",
+  "app.records.new.fields.details": "تفصیلات",
+  "app.records.new.placeholders.details":
+    "اگلے ہفتے کیتے جو وی یاد رکھنا ضروری ہو — مقدار، موسم، کھیت دی صورتحال۔",
+  "app.records.new.buttons.saving": "محفوظ ہو رہا اے…",
+  "app.records.new.buttons.save": "ریکارڈ محفوظ کرو",
+  "app.records.new.demoNotice": "ڈیمو — محفوظ کرنا ہُن ڈیٹابیس نال نہیں جُڑیا",
+  "app.records.new.success.heading": "ریکارڈ ڈیمو وِچ محفوظ ہو گیا",
+  "app.records.new.success.description":
+    "مکمل بلڈ وِچ اِہ اندراج تہاݙے کھیت دے ریکارڈ وِچ شامل ہوگا تے مستقبل دیاں رہنمائیاں تیز ہوں گیاں۔",
+  "app.records.new.success.backToDashboard": "واپس ڈیش بورڈ تے",
+  "app.records.new.success.viewFarms": "میرے کھیت ویکھو",
+  "app.records.new.errors.farmRequired": "چنو اِہ کس کھیت تے ہویا۔",
+  "app.records.new.errors.dateRequired": "تاریخ چنو۔",
 };

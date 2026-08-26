@@ -13,6 +13,7 @@ import type { Locale } from "./config";
 import { formatMessage } from "./logic";
 import { resolveAppLocale, resolveString, type ResolvedString, type StringTable } from "./logic";
 import type { DashboardBundle } from "@/app/(farmer)/(dashboard)/dashboard/dashboard-bundle";
+import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -223,6 +224,154 @@ export async function getDashboardBundle(): Promise<DashboardBundle> {
       actionScan: t("app.dashboard.demo.actionScan").text,
       actionPrices: t("app.dashboard.demo.actionPrices").text,
       actionRecord: t("app.dashboard.demo.actionRecord").text,
+    },
+  };
+}
+
+/**
+ * Flat translation bundle for the farms feature (list, new, detail, records).
+ * Built server-side and passed as props to client components.
+ */
+export async function getFarmsBundle(): Promise<FarmsBundle> {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    eyebrow: t("app.farms.eyebrow").text,
+    healthGood: t("app.farms.health.good").text,
+    healthWatch: t("app.farms.health.watch").text,
+    unitsAcres: t("app.farms.units.acres").text,
+    stages: {
+      sowing: t("app.farms.stages.sowing").text,
+      tillering: t("app.farms.stages.tillering").text,
+      vegetative: t("app.farms.stages.vegetative").text,
+      grainFilling: t("app.farms.stages.grainFilling").text,
+      ready: t("app.farms.stages.ready").text,
+      squaring: t("app.farms.stages.squaring").text,
+      flowering: t("app.farms.stages.flowering").text,
+      bollFilling: t("app.farms.stages.bollFilling").text,
+      grandGrowth: t("app.farms.stages.grandGrowth").text,
+      ripening: t("app.farms.stages.ripening").text,
+      harvest: t("app.farms.stages.harvest").text,
+    },
+    districts: {
+      multan: t("app.farms.districts.multan").text,
+      sahiwal: t("app.farms.districts.sahiwal").text,
+      faisalabad: t("app.farms.districts.faisalabad").text,
+      vehari: t("app.farms.districts.vehari").text,
+      bahawalpur: t("app.farms.districts.bahawalpur").text,
+      lodhran: t("app.farms.districts.lodhran").text,
+    },
+    crops: {
+      wheat: t("app.farms.crops.wheat").text,
+      cotton: t("app.farms.crops.cotton").text,
+      sugarcane: t("app.farms.crops.sugarcane").text,
+      maize: t("app.farms.crops.maize").text,
+      rice: t("app.farms.crops.rice").text,
+    },
+    list: {
+      pageTitle: t("app.farms.list.pageTitle").text,
+      heading: t("app.farms.list.heading").text,
+      description: t("app.farms.list.description").text,
+      addLink: t("app.farms.list.addLink").text,
+      openFarm: t("app.farms.list.openFarm").text,
+      addNewFarm: t("app.farms.list.addNewFarm").text,
+    },
+    new: {
+      pageTitle: t("app.farms.new.pageTitle").text,
+      heading: t("app.farms.new.heading").text,
+      description: t("app.farms.new.description").text,
+      fields: {
+        name: t("app.farms.new.fields.name").text,
+        district: t("app.farms.new.fields.district").text,
+        crop: t("app.farms.new.fields.crop").text,
+        acres: t("app.farms.new.fields.acres").text,
+      },
+      placeholders: {
+        name: t("app.farms.new.placeholders.name").text,
+        district: t("app.farms.new.placeholders.district").text,
+        crop: t("app.farms.new.placeholders.crop").text,
+        acres: t("app.farms.new.placeholders.acres").text,
+      },
+      buttons: {
+        saving: t("app.farms.new.buttons.saving").text,
+        save: t("app.farms.new.buttons.save").text,
+      },
+      demoNotice: t("app.farms.new.demoNotice").text,
+      success: {
+        heading: t("app.farms.new.success.heading").text,
+        description: t("app.farms.new.success.description").text,
+        goToFarms: t("app.farms.new.success.goToFarms").text,
+        backToDashboard: t("app.farms.new.success.backToDashboard").text,
+      },
+      errors: {
+        nameRequired: t("app.farms.new.errors.nameRequired").text,
+        districtRequired: t("app.farms.new.errors.districtRequired").text,
+        cropRequired: t("app.farms.new.errors.cropRequired").text,
+        acresRequired: t("app.farms.new.errors.acresRequired").text,
+      },
+    },
+    detail: {
+      pageTitle: t("app.farms.detail.pageTitle").text,
+      heroEyebrow: t("app.farms.detail.heroEyebrow").text,
+      goodHealth: t("app.farms.detail.goodHealth").text,
+      needsWatching: t("app.farms.detail.needsWatching").text,
+      sownLabel: t("app.farms.detail.sownLabel").text,
+      seasonHeading: t("app.farms.detail.seasonHeading").text,
+      activityHeading: t("app.farms.detail.activityHeading").text,
+      viewAllRecords: t("app.farms.detail.viewAllRecords").text,
+      logFieldEvent: t("app.farms.detail.logFieldEvent").text,
+      scanCrop: t("app.farms.detail.scanCrop").text,
+    },
+    records: {
+      eyebrow: t("app.records.eyebrow").text,
+      types: {
+        irrigation: t("app.records.types.irrigation").text,
+        fertilizer: t("app.records.types.fertilizer").text,
+        pesticide: t("app.records.types.pesticide").text,
+        disease: t("app.records.types.disease").text,
+        harvest: t("app.records.types.harvest").text,
+      },
+      farmRecords: {
+        pageTitle: t("app.records.farmRecords.pageTitle").text,
+        heading: t("app.records.farmRecords.heading").text,
+        description: t("app.records.farmRecords.description").text,
+        demoNotice: t("app.records.farmRecords.demoNotice").text,
+      },
+      new: {
+        pageTitle: t("app.records.new.pageTitle").text,
+        heading: t("app.records.new.heading").text,
+        description: t("app.records.new.description").text,
+        fields: {
+          type: t("app.records.new.fields.type").text,
+          farm: t("app.records.new.fields.farm").text,
+          date: t("app.records.new.fields.date").text,
+          title: t("app.records.new.fields.title").text,
+          optional: t("app.records.new.fields.optional").text,
+          details: t("app.records.new.fields.details").text,
+        },
+        placeholders: {
+          farm: t("app.records.new.placeholders.farm").text,
+          titleIrrigation: t("app.records.new.placeholders.titleIrrigation").text,
+          titleOther: t("app.records.new.placeholders.titleOther").text,
+          details: t("app.records.new.placeholders.details").text,
+        },
+        buttons: {
+          saving: t("app.records.new.buttons.saving").text,
+          save: t("app.records.new.buttons.save").text,
+        },
+        demoNotice: t("app.records.new.demoNotice").text,
+        success: {
+          heading: t("app.records.new.success.heading").text,
+          description: t("app.records.new.success.description").text,
+          backToDashboard: t("app.records.new.success.backToDashboard").text,
+          viewFarms: t("app.records.new.success.viewFarms").text,
+        },
+        errors: {
+          farmRequired: t("app.records.new.errors.farmRequired").text,
+          dateRequired: t("app.records.new.errors.dateRequired").text,
+        },
+      },
     },
   };
 }
