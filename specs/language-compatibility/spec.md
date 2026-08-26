@@ -74,19 +74,22 @@ to read, navigate, and sign up entirely in Saraiki.
 - FR-9 While a switch is in flight the control is disabled; double-taps cannot fire two
   navigations.
 
-**Translations & catalog**
+**Translations & database**
 - FR-10 Every user-visible string on translated surfaces — headings, body, buttons,
   labels, placeholders, validation messages, aria-labels, alt text, page `<title>` and
   meta descriptions, and demo snippets such as the login advisor preview — comes from
-  the shared translation catalog. English rendering uses the same catalog (single source
-  of truth; no parallel hardcoded copy drifting elsewhere).
-- FR-11 The catalog lives in the database (constitution) and is editable there without
-  redeploying; each entry belongs to one namespace/key and one language, and a key can
-  hold at most one value per language.
+  the Supabase `translations` table. English rendering uses the same table (single
+  source of truth; no parallel hardcoded copy drifting elsewhere).
+- FR-11 The Supabase `translations` table is the source of truth for all translated
+  strings (constitution). It is editable there without redeploying; each entry belongs
+  to one namespace/key and one language, and a key can hold at most one value per
+  language. No catalog files exist as an intermediate source — the database IS the
+  catalog. All DB sync operations use the in-project Supabase MCP connection (no
+  ad-hoc clients or manual scripts).
 - FR-12 When a string is missing or empty for a language, that segment renders the
   English value wrapped so it is announced/read as English and does not corrupt
-  surrounding RTL text. Raw catalog keys are never shown to users. Missing segments are
-  never silently hidden.
+  surrounding RTL text. Raw translation keys are never shown to users. Missing segments
+  are never silently hidden.
 - FR-13 Coverage is measurable: it is possible to list, per language, which keys fall
   back to English (a coverage/status signal exists even though no admin UI ships).
 
@@ -152,7 +155,7 @@ to read, navigate, and sign up entirely in Saraiki.
 - **Corrupted or invalid cookie value** → treated as no stored choice.
 - **Cookie disagrees with URL** (cookie=ur on `/pa/features`) → URL wins; switcher marks
   the URL's language.
-- **Missing OR empty catalog value** → both count as missing (English fallback path).
+- **Missing OR empty DB value** → both count as missing (English fallback path).
 - **Duplicate key within a language** → rejected at write time; one value per key per
   language.
 - **Longest-real-word test**: Urdu/Pashto/Sindhi words don't hyphenate and breaking
@@ -170,7 +173,8 @@ to read, navigate, and sign up entirely in Saraiki.
 ## Out of scope
 
 - Voice input/output, IVR, SMS alerts (constitution).
-- Admin UI for editing translations — DB edits happen via SQL/migrations for now.
+- Admin UI for editing translations — DB edits happen via SQL/migrations for now; no
+  catalog files to maintain.
 - Account-level preference sync (login persistence across devices) — deferred wholly to
   the future auth/database spec; this feature is cookie-only.
 - The `/onboarding` screens themselves — next feature; it will consume this system
@@ -198,7 +202,7 @@ to read, navigate, and sign up entirely in Saraiki.
       chrome or plain — never an English page masquerading.
 - [ ] AC-6 Deleting one Saraiki value in the DB makes only that segment render English
       (isolated, valid `lang=en`) on `/skr/...`; restoring the row restores Saraiki on
-      next request without redeploy.
+      next request without redeploy. No catalog files exist to sync from.
 - [ ] AC-7 On `/ur/...` pages: layout mirrored, price-like figures render ۳٬۵۰۰-style
       digits, phone/email fields stay LTR, free-text field aligns to typed script,
       headings render Nastaliq-style, buttons/badges show no clipped glyphs.

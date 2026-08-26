@@ -36,12 +36,15 @@ Scope ruling (founder): the **whole farmer app ships in one release** — no pha
 - **FR-16 Honest controls:** every language control in the app either works or does not exist — no control may navigate to a 404.
 - **FR-17 Onboarding wired:** onboarding is fixed and becomes a real post-signup step — new signups land on it after account creation, with the language chosen during signup pre-selected (constitution rule), its language list matching FR-15, and completion continuing into the app. Existing users signing in continue straight to the dashboard as merged in PR #16.
 - **FR-18 Advisor works per locale:** the advisor's canned replies render in the active language, and trigger-word matching recognizes keywords authored for that locale — so a farmer typing in Urdu gets a relevant Urdu reply, not the fallback.
+- **FR-19 Supabase MCP for DB sync:** all translation DB operations use the in-project Supabase MCP connection. No ad-hoc clients, manual scripts, or catalog files — the Supabase `translations` table is the single source of truth, and all sync/migration operations go through MCP.
 
 ## Edge cases & rules
 
 - Preference value corrupted or references a retired language → English, silently, no crash.
 - Switching language mid-form performs a full reload; unsaved input is lost. Accepted trade-off for this release (matches existing switcher behavior site-wide) — forms are short; noted honestly rather than hidden.
-- A translation missing or empty in the database falls back to English per the established pipeline; a farmer must never see a raw key, blank label, or mixed sentence where a full English string was available.
+- A translation missing or empty in the Supabase `translations` table falls back to
+  English per the established pipeline; a farmer must never see a raw key, blank label,
+  or mixed sentence where a full English string was available.
 - Longest-language layout stress: Urdu/Pashto strings run longer than English; no surface may introduce horizontal scroll at 320px or overlap touch targets in any locale.
 - Plural/sentence structure differences are handled by translators authoring natural per-locale strings — the UI never concatenates translated fragments around inserted words except through the existing isolated-fallback wrapper.
 - Charts, trend arrows, and progress indicators flip direction meaningfully in RTL or use direction-neutral glyphs; a mirrored arrow must never imply the opposite trend.

@@ -9,9 +9,9 @@ Scope question this research answers: what exists, what breaks, what the realist
 
 **Pipeline** (all working, verified in groups 4d/4e):
 
-1. `catalog/{en,ur,pa,ps,sd,skr,bal,hno}.ts` — typed authoring source of truth. **671 keys × 8 locales = 5368 values.**
-2. `scripts/sync-translations.mts` upserts catalog → Supabase `public.translations` (unique `(key, locale)`), MD5-verified.
-3. Runtime: `lib/i18n/server.ts` `getDictionary(locale)` reads DB rows (`status='translated'`) **overlaid on** the build-time catalog; missing/empty → English fallback; per-request dedupe via React `cache()`; layouts are `force-dynamic` so founder SQL edits land next request.
+1. Supabase `public.translations` table — single source of truth. **671 keys × 8 locales = 5368 rows.**
+2. Translations authored directly via SQL/migrations (no catalog files as intermediate source).
+3. Runtime: `lib/i18n/server.ts` `getDictionary(locale)` reads DB rows (`status='translated'`); missing/empty → English fallback; per-request dedupe via React `cache()`; layouts are `force-dynamic` so founder SQL edits land next request.
 4. Locale resolution for site pages: **URL only** (`next/root-params`). Proxy (`proxy.ts`, K1): bare paths rewrite internally to `/en/*`; `/{slug}/*` passes through; no cookies/headers involved (FR-4). English has **no slug** (`urlSlug: ""`), so `/en/*` is not a real URL family.
 5. `<html lang>` + `dir` + fonts: each route group owns its own `<html>`. `(site)/[locale]/layout.tsx` emits registry pair and attaches Nastaliq + Noto Sans Arabic font variables **only for non-English locales** (FR-17). Farmer layout hardcodes `lang="en" dir="ltr"` with Latin faces only.
 6. Persistence: `LanguageSwitcher` sets `agro_locale=<locale>` cookie (FR-21) on every switch; cookie influences switcher highlight + suggestion-chip suppression only — never what a URL renders. A server-side-readable cookie already exists as a mechanism.
@@ -70,7 +70,7 @@ These exist on `main` today and any localization work collides with them:
 − Leaves constitution's "switcher visible inside the farmer app" unmet; localization momentum lost.
 
 Any approach still needs these sub-decisions:
-- **Demo content strategy:** translate mock content through the catalog (~200–300 new keys × 8 ≈ 1600–2400 rows) vs localize chrome/UI only and keep advisory/alert bodies English (fallback-wrapped per FR-12). Cost/realism trade-off.
+- **Demo content strategy:** translate mock content via SQL migrations (~200–300 new keys × 8 ≈ 1600–2400 rows) vs localize chrome/UI only and keep advisory/alert bodies English (fallback-wrapped per FR-12). Cost/realism trade-off.
 - **Digits, dates, relative times** through `format.ts` everywhere data renders.
 - **RTL audit** of shell + heaviest screens at 320px with longest real strings (edge case in lang-compat spec).
 - **Auth interplay:** guards redirect to bare `/login`; verify/forgot/reset surfaces and whether they enter scope; post-login redirect carrying language intent.
@@ -110,7 +110,7 @@ Inline English errors vs auth-forms' Zod+`ERROR_KEYS` translation path. Localiza
 
 ## 7. Sizing estimate
 
-| Slice | New catalog keys (est.) |
+| Slice | New translation keys (est.) |
 |---|---|
 | Shell (sidebar, tabs, headers, sign-out) | ~25 |
 | Dashboard screen incl. demo content | ~90 |
@@ -122,7 +122,7 @@ Inline English errors vs auth-forms' Zod+`ERROR_KEYS` translation path. Localiza
 | Forgot/reset/verify/onboarding fixes | ~55 |
 | **Total** | **~450–550 keys × 8 locales ≈ 3600–4400 new DB rows** |
 
-Translation authoring is the long pole; sync + verification tooling from groups 4d/4e is reusable as-is.
+Translation authoring is the long pole; verification tooling from groups 4d/4e is reusable as-is.
 
 ## 8. Open questions for clarify phase (preview, not exhaustive)
 
