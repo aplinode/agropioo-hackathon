@@ -12,6 +12,7 @@ import { getSupabase } from "@/lib/supabase";
 import type { Locale } from "./config";
 import { formatMessage } from "./logic";
 import { resolveAppLocale, resolveString, type ResolvedString, type StringTable } from "./logic";
+import type { DashboardBundle } from "@/app/(farmer)/(dashboard)/dashboard/dashboard-bundle";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -112,6 +113,119 @@ export const getAppLocale = cache(async (): Promise<Locale> => {
   const cookieStore = await cookies();
   return resolveAppLocale(cookieStore.get(APP_LOCALE_COOKIE)?.value);
 });
+
+/**
+ * Flat translation bundle for the client shell (sidebar + bottom tabs).
+ * Server-only function — result crosses the RSC boundary as plain props.
+ */
+export async function getShellBundle() {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    nav: {
+      dashboard: t("app.shell.nav.dashboard").text,
+      farms: t("app.shell.nav.farms").text,
+      advisor: t("app.shell.nav.advisor").text,
+      detect: t("app.shell.nav.detect").text,
+      prices: t("app.shell.nav.prices").text,
+      notifications: t("app.shell.nav.notifications").text,
+      settings: t("app.shell.nav.settings").text,
+      more: t("app.shell.nav.more").text,
+    },
+    signOut: t("app.shell.signOut").text,
+    aria: {
+      farmerTools: t("app.shell.aria.farmerTools").text,
+      currentPage: t("app.shell.aria.currentPage").text,
+    },
+    productOf: t("common.productOfAplinode").text,
+    builtForPakistan: t("common.builtForPakistan").text,
+  } as const;
+}
+
+/**
+ * Flat translation bundle for the client DashboardView (UI chrome + demo data).
+ * Server-only function — result crosses the RSC boundary as plain props.
+ */
+export async function getDashboardBundle(): Promise<DashboardBundle> {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    greeting: t("app.dashboard.greeting").text,
+    profileMenu: t("app.dashboard.aria.profileMenu").text,
+    welcomeEyebrow: t("app.dashboard.welcomeEyebrow").text,
+    welcomeTitle: t("app.dashboard.welcomeTitle").text,
+    welcomeBody: t("app.dashboard.welcomeBody").text,
+    addFirstFarm: t("app.dashboard.addFirstFarm").text,
+    today: t("app.dashboard.badge.today").text,
+    advisoryTitle: t("app.dashboard.aria.advisoryTitle").text,
+    carryToField: t("app.dashboard.carryToField").text,
+    askAdvisor: t("app.dashboard.askAdvisor").text,
+    weatherTitle: t("app.dashboard.aria.weatherTitle").text,
+    degreesCelsius: t("app.dashboard.aria.degreesCelsius").text,
+    fullForecast: t("app.dashboard.fullForecast").text,
+    weatherUnavailable: t("app.dashboard.weatherUnavailable").text,
+    seasonTipBadge: t("app.dashboard.seasonTipBadge").text,
+    alertsHeading: t("app.dashboard.alertsHeading").text,
+    newCount: t("app.dashboard.newCount").text,
+    viewAllAlerts: t("app.dashboard.viewAllAlerts").text,
+    noAlerts: t("app.dashboard.noAlerts").text,
+    alertAria: t("app.dashboard.aria.alert").text,
+    severityCritical: t("app.dashboard.severity.critical").text,
+    severityWatch: t("app.dashboard.severity.watch").text,
+    severityInfo: t("app.dashboard.severity.info").text,
+    quickActionsHeading: t("app.dashboard.quickActionsHeading").text,
+    cropDoctor: t("app.dashboard.cropDoctor").text,
+    detectTitle: t("app.dashboard.detectTitle").text,
+    detectBody: t("app.dashboard.detectBody").text,
+    myFarms: t("app.dashboard.myFarms").text,
+    addFarm: t("app.dashboard.addFarm").text,
+    healthGood: t("app.dashboard.health.good").text,
+    healthWatch: t("app.dashboard.health.watch").text,
+    setupChecklist: t("app.dashboard.setupChecklist").text,
+    checklistProgress: t("app.dashboard.checklistProgress").text,
+    dismissChecklist: t("app.dashboard.aria.dismissChecklist").text,
+    setupProgress: t("app.dashboard.aria.setupProgress").text,
+    demoFooter: t("app.dashboard.demoFooter").text,
+    languageLabel: t("app.dashboard.languageLabel").text,
+    signOut: t("app.shell.signOut").text,
+    demo: {
+      todayLabel: t("app.dashboard.demo.todayLabel").text,
+      location: t("app.dashboard.demo.location").text,
+      advisoryCrop: t("app.dashboard.demo.advisoryCrop").text,
+      advisoryStage: t("app.dashboard.demo.advisoryStage").text,
+      advisoryAction: t("app.dashboard.demo.advisoryAction").text,
+      advisoryWhy: t("app.dashboard.demo.advisoryWhy").text,
+      seasonAction: t("app.dashboard.demo.seasonAction").text,
+      seasonWhy: t("app.dashboard.demo.seasonWhy").text,
+      weatherLocation: t("app.dashboard.demo.weatherLocation").text,
+      weatherCondition: t("app.dashboard.demo.weatherCondition").text,
+      rainNote: t("app.dashboard.demo.rainNote").text,
+      alertWhitefly: t("app.dashboard.demo.alertWhitefly").text,
+      alertRain: t("app.dashboard.demo.alertRain").text,
+      alertPrice: t("app.dashboard.demo.alertPrice").text,
+      farm1Name: t("app.dashboard.demo.farm1Name").text,
+      farm1Location: t("app.dashboard.demo.farm1Location").text,
+      farm1Crops: t("app.dashboard.demo.farm1Crops").text,
+      farm1Stage: t("app.dashboard.demo.farm1Stage").text,
+      farm2Name: t("app.dashboard.demo.farm2Name").text,
+      farm2Location: t("app.dashboard.demo.farm2Location").text,
+      farm2Crops: t("app.dashboard.demo.farm2Crops").text,
+      farm2Stage: t("app.dashboard.demo.farm2Stage").text,
+      farm3Name: t("app.dashboard.demo.farm3Name").text,
+      farm3Location: t("app.dashboard.demo.farm3Location").text,
+      farm3Crops: t("app.dashboard.demo.farm3Crops").text,
+      farm3Stage: t("app.dashboard.demo.farm3Stage").text,
+      checklistAdvisor: t("app.dashboard.demo.checklistAdvisor").text,
+      checklistDetect: t("app.dashboard.demo.checklistDetect").text,
+      actionAdvisor: t("app.dashboard.demo.actionAdvisor").text,
+      actionScan: t("app.dashboard.demo.actionScan").text,
+      actionPrices: t("app.dashboard.demo.actionPrices").text,
+      actionRecord: t("app.dashboard.demo.actionRecord").text,
+    },
+  };
+}
 
 /** Flat prop bundle for the client SiteHeader (functions can't cross the RSC boundary). */
 export function siteHeaderStrings(t: Translator) {

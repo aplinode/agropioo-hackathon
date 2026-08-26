@@ -15,22 +15,29 @@ import {
   TagIcon,
 } from "@/components/icons";
 import logoOnDark from "@/references/Agropioo-logo-footer.png";
+import type { ShellBundle } from "./shell-bundle";
 
 /* Desktop (≥lg) sidebar for the farmer app: a dark forest ledger rail.
    The farmer app carries its own identity here — marketing pages keep
    their white chrome; inside the app, greens go deep. */
-const destinations = [
-  { href: "/dashboard", label: "Dashboard", Icon: HomeIcon },
-  { href: "/farms", label: "Farms", Icon: LeafIcon },
-  { href: "/advisor", label: "Advisor", Icon: ChatIcon },
-  { href: "/detect", label: "Detect", Icon: CameraIcon },
-  { href: "/prices", label: "Prices", Icon: TagIcon },
-  { href: "/notifications", label: "Notifications", Icon: BellIcon },
-  { href: "/settings", label: "Settings", Icon: GearIcon },
-];
 
-export default function AppSidebar() {
+interface AppSidebarProps {
+  bundle: ShellBundle;
+}
+
+export default function AppSidebar({ bundle }: AppSidebarProps) {
   const pathname = usePathname();
+  const { nav, signOut, aria, productOf, builtForPakistan } = bundle;
+
+  const destinations = [
+    { href: "/dashboard", label: nav.dashboard, Icon: HomeIcon },
+    { href: "/farms", label: nav.farms, Icon: LeafIcon },
+    { href: "/advisor", label: nav.advisor, Icon: ChatIcon },
+    { href: "/detect", label: nav.detect, Icon: CameraIcon },
+    { href: "/prices", label: nav.prices, Icon: TagIcon },
+    { href: "/notifications", label: nav.notifications, Icon: BellIcon },
+    { href: "/settings", label: nav.settings, Icon: GearIcon },
+  ];
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -43,10 +50,10 @@ export default function AppSidebar() {
           <Image src={logoOnDark} alt="Agropioo" className="h-11 w-auto" />
         </Link>
         <p className="mt-1 px-2 font-mono text-[0.65rem] uppercase tracking-[0.22em] text-white/50">
-          A product of Aplinode
+          {productOf}
         </p>
 
-        <nav aria-label="Farmer tools" className="mt-8">
+        <nav aria-label={aria.farmerTools} className="mt-8">
           <ul className="space-y-1">
             {destinations.map(({ href, label, Icon }) => {
               const active = isActive(href);
@@ -85,11 +92,11 @@ export default function AppSidebar() {
           className="flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
         >
           <LogOutIcon className="h-5 w-5 shrink-0" />
-          Sign out
+          {signOut}
         </Link>
         <p className="flex items-center gap-2 px-3 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-white/40">
           <SproutIcon size={14} className="shrink-0 text-agro-sprout/60" aria-hidden="true" />
-          Built for Pakistan
+          {builtForPakistan}
         </p>
       </div>
     </aside>

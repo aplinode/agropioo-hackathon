@@ -12,8 +12,6 @@ import {
   ChevronRightIcon,
   ClipboardIcon,
   CloudRainIcon,
-  GlobeIcon,
-  BellIcon,
   LeafIcon,
   MapPinIcon,
   PlusIcon,
@@ -22,18 +20,10 @@ import {
   XIcon,
   LogOutIcon,
 } from "@/components/icons";
-import {
-  checklistItems,
-  demoAdvisory,
-  demoAlerts,
-  demoFarmer,
-  demoFarms,
-  demoSeasonTip,
-  demoWeather,
-  quickActions,
-} from "./demo-data";
+import { getDemoData } from "./demo-data";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import type { Locale } from "@/lib/i18n/config";
+import type { DashboardBundle } from "./dashboard-bundle";
 
 const CHECKLIST_DISMISS_KEY = "agropioo-checklist-dismissed";
 
@@ -91,12 +81,6 @@ const severityChip = {
   info: "bg-agro-mint text-agro-slate",
 } as const;
 
-const severityWord = {
-  critical: "Critical",
-  warning: "Watch",
-  info: "Info",
-} as const;
-
 const alertKindIcon = {
   pest: BugIcon,
   weather: CloudRainIcon,
@@ -147,6 +131,8 @@ type DashboardViewProps = {
   weatherAvailable?: boolean;
   /** Cookie-resolved locale threaded from the server page (ADR 0004 / FR-3). */
   appLocale?: Locale;
+  /** Server-resolved translation bundle (all dashboard strings). */
+  bundle: DashboardBundle;
 };
 
 /* Farmer home screen — answers "kya karoon aaj?" in one scan.
@@ -158,6 +144,7 @@ export default function DashboardView({
   variant,
   weatherAvailable = true,
   appLocale,
+  bundle,
 }: DashboardViewProps) {
   const isEmpty = variant === "empty";
   const completedCount = isEmpty ? 0 : 1;
@@ -168,8 +155,15 @@ export default function DashboardView({
   );
 
   const [showProfile, setShowProfile] = useState(false);
-  const advisory = isEmpty ? demoSeasonTip : demoAdvisory;
+  const { farmer, advisory, seasonTip, weather, alerts: demoAlerts, farms: demoFarms, checklistItems, quickActions } = getDemoData(bundle);
+  const advisory_ = isEmpty ? seasonTip : advisory;
   const topAlerts = demoAlerts.slice(0, 3);
+
+  const severityWord = {
+    critical: bundle.severityCritical,
+    warning: bundle.severityWatch,
+    info: bundle.severityInfo,
+  } as const;
 
   return (
     <div className="space-y-9 pt-1">
@@ -177,25 +171,25 @@ export default function DashboardView({
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-canopy">
-            {demoFarmer.todayLabel}
+            {farmer.todayLabel}
           </p>
           <h1 className="display-heading mt-2 font-display text-[1.75rem] font-semibold leading-tight tracking-tight text-agro-forest sm:text-4xl">
-            Hello, {demoFarmer.firstName}
+            {bundle.greeting.replace("{name}", farmer.firstName)}
           </h1>
           <p className="mt-2 flex items-center gap-1.5 text-sm text-agro-slate">
             <MapPinIcon size={16} className="shrink-0 text-agro-canopy" />
-            {demoFarmer.location}
+            {farmer.location}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <div
             onClick={() => setShowProfile(!showProfile)}
             role="button"
-            aria-label="Profile menu"
+            aria-label={bundle.profileMenu}
             className={`relative inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-canopy font-semibold text-white transition-colors ${showProfile ? "border-2 border-agro-sprout" : ""} hover:bg-agro-forest`}
           >
             <span style={{ fontWeight: "bold", color: "white" }}>
-              {demoFarmer.firstName[0]}
+              {farmer.firstName[0]}
             </span>
           </div>
           {showProfile && (
@@ -203,9 +197,9 @@ export default function DashboardView({
               className="absolute right-0 mt-2 w-48 rounded-md bg-white py-2 shadow-lg border border-agro-sprout/20 z-50 min-w-[160px]"
             >
               <div className="px-4 py-3 text-sm text-agro-forest">
-                <div className="font-medium">{demoFarmer.firstName} {demoFarmer.lastName}</div>
+                <div className="font-medium">{farmer.firstName} {farmer.lastName}</div>
                 <div className="text-agro-slate text-xs">
-                  {demoFarmer.email}
+                  {farmer.email}
                 </div>
               </div>
             </div>
@@ -213,13 +207,13 @@ export default function DashboardView({
 <button
   type="button"
   onClick={() => signOut()}
-  aria-label="Sign out"
+  aria-label={bundle.signOut}
   className="inline-flex h-11 items-center gap-1.5 rounded-full border border-agro-sprout bg-white px-3 font-mono text-sm font-semibold text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
 >
             <LogOutIcon size={12} className="h-4 w-4 shrink-0" />
-            Sign out
+            {bundle.signOut}
           </button>
-          <LanguageSwitcher label="Language" currentLocale={appLocale} />
+          <LanguageSwitcher label={bundle.languageLabel} currentLocale={appLocale} />
         </div>
       </header>
 
@@ -237,24 +231,23 @@ export default function DashboardView({
             />
             <div className="relative p-6 sm:p-8">
               <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-agro-sprout">
-                Welcome to Agropioo
+                {bundle.welcomeEyebrow}
               </p>
               <h2
                 id="welcome-hero"
                 className="display-heading mt-3 max-w-md font-display text-2xl font-bold leading-snug sm:text-[1.9rem]"
               >
-                Start With Your First Farm.
+                {bundle.welcomeTitle}
               </h2>
               <p className="mt-2 max-w-md text-sm leading-relaxed text-white/80">
-                Your crop, your soil, your weather — every advisory will be
-                shaped around them once your farm is in.
+                {bundle.welcomeBody}
               </p>
               <Link
                 href="/farms/new"
                 className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-agro-forest shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
               >
                 <PlusIcon className="h-4 w-4" />
-                Add your first farm
+                {bundle.addFirstFarm}
               </Link>
             </div>
           </section>
@@ -266,23 +259,23 @@ export default function DashboardView({
             <div className="p-6 pb-7 sm:p-8">
               <div className="flex flex-wrap items-center gap-2 pe-16 sm:pe-24">
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-agro-sprout">
-                  {demoAdvisory.crop}
+                  {advisory.crop}
                 </span>
                 <span className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-white/75">
-                  {demoAdvisory.stage}
+                  {advisory.stage}
                 </span>
               </div>
               <span className="absolute end-6 top-6 font-mono text-xs uppercase tracking-wide text-agro-sprout/80 sm:end-8 sm:top-8">
-                Today
+                {bundle.today}
               </span>
               <h2 id="advisory-heading" className="sr-only">
-                Today&apos;s advisory
+                {bundle.advisoryTitle}
               </h2>
               <p className="display-heading mt-5 max-w-lg font-display text-[1.55rem] font-semibold leading-snug sm:text-[1.85rem]">
-                {advisory.action}.
+                {advisory_.action}.
               </p>
               <p className="mt-2.5 max-w-lg text-sm leading-relaxed text-white/80">
-                {advisory.why}
+                {advisory_.why}
               </p>
             </div>
             {/* Perforation + tear-off stub: the advisor rides along to the field */}
@@ -292,13 +285,13 @@ export default function DashboardView({
             />
             <div className="flex h-16 items-center justify-between gap-3 px-6 sm:px-8">
               <p className="hidden font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-sprout/70 sm:block">
-                Carry it to the field
+                {bundle.carryToField}
               </p>
               <Link
                 href="/advisor"
                 className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-agro-forest transition-all duration-200 hover:-translate-y-px hover:shadow-md active:translate-y-0"
               >
-                Ask the advisor
+                {bundle.askAdvisor}
                 <ArrowRightIcon size={16} />
               </Link>
             </div>
@@ -314,37 +307,37 @@ export default function DashboardView({
             <>
               <div className="flex items-baseline justify-between gap-3">
                 <h2 className="shrink-0 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate">
-                  Weather · {demoWeather.location}
+                  {bundle.weatherTitle.replace("{location}", weather.location)}
                 </h2>
                 <CloudRainIcon className="h-5 w-5 shrink-0 text-agro-canopy" aria-hidden="true" />
               </div>
               <div className="mt-4 flex items-end justify-between gap-3">
                 <p className="text-sm font-medium leading-snug text-agro-ink">
-                  {demoWeather.condition}
+                  {weather.condition}
                 </p>
                 <p
                   className="font-mono text-[2.75rem] font-bold leading-none tracking-tight text-agro-forest"
-                  aria-label={`${demoWeather.temperatureC} degrees Celsius`}
+                  aria-label={bundle.degreesCelsius.replace("{n}", String(weather.temperatureC))}
                 >
-                  {demoWeather.temperatureC}°
+                  {weather.temperatureC}°
                 </p>
               </div>
               <div className="mt-4 flex flex-wrap gap-1.5">
                 <span className="rounded-md bg-agro-mint px-2 py-1 font-mono text-xs text-agro-slate">
-                  H {demoWeather.highC}°
+                  H {weather.highC}°
                 </span>
                 <span className="rounded-md bg-agro-mint px-2 py-1 font-mono text-xs text-agro-slate">
-                  L {demoWeather.lowC}°
+                  L {weather.lowC}°
                 </span>
               </div>
               <p className="mt-3 rounded-xl bg-agro-mint px-3 py-2.5 text-xs leading-relaxed text-agro-slate">
-                {demoWeather.rainNote}
+                {weather.rainNote}
               </p>
               <Link
                 href="/weather"
                 className="mt-auto inline-flex min-h-11 items-center gap-1 pt-3 text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline"
               >
-                Full forecast
+                {bundle.fullForecast}
                 <ChevronRightIcon className="h-4 w-4" />
               </Link>
             </>
@@ -352,12 +345,11 @@ export default function DashboardView({
             /* Explanatory fallback, not an error dump (spec FR10c). */
             <>
               <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate">
-                Weather · {demoWeather.location}
+                {bundle.weatherTitle.replace("{location}", weather.location)}
               </h2>
               <p className="mt-4 flex items-start gap-3 text-sm leading-relaxed text-agro-slate">
                 <CloudRainIcon className="mt-0.5 h-5 w-5 shrink-0 text-agro-slate" aria-hidden="true" />
-                Weather isn&apos;t loading right now. Check again in a little
-                while — your advisories keep working meanwhile.
+                {bundle.weatherUnavailable}
               </p>
             </>
           )}
@@ -371,20 +363,20 @@ export default function DashboardView({
           <div className="relative overflow-hidden rounded-2xl border border-agro-sprout bg-white p-5 sm:p-6">
             <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-agro-mint px-3 py-1 text-xs font-semibold text-agro-canopy">
-                Season tip
+                {bundle.seasonTipBadge}
               </span>
               <span className="font-mono text-xs uppercase tracking-wide text-agro-slate">
-                Today
+                {bundle.today}
               </span>
             </div>
             <h2
               id="season-tip-heading"
               className="display-heading mt-3 font-display text-lg font-bold leading-snug text-agro-forest sm:text-xl"
             >
-              {demoSeasonTip.action}.
+              {seasonTip.action}.
             </h2>
             <p className="mt-1.5 max-w-lg text-sm leading-relaxed text-agro-slate">
-              {demoSeasonTip.why}
+              {seasonTip.why}
             </p>
           </div>
         </section>
@@ -394,15 +386,15 @@ export default function DashboardView({
       <section aria-labelledby="alerts-heading">
         <SectionHead
           id="alerts-heading"
-          title="Alerts"
-          meta={isEmpty ? undefined : `${demoFarmer.unreadCount} new`}
+          title={bundle.alertsHeading}
+          meta={isEmpty ? undefined : bundle.newCount.replace("{n}", String(farmer.unreadCount))}
           action={
             !isEmpty ? (
               <Link
                 href="/notifications"
                 className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline"
               >
-                View all alerts
+                {bundle.viewAllAlerts}
               </Link>
             ) : undefined
           }
@@ -415,7 +407,7 @@ export default function DashboardView({
             >
               <CheckIcon className="h-5 w-5" />
             </span>
-            No alerts today — your crops are calm.
+            {bundle.noAlerts}
           </p>
         ) : (
           <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
@@ -432,7 +424,7 @@ export default function DashboardView({
                     >
                       <KindIcon className="h-3.5 w-3.5" />
                       {severityWord[alert.severity]}
-                      <span className="sr-only">alert</span>
+                      <span className="sr-only">{bundle.alertAria}</span>
                     </span>
                     <p className="min-w-0 flex-1 text-sm leading-snug text-agro-ink">
                       {alert.message}
@@ -454,7 +446,7 @@ export default function DashboardView({
 
       {/* Quick actions */}
       <section aria-labelledby="actions-heading">
-        <SectionHead id="actions-heading" title="Quick actions" />
+        <SectionHead id="actions-heading" title={bundle.quickActionsHeading} />
         <ul className="mt-3 grid grid-cols-4 gap-2 sm:gap-3">
           {quickActions.map((action) => {
             const ActionIcon = quickActionIcon[action.icon];
@@ -489,14 +481,13 @@ export default function DashboardView({
         <div className="relative flex items-center gap-4">
           <div className="min-w-0 flex-1">
             <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-agro-sprout">
-              Crop doctor
+              {bundle.cropDoctor}
             </p>
             <h2 className="display-heading mt-2 max-w-sm font-display text-xl font-bold leading-snug sm:text-2xl">
-              Spot disease before it spreads
+              {bundle.detectTitle}
             </h2>
             <p className="mt-1.5 max-w-md text-sm leading-relaxed text-white/80">
-              Upload a photo of an affected leaf — get a diagnosis and what to
-              do next, right on your phone.
+              {bundle.detectBody}
             </p>
           </div>
           <span
@@ -513,7 +504,7 @@ export default function DashboardView({
         <section aria-labelledby="farms-heading">
           <SectionHead
             id="farms-heading"
-            title="My farms"
+            title={bundle.myFarms}
             meta={String(demoFarms.length)}
             action={
               <Link
@@ -521,7 +512,7 @@ export default function DashboardView({
                 className="inline-flex min-h-11 items-center gap-1 rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline"
               >
                 <PlusIcon className="h-4 w-4" />
-                Add farm
+                {bundle.addFarm}
               </Link>
             }
           />
@@ -549,7 +540,7 @@ export default function DashboardView({
                         }`}
                         aria-hidden="true"
                       />
-                      {farm.health === "good" ? "Good" : "Watch"}
+                      {farm.health === "good" ? bundle.healthGood : bundle.healthWatch}
                     </span>
                   </div>
                   <h3 className="mt-3 line-clamp-2 font-semibold leading-snug text-agro-ink">
@@ -568,7 +559,7 @@ export default function DashboardView({
                 className="flex h-full min-h-44 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-agro-sprout p-4 text-agro-canopy transition-colors hover:border-agro-canopy hover:bg-agro-mint"
               >
                 <PlusIcon className="h-5 w-5" />
-                <span className="text-sm font-semibold">Add farm</span>
+                <span className="text-sm font-semibold">{bundle.addFarm}</span>
               </Link>
             </li>
           </ul>
@@ -584,17 +575,17 @@ export default function DashboardView({
           <button
             type="button"
             onClick={() => checklistStore.dismiss()}
-            aria-label="Dismiss setup checklist"
+            aria-label={bundle.dismissChecklist}
             className="absolute right-1 top-1 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-agro-slate transition-colors hover:bg-white hover:text-agro-forest"
           >
             <XIcon className="h-5 w-5" />
           </button>
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 pe-12">
             <h2 id="checklist-heading" className="font-display text-lg font-bold text-agro-forest">
-              Set up your farm
+              {bundle.setupChecklist}
             </h2>
             <span className="font-mono text-xs text-agro-slate">
-              {completedCount} of {checklistItems.length} complete
+              {bundle.checklistProgress.replace("{done}", String(completedCount)).replace("{total}", String(checklistItems.length))}
             </span>
           </div>
           <div
@@ -603,7 +594,7 @@ export default function DashboardView({
             aria-valuemin={0}
             aria-valuemax={checklistItems.length}
             aria-valuenow={completedCount}
-            aria-label="Setup progress"
+            aria-label={bundle.setupProgress}
           >
             <div
               className="h-full rounded-full bg-agro-canopy transition-[width] duration-300"
@@ -645,7 +636,7 @@ export default function DashboardView({
       )}
 
       <p className="pb-2 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
-        Demo build · sample data only
+        {bundle.demoFooter}
       </p>
     </div>
   );
