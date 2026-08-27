@@ -1,4 +1,12 @@
-import type { StreamedRunResult, Agent } from "@openai/agents";
+import type { RunStreamEvent } from "@openai/agents";
+
+/* Structural subset of StreamedRunResult that this transform consumes —
+   avoids the SDK's invariant context generics while staying fully typed. */
+type StreamResult = {
+  [Symbol.asyncIterator](): AsyncIterator<RunStreamEvent>;
+  readonly completed: Promise<void>;
+  readonly finalOutput: unknown;
+};
 
 /**
  * Transforms an OpenAI Agents SDK StreamedRunResult into a Server-Sent Events
@@ -14,8 +22,8 @@ import type { StreamedRunResult, Agent } from "@openai/agents";
  * final output on success, or whatever streamed before an error/client
  * disconnect — so persistence never writes an empty row over partial text.
  */
-export function toSSEStream<TAgent extends Agent<any, any>>(
-  result: StreamedRunResult<any, TAgent>,
+export function toSSEStream(
+  result: StreamResult,
   conversationId: string,
   onFinished?: (output: string) => void | Promise<void>,
 ): ReadableStream<Uint8Array> {
@@ -55,7 +63,8 @@ export function toSSEStream<TAgent extends Agent<any, any>>(
 
         await result.completed;
 
-        const output = result.finalOutput ?? accumulated;
+        const final = result.finalOutput;
+        const output = typeof final === "string" ? final : accumulated;
         await finish(output);
 
         const payload = JSON.stringify({
