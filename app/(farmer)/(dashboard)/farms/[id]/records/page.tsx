@@ -10,6 +10,8 @@ import {
   RecordIcon,
 } from "@/components/icons";
 import { getFarmsBundle } from "@/lib/i18n/server";
+import { requireSessionPage } from "@/lib/auth/guards";
+import { getSupabase } from "@/lib/supabase";
 
 export const metadata: Metadata = {
   title: "Farm records — Agropioo",
@@ -30,13 +32,33 @@ export default async function FarmRecordsPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await requireSessionPage();
   const { id } = await params;
   let records: Array<Record<string, unknown>> = [];
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/farms/${id}/records`, { cache: 'no-store' });
-    if (res.ok) records = await res.json();
-  } catch {}
-  if (!records) notFound();
+    const supabase = getSupabase();
+    // First verify farm belongs to session
+    const { data: farm } = await supabase
+      .from('farms')
+      .select('id')
+      .eq('id', id)
+      .eq('account_id', session.accountId)
+      .is('archived_at', null)
+      .maybeSingle();
+
+    if (farm) {
+      const { data } = await supabase
+        .from('records')
+        .select('*')
+        .eq('farm_id', id)
+        .order('event_date', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (data) records = data;
+    }
+  } catch (err) {
+    console.error("Error fetching farm records:", err);
+  }
 
   const bundle = await getFarmsBundle();
 

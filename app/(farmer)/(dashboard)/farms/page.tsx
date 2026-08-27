@@ -8,6 +8,9 @@ import {
   PlusIcon,
 } from "@/components/icons";
 import { getFarmsBundle } from "@/lib/i18n/server";
+import { requireSessionPage } from "@/lib/auth/guards";
+import { getSupabase } from "@/lib/supabase";
+import { computeFarmHealth } from "@/lib/farms/health";
 
 export const metadata: Metadata = {
   title: "Farms — Agropioo",
@@ -19,12 +22,39 @@ const healthChip = {
 } as const;
 
 export default async function FarmsPage() {
+  const session = await requireSessionPage();
   const bundle = await getFarmsBundle();
   let farms: Array<Record<string, unknown>> = [];
+
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/farms`, { cache: 'no-store' });
-    if (res.ok) farms = await res.json();
-  } catch {}
+    const supabase = getSupabase();
+    const { data: rawFarms, error } = await supabase
+      .from('farms')
+      .select('*')
+      .eq('account_id', session.accountId)
+      .is('archived_at', null)
+      .order('created_at', { ascending: false });
+
+    if (!error && rawFarms) {
+      farms = await Promise.all(
+        rawFarms.map(async (farm) => {
+          const { data: recent } = await supabase
+            .from('records')
+            .select('type, event_date')
+            .eq('farm_id', farm.id)
+            .order('event_date', { ascending: false })
+            .limit(5);
+
+          return {
+            ...farm,
+            health: computeFarmHealth(farm.growth_stages as Record<string, string>, recent ?? []),
+          };
+        })
+      );
+    }
+  } catch (err) {
+    console.error("Error fetching farms:", err);
+  }
 
   return (
     <div className="pt-1">
