@@ -11,6 +11,7 @@ export type ShellBundle = {
     advisor: string;
     detect: string;
     prices: string;
+    weather: string;
     notifications: string;
     settings: string;
     more: string;
