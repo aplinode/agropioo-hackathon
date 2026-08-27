@@ -21,6 +21,7 @@ export type FarmsBundle = {
     grandGrowth: string;
     ripening: string;
     harvest: string;
+    panicleInitiation: string;
   };
   districts: {
     multan: string;
@@ -44,6 +45,7 @@ export type FarmsBundle = {
     addLink: string;
     openFarm: string;
     addNewFarm: string;
+    emptyHeading: string;
   };
   new: {
     pageTitle: string;

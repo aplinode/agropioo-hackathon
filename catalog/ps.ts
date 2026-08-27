@@ -811,6 +811,7 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.farms.stages.grandGrowth": "لویه پهuppez",
   "app.farms.stages.ripening": "رسیدل",
   "app.farms.stages.harvest": "haust",
+  "app.farms.stages.panicleInitiation": "پانیکل انیشیولیشن",
 
   /* ── ولسوالي او زبڼه ────────────────────────────────── */
   "app.farms.districts.multan": "ملتان",
@@ -833,6 +834,7 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.farms.list.addLink": "اضافه کړئ",
   "app.farms.list.openFarm": "کډه خلاصه کړئ",
   "app.farms.list.addNewFarm": "نوې کډه اضافه کړئ",
+  "app.farms.list.emptyHeading": "اوس وخت څوک کډه نشته",
 
   /* ── نوې کډه ─────────────────────────────────────────── */
   "app.farms.new.pageTitle": "کډه اضافه کړئ — اګروپیو",

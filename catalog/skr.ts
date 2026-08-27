@@ -811,6 +811,7 @@ export const skr: Partial<Record<CatalogKey, string>> = {
   "app.farms.stages.grandGrowth": "عریض نشوونما",
   "app.farms.stages.ripening": "پکنا",
   "app.farms.stages.harvest": "کٹائی",
+  "app.farms.stages.panicleInitiation": "پنجڑا چادھنا",
 
   /* ── ضلع تے فصلیں ──────────────────────────────────── */
   "app.farms.districts.multan": "ملتان",
@@ -833,6 +834,7 @@ export const skr: Partial<Record<CatalogKey, string>> = {
   "app.farms.list.addLink": "شامل کرو",
   "app.farms.list.openFarm": "کھیت کھولو",
   "app.farms.list.addNewFarm": "نیا کھیت شامل کرو",
+  "app.farms.list.emptyHeading": "تہاݙے کول کویں کھیت نئیں",
 
   /* ── نیا کھیت ────────────────────────────────────────── */
   "app.farms.new.pageTitle": "کھیت شامل کرو — اگروپیو",

@@ -812,6 +812,7 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.farms.stages.grandGrowth": "ويسو ش.effects",
   "app.farms.stages.ripening": "پکڻ",
   "app.farms.stages.harvest": "ڪٹائي",
+  "app.farms.stages.panicleInitiation": "پاڻيڪل اينٿيئيولوشن",
 
   /* ── ضلعو ۽ فصلون ───────────────────────────────────── */
   "app.farms.districts.multan": "ملتان",
@@ -834,6 +835,7 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.farms.list.addLink": "شامل ڪريو",
   "app.farms.list.openFarm": "کيثر کوليو",
   "app.farms.list.addNewFarm": "نئون کيثر شامل ڪريو",
+  "app.farms.list.emptyHeading": "اوس وقت کيثر نه آهي",
 
   /* ── نئون کيثر ────────────────────────────────────────── */
   "app.farms.new.pageTitle": "کيثر شامل ڪريو — اگروپيو",

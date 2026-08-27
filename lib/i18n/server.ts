@@ -255,6 +255,7 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
       grandGrowth: t("app.farms.stages.grandGrowth").text,
       ripening: t("app.farms.stages.ripening").text,
       harvest: t("app.farms.stages.harvest").text,
+      panicleInitiation: t("app.farms.stages.panicleInitiation").text,
     },
     districts: {
       multan: t("app.farms.districts.multan").text,
@@ -278,6 +279,7 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
       addLink: t("app.farms.list.addLink").text,
       openFarm: t("app.farms.list.openFarm").text,
       addNewFarm: t("app.farms.list.addNewFarm").text,
+      emptyHeading: t("app.farms.list.emptyHeading").text,
     },
     new: {
       pageTitle: t("app.farms.new.pageTitle").text,
