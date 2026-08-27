@@ -151,7 +151,7 @@ export default function AdvisorChat({ bundle, appLocale }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          conversationId: activeConvId,
+          ...(activeConvId ? { conversationId: activeConvId } : {}),
           message: clean,
         }),
         signal: controller.signal,
