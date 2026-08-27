@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   experimental: {
@@ -9,8 +10,16 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.resolve = config.resolve || {};
     config.resolve.alias = config.resolve.alias || {};
-    config.resolve.alias["@openai/agents-realtime"] = false;
+    config.resolve.alias["@openai/agents-realtime"] = path.resolve(
+      __dirname,
+      "lib/empty.ts",
+    );
     return config;
+  },
+  turbopack: {
+    resolveAlias: {
+      "@openai/agents-realtime": "./lib/empty.ts",
+    },
   },
 };
 
