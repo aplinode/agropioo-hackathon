@@ -708,6 +708,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.shell.nav.advisor": "مشیر",
   "app.shell.nav.detect": "تشخیص",
   "app.shell.nav.prices": "قیمتیں",
+  "app.shell.nav.weather": "موسم",
   "app.shell.nav.notifications": "اطلاعات",
   "app.shell.nav.settings": "ترتیبات",
   "app.shell.nav.more": "مزید",

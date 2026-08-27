@@ -708,6 +708,7 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.shell.nav.advisor": "مشير",
   "app.shell.nav.detect": "تشخيص",
   "app.shell.nav.prices": "قیمتون",
+  "app.shell.nav.weather": "موسم",
   "app.shell.nav.notifications": "اطلاعات",
   "app.shell.nav.settings": "ترتيبون",
   "app.shell.nav.more": "هورين",

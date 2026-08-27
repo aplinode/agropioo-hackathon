@@ -708,6 +708,7 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "app.shell.nav.advisor": "مشیر",
   "app.shell.nav.detect": "تشخیص",
   "app.shell.nav.prices": "قیمتەن",
+  "app.shell.nav.weather": "ہوا",
   "app.shell.nav.notifications": "خبرداریاں",
   "app.shell.nav.settings": "ترتیبات",
   "app.shell.nav.more": "دیگر",

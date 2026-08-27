@@ -712,6 +712,7 @@ export const en = {
   "app.shell.nav.advisor": "Advisor",
   "app.shell.nav.detect": "Detect",
   "app.shell.nav.prices": "Prices",
+  "app.shell.nav.weather": "Weather",
   "app.shell.nav.notifications": "Notifications",
   "app.shell.nav.settings": "Settings",
   "app.shell.nav.more": "More",
