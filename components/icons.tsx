@@ -2,12 +2,14 @@ type IconProps = {
   size?: number;
   className?: string;
   strokeWidth?: number;
+  "data-flip-rtl"?: boolean;
 };
 
 function base({
   size = 20,
   className,
   strokeWidth = 1.75,
+  "data-flip-rtl": dataFlipRtl,
 }: IconProps): React.SVGAttributes<SVGSVGElement> {
   return {
     width: size,
@@ -20,6 +22,7 @@ function base({
     strokeLinejoin: "round",
     className,
     "aria-hidden": true,
+    ...(dataFlipRtl !== undefined ? { "data-flip-rtl": dataFlipRtl } : {}),
   };
 }
 

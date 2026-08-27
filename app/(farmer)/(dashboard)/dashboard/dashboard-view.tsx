@@ -194,7 +194,7 @@ export default function DashboardView({
           </div>
           {showProfile && (
             <div
-              className="absolute right-0 mt-2 w-48 rounded-md bg-white py-2 shadow-lg border border-agro-sprout/20 z-50 min-w-[160px]"
+              className="absolute end-0 mt-2 w-48 rounded-md bg-white py-2 shadow-lg border border-agro-sprout/20 z-50 min-w-[160px]"
             >
               <div className="px-4 py-3 text-sm text-agro-forest">
                 <div className="font-medium">{farmer.firstName} {farmer.lastName}</div>
@@ -292,7 +292,7 @@ export default function DashboardView({
                 className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-agro-forest transition-all duration-200 hover:-translate-y-px hover:shadow-md active:translate-y-0"
               >
                 {bundle.askAdvisor}
-                <ArrowRightIcon size={16} />
+                <ArrowRightIcon size={16} data-flip-rtl />
               </Link>
             </div>
           </section>
@@ -338,7 +338,7 @@ export default function DashboardView({
                 className="mt-auto inline-flex min-h-11 items-center gap-1 pt-3 text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline"
               >
                 {bundle.fullForecast}
-                <ChevronRightIcon className="h-4 w-4" />
+                <ChevronRightIcon className="h-4 w-4" data-flip-rtl />
               </Link>
             </>
           ) : (
@@ -433,7 +433,8 @@ export default function DashboardView({
                       {alert.relativeTime}
                     </span>
                     <ChevronRightIcon
-                      className="h-4 w-4 shrink-0 text-agro-slate transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-agro-canopy"
+                      className="h-4 w-4 shrink-0 text-agro-slate transition-transform duration-200 group-hover:text-agro-canopy"
+                      data-flip-rtl
                       aria-hidden="true"
                     />
                   </Link>
@@ -516,9 +517,9 @@ export default function DashboardView({
               </Link>
             }
           />
-          <ul className="-mx-4 mt-3 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 lg:mx-0 lg:grid lg:grid-cols-3 lg:overflow-visible lg:px-0">
+          <ul className="mt-3 flex flex-wrap gap-4 pb-2 lg:grid lg:grid-cols-3 lg:pb-0">
             {demoFarms.map((farm) => (
-              <li key={farm.id} className="w-64 shrink-0 snap-start lg:w-auto">
+              <li key={farm.id} className="w-full min-w-[min(16rem,100%)] flex-1 basis-64 sm:basis-72 lg:w-auto">
                 <Link
                   href={`/farms/${farm.id}`}
                   className="group flex h-full flex-col rounded-2xl border border-agro-sprout bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-agro-sprout hover:shadow-md"
@@ -576,7 +577,7 @@ export default function DashboardView({
             type="button"
             onClick={() => checklistStore.dismiss()}
             aria-label={bundle.dismissChecklist}
-            className="absolute right-1 top-1 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-agro-slate transition-colors hover:bg-white hover:text-agro-forest"
+            className="absolute end-1 top-1 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-agro-slate transition-colors hover:bg-white hover:text-agro-forest"
           >
             <XIcon className="h-5 w-5" />
           </button>
@@ -625,6 +626,7 @@ export default function DashboardView({
                     </span>
                     <ChevronRightIcon
                       className="h-4 w-4 shrink-0 text-agro-slate transition-colors group-hover:text-agro-canopy"
+                      data-flip-rtl
                       aria-hidden="true"
                     />
                   </Link>

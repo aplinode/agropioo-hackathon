@@ -152,6 +152,53 @@ select.focus-ring-none:focus-visible {
   line-height: 1.6;
 }
 
+/* --- alignment & responsiveness across languages (dashboard-i18n D8 / FR-13..FR-20)
+   -------------------------------------------------------------------------- */
+
+/* Directional icons opt-in: attach data-flip-rtl to glyphs whose semantic
+   meaning depends on reading direction (back/forward chevrons, trend arrows,
+   progress chevrons). Non-directional glyphs (checkmarks, search, logo,
+   numerals, crop-health dots) stay untouched. A mirrored indicator must
+   never imply the opposite meaning — verified per icon in AC-18. */
+[dir="rtl"] [data-flip-rtl] {
+  transform: scaleX(-1);
+}
+
+/* Nastaliq clipping safety: cards, chips, and badges that carry translated
+   text must use min-height rather than fixed height so Urdu/Punjabi glyphs
+   sit fully inside the container (FR-12, AC-21). Applied at the token level
+   so English rendering stays pixel-identical (FR-10). */
+[dir="rtl"] .agro-card,
+[dir="rtl"] .agro-chip,
+[dir="rtl"] .agro-badge {
+  min-height: 2.75rem;
+  height: auto;
+}
+
+/* Overflow hierarchy (FR-19): Arabic-script text is never truncated mid-word
+   because breaking cursive joining destroys shaping. Force line-clamp and
+   truncate to release their grip on Arabic-script labels so the layout
+   falls back to wrap → reflow → shrink (the first three tiers of FR-19). */
+[dir="rtl"] .line-clamp-1,
+[dir="rtl"] .line-clamp-2,
+[dir="rtl"] .line-clamp-3,
+[dir="rtl"] .truncate {
+  -webkit-line-clamp: unset;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+/* Logical-edge alignment (FR-16): catch stray text-left/text-right utilities
+   on translated surfaces inside the farmer route group. Mirrors to text-end
+   under RTL. Authors should prefer text-start/text-end directly. */
+[dir="rtl"] .text-left {
+  text-align: right;
+}
+[dir="rtl"] .text-right {
+  text-align: left;
+}
+
 /* Field-pass ticket: punched notches where the dashed perforation meets the card edges.
    --ticket-stub must match the stub footer height set by the consumer. */
 .field-ticket {

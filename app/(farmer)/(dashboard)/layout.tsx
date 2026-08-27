@@ -15,7 +15,7 @@ export default async function FarmerAppLayout({ children }: { children: ReactNod
   return (
     <div className="min-h-dvh bg-agro-paper">
       <AppSidebar bundle={bundle} />
-      <div className="lg:pl-64">
+      <div className="lg:ps-64">
         <main className="mx-auto w-full max-w-2xl px-4 pb-28 pt-6 sm:px-6 lg:max-w-4xl lg:px-10 lg:pb-16 lg:pt-9 xl:max-w-5xl">
           {children}
         </main>
