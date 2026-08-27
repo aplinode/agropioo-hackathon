@@ -22,6 +22,9 @@ export default function BottomTabBar({ bundle }: BottomTabBarProps) {
   const pathname = usePathname();
   const { nav, aria } = bundle;
 
+  const onAdvisor = pathname === "/advisor" || pathname.startsWith("/advisor/");
+  if (onAdvisor) return null;
+
   const tabs = [
     { href: "/dashboard", label: nav.dashboard, Icon: HomeIcon },
     { href: "/farms", label: nav.farms, Icon: LeafIcon },
