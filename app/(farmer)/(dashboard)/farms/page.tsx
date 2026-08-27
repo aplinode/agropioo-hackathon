@@ -87,7 +87,7 @@ export default async function FarmsPage() {
               <span className="mt-4 inline-flex min-h-11 items-center gap-1 pt-1 text-sm font-semibold text-agro-canopy underline-offset-4 group-hover:underline">
                 {bundle.list.openFarm}
                 <ChevronRightIcon
-                  className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                  className="h-4 w-4 transition-colors duration-200 group-hover:text-agro-canopy"
                   aria-hidden="true"
                 />
               </span>

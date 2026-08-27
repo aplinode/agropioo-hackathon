@@ -292,7 +292,7 @@ export default function DashboardView({
                 className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-agro-forest transition-all duration-200 hover:-translate-y-px hover:shadow-md active:translate-y-0"
               >
                 {bundle.askAdvisor}
-                <ArrowRightIcon size={16} data-flip-rtl />
+                <ArrowRightIcon size={16} />
               </Link>
             </div>
           </section>
@@ -338,7 +338,7 @@ export default function DashboardView({
                 className="mt-auto inline-flex min-h-11 items-center gap-1 pt-3 text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline"
               >
                 {bundle.fullForecast}
-                <ChevronRightIcon className="h-4 w-4" data-flip-rtl />
+                <ChevronRightIcon className="h-4 w-4" />
               </Link>
             </>
           ) : (
@@ -434,7 +434,6 @@ export default function DashboardView({
                     </span>
                     <ChevronRightIcon
                       className="h-4 w-4 shrink-0 text-agro-slate transition-transform duration-200 group-hover:text-agro-canopy"
-                      data-flip-rtl
                       aria-hidden="true"
                     />
                   </Link>
@@ -626,7 +625,6 @@ export default function DashboardView({
                     </span>
                     <ChevronRightIcon
                       className="h-4 w-4 shrink-0 text-agro-slate transition-colors group-hover:text-agro-canopy"
-                      data-flip-rtl
                       aria-hidden="true"
                     />
                   </Link>

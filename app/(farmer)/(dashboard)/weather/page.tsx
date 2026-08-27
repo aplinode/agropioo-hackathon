@@ -163,11 +163,11 @@ export default async function WeatherPage({
               <span className="min-w-0 flex-1 truncate text-sm text-agro-slate">
                 {day.condition}
               </span>
-              <span className="hidden w-16 shrink-0 text-right font-mono text-[0.7rem] text-agro-canopy sm:block">
+              <span className="hidden w-16 shrink-0 text-end font-mono text-[0.7rem] text-agro-canopy sm:block">
                 <DropletIcon size={11} className="me-1 inline align-text-bottom" aria-hidden="true" />
                 {day.rainPct}%
               </span>
-              <span className="w-16 shrink-0 text-right font-mono text-sm text-agro-ink">
+              <span className="w-16 shrink-0 text-end font-mono text-sm text-agro-ink">
                 {day.loC}°–{day.hiC}°
               </span>
             </li>
