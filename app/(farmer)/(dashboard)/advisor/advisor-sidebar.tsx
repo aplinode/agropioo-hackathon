@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import type { AdvisorBundle } from "./advisor-bundle";
-import { ChatIcon, CloseIcon, MenuIcon, PencilIcon, PlusIcon, XIcon } from "@/components/icons";
+import ConfirmDialog from "./confirm-dialog";
+import { CloseIcon, PencilIcon, PlusIcon, XIcon } from "@/components/icons";
 
 export type ConversationMeta = {
   id: string;
@@ -35,6 +36,7 @@ export default function AdvisorSidebar({
 }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
+  const [deleting, setDeleting] = useState<ConversationMeta | null>(null);
 
   function startRename(conv: ConversationMeta) {
     setEditingId(conv.id);
@@ -46,12 +48,6 @@ export default function AdvisorSidebar({
       onRename(editingId, editTitle.trim());
     }
     setEditingId(null);
-  }
-
-  function handleDelete(id: string) {
-    if (window.confirm(bundle.sidebar.deleteConfirm)) {
-      onDelete(id);
-    }
   }
 
   return (
@@ -150,8 +146,8 @@ export default function AdvisorSidebar({
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleDelete(conv.id)}
-                          className="rounded p-1 text-agro-slate hover:bg-white hover:text-red-600"
+                          onClick={() => setDeleting(conv)}
+                          className="rounded p-1 text-agro-slate hover:bg-white hover:text-agro-error"
                           aria-label={bundle.sidebar.delete}
                         >
                           <XIcon className="h-3 w-3" />
@@ -165,6 +161,20 @@ export default function AdvisorSidebar({
           )}
         </div>
       </aside>
+
+      {deleting && (
+        <ConfirmDialog
+          title={bundle.sidebar.deleteTitle}
+          message={bundle.sidebar.deleteConfirm}
+          confirmLabel={bundle.sidebar.delete}
+          cancelLabel={bundle.sidebar.cancel}
+          onConfirm={() => {
+            onDelete(deleting.id);
+            setDeleting(null);
+          }}
+          onCancel={() => setDeleting(null)}
+        />
+      )}
     </>
   );
 }

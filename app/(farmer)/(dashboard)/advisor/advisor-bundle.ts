@@ -6,7 +6,9 @@ export type AdvisorBundle = {
     noConversations: string;
     rename: string;
     delete: string;
+    deleteTitle: string;
     deleteConfirm: string;
+    cancel: string;
     closeSidebar: string;
   };
   chat: {

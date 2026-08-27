@@ -1,9 +1,11 @@
 import { Agent } from "@openai/agents";
 import { searchKnowledgeBase } from "../tools/knowledge-base";
+import { advisorModel } from "../model";
 
 export function createSchemesAgent() {
   return new Agent({
     name: "Schemes Advisor",
+    model: advisorModel(),
     handoffDescription: "Handles questions about government agricultural schemes, subsidies, Kissan Card, loans, crop insurance, and agricultural support programs.",
     instructions: `You are a government schemes specialist for Pakistani farmers. You help with:
 - Kissan Card program and interest-free loans

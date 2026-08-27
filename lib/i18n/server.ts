@@ -396,7 +396,9 @@ export async function getAdvisorBundle(): Promise<AdvisorBundle> {
       noConversations: t("app.advisor.sidebar.noConversations").text,
       rename: t("app.advisor.sidebar.rename").text,
       delete: t("app.advisor.sidebar.delete").text,
+      deleteTitle: t("app.advisor.sidebar.deleteTitle").text,
       deleteConfirm: t("app.advisor.sidebar.deleteConfirm").text,
+      cancel: t("app.advisor.sidebar.cancel").text,
       closeSidebar: t("app.advisor.sidebar.closeSidebar").text,
     },
     chat: {

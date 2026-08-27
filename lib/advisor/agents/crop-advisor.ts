@@ -1,9 +1,11 @@
 import { Agent } from "@openai/agents";
 import { searchKnowledgeBase } from "../tools/knowledge-base";
+import { advisorModel } from "../model";
 
 export function createCropAdvisorAgent() {
   return new Agent({
     name: "Crop Advisor",
+    model: advisorModel(),
     handoffDescription: "Handles questions about crop diseases, pests, agronomy practices, fertilizer schedules, and general crop management for wheat, cotton, rice, sugarcane, and maize.",
     instructions: `You are a crop disease and agronomy specialist for Pakistani agriculture. You help farmers with:
 - Crop disease identification and treatment

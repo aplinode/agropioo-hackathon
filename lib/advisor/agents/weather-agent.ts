@@ -1,9 +1,11 @@
 import { Agent } from "@openai/agents";
 import { getWeather } from "../tools/weather";
+import { advisorModel } from "../model";
 
 export function createWeatherAgent() {
   return new Agent({
     name: "Weather Advisor",
+    model: advisorModel(),
     handoffDescription: "Handles questions about weather forecasts, rain predictions, temperature, and spray window advice.",
     instructions: `You are a weather specialist for Pakistani farmers. You help with:
 - Current weather conditions and forecasts

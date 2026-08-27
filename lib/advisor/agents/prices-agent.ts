@@ -1,9 +1,11 @@
 import { Agent } from "@openai/agents";
 import { getMarketPrices } from "../tools/prices";
+import { advisorModel } from "../model";
 
 export function createPricesAgent() {
   return new Agent({
     name: "Prices Advisor",
+    model: advisorModel(),
     handoffDescription: "Handles questions about mandi prices, market rates, crop selling advice, and price trends.",
     instructions: `You are a market prices specialist for Pakistani agriculture. You help farmers with:
 - Current mandi (market) prices for crops

@@ -67,8 +67,15 @@ export default function AdvisorChat({ bundle, appLocale }: Props) {
   }, []);
 
   useEffect(() => {
-    void loadConversations();
-  }, [loadConversations]);
+    // Initial sidebar load: setState only inside the promise callback
+    // (allowed pattern for syncing with an external system).
+    fetch("/api/advisor/conversations")
+      .then((res) => (res.ok ? res.json() : null))
+      .catch(() => null)
+      .then((data: { conversations?: ConversationMeta[] } | null) => {
+        if (data?.conversations) setConversations(data.conversations);
+      });
+  }, []);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "nearest" });
@@ -151,7 +158,7 @@ export default function AdvisorChat({ bundle, appLocale }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          conversationId: activeConvId,
+          ...(activeConvId ? { conversationId: activeConvId } : {}),
           message: clean,
         }),
         signal: controller.signal,
@@ -175,14 +182,17 @@ export default function AdvisorChat({ bundle, appLocale }: Props) {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulated = "";
-      let convId = activeConvId;
+      let buffer = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n");
+        // SSE events can split across chunk boundaries — keep the trailing
+        // partial line buffered until its newline arrives.
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
 
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
@@ -192,7 +202,11 @@ export default function AdvisorChat({ bundle, appLocale }: Props) {
           try {
             const event = JSON.parse(payload);
 
-            if (event.type === "text") {
+            if (event.type === "conversation") {
+              // Bind follow-up messages to this conversation (FR-10.7) unless
+              // the farmer switched away mid-stream.
+              if (!controller.signal.aborted) setActiveConvId(event.id);
+            } else if (event.type === "text") {
               accumulated += event.delta;
               setStreamingText(accumulated);
             } else if (event.type === "done") {
@@ -219,13 +233,6 @@ export default function AdvisorChat({ bundle, appLocale }: Props) {
       }
 
       await loadConversations();
-
-      if (!convId) {
-        const convs = conversations;
-        if (convs.length === 0) {
-          await loadConversations();
-        }
-      }
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") return;
       setError(bundle.errors.network);

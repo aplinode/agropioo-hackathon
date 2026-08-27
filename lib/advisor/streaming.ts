@@ -1,27 +1,58 @@
-import type { StreamedRunResult, Agent, UnknownContext } from "@openai/agents";
+import type { RunStreamEvent } from "@openai/agents";
+
+/* Structural subset of StreamedRunResult that this transform consumes —
+   avoids the SDK's invariant context generics while staying fully typed. */
+type StreamResult = {
+  [Symbol.asyncIterator](): AsyncIterator<RunStreamEvent>;
+  readonly completed: Promise<void>;
+  readonly finalOutput: unknown;
+};
 
 /**
  * Transforms an OpenAI Agents SDK StreamedRunResult into a Server-Sent Events
  * ReadableStream suitable for Next.js Route Handlers.
  *
  * Events emitted:
- *   data: {"type":"text","delta":"..."}   — text chunk
- *   data: {"type":"done","output":"..."}  — full final output
- *   data: {"type":"error","message":"..."} — error during generation
+ *   data: {"type":"conversation","id":"..."}  — conversation this exchange belongs to (first event)
+ *   data: {"type":"text","delta":"..."}       — text chunk
+ *   data: {"type":"done","output":"..."}      — full final output
+ *   data: {"type":"error","message":"..."}    — error during generation
+ *
+ * onFinished receives the best-available advisor output exactly once — the
+ * final output on success, or whatever streamed before an error/client
+ * disconnect — so persistence never writes an empty row over partial text.
  */
-export function toSSEStream<TAgent extends Agent<UnknownContext>>(
-  result: StreamedRunResult<UnknownContext, TAgent>,
+export function toSSEStream(
+  result: StreamResult,
+  conversationId: string,
+  onFinished?: (output: string) => void | Promise<void>,
 ): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder();
+  let accumulated = "";
+  let finished = false;
+
+  async function finish(output: string) {
+    if (finished) return;
+    finished = true;
+    try {
+      await onFinished?.(output);
+    } catch {
+      // Persistence failure is non-fatal: the farmer still sees the stream.
+    }
+  }
 
   return new ReadableStream({
     async start(controller) {
       try {
+        const opening = JSON.stringify({ type: "conversation", id: conversationId });
+        controller.enqueue(encoder.encode(`data: ${opening}\n\n`));
+
         for await (const event of result) {
           if (
             event.type === "raw_model_stream_event" &&
             event.data.type === "output_text_delta"
           ) {
+            accumulated += event.data.delta;
             const payload = JSON.stringify({
               type: "text",
               delta: event.data.delta,
@@ -32,12 +63,18 @@ export function toSSEStream<TAgent extends Agent<UnknownContext>>(
 
         await result.completed;
 
+        const final = result.finalOutput;
+        const output = typeof final === "string" ? final : accumulated;
+        await finish(output);
+
         const payload = JSON.stringify({
           type: "done",
-          output: result.finalOutput ?? "",
+          output,
         });
         controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
       } catch (err) {
+        // Client disconnected or the run failed — keep whatever streamed.
+        await finish(accumulated);
         const message =
           err instanceof Error ? err.message : "Unexpected error during generation";
         const payload = JSON.stringify({ type: "error", message });
@@ -45,6 +82,10 @@ export function toSSEStream<TAgent extends Agent<UnknownContext>>(
       } finally {
         controller.close();
       }
+    },
+    async cancel() {
+      // Consumer went away (navigation, abort) — persist partial text.
+      await finish(accumulated);
     },
   });
 }

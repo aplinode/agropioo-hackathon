@@ -1,10 +1,12 @@
 import { Agent } from "@openai/agents";
 import { getMyFarms, getMyRecords } from "../tools/farm-data";
 import { searchKnowledgeBase } from "../tools/knowledge-base";
+import { advisorModel } from "../model";
 
 export function createFarmDataAgent() {
   return new Agent({
     name: "Farm Data Advisor",
+    model: advisorModel(),
     handoffDescription: "Handles questions about the farmer's own farms, farm records, planting history, crop status, and past activities (irrigation, spraying, fertilizer).",
     instructions: `You are a farm management specialist who helps the farmer understand their own farming data. You have access to:
 - The farmer's registered farms (name, location, size, crop types, growth stage, health)
