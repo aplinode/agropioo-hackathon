@@ -29,13 +29,16 @@ export const searchKnowledgeBase = tool({
     const openai = getOpenAI();
     const embeddingModel = process.env.ADVISOR_EMBEDDING_MODEL ?? "text-embedding-3-small";
 
-    // Generate embedding for the query
-    const embedResponse = await openai.embeddings.create({
-      model: embeddingModel,
-      input: query,
-    });
-
-    const queryEmbedding = embedResponse.data[0].embedding;
+    let queryEmbedding: number[];
+    try {
+      const embedResponse = await openai.embeddings.create({
+        model: embeddingModel,
+        input: query,
+      });
+      queryEmbedding = embedResponse.data[0].embedding;
+    } catch {
+      return "Knowledge base search is unavailable (embedding model not supported by current provider). Answer from your general farming knowledge and suggest the farmer consult a local extension officer for specific advice.";
+    }
 
     // Search via Supabase RPC
     const { data, error } = await supabase.rpc("advisor_search_similar", {
