@@ -914,4 +914,9 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.records.new.success.viewFarms": "زما کډې وګورئ",
   "app.records.new.errors.farmRequired": "وټاکئ چې دا څنګه یو کډه کې شوې.",
   "app.records.new.errors.dateRequired": "نیټه وټاکئ.",
+  "app.advisor.chat.tryAsking": "دا وپوښتل وګورئ",
+  "app.advisor.chat.suggested1": "زما غنمو ته کومه ناروغي اخته شوې ده؟",
+  "app.advisor.chat.suggested2": "ایا نن په ملتان کې باران کیږي؟",
+  "app.advisor.chat.suggested3": "نن د منډي نرخونه څه دي؟",
+  "app.advisor.chat.suggested4": "د کسان کارډ سکیم په اړه راته ووایه",
 };

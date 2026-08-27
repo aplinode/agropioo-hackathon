@@ -404,6 +404,11 @@ export async function getAdvisorBundle(): Promise<AdvisorBundle> {
       openingGreeting: t("app.advisor.chat.openingGreeting").text,
       photoRedirect: t("app.advisor.chat.photoRedirect").text,
       nonFarmingRedirect: t("app.advisor.chat.nonFarmingRedirect").text,
+      tryAsking: t("app.advisor.chat.tryAsking").text,
+      suggested1: t("app.advisor.chat.suggested1").text,
+      suggested2: t("app.advisor.chat.suggested2").text,
+      suggested3: t("app.advisor.chat.suggested3").text,
+      suggested4: t("app.advisor.chat.suggested4").text,
     },
     errors: {
       serviceUnavailable: t("app.advisor.errors.serviceUnavailable").text,

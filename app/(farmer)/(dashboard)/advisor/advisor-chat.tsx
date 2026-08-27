@@ -5,8 +5,9 @@ import type { AdvisorBundle } from "./advisor-bundle";
 import AdvisorSidebar, { type ConversationMeta } from "./advisor-sidebar";
 import MarkdownRender from "./markdown-render";
 import { MenuIcon } from "@/components/icons";
+import { LOCALE_REGISTRY, type Locale } from "@/lib/i18n/config";
 
-type Props = { bundle: AdvisorBundle };
+type Props = { bundle: AdvisorBundle; appLocale?: Locale };
 
 type ChatMessage = {
   id: string;
@@ -21,7 +22,8 @@ function textDirection(text: string): "rtl" | "ltr" {
   return ARABIC_URDU_RE.test(text) ? "rtl" : "ltr";
 }
 
-export default function AdvisorChat({ bundle }: Props) {
+export default function AdvisorChat({ bundle, appLocale }: Props) {
+  const localeDir = appLocale ? LOCALE_REGISTRY[appLocale].dir : "ltr";
   const [conversations, setConversations] = useState<ConversationMeta[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -233,10 +235,10 @@ export default function AdvisorChat({ bundle }: Props) {
   }
 
   const suggestedQuestions = [
-    "What disease is affecting my wheat?",
-    "Will it rain today in Multan?",
-    "What are today's mandi prices?",
-    "Tell me about Kissan Card scheme",
+    bundle.chat.suggested1,
+    bundle.chat.suggested2,
+    bundle.chat.suggested3,
+    bundle.chat.suggested4,
   ];
 
   return (
@@ -280,7 +282,7 @@ export default function AdvisorChat({ bundle }: Props) {
               </p>
               <div className="mt-6">
                 <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-agro-cloud">
-                  Try asking
+                  {bundle.chat.tryAsking}
                 </p>
                 <ul className="mt-3 flex flex-wrap justify-center gap-2">
                   {suggestedQuestions.map((q) => (
@@ -288,6 +290,7 @@ export default function AdvisorChat({ bundle }: Props) {
                       <button
                         type="button"
                         onClick={() => send(q)}
+                        dir={textDirection(q)}
                         className="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-agro-sprout bg-white px-3.5 text-sm font-medium text-agro-canopy transition-colors hover:bg-agro-mint"
                       >
                         {q}
@@ -369,6 +372,7 @@ export default function AdvisorChat({ bundle }: Props) {
               name="message"
               type="text"
               autoComplete="off"
+              dir={localeDir}
               placeholder={bundle.chat.placeholder}
               value={draft}
               onChange={(e) => setDraft(e.target.value)}

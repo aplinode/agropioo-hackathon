@@ -914,4 +914,9 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "app.records.new.success.viewFarms": "میں شُتُم ویکھئ",
   "app.records.new.errors.farmRequired": "چنئ اُہ کِس شُتُم ئی ہویا۔",
   "app.records.new.errors.dateRequired": "تاریخ چنئ۔",
+  "app.advisor.chat.tryAsking": "اِے پُرسئ بکنئت",
+  "app.advisor.chat.suggested1": "منئ گندمءَ چِے بیمارئ لگت؟",
+  "app.advisor.chat.suggested2": "مرۏچ ملتانءَ باران بیت؟",
+  "app.advisor.chat.suggested3": "مرۏچ منڈیءَ بھا چِے اِنت؟",
+  "app.advisor.chat.suggested4": "کسان کارڈ سکیمءَ بارہءَ بگوشئ",
 };

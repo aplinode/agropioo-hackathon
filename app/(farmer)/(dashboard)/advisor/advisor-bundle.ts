@@ -16,6 +16,11 @@ export type AdvisorBundle = {
     openingGreeting: string;
     photoRedirect: string;
     nonFarmingRedirect: string;
+    tryAsking: string;
+    suggested1: string;
+    suggested2: string;
+    suggested3: string;
+    suggested4: string;
   };
   errors: {
     serviceUnavailable: string;

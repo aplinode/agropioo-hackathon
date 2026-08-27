@@ -915,4 +915,9 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.records.new.success.viewFarms": "منھنجا کيثر ڏيڪھو",
   "app.records.new.errors.farmRequired": "ڏيڪھيو ڇا هن کيثر تي ٿييُو آهي.",
   "app.records.new.errors.dateRequired": "تاريخ ڏيڪھيو.",
+  "app.advisor.chat.tryAsking": "ھي پڇي ڏسو",
+  "app.advisor.chat.suggested1": "منھنجي ڪڻڪ تي ڪھڙي بيماري لڳي آھي؟",
+  "app.advisor.chat.suggested2": "ڇا اڄ ملتان ۾ مينھن پوندو؟",
+  "app.advisor.chat.suggested3": "اڄ منڊي جا اگھ ڇا آھن؟",
+  "app.advisor.chat.suggested4": "ڪسان ڪارڊ اسڪيم بابت ٻڌايو",
 };

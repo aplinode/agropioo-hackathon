@@ -914,4 +914,9 @@ export const skr: Partial<Record<CatalogKey, string>> = {
   "app.records.new.success.viewFarms": "میرے کھیت ویکھو",
   "app.records.new.errors.farmRequired": "چنو اِہ کس کھیت تے ہویا۔",
   "app.records.new.errors.dateRequired": "تاریخ چنو۔",
+  "app.advisor.chat.tryAsking": "ایہہ پُچھ کے ݙیکھو",
+  "app.advisor.chat.suggested1": "میݙی کݨک تے کہڑی بیماری لگی ہے؟",
+  "app.advisor.chat.suggested2": "کیا اج ملتان وِچ مین٘ہ وَسسی؟",
+  "app.advisor.chat.suggested3": "اج منڈی دے بھا کیا ہِن؟",
+  "app.advisor.chat.suggested4": "کسان کارڈ سکیم بارے ݙسیو",
 };
