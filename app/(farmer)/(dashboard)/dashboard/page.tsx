@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getAppLocale, getDashboardBundle } from "@/lib/i18n/server";
 import DashboardView from "./dashboard-view";
 
 export const metadata: Metadata = {
@@ -15,11 +16,15 @@ export default async function DashboardPage({
   const params = await searchParams;
   const emptyView = params.view === "empty";
   const weatherOff = params.weather === "off";
+  const appLocale = await getAppLocale();
+  const bundle = await getDashboardBundle();
 
   return (
     <DashboardView
       variant={emptyView ? "empty" : "default"}
       weatherAvailable={!weatherOff}
+      appLocale={appLocale}
+      bundle={bundle}
     />
   );
 }

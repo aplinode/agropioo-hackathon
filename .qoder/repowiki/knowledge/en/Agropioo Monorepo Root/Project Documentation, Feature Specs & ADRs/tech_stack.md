@@ -1,0 +1,1 @@
+Plain Markdown documents organized under a Spec-Driven Development convention defined in `docs/spec-drvien-dev.md`; ADRs follow a lightweight Context/Decision/Consequences template with numeric IDs.

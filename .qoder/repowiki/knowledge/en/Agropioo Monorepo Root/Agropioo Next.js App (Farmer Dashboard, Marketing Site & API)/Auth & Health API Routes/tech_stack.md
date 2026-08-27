@@ -1,0 +1,1 @@
+Next.js App Router route handlers (Node `Request`/`Response`), Supabase client for PostgreSQL access, bcryptjs for password hashing, Zod for request validation, and custom in-memory rate limiters keyed by IP/email.

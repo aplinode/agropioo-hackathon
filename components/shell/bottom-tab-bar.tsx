@@ -9,19 +9,26 @@ import {
   HomeIcon,
   LeafIcon,
 } from "@/components/icons";
+import type { ShellBundle } from "./shell-bundle";
 
 /* Mobile bottom tab bar — exactly five tabs per the dashboard spec.
    Active tab gets a solid canopy chip: unmistakable in outdoor light. */
-const tabs = [
-  { href: "/dashboard", label: "Dashboard", Icon: HomeIcon },
-  { href: "/farms", label: "Farms", Icon: LeafIcon },
-  { href: "/advisor", label: "Advisor", Icon: ChatIcon },
-  { href: "/detect", label: "Detect", Icon: CameraIcon },
-  { href: "/more", label: "More", Icon: GridIcon },
-];
 
-export default function BottomTabBar() {
+interface BottomTabBarProps {
+  bundle: ShellBundle;
+}
+
+export default function BottomTabBar({ bundle }: BottomTabBarProps) {
   const pathname = usePathname();
+  const { nav, aria } = bundle;
+
+  const tabs = [
+    { href: "/dashboard", label: nav.dashboard, Icon: HomeIcon },
+    { href: "/farms", label: nav.farms, Icon: LeafIcon },
+    { href: "/advisor", label: nav.advisor, Icon: ChatIcon },
+    { href: "/detect", label: nav.detect, Icon: CameraIcon },
+    { href: "/more", label: nav.more, Icon: GridIcon },
+  ];
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -29,7 +36,7 @@ export default function BottomTabBar() {
 
   return (
     <nav
-      aria-label="Farmer tools"
+      aria-label={aria.farmerTools}
       className="fixed inset-x-0 bottom-0 z-40 border-t border-agro-sprout bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       <ul className="grid grid-cols-5">
@@ -58,7 +65,7 @@ export default function BottomTabBar() {
                   <Icon size={18} />
                 </span>
                 {label}
-                <span className="sr-only">{active ? " (current page)" : ""}</span>
+                <span className="sr-only">{active ? ` (${aria.currentPage})` : ""}</span>
               </Link>
             </li>
           );

@@ -1,0 +1,1 @@
+TypeScript `.ts` modules using ES module imports/exports; tested with Vitest; relies on the shared `lib/i18n/config` `Locale` type and is deployed to Supabase via `scripts/sync-translations.mts`.

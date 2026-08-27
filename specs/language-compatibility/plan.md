@@ -10,10 +10,11 @@ Nest every translatable page under a single `app/[locale]/…` route tree whose 
 read the locale once and emit `lang`/`dir`/fonts from one registry. A root `proxy.ts`
 (the Next-16 replacement for middleware) rewrites unprefixed URLs to their `/en`
 counterparts *internally* (browser URL stays bare), passes real prefixed URLs through,
-and owns the locale cookie. Strings live in one typed catalog module, synced into a
-Supabase `translations` table by a script; pages resolve text through a server-only
-loader with per-request dedupe and short-TTL caching, falling back to isolated English
-when a row is missing. RTL correctness comes from logical Tailwind utilities plus a few
+and owns the locale cookie. Strings live in the Supabase `translations` table as the
+single source of truth — no catalog files exist; translations are authored directly in
+the database via SQL/migrations. Pages resolve text through a server-only loader with
+per-request dedupe and short-TTL caching, falling back to isolated English when a row
+is missing. RTL correctness comes from logical Tailwind utilities plus a few
 scoped `[dir="rtl"]` overrides; Arabic-script faces (Nastaliq display + Arabic sans UI)
 load only where text uses them.
 
@@ -22,7 +23,7 @@ load only where text uses them.
 | # | Decision | Chosen | Alternatives rejected (why) |
 |---|---|---|---|
 | K1 | Locale routing | Single `[locale]` tree + proxy **rewrite** of bare URLs to `/en/…` (URL never changes) | Duplicated English + locale trees (every future route added twice, drift); full-prefix-everywhere incl. English (breaks FR-4's "unprefixed = English"); optional-catch-all segments (fragile matching) |
-| K2 | Catalog storage | Typed TS catalog = authoring source of truth; **sync script upserts** into `translations` table; runtime reads DB | JSON dictionaries (violates constitution's DB-managed requirement); migrations-as-INSERTs only (re-running clobbers founder's SQL edits); runtime-only seeding (unreviewable diffs) |
+| K2 | Catalog storage | **Supabase `translations` table = single source of truth**; translations authored directly via SQL/migrations using Supabase MCP; runtime reads DB | JSON dictionaries (violates constitution's DB-managed requirement); catalog files as intermediate source (unnecessary indirection, sync drift risk); runtime-only seeding (unreviewable diffs); ad-hoc sync scripts (MCP preferred) |
 | K3 | i18n library | **None** — ~150-line in-house core (registry + loader + formatter) | next-intl et al. assume file catalogs + own routing; our hybrid + DB catalog fights them; new dependency needs approval anyway |
 | K4 | Cache strategy | `unstable_cache` on the whole-dictionary fetch, **60s TTL**, plus React `cache()` per-request dedupe | Tag-based invalidation (founder's SQL edits bypass app tags → stale forever until manual tag bust); no cache (extra Supabase round-trip per render) |
 | K5 | Fonts | `Noto Nastaliq Urdu` (display/headings/prose) + `Noto Sans Arabic` (UI chrome, labels, data) via `next/font/google`, subsets `arabic`; families applied only under RTL scopes so English never fetches them | Naskh everywhere (loses Nastaliq identity farmers expect); Nastaliq everywhere (clips at UI sizes, heavy); Jameel Noori/Gulzar (licensing + coverage unclear) |
@@ -35,13 +36,11 @@ load only where text uses them.
 
 ```
 proxy.ts                                  NEW  locale parse + rewrite-to-/en + cookie write
-supabase/migrations/0001_translations.sql NEW  first repo migration: translations(key, locale, value, status, updated_at)
-scripts/sync-translations.mjs             NEW  upsert catalog → Supabase (node, no new deps)
+supabase/migrations/0001_translations.sql NEW  translations table + seed data (INSERTs for all 8 locales)
 lib/i18n/config.ts                        NEW  registry: 8 entries {slug, langTag, dir, nativeName, englishName} + guards
 lib/i18n/server.ts                        NEW  server-only loader: getDictionary(locale) → t(); unstable_cache(60s) + cache()
 lib/i18n/format.ts                        NEW  formatNumber/locale digits; localeHref(path, locale)
 lib/i18n/logic.ts                         NEW  pure functions shared by server+tests (fallback resolution, prefix parsing)
-catalog/strings.ts                        NEW  typed catalog: every key × 8 languages (AI-drafted, founder-reviewed)
 components/language-switcher.tsx          NEW  client dropdown; native names; path/query/hash preserving
 components/suggestion-chip.tsx            NEW  client; one-time dismissible اردو میں دیکھیں chip (English pages)
 app/[locale]/layout.tsx                   NEW  emits <html lang dir>, font vars, localized-not-found boundary
@@ -72,17 +71,18 @@ adrs/0002-db-backed-translations.md       NEW
   `data-flip-rtl`; grep gate added to review checklist.
 - **Landing page stays fully `"use client"`** for now (out-of-scope refactor); its
   translated strings arrive as props from the server page. Same for CTA/EarlyAccess.
-- **Seed flow**: `sync-translations.mjs` upserts the whole catalog (idempotent,
-  safe to re-run while drafting copy). After founder locks copy, DB becomes the editing
-  surface (SQL) and re-syncs are deliberate.
+- **Seed flow**: translations are seeded via SQL migration files (INSERT statements)
+  that populate the `translations` table with all 8 locales, applied through Supabase
+  MCP. Founder edits happen directly in the DB via MCP; no re-sync needed. Coverage
+  tests verify all keys × 8 locales exist before merge.
 
 ## Build order (tasks follow after plan approval)
 
-1. Registry + pure logic + tests · 2. Migration + sync script + empty catalog skeleton ·
-3. `[locale]` tree move + proxy + html lang/dir/fonts · 4. Loader/formatter wired ·
-5. Switcher + chip · 6. Surface-by-surface extraction (header → landing → marketing
-pages → auth → orphans), committing per surface · 7. Metadata/hreflang/sitemap ·
-8. RTL polish pass + 320px audit · 9. Full AC run-through.
+1. Registry + pure logic + tests · 2. Migration with seed data + empty translation
+skeleton · 3. `[locale]` tree move + proxy + html lang/dir/fonts ·
+4. Loader/formatter wired · 5. Switcher + chip · 6. Surface-by-surface extraction
+(header → landing → marketing pages → auth → orphans), committing per surface ·
+7. Metadata/hreflang/sitemap · 8. RTL polish pass + 320px audit · 9. Full AC run-through.
 
 ## Risks
 

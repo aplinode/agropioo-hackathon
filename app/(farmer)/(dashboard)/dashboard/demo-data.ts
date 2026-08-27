@@ -1,6 +1,10 @@
 /* Typed demo mock data for the dashboard (UI-only demo build).
    Pakistan-first realism: Pakistani names, Multan/Sahiwal-class locations,
-   wheat/cotton/sugarcane/maize, °C. No invented proven results. */
+   wheat/cotton/sugarcane/maize, °C. No invented proven results.
+   Translatable strings are resolved from the server bundle via getDemoData().
+   Static constants are kept for other pages that import them directly. */
+
+import type { DashboardBundle } from "./dashboard-bundle";
 
 export type AlertSeverity = "critical" | "warning" | "info";
 export type FarmHealth = "good" | "watch";
@@ -30,15 +34,14 @@ export type DemoChecklistItem = {
   href: string;
 };
 
+/* ── Static constants (used by other pages directly) ─────────────────── */
+
 export const demoFarmer = {
   firstName: "Ahmad",
   lastName: "Ali",
   initials: "MA",
   location: "Multan, Punjab",
-  /** Static demo date shown beside the location in the header. */
   todayLabel: "Sunday, 23 Aug",
-  /** ALL unread notifications — the bell badge reflects this total,
-      even when the alerts strip shows only the top 3. */
   unreadCount: 5,
   email: "ahmad.ali@agropioo.com",
 };
@@ -133,3 +136,66 @@ export const quickActions = [
   { id: "action-scan", label: "Scan crop", href: "/detect", icon: "camera" },
   { id: "action-prices", label: "Check prices", href: "/prices", icon: "tag" },
 ] as const;
+
+/* ── Bundle-aware factory (dashboard-view only) ──────────────────────── */
+
+export function getDemoData(bundle: DashboardBundle) {
+  const d = bundle.demo;
+  const farmer = {
+    firstName: demoFarmer.firstName,
+    lastName: demoFarmer.lastName,
+    initials: demoFarmer.initials,
+    location: d.location,
+    todayLabel: d.todayLabel,
+    unreadCount: demoFarmer.unreadCount,
+    email: demoFarmer.email,
+  };
+
+  const advisory = {
+    crop: d.advisoryCrop,
+    stage: d.advisoryStage,
+    action: d.advisoryAction,
+    why: d.advisoryWhy,
+  };
+
+  const seasonTip = {
+    action: d.seasonAction,
+    why: d.seasonWhy,
+  };
+
+  const weather = {
+    location: d.weatherLocation,
+    condition: d.weatherCondition,
+    temperatureC: demoWeather.temperatureC,
+    highC: demoWeather.highC,
+    lowC: demoWeather.lowC,
+    rainNote: d.rainNote,
+  };
+
+  const alerts: DemoAlert[] = [
+    { ...demoAlerts[0], message: d.alertWhitefly },
+    { ...demoAlerts[1], message: d.alertRain },
+    { ...demoAlerts[2], message: d.alertPrice },
+  ];
+
+  const farms: DemoFarm[] = [
+    { ...demoFarms[0], name: d.farm1Name, location: d.farm1Location, crops: d.farm1Crops, stage: d.farm1Stage },
+    { ...demoFarms[1], name: d.farm2Name, location: d.farm2Location, crops: d.farm2Crops, stage: d.farm2Stage },
+    { ...demoFarms[2], name: d.farm3Name, location: d.farm3Location, crops: d.farm3Crops, stage: d.farm3Stage },
+  ];
+
+  const checklistItems: DemoChecklistItem[] = [
+    { id: "checklist-farm", label: bundle.addFirstFarm, href: "/farms/new" },
+    { id: "checklist-advisor", label: d.checklistAdvisor, href: "/advisor" },
+    { id: "checklist-detect", label: d.checklistDetect, href: "/detect" },
+  ];
+
+  const quickActions = [
+    { id: "action-record", label: d.actionRecord, href: "/records/new", icon: "clipboard" },
+    { id: "action-advisor", label: d.actionAdvisor, href: "/advisor", icon: "chat" },
+    { id: "action-scan", label: d.actionScan, href: "/detect", icon: "camera" },
+    { id: "action-prices", label: d.actionPrices, href: "/prices", icon: "tag" },
+  ] as const;
+
+  return { farmer, advisory, seasonTip, weather, alerts, farms, checklistItems, quickActions };
+}

@@ -124,6 +124,34 @@ select.focus-ring-none:focus-visible {
   text-transform: uppercase;
 }
 
+/* --- Script-safe typography (dashboard-i18n D5 / FR-11) ------------------- */
+
+[dir="rtl"] {
+  /* Cursive-joining safety: Chromium still applies letter-spacing to Arabic
+     despite the CSS spec forbidding it (W3C I18N-ISSUE-354, Chromium 40618336). */
+  letter-spacing: normal !important;
+
+  /* Uppercase is a no-op on Arabic-script; stripping it keeps eyebrow labels
+     honest without needing per-component conditionals (FR-11). */
+  text-transform: none;
+
+  /* Mono digits: Geist Mono lacks Arabic-Indic glyphs (۰–۹); Noto Sans
+     Arabic fills the gap so FR-19 Eastern digits render consistently. */
+  --font-mono: var(--font-geist-mono), "Noto Sans Arabic";
+}
+
+/* Nastaliq has unbounded vertical metrics (Google Fonts issue #7810):
+   generous leading prevents ascender/descender clipping (W3C arab-ur-lreq). */
+[dir="rtl"][lang="ur"],
+[dir="rtl"][lang="pa-Arab"] {
+  line-height: 1.9;
+}
+
+/* Other Arabic-script locales: wider than Latin baseline but Naskh-friendly. */
+[dir="rtl"]:not([lang="ur"]):not([lang="pa-Arab"]) {
+  line-height: 1.6;
+}
+
 /* Field-pass ticket: punched notches where the dashed perforation meets the card edges.
    --ticket-stub must match the stub footer height set by the consumer. */
 .field-ticket {

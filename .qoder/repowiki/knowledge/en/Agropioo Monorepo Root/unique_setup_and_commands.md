@@ -1,0 +1,1 @@
+`npm run dev` starts the Next.js dev server; `npm run sync:translations` runs the translation sync script against `.env`; `npm run test` executes Vitest over `lib/**/*.test.ts` and `catalog/**/*.test.ts`; `npm run lint` runs ESLint with Next's web vitals rules.

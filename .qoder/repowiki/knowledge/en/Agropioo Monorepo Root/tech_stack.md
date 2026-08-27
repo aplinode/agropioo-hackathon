@@ -1,0 +1,1 @@
+Next.js 16 App Router with React 19, TypeScript 5, Tailwind CSS 4, Supabase client, Zod v4 for validation, Vitest for unit testing, and ESLint 9 with eslint-config-next — shared uniformly across `app/`, `lib/`, and `catalog/`.

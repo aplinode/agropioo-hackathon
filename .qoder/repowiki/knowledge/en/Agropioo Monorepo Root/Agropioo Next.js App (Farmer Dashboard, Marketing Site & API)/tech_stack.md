@@ -1,0 +1,1 @@
+Next.js App Router with route groups for tenant separation (`(farmer)` vs `(site)`), Tailwind CSS for styling, Supabase for authentication and data, and a shared `components/` library consumed by both the marketing site and farmer dashboard.

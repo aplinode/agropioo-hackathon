@@ -1,0 +1,6 @@
+- Pure decision functions take explicit inputs (e.g. row objects, timestamps) and return deterministic results without touching DB or request objects, enabling unit testing against fixed clocks.
+- Sensitive secrets are never stored in plaintext: codes are hashed with SHA-256 before storage and compared via hash equality.
+- Email normalization (trim + lowercase) is enforced at the Zod schema boundary so every downstream comparison and storage sees an identical value.
+- HTTP errors follow a uniform `{ error: { code, message } }` envelope produced through `errorBody`/`errorResponse` with typed `ApiErrorCode` values.
+- Singleton services (nodemailer transporter, Supabase clients) are lazily initialized once per process and returned via getter functions that validate required env vars.
+- i18n keys are resolved through a `t(key, params)` translator that falls back to English when a localized string is missing, and only plain text (not functions) crosses the RSC boundary.

@@ -1,6 +1,8 @@
 /* Typed demo data for the farms feature (UI-only demo build).
    Farm records stay consistent with the dashboard's demoFarms ids. */
 
+import type { FarmsBundle } from "./farms-bundle";
+
 export type RecordKind =
   | "irrigation"
   | "fertilizer"
@@ -24,6 +26,19 @@ export const recordTypeLabel = {
   disease: "Disease",
   harvest: "Harvest",
 } as const;
+
+/** Translated record type labels from the farms bundle. */
+export function getRecordTypeLabel(
+  bundle: FarmsBundle,
+): Record<RecordKind, string> {
+  return {
+    irrigation: bundle.records.types.irrigation,
+    fertilizer: bundle.records.types.fertilizer,
+    pesticide: bundle.records.types.pesticide,
+    disease: bundle.records.types.disease,
+    harvest: bundle.records.types.harvest,
+  };
+}
 
 export const demoRecords: DemoRecord[] = [
   {

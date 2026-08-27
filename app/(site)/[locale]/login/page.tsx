@@ -1,29 +1,65 @@
 import type { Metadata } from "next";
-import { locale } from "next/root-params";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { isLocale, type Locale as LocaleCode } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/server";
-import LoginForm from "./login-form";
+import { getCurrentDictionary } from "@/lib/i18n/server";
+import LoginForm, { type AuthErrorCopy, type LoginCopy } from "./login-form";
 
-export const metadata: Metadata = {
-  title: "Sign in — Agropioo",
-  description:
-    "Sign in to Agropioo, the AI-powered farm intelligence platform. Your advisor, records, and advisories — waiting where you left them.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getCurrentDictionary();
+  return {
+    title: t("li.meta.title").text,
+    description: t("li.meta.description").text,
+  };
+}
 
 export default async function LoginPage() {
-  const raw = await locale();
-  const current: LocaleCode = isLocale(raw) ? raw : "en";
-  const { t } = await getDictionary(current);
+  const { t } = await getCurrentDictionary();
   const switcherLabel = t("common.languageSwitcherLabel").text;
+
+  const errors: AuthErrorCopy = {
+    emailRequired: t("auth.err.emailRequired").text,
+    emailInvalid: t("auth.err.emailInvalid").text,
+    loginPasswordRequired: t("auth.err.loginPasswordRequired").text,
+    tooManyAttempts: t("auth.err.tooManyAttempts").text,
+    invalidCredentials: t("auth.err.invalidCredentials").text,
+    serverError: t("auth.err.serverError").text,
+  };
+
+  const copy: LoginCopy = {
+    productOf: t("common.productOfAplinode").text,
+    brandHeadingA: t("li.brand.headingA").text,
+    brandHeadingB: t("li.brand.headingB").text,
+    demoAria: t("li.demo.aria").text,
+    demoUser: t("li.demo.user").text,
+    demoAdvisorLabel: t("li.demo.advisorLabel").text,
+    demoAdvisorBody: t("li.demo.advisorBody").text,
+    points: [t("li.point1").text, t("li.point2").text, t("li.point3").text],
+    backHome: t("auth.backHome").text,
+    eyebrow: t("li.eyebrow").text,
+    heading: t("li.heading").text,
+    sub: t("li.sub").text,
+    emailLabel: t("auth.emailLabel").text,
+    emailPlaceholder: t("auth.emailPlaceholder").text,
+    passwordLabel: t("auth.passwordLabel").text,
+    passwordPlaceholder: t("li.passwordPlaceholder").text,
+    showPassword: t("auth.showPassword").text,
+    hidePassword: t("auth.hidePassword").text,
+    forgot: t("li.forgot").text,
+    submit: t("nav.signIn").text,
+    submitting: t("li.submitting").text,
+    noAccount: t("li.noAccount").text,
+    noAccountEnd: t("li.noAccountEnd").text,
+    createAccount: t("li.createAccount").text,
+    footerStrip: t("home.footer.motto").text,
+    errors,
+  };
 
   return (
     <div className="relative">
       <div className="absolute end-5 top-5 z-20 sm:end-8 sm:top-8">
         <LanguageSwitcher label={switcherLabel} />
       </div>
-      <LoginForm />
+      <LoginForm copy={copy} />
     </div>
   );
 }

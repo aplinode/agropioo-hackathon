@@ -1,0 +1,1 @@
+Centralized translation catalog that defines the English source-of-truth key set and provides parallel locale dictionaries for Agropioo's UI strings, synced to Supabase at runtime.

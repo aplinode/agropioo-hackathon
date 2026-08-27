@@ -1,0 +1,6 @@
+- Every route handler wraps its body in try/catch and returns errors via `errorResponse(errorType, COPY.* message, statusCode)` from `@/lib/http` rather than throwing.
+- Request bodies are parsed and validated with a Zod schema imported from `@/lib/validation/auth` using `.safeParse()`, returning a `validation_error` response on failure before any DB work.
+- Rate limiting is applied per-route using `hitLimiter` against both `clientIp(request)` and the primary entity (email) with keys like `login:ip`, `signup:email`, etc., using rules from `RATE_RULES`.
+- Authentication state is carried via short-lived pass tokens set as cookies through `mintPass`/`setPassCookie`/`clearPassCookies` from `@/lib/auth/pass`, with purpose-scoped cookie names (`session`, `verify`, `reset`).
+- Email verification codes are issued and delivered together via `issueVerificationCode` + `deliverCode` from `@/lib/auth/code-flow`, with optional `demoCode` conditionally attached to the response when SMTP is not configured.
+- Database access goes exclusively through `getSupabase()` from `@/lib/supabase`, querying the `users`, `verification_codes`, `pass_states`, and `sessions` tables.

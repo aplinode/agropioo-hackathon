@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: catalog
+title: Multilingual Translation Catalog (Agropioo i18n)
+scope:
+    - catalog/
+source_files: []
+depends_on: []
+related_to:
+    - path: app/marketing_site

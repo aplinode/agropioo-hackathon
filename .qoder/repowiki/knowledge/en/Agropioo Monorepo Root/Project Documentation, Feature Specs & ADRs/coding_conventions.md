@@ -1,0 +1,6 @@
+- Each feature spec lives in its own `specs/<feature>/` folder and contains at minimum a `spec.md` with the standard sections: Goal, User Scenarios, Functional Requirements (numbered FR1..FRn), Edge Cases & Rules, Out of Scope, and Acceptance Criteria.
+- Functional requirements are written as testable behaviour statements prefixed with an FR number so acceptance criteria can cite them directly (e.g., `[ ] ... satisfies FR2`).
+- Specs deliberately describe *what* and *why*, not *how*: implementation details (databases, frameworks, file layout) are deferred to a separate `plan.md` kept alongside the spec.
+- Cross-feature dependencies are resolved by explicit path references between specs (e.g., `specs/authentication/spec.md` lists which lines of `specs/otp-verification/spec.md` it supersedes) rather than through shared templates.
+- Architectural decisions are recorded as numbered ADRs in `adrs/` using a fixed Context/Decision/Consequences structure and explicitly link back to the originating spec's plan items.
+- Every spec ends with an Acceptance Criteria checklist using checkbox syntax (`[ ]`) that maps one-to-one with the functional requirements, providing a verifiable definition of done.

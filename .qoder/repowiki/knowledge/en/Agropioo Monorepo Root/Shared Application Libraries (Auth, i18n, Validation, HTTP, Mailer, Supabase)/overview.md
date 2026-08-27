@@ -1,0 +1,1 @@
+Cross-cutting libraries providing shared auth logic, internationalization, Zod validation schemas, standardized HTTP helpers, email delivery, and Supabase client access for the Agropioo app.

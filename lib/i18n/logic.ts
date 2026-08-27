@@ -5,6 +5,7 @@
 
 import {
   DEFAULT_LOCALE,
+  isLocale,
   LOCALE_REGISTRY,
   localeBySlug,
   type Locale,
@@ -59,6 +60,16 @@ export function switchedPathname(currentPathname: string, target: Locale): strin
   const { locale, rest } = splitLocalePrefix(currentPathname);
   const contentPath = locale ? rest : normalizePath(currentPathname);
   return localeHref(target, contentPath === "" ? "/" : contentPath);
+}
+
+/**
+ * Resolves the farmer-app display language from the persisted preference
+ * value (dashboard-i18n spec FR-4/FR-6): absent, empty, or unknown values
+ * fall back to English. Matching is strict lowercase — the switcher only
+ * ever writes registry codes.
+ */
+export function resolveAppLocale(value: string | undefined | null): Locale {
+  return typeof value === "string" && isLocale(value) ? value : DEFAULT_LOCALE;
 }
 
 export type StringTable = Readonly<Record<string, string>>;

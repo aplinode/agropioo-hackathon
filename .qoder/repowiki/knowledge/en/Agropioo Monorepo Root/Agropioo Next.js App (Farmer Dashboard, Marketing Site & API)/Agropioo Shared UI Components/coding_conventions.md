@@ -1,0 +1,6 @@
+- Interactive components opt into client rendering with a `'use client'` directive at the top of the file, while presentational/layout components stay server-rendered.
+- Branding visuals consistently use the `FurrowMotif` decorative component and the `agro-*` Tailwind color palette instead of hard-coded hex values.
+- Navigation links are driven by data arrays (e.g., `links` in `Nav.tsx`, `destinations` in `AppSidebar`) and rendered via `.map`, keeping routes declarative and easy to extend.
+- Typography follows a shared scale: eyebrow labels use `font-mono uppercase tracking-[0.22em] text-agro-canopy`, headings use the `display-heading` class, and body copy uses `text-agro-slate`.
+- Client-side state is managed with React hooks (`useState`, `useEffect`, `useRef`) and side effects are cleaned up in effect return functions (event listeners, timers).
+- Accessibility is expressed inline with `aria-*` attributes, `role` attributes on menus/alerts, and `aria-hidden="true"` on purely decorative elements.

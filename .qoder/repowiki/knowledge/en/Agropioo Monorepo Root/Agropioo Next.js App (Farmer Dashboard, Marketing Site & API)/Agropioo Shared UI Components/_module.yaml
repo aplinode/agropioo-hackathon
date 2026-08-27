@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: app/shared_components
+title: Agropioo Shared UI Components
+scope:
+    - components/
+source_files: []
+depends_on: []
+related_to:
+    - path: app/farmer_dashboard
+    - path: app/marketing_site

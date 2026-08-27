@@ -1,0 +1,1 @@
+Next.js App Router application that serves a multi-locale marketing site, an authenticated farmer dashboard, and Supabase-backed auth/health API routes sharing one component library.

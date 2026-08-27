@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { demoFarms } from "@/app/(farmer)/(dashboard)/dashboard/demo-data";
 import PageHeader from "@/components/shell/page-header";
-import { recordTypeLabel, recordsForFarm } from "../../demo-data";
+import { recordsForFarm } from "../../demo-data";
 import {
   CloudRainIcon,
   SproutIcon,
@@ -10,6 +10,7 @@ import {
   BugIcon,
   WheatIcon,
 } from "@/components/icons";
+import { getFarmsBundle } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
   title: "Farm records — Agropioo",
@@ -34,14 +35,23 @@ export default async function FarmRecordsPage({
   const farm = demoFarms.find((candidate) => candidate.id === id);
   if (!farm) notFound();
 
+  const bundle = await getFarmsBundle();
   const records = recordsForFarm(farm.id);
+
+  const recordTypeLabel: Record<string, string> = {
+    irrigation: bundle.records.types.irrigation,
+    fertilizer: bundle.records.types.fertilizer,
+    pesticide: bundle.records.types.pesticide,
+    disease: bundle.records.types.disease,
+    harvest: bundle.records.types.harvest,
+  };
 
   return (
     <div className="pt-1">
       <PageHeader
-        eyebrow={`${farm.name} · records`}
-        title="The farm's memory"
-        description="Every irrigation, spray, and treatment written down — so decisions next week don't rely on memory."
+        eyebrow={`${farm.name} · ${bundle.records.eyebrow}`}
+        title={bundle.records.farmRecords.heading}
+        description={bundle.records.farmRecords.description}
       />
 
       <ol className="mt-6 space-y-3">
@@ -81,7 +91,7 @@ export default async function FarmRecordsPage({
       </ol>
 
       <p className="mt-6 rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
-        DEMO · sample entries only — saving new ones isn&apos;t wired yet
+        {bundle.records.farmRecords.demoNotice}
       </p>
     </div>
   );

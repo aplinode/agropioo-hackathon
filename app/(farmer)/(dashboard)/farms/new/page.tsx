@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
 import PageHeader from "@/components/shell/page-header";
 import NewFarmForm from "./farm-form";
+import { getFarmsBundle } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
   title: "Add a farm — Agropioo",
 };
 
-export default function NewFarmPage() {
+export default async function NewFarmPage() {
+  const bundle = await getFarmsBundle();
   return (
     <div className="pt-1">
       <PageHeader
-        eyebrow="Farms"
-        title="Add a farm"
-        description="Tell Agropioo about your land — location, crop, and size — so every advisory is shaped around it."
+        eyebrow={bundle.eyebrow}
+        title={bundle.new.heading}
+        description={bundle.new.description}
       />
       <div className="mt-8 max-w-xl">
-        <NewFarmForm />
+        <NewFarmForm bundle={bundle} />
       </div>
     </div>
   );

@@ -1,0 +1,3 @@
+- Path aliases use `@/` pointing to the workspace root, shared by `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, and `vitest.config.ts`.
+- Locale-aware routes are handled exclusively by the root `proxy.ts` middleware, which rewrites non-locale paths to `/en/...` and lets explicit locale slugs pass through without redirects.
+- Cross-cutting concerns (auth, i18n, validation, HTTP, mailer, Supabase) live in `lib/` and are imported by both `app/` routes and tests rather than being duplicated.
