@@ -109,6 +109,7 @@ Give every farmer a knowledgeable advisor they can talk to in their own language
 - **FR-10.6:** The last 10 messages from the current conversation are included as context in each advisor request, so the advisor maintains continuity.
 - **FR-10.7:** All messages a farmer sends without switching conversations belong to the same conversation session — the client learns the conversation id from the first response and reuses it for follow-up messages. A new session is created only via the "New Conversation" button or after page reload without a selected conversation.
 - **FR-10.8:** Selecting a conversation in the sidebar loads that conversation's full message history into the chat area, replacing whatever is currently displayed, and marks it as the active conversation for subsequent messages.
+- **FR-10.9:** Destructive actions (conversation deletion) are confirmed through an in-app modal dialog — never native browser dialogs (`window.confirm`/`alert`). The modal states the action cannot be undone, and can be dismissed via a cancel button, the Escape key, or tapping the backdrop.
 
 ### FR-11: Safety & Boundaries
 - **FR-11.1:** The advisor refuses non-farming queries politely (e.g. politics, sports, personal advice) and redirects to farming topics.
@@ -211,3 +212,4 @@ Give every farmer a knowledgeable advisor they can talk to in their own language
 | AC-29 | `npm run lint` and `npm run build` pass | Automated: run both commands, verify zero errors |
 | AC-30 | Follow-up messages continue the same conversation | Manual: from a fresh chat send two messages back-to-back, verify only ONE new conversation appears in the sidebar and both exchanges are inside it |
 | AC-31 | Switching conversations loads the right history | Manual: create two conversations with distinct topics, switch between them, verify the chat area shows only that conversation's messages and new messages join it |
+| AC-32 | Deleting a conversation uses an in-app modal | Manual: tap delete, verify a styled modal (not a browser dialog) appears; cancel via Escape/backdrop/cancel button leaves the conversation intact; confirm removes it |
