@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "sync:translations": "node --experimental-strip-types --env-file-if-exists=.env scripts/sync-translations.mts"
+    "sync:translations": "node --experimental-strip-types --env-file-if-exists=.env scripts/sync-translations.mts",
+    "seed:knowledge": "node --experimental-strip-types --env-file-if-exists=.env scripts/seed-knowledge.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
