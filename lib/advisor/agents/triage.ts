@@ -6,6 +6,7 @@ import { createPricesAgent } from "./prices-agent";
 import { createSchemesAgent } from "./schemes-agent";
 import { farmingOnlyGuardrail, noFabricationGuardrail } from "../guardrails";
 import { searchKnowledgeBase } from "../tools/knowledge-base";
+import { advisorModel } from "../model";
 import type { FarmerContext } from "../context";
 
 export function createTriageAgent(ctx: FarmerContext) {
@@ -70,7 +71,7 @@ After every response, suggest 2-3 follow-up questions the farmer might want to a
   return new Agent({
     name: "Triage",
     instructions: baseInstructions,
-    model: process.env.ADVISOR_MODEL ?? "gpt-4o-mini",
+    model: advisorModel(),
     tools: [searchKnowledgeBase],
     handoffs: [
       handoff(cropAdvisor),
