@@ -29,6 +29,7 @@ Route each farmer query to the most appropriate specialist agent. You also handl
 - Season: ${ctx.currentSeason}
 - Farms: ${farmSummary}
 ${ctx.district ? `- Location: ${ctx.district}, Punjab, Pakistan` : ""}
+${ctx.conversationHistory ? `\n## Recent conversation history\n${ctx.conversationHistory}` : ""}
 
 ## Available specialists (use handoffs):
 - **Crop Advisor**: crop diseases, pests, agronomy, fertilizer, seed treatment, irrigation scheduling

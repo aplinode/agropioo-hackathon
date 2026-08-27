@@ -15,6 +15,7 @@ export interface FarmerContext {
   farms: FarmSummary[];
   currentSeason: "Kharif" | "Rabi";
   district?: string;
+  conversationHistory?: string;
 }
 
 export function getCurrentSeason(): "Kharif" | "Rabi" {
