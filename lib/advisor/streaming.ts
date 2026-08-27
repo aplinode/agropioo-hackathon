@@ -1,4 +1,4 @@
-import type { StreamedRunResult, Agent } from "@openai/agents";
+import type { StreamedRunResult, Agent, UnknownContext } from "@openai/agents";
 
 /**
  * Transforms an OpenAI Agents SDK StreamedRunResult into a Server-Sent Events
@@ -9,8 +9,8 @@ import type { StreamedRunResult, Agent } from "@openai/agents";
  *   data: {"type":"done","output":"..."}  — full final output
  *   data: {"type":"error","message":"..."} — error during generation
  */
-export function toSSEStream<TAgent extends Agent<any, any>>(
-  result: StreamedRunResult<any, TAgent>,
+export function toSSEStream<TAgent extends Agent<UnknownContext>>(
+  result: StreamedRunResult<UnknownContext, TAgent>,
 ): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder();
 
