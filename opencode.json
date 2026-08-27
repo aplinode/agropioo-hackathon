@@ -16,5 +16,6 @@
     "webfetch": "allow",
     "websearch": "allow",
     "skill": "allow"
-  }
+  },
+  "snapshot": false
 }
