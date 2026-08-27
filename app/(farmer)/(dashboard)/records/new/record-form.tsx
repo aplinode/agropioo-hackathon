@@ -18,7 +18,9 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
   const [status, setStatus] = useState<'idle' | 'loading' | 'saved' | 'error'>('idle');
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
   const [farms, setFarms] = useState<{ id: string; name: string }[]>([]);
+  const [lockedFarmName, setLockedFarmName] = useState<string | null>(null);
   const [weatherOverride, setWeatherOverride] = useState<string>('');
+  const isFarmLocked = Boolean(defaultFarmId);
 
   const {
     register,
@@ -51,10 +53,29 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
     fetch('/api/farms')
       .then((r) => r.json())
       .then((data: Array<Record<string, unknown>>) => {
-        setFarms(data.filter((f) => !f.archived_at).map((f) => ({ id: String(f.id), name: String(f.name) })));
+        const active = data
+          .filter((f) => !f.archived_at)
+          .map((f) => ({ id: String(f.id), name: String(f.name) }));
+        setFarms(active);
+        if (defaultFarmId) {
+          const match = active.find((f) => f.id === defaultFarmId);
+          setLockedFarmName(match ? match.name : null);
+        }
       })
       .catch(() => {});
-  }, []);
+  }, [defaultFarmId]);
+
+  useEffect(() => {
+    if (!defaultFarmId || lockedFarmName !== null || farms.length === 0) return;
+    if (lockedFarmName === null) {
+      fetch(`/api/farms/${defaultFarmId}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (data && !data.archived_at) setLockedFarmName(String(data.name));
+        })
+        .catch(() => {});
+    }
+  }, [defaultFarmId, lockedFarmName, farms.length]);
 
   const onSubmit = async (data: CreateRecordInput) => {
     setStatus('loading');
@@ -123,11 +144,32 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
     <form onSubmit={handleSubmit(onSubmit as any)} noValidate className="space-y-5">
       <div>
         <label htmlFor="record-farm" className="block text-sm font-semibold text-agro-ink">{bundle.records.new.fields.farm}</label>
-        <select id="record-farm" {...register('farm_id')} className={`${inputClass(errors.farm_id?.message)} appearance-none`}>
-          <option value="">Select a farm</option>
-          {farms.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
-        </select>
-        {(errors.farm_id || serverErrors.farm_id) && <p className="mt-1.5 text-sm font-medium text-agro-forest">{errors.farm_id?.message || serverErrors.farm_id}</p>}
+        {isFarmLocked ? (
+          <div className="mt-2">
+            {lockedFarmName === null ? (
+              <div className="flex h-12 items-center rounded-xl border border-agro-sprout bg-agro-cloud/40 px-4 text-sm text-agro-slate">
+                Loading farm…
+              </div>
+            ) : (
+              <div className="flex h-12 items-center gap-2 rounded-xl border border-agro-sprout bg-agro-cloud/40 px-4 text-sm font-semibold text-agro-ink">
+                <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-agro-mint text-agro-canopy" aria-hidden="true">
+                  <CheckIcon size={14} />
+                </span>
+                {lockedFarmName}
+              </div>
+            )}
+            <input type="hidden" id="record-farm" {...register('farm_id')} />
+          </div>
+        ) : (
+          <>
+            <select id="record-farm" {...register('farm_id')} className={`${inputClass(errors.farm_id?.message)} appearance-none`}>
+              <option value="">Select a farm</option>
+              {farms.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+            </select>
+            {(errors.farm_id || serverErrors.farm_id) && <p className="mt-1.5 text-sm font-medium text-agro-forest">{errors.farm_id?.message || serverErrors.farm_id}</p>}
+          </>
+        )}
+        {isFarmLocked && (errors.farm_id || serverErrors.farm_id) && <p className="mt-1.5 text-sm font-medium text-agro-forest">{errors.farm_id?.message || serverErrors.farm_id}</p>}
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
