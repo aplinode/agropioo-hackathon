@@ -811,6 +811,7 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "app.farms.stages.grandGrowth": "عریض نشوونما",
   "app.farms.stages.ripening": "پکنا",
   "app.farms.stages.harvest": "کٹائی",
+  "app.farms.stages.panicleInitiation": "پنجڑا چادھنا",
 
   /* ── ضلع ئی فصلئ ────────────────────────────────────── */
   "app.farms.districts.multan": "ملتان",
@@ -833,6 +834,7 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "app.farms.list.addLink": "شامل کنئ",
   "app.farms.list.openFarm": "شُتُم کھلئ",
   "app.farms.list.addNewFarm": "نوی شُتُم شامل کنئ",
+  "app.farms.list.emptyHeading": "تئی شُتُم نئیں",
 
   /* ── نوی شُتُم ────────────────────────────────────────── */
   "app.farms.new.pageTitle": "شُتُم شامل کنئ — اگروپیو",

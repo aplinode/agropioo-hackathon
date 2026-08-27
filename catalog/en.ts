@@ -817,6 +817,7 @@ export const en = {
   "app.farms.stages.grandGrowth": "Grand growth",
   "app.farms.stages.ripening": "Ripening",
   "app.farms.stages.harvest": "Harvest",
+  "app.farms.stages.panicleInitiation": "Panicle initiation",
 
   /* ── Districts & crops ──────────────────────────────── */
   "app.farms.districts.multan": "Multan",
@@ -839,6 +840,7 @@ export const en = {
   "app.farms.list.addLink": "Add",
   "app.farms.list.openFarm": "Open farm",
   "app.farms.list.addNewFarm": "Add a new farm",
+  "app.farms.list.emptyHeading": "No farms yet",
 
   /* ── Farms new ──────────────────────────────────────── */
   "app.farms.new.pageTitle": "Add a farm \u2014 Agropioo",

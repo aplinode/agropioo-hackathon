@@ -813,6 +813,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.farms.stages.grandGrowth": "عریض نشوونما",
   "app.farms.stages.ripening": "پکنا",
   "app.farms.stages.harvest": "کٹائی",
+  "app.farms.stages.panicleInitiation": "پہنچائپن",
 
   /* ── ضلع اور فصلیں ─────────────────────────────────── */
   "app.farms.districts.multan": "ملتان",
@@ -835,6 +836,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.farms.list.addLink": "شامل کریں",
   "app.farms.list.openFarm": "کھیت کھولیں",
   "app.farms.list.addNewFarm": "نیا کھیت شامل کریں",
+  "app.farms.list.emptyHeading": "ابھی تک کوئی کھیت نہیں",
 
   /* ── نیا کھیت ───────────────────────────────────────── */
   "app.farms.new.pageTitle": "کھیت شامل کریں — اگروپیو",

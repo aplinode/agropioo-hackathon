@@ -4,6 +4,8 @@
 export type ApiErrorCode =
   | "validation_error"
   | "unauthorized"
+  | "not_found"
+  | "conflict"
   | "conflict_registered"
   | "rate_limited"
   | "server_error";

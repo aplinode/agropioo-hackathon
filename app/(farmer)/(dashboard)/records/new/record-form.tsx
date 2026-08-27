@@ -1,84 +1,97 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createRecordSchema, type CreateRecordInput } from "@/lib/validation/farms";
+import { RECORD_TYPES, SEASONS, YEAR_OPTIONS, WEATHER_CONDITIONS } from "@/lib/farms/constants";
+import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle";
 import {
-  AlertTriangleIcon,
   ArrowRightIcon,
   CheckIcon,
-  CloudRainIcon,
-  SproutIcon,
-  FlaskIcon,
-  BugIcon,
-  WheatIcon,
 } from "@/components/icons";
-import { demoFarms } from "@/app/(farmer)/(dashboard)/dashboard/demo-data";
-import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle";
 
-/* Static demo date — ties to the dashboard's mock header date and keeps
-   server/client markup identical. */
-const DEMO_TODAY = "2026-08-23";
 
-/* Field-record entry (UI-only demo): pick the event type, note what
-   happened, save. Saving is simulated — no backend is wired yet. */
-export default function NewRecordForm({ bundle }: { bundle: FarmsBundle }) {
+export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBundle; defaultFarmId: string }) {
   const router = useRouter();
-  const [type, setType] = useState<string>("irrigation");
-  const [date, setDate] = useState(DEMO_TODAY);
-  const [status, setStatus] = useState<"idle" | "loading" | "saved">("idle");
-  const [fieldErrors, setFieldErrors] = useState<{
-    farm?: string;
-    date?: string;
-  }>({});
+  const [status, setStatus] = useState<'idle' | 'loading' | 'saved' | 'error'>('idle');
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
+  const [farms, setFarms] = useState<{ id: string; name: string }[]>([]);
+  const [weatherOverride, setWeatherOverride] = useState<string>('');
 
-  const recordTypes = [
-    { id: "irrigation", label: bundle.records.types.irrigation, Icon: CloudRainIcon },
-    { id: "fertilizer", label: bundle.records.types.fertilizer, Icon: SproutIcon },
-    { id: "pesticide", label: bundle.records.types.pesticide, Icon: FlaskIcon },
-    { id: "disease", label: bundle.records.types.disease, Icon: BugIcon },
-    { id: "harvest", label: bundle.records.types.harvest, Icon: WheatIcon },
-  ] as const;
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateRecordInput>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(createRecordSchema) as any,
+    defaultValues: {
+      farm_id: defaultFarmId || '',
+      type: 'irrigation',
+      season: 'Summer',
+      year: YEAR_OPTIONS[10],
+      event_date: new Date().toISOString().split('T')[0],
+      title: '',
+      note: '',
+      weather_condition: null,
+      yield_qty: null,
+      labor_cost: null,
+      transport_cost: null,
+    },
+  });
 
-  const titlePlaceholder =
-    type === "irrigation"
-      ? bundle.records.new.placeholders.titleIrrigation
-      : bundle.records.new.placeholders.titleOther;
+  const selectedType = watch('type');
+  const isHarvest = selectedType === 'harvest';
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (status === "loading") return;
+  useEffect(() => {
+    fetch('/api/farms')
+      .then((r) => r.json())
+      .then((data: Array<Record<string, unknown>>) => {
+        setFarms(data.filter((f) => !f.archived_at).map((f) => ({ id: String(f.id), name: String(f.name) })));
+      })
+      .catch(() => {});
+  }, []);
 
-    const data = new FormData(event.currentTarget);
-    const farmId = String(data.get("farm") ?? "");
-    const when = String(data.get("date") ?? "");
+  const onSubmit = async (data: CreateRecordInput) => {
+    setStatus('loading');
+    setServerErrors({});
+    try {
+      const res = await fetch('/api/records', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const body = await res.json() as Record<string, unknown>;
+        const errorBody = body.error as Record<string, unknown> | undefined;
+        if (errorBody?.issues) {
+          const map: Record<string, string> = {};
+          (errorBody.issues as Record<string, unknown>[]).forEach((i) => { map[(i.path as unknown as string[]).join('.')] = i.message as string; });
+          setServerErrors(map);
+        } else {
+          setServerErrors({ form: (errorBody?.message as string | undefined) || 'Failed to save' });
+        }
+        setStatus('error');
+        return;
+      }
+      await res.json();
+      setStatus('saved');
+      const farmId = data.farm_id;
+      setTimeout(() => router.push(`/farms/${farmId}/records`), 600);
+    } catch {
+      setServerErrors({ form: 'Network error' });
+      setStatus('error');
+    }
+  };
 
-    const errors: typeof fieldErrors = {};
-    if (!farmId) errors.farm = bundle.records.new.errors.farmRequired;
-    if (!when) errors.date = bundle.records.new.errors.dateRequired;
-    setFieldErrors(errors);
-    if (Object.keys(errors).length > 0) return;
-
-    setStatus("loading");
-    // Demo save. Swap for POST /api/farms/[id]/records once wired.
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    setStatus("saved");
-  }
-
-  const inputClass = (hasError?: string) =>
-    `focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
-      hasError
-        ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
-        : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
-    }`;
-
-  if (status === "saved") {
+  if (status === 'saved') {
     return (
       <div className="flex flex-1 flex-col justify-center py-16" role="status">
-        <span
-          className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-agro-canopy text-white"
-          aria-hidden="true"
-        >
+        <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-agro-canopy text-white" aria-hidden="true">
           <CheckIcon size={26} />
         </span>
         <h2 className="display-heading mt-5 font-display text-3xl font-bold tracking-tight text-agro-ink">
@@ -88,152 +101,117 @@ export default function NewRecordForm({ bundle }: { bundle: FarmsBundle }) {
           {bundle.records.new.success.description}
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <Link
-            href="/dashboard"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0"
-          >
-            {bundle.records.new.success.backToDashboard}
-            <ArrowRightIcon size={16} />
-          </Link>
-          <button
-            type="button"
-            onClick={() => router.push("/farms")}
-            className="inline-flex h-12 items-center justify-center rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint"
-          >
+          <button type="button" onClick={() => router.push('/farms')} className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0">
             {bundle.records.new.success.viewFarms}
+            <ArrowRightIcon size={16} />
+          </button>
+          <button type="button" onClick={() => setStatus('idle')} className="inline-flex h-12 items-center justify-center rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors duration-200 hover:border-agro-canopy hover:bg-agro-mint">
+            Log another
           </button>
         </div>
       </div>
     );
   }
 
+  const inputClass = (err?: string) =>
+    `focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+      err ? 'border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20' : 'border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20'
+    }`;
+
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
-      {/* Event type */}
-      <fieldset>
-        <legend className="text-sm font-semibold text-agro-ink">
-          {bundle.records.new.fields.type}
-        </legend>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {recordTypes.map(({ id, label, Icon }) => {
-            const active = type === id;
-            return (
-              <button
-                key={id}
-                type="button"
-                aria-pressed={active}
-                onClick={() => setType(id)}
-                className={`inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full px-3.5 text-sm font-semibold transition-colors ${
-                  active
-                    ? "bg-agro-canopy text-white"
-                    : "border border-agro-sprout bg-white text-agro-slate hover:border-agro-canopy hover:text-agro-canopy"
-                }`}
-              >
-                <Icon size={15} aria-hidden="true" />
-                {label}
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    <form onSubmit={handleSubmit(onSubmit as any)} noValidate className="space-y-5">
+      <div>
+        <label htmlFor="record-farm" className="block text-sm font-semibold text-agro-ink">{bundle.records.new.fields.farm}</label>
+        <select id="record-farm" {...register('farm_id')} className={`${inputClass(errors.farm_id?.message)} appearance-none`}>
+          <option value="">Select a farm</option>
+          {farms.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+        </select>
+        {(errors.farm_id || serverErrors.farm_id) && <p className="mt-1.5 text-sm font-medium text-agro-forest">{errors.farm_id?.message || serverErrors.farm_id}</p>}
+      </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="record-farm" className="block text-sm font-semibold text-agro-ink">
-            {bundle.records.new.fields.farm}
-          </label>
-          <select
-            id="record-farm"
-            name="farm"
-            defaultValue=""
-            aria-invalid={Boolean(fieldErrors.farm)}
-            aria-describedby={fieldErrors.farm ? "record-farm-error" : undefined}
-            className={`${inputClass(fieldErrors.farm)} appearance-none`}
-          >
-            <option value="" disabled>
-              {bundle.records.new.placeholders.farm}
-            </option>
-            {demoFarms.map((farm) => (
-              <option key={farm.id} value={farm.id}>
-                {farm.name}
-              </option>
-            ))}
+          <label htmlFor="record-type" className="block text-sm font-semibold text-agro-ink">{bundle.records.new.fields.type}</label>
+          <select id="record-type" {...register('type')} className={inputClass(errors.type?.message)}>
+            {RECORD_TYPES.map((t) => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
           </select>
-          {fieldErrors.farm && (
-            <p
-              id="record-farm-error"
-              className="mt-1.5 flex items-start gap-1.5 text-sm font-medium text-agro-ink"
-            >
-              <AlertTriangleIcon size={16} className="mt-0.5 shrink-0 text-agro-forest" />
-              {fieldErrors.farm}
-            </p>
-          )}
+          {(errors.type || serverErrors.type) && <p className="mt-1.5 text-sm font-medium text-agro-forest">{errors.type?.message || serverErrors.type}</p>}
         </div>
-
         <div>
-          <label htmlFor="record-date" className="block text-sm font-semibold text-agro-ink">
-            {bundle.records.new.fields.date}
-          </label>
-          <input
-            id="record-date"
-            name="date"
-            type="date"
-            value={date}
-            onChange={(event) => setDate(event.target.value)}
-            aria-invalid={Boolean(fieldErrors.date)}
-            aria-describedby={fieldErrors.date ? "record-date-error" : undefined}
-            className={`${inputClass(fieldErrors.date)} [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
-          />
-          {fieldErrors.date && (
-            <p
-              id="record-date-error"
-              className="mt-1.5 flex items-start gap-1.5 text-sm font-medium text-agro-ink"
-            >
-              <AlertTriangleIcon size={16} className="mt-0.5 shrink-0 text-agro-forest" />
-              {fieldErrors.date}
-            </p>
-          )}
+          <label htmlFor="record-date" className="block text-sm font-semibold text-agro-ink">{bundle.records.new.fields.date}</label>
+          <input id="record-date" type="date" {...register('event_date')} className={inputClass(errors.event_date?.message)} />
+          {(errors.event_date || serverErrors.event_date) && <p className="mt-1.5 text-sm font-medium text-agro-forest">{errors.event_date?.message || serverErrors.event_date}</p>}
+        </div>
+      </div>
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label htmlFor="record-season" className="block text-sm font-semibold text-agro-ink">Season</label>
+          <select id="record-season" {...register('season')} className={inputClass(errors.season?.message)}>
+            {SEASONS.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="record-year" className="block text-sm font-semibold text-agro-ink">Year</label>
+          <select id="record-year" {...register('year')} className={inputClass(errors.year?.message)}>
+            {YEAR_OPTIONS.map((y) => <option key={y} value={y}>{y}</option>)}
+          </select>
         </div>
       </div>
 
       <div>
-        <label htmlFor="record-title" className="block text-sm font-semibold text-agro-ink">
-          {bundle.records.new.fields.title} <span className="font-normal text-agro-slate">{bundle.records.new.fields.optional}</span>
-        </label>
-        <input
-          id="record-title"
-          name="title"
-          type="text"
-          autoComplete="off"
-          placeholder={titlePlaceholder}
-          className={inputClass()}
-        />
+        <label htmlFor="record-title" className="block text-sm font-semibold text-agro-ink">{bundle.records.new.fields.title} <span className="text-agro-slate font-normal">({bundle.records.new.fields.optional})</span></label>
+        <input id="record-title" {...register('title')} className={inputClass(errors.title?.message)} />
       </div>
 
       <div>
-        <label htmlFor="record-note" className="block text-sm font-semibold text-agro-ink">
-          {bundle.records.new.fields.details} <span className="font-normal text-agro-slate">{bundle.records.new.fields.optional}</span>
-        </label>
-        <textarea
-          id="record-note"
-          name="note"
-          rows={3}
-          placeholder={bundle.records.new.placeholders.details}
-          className="focus-ring-none mt-2 w-full rounded-xl border border-agro-sprout bg-white px-4 py-3 text-sm leading-relaxed text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20"
-        />
+        <label htmlFor="record-note" className="block text-sm font-semibold text-agro-ink">{bundle.records.new.fields.details}</label>
+        <textarea id="record-note" rows={3} {...register('note')} className={inputClass(errors.note?.message)} />
+      </div>
+
+      {isHarvest && (
+        <div className="grid gap-5 sm:grid-cols-3">
+          <div>
+            <label htmlFor="record-yield" className="block text-sm font-semibold text-agro-ink">Yield Qty</label>
+            <input id="record-yield" type="number" step="0.01" {...register('yield_qty', { valueAsNumber: true })} className={inputClass(errors.yield_qty?.message)} />
+          </div>
+          <div>
+            <label htmlFor="record-labor" className="block text-sm font-semibold text-agro-ink">Labor Cost</label>
+            <input id="record-labor" type="number" step="0.01" {...register('labor_cost', { valueAsNumber: true })} className={inputClass(errors.labor_cost?.message)} />
+          </div>
+          <div>
+            <label htmlFor="record-transport" className="block text-sm font-semibold text-agro-ink">Transport Cost</label>
+            <input id="record-transport" type="number" step="0.01" {...register('transport_cost', { valueAsNumber: true })} className={inputClass(errors.transport_cost?.message)} />
+          </div>
+        </div>
+      )}
+
+      <div>
+        <label htmlFor="record-weather" className="block text-sm font-semibold text-agro-ink">Weather Condition</label>
+        <select
+          id="record-weather"
+          value={weatherOverride}
+          onChange={(e) => {
+            const val = e.target.value;
+            setWeatherOverride(val);
+            setValue('weather_condition', (val || null) as unknown as CreateRecordInput['weather_condition']);
+          }}
+          className={inputClass(errors.weather_condition?.message)}
+        >
+          <option value="">Auto-fetch</option>
+          {WEATHER_CONDITIONS.map((w) => <option key={w} value={w}>{w}</option>)}
+        </select>
       </div>
 
       <button
         type="submit"
-        disabled={status === "loading"}
+        disabled={isSubmitting || status === 'loading'}
         className="inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-agro-canopy text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
       >
-        {status === "loading" ? (
+        {status === 'loading' ? (
           <>
-            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25" />
-              <path fill="currentColor" opacity="0.75" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-            </svg>
+            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25" /><path fill="currentColor" opacity="0.75" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" /></svg>
             {bundle.records.new.buttons.saving}
           </>
         ) : (
@@ -243,10 +221,7 @@ export default function NewRecordForm({ bundle }: { bundle: FarmsBundle }) {
           </>
         )}
       </button>
-
-      <p className="rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
-        {bundle.records.new.demoNotice}
-      </p>
+      {(serverErrors.form || status === 'error') && <p className="text-center text-sm font-medium text-agro-forest">{serverErrors.form}</p>}
     </form>
   );
 }
