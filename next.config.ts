@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
     // routing-level 404 that renders its own <html>.
     globalNotFound: true,
   },
+  webpack: (config) => {
+    config.resolve = config.resolve || {};
+    config.resolve.alias = config.resolve.alias || {};
+    config.resolve.alias["@openai/agents-realtime"] = false;
+    return config;
+  },
 };
 
 export default nextConfig;
