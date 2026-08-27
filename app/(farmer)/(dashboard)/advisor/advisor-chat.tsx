@@ -1,169 +1,389 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import {
-  demoAdvisory,
-  demoFarmer,
-} from "@/app/(farmer)/(dashboard)/dashboard/demo-data";
-import {
-  advisorReplies,
-  defaultReply,
-  openingMessage,
-  suggestedQuestions,
-} from "./demo-data";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { AdvisorBundle } from "./advisor-bundle";
+import AdvisorSidebar, { type ConversationMeta } from "./advisor-sidebar";
+import MarkdownRender from "./markdown-render";
+import { MenuIcon } from "@/components/icons";
+
+type Props = { bundle: AdvisorBundle };
 
 type ChatMessage = {
-  id: number;
+  id: string;
   role: "advisor" | "farmer";
   text: string;
+  streaming?: boolean;
 };
 
-/* AI Advisor chat (UI-only demo): a seeded conversation, suggestion chips,
-   and canned keyword-matched replies. Voice is out of scope — text only. */
-export default function AdvisorChat() {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: 0, role: "advisor", text: openingMessage },
-  ]);
+const ARABIC_URDU_RE = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+function textDirection(text: string): "rtl" | "ltr" {
+  return ARABIC_URDU_RE.test(text) ? "rtl" : "ltr";
+}
+
+export default function AdvisorChat({ bundle }: Props) {
+  const [conversations, setConversations] = useState<ConversationMeta[]>([]);
+  const [activeConvId, setActiveConvId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [thinking, setThinking] = useState(false);
-  const nextIdRef = useRef(1);
-  const liveRegionRef = useRef<HTMLDivElement>(null);
-
-  /* Keep the newest message in view as the conversation grows. */
+  const [error, setError] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [streamingText, setStreamingText] = useState("");
+  const nextIdRef = useRef(0);
   const endRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const loadConversations = useCallback(async () => {
+    try {
+      const res = await fetch("/api/advisor/conversations");
+      if (!res.ok) return;
+      const data = await res.json();
+      setConversations(data.conversations ?? []);
+    } catch {
+      /* silent — sidebar shows empty state */
+    }
+  }, []);
+
+  const loadMessages = useCallback(async (convId: string) => {
+    try {
+      const res = await fetch(`/api/advisor/messages/${convId}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const loaded: ChatMessage[] = (data.messages ?? []).map(
+        (m: { id: string; role: string; content: string }) => ({
+          id: m.id,
+          role: m.role === "farmer" ? "farmer" as const : "advisor" as const,
+          text: m.content,
+        }),
+      );
+      setMessages(loaded);
+      nextIdRef.current = loaded.length + 1;
+    } catch {
+      /* silent — empty chat */
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadConversations();
+  }, [loadConversations]);
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "nearest" });
-  }, [messages, thinking]);
+  }, [messages, thinking, streamingText]);
 
-  function replyFor(question: string): string {
-    const lowered = question.toLowerCase();
-    const match = advisorReplies.find((candidate) =>
-      candidate.keywords.some((keyword) => lowered.includes(keyword))
-    );
-    return match?.reply ?? defaultReply;
+  async function selectConversation(id: string) {
+    abortRef.current?.abort();
+    setActiveConvId(id);
+    setThinking(false);
+    setStreamingText("");
+    setError(null);
+    await loadMessages(id);
   }
 
-  function send(text: string) {
+  async function newConversation() {
+    abortRef.current?.abort();
+    setActiveConvId(null);
+    setMessages([]);
+    setThinking(false);
+    setStreamingText("");
+    setError(null);
+    setDraft("");
+  }
+
+  async function handleRename(id: string, title: string) {
+    try {
+      const res = await fetch(`/api/advisor/conversations/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title }),
+      });
+      if (res.ok) {
+        setConversations((prev) =>
+          prev.map((c) => (c.id === id ? { ...c, title } : c)),
+        );
+      }
+    } catch {
+      /* silent */
+    }
+  }
+
+  async function handleDelete(id: string) {
+    try {
+      const res = await fetch(`/api/advisor/conversations/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setConversations((prev) => prev.filter((c) => c.id !== id));
+        if (activeConvId === id) {
+          setActiveConvId(null);
+          setMessages([]);
+        }
+      }
+    } catch {
+      /* silent */
+    }
+  }
+
+  async function send(text: string) {
     const clean = text.trim();
     if (!clean || thinking) return;
+
     setDraft("");
-    setMessages((current) => [
-      ...current,
-      { id: nextIdRef.current++, role: "farmer", text: clean },
-    ]);
+    setError(null);
+
+    const farmerMsg: ChatMessage = {
+      id: `msg-${nextIdRef.current++}`,
+      role: "farmer",
+      text: clean,
+    };
+    setMessages((prev) => [...prev, farmerMsg]);
     setThinking(true);
-    // Canned demo reply. Swap for POST /api/advisor once wired.
-    window.setTimeout(() => {
-      setMessages((current) => [
-        ...current,
-        { id: nextIdRef.current++, role: "advisor", text: replyFor(clean) },
-      ]);
+    setStreamingText("");
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      const res = await fetch("/api/advisor/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId: activeConvId,
+          message: clean,
+        }),
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        const status = res.status;
+        if (status === 503) setError(bundle.errors.serviceUnavailable);
+        else if (status === 429) setError(bundle.errors.rateLimited);
+        else setError(bundle.errors.generic);
+        setThinking(false);
+        return;
+      }
+
+      if (!res.body) {
+        setError(bundle.errors.generic);
+        setThinking(false);
+        return;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = "";
+      let convId = activeConvId;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split("\n");
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const payload = line.slice(6).trim();
+          if (!payload) continue;
+
+          try {
+            const event = JSON.parse(payload);
+
+            if (event.type === "text") {
+              accumulated += event.delta;
+              setStreamingText(accumulated);
+            } else if (event.type === "done") {
+              accumulated = event.output || accumulated;
+            } else if (event.type === "error") {
+              setError(event.message || bundle.errors.generic);
+            }
+          } catch {
+            /* skip malformed SSE lines */
+          }
+        }
+      }
+
       setThinking(false);
-    }, 1100);
+      setStreamingText("");
+
+      if (accumulated) {
+        const advisorMsg: ChatMessage = {
+          id: `msg-${nextIdRef.current++}`,
+          role: "advisor",
+          text: accumulated,
+        };
+        setMessages((prev) => [...prev, advisorMsg]);
+      }
+
+      await loadConversations();
+
+      if (!convId) {
+        const convs = conversations;
+        if (convs.length === 0) {
+          await loadConversations();
+        }
+      }
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      setError(bundle.errors.network);
+      setThinking(false);
+      setStreamingText("");
+    }
   }
 
+  const suggestedQuestions = [
+    "What disease is affecting my wheat?",
+    "Will it rain today in Multan?",
+    "What are today's mandi prices?",
+    "Tell me about Kissan Card scheme",
+  ];
+
   return (
-    <div className="flex flex-1 flex-col">
-      {/* Demo affordance */}
-      <p className="rounded-xl border border-agro-sprout bg-agro-mint px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
-        DEMO · replies are canned samples, no model is connected yet
-      </p>
+    <div className="flex flex-1 overflow-hidden">
+      <AdvisorSidebar
+        bundle={bundle}
+        conversations={conversations}
+        activeId={activeConvId}
+        onSelect={selectConversation}
+        onNew={newConversation}
+        onRename={handleRename}
+        onDelete={handleDelete}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
-      {/* Transcript */}
-      <div
-        ref={liveRegionRef}
-        aria-live="polite"
-        aria-label="Advisor conversation"
-        className="mt-5 space-y-3"
-      >
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.role === "farmer" ? "justify-end" : "justify-start"}`}
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* Header with sidebar toggle */}
+        <div className="flex items-center gap-3 border-b border-agro-sprout px-4 py-2">
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(true)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-agro-slate transition-colors hover:bg-agro-mint"
+            aria-label={bundle.aria.openSidebar}
           >
-            <p
-              className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed sm:max-w-[75%] ${
-                message.role === "farmer"
-                  ? "rounded-ee-md bg-agro-canopy text-white"
-                  : "rounded-es-md border border-agro-sprout bg-white text-agro-ink"
-              }`}
-            >
-              {message.text}
-            </p>
-          </div>
-        ))}
-        {thinking && (
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-agro-slate">
-            Advisor is writing…
-          </p>
-        )}
-        <div ref={endRef} />
-      </div>
+            <MenuIcon className="h-5 w-5" />
+          </button>
+          <h1 className="text-sm font-semibold text-agro-ink">{bundle.pageTitle}</h1>
+        </div>
 
-      {/* Suggestion chips */}
-      <div className="mt-6">
-        <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-agro-slate">
-          Try asking
-        </p>
-        <ul className="mt-2 flex flex-wrap gap-2">
-          {suggestedQuestions.map((question) => (
-            <li key={question}>
-              <button
-                type="button"
-                onClick={() => send(question)}
-                disabled={thinking}
-                className="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-agro-sprout bg-white px-3.5 text-sm font-medium text-agro-canopy transition-colors hover:bg-agro-mint disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {question}
-              </button>
-            </li>
-          ))}
-          <li>
-            <button
-              type="button"
-              onClick={() =>
-                send(`What should I do about my ${demoAdvisory.crop.toLowerCase()} at ${demoFarmer.location}?`)
-              }
-              disabled={thinking}
-              className="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-agro-sprout bg-white px-3.5 text-sm font-medium text-agro-canopy transition-colors hover:bg-agro-mint disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              About my farm today?
-            </button>
-          </li>
-        </ul>
-      </div>
-
-      {/* Composer — the rounded container carries the focus ring so the
-          indicator follows its shape, not a sharp box around the input. */}
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          send(draft);
-        }}
-        className="sticky bottom-[calc(4.75rem+env(safe-area-inset-bottom))] mt-4 flex items-center gap-2 rounded-2xl border border-agro-sprout bg-white/95 p-2 shadow-md backdrop-blur transition-colors duration-200 focus-within:border-agro-canopy focus-within:ring-2 focus-within:ring-agro-canopy/20 lg:bottom-4"
-      >
-        <label htmlFor="advisor-input" className="sr-only">
-          Ask the advisor
-        </label>
-        <input
-          id="advisor-input"
-          name="message"
-          type="text"
-          autoComplete="off"
-          placeholder="Ask anything about your crop…"
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          className="focus-ring-none h-11 min-w-0 flex-1 bg-transparent px-3 text-sm text-agro-ink placeholder:text-agro-cloud outline-none"
-        />
-        <button
-          type="submit"
-          disabled={!draft.trim() || thinking}
-          className="inline-flex h-11 w-14 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-agro-canopy text-sm font-semibold text-white transition-colors hover:bg-agro-forest disabled:cursor-not-allowed disabled:opacity-50"
+        {/* Messages */}
+        <div
+          aria-live="polite"
+          aria-label={bundle.aria.chatMessages}
+          className="flex-1 overflow-y-auto px-4 py-4"
         >
-          Send
-          <span className="sr-only">message</span>
-        </button>
-      </form>
+          {messages.length === 0 && !thinking ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <p className="max-w-sm text-sm leading-relaxed text-agro-slate">
+                {bundle.chat.openingGreeting}
+              </p>
+              <div className="mt-6">
+                <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-agro-cloud">
+                  Try asking
+                </p>
+                <ul className="mt-3 flex flex-wrap justify-center gap-2">
+                  {suggestedQuestions.map((q) => (
+                    <li key={q}>
+                      <button
+                        type="button"
+                        onClick={() => send(q)}
+                        className="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-agro-sprout bg-white px-3.5 text-sm font-medium text-agro-canopy transition-colors hover:bg-agro-mint"
+                      >
+                        {q}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${message.role === "farmer" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    dir={textDirection(message.text)}
+                    className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed sm:max-w-[75%] ${
+                      message.role === "farmer"
+                        ? "rounded-ee-md bg-agro-canopy text-white"
+                        : "rounded-es-md border border-agro-sprout bg-white text-agro-ink"
+                    }`}
+                  >
+                    {message.role === "advisor" ? (
+                      <MarkdownRender text={message.text} />
+                    ) : (
+                      <p>{message.text}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {/* Streaming message in progress */}
+              {thinking && streamingText && (
+                <div className="flex justify-start">
+                  <div
+                    dir={textDirection(streamingText)}
+                    className="max-w-[85%] rounded-2xl rounded-es-md border border-agro-sprout bg-white px-4 py-3 text-sm leading-relaxed text-agro-ink sm:max-w-[75%]"
+                  >
+                    <MarkdownRender text={streamingText} />
+                    <span className="ml-1 inline-block h-4 w-0.5 animate-pulse bg-agro-canopy" />
+                  </div>
+                </div>
+              )}
+
+              {/* Thinking indicator (before any text arrives) */}
+              {thinking && !streamingText && (
+                <p className="font-mono text-xs uppercase tracking-[0.18em] text-agro-slate">
+                  {bundle.chat.thinking}
+                </p>
+              )}
+
+              {error && (
+                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+
+              <div ref={endRef} />
+            </div>
+          )}
+        </div>
+
+        {/* Composer */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            send(draft);
+          }}
+          className="sticky bottom-0 border-t border-agro-sprout bg-white/95 px-4 py-3 backdrop-blur"
+        >
+          <div className="flex items-center gap-2 rounded-2xl border border-agro-sprout bg-white p-2 shadow-md transition-colors duration-200 focus-within:border-agro-canopy focus-within:ring-2 focus-within:ring-agro-canopy/20">
+            <label htmlFor="advisor-input" className="sr-only">
+              {bundle.chat.placeholder}
+            </label>
+            <input
+              id="advisor-input"
+              name="message"
+              type="text"
+              autoComplete="off"
+              placeholder={bundle.chat.placeholder}
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              className="h-11 min-w-0 flex-1 bg-transparent px-3 text-sm text-agro-ink placeholder:text-agro-cloud outline-none"
+            />
+            <button
+              type="submit"
+              disabled={!draft.trim() || thinking}
+              className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {bundle.chat.send}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
