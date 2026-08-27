@@ -14,6 +14,25 @@ import type { FarmerContext, FarmSummary } from "@/lib/advisor/context";
 import { run } from "@openai/agents";
 import { toSSEStream, sseHeaders } from "@/lib/advisor/streaming";
 import { demoFarms } from "@/app/(farmer)/(dashboard)/dashboard/demo-data";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+async function createConversation(
+  supabase: SupabaseClient,
+  accountId: string,
+  firstMessage: string,
+): Promise<string | undefined> {
+  const { data, error } = await supabase
+    .from("advisor_conversations")
+    .insert({
+      account_id: accountId,
+      title: firstMessage.slice(0, 60) || "New conversation",
+      language: "en",
+    })
+    .select("id")
+    .single();
+  if (error) return undefined;
+  return data?.id;
+}
 
 export async function POST(request: Request) {
   const session = await requireSessionApi();
@@ -32,22 +51,10 @@ export async function POST(request: Request) {
 
   const supabase = getSupabase();
 
-  let convId = conversationId;
+  const convId =
+    conversationId ?? (await createConversation(supabase, session.accountId, message));
   if (!convId) {
-    const { data: newConv, error: convErr } = await supabase
-      .from("advisor_conversations")
-      .insert({
-        account_id: session.accountId,
-        title: message.slice(0, 60) || "New conversation",
-        language: "en",
-      })
-      .select("id")
-      .single();
-
-    if (convErr || !newConv) {
-      return errorResponse("server_error", "Could not create conversation.", 500);
-    }
-    convId = newConv.id;
+    return errorResponse("server_error", "Could not create conversation.", 500);
   }
 
   const farmerMessage = message;
@@ -98,26 +105,17 @@ export async function POST(request: Request) {
     );
   }
 
-  const sseStream = toSSEStream(result);
+  const sseStream = toSSEStream(result, convId, async (advisorOutput) => {
+    await supabase.from("advisor_messages").insert([
+      { conversation_id: convId, role: "farmer", content: farmerMessage },
+      { conversation_id: convId, role: "advisor", content: advisorOutput },
+    ]);
 
-  void (async () => {
-    try {
-      await result.completed;
-      const advisorOutput = result.finalOutput ?? "";
-
-      await supabase.from("advisor_messages").insert([
-        { conversation_id: convId, role: "farmer", content: farmerMessage },
-        { conversation_id: convId, role: "advisor", content: advisorOutput },
-      ]);
-
-      await supabase
-        .from("advisor_conversations")
-        .update({ updated_at: new Date().toISOString() })
-        .eq("id", convId);
-    } catch {
-      // fire-and-forget: message persistence failure is non-fatal for the stream
-    }
-  })();
+    await supabase
+      .from("advisor_conversations")
+      .update({ updated_at: new Date().toISOString() })
+      .eq("id", convId);
+  });
 
   return new Response(sseStream, { headers: sseHeaders });
 }
