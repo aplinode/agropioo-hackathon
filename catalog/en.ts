@@ -919,6 +919,28 @@ export const en = {
   "app.records.new.success.viewFarms": "View my farms",
   "app.records.new.errors.farmRequired": "Pick which farm this happened on.",
   "app.records.new.errors.dateRequired": "Pick the date.",
+
+  "app.advisor.pageTitle": "Advisor",
+  "app.advisor.sidebar.title": "Conversations",
+  "app.advisor.sidebar.newConversation": "New conversation",
+  "app.advisor.sidebar.noConversations": "No conversations yet. Start a new one!",
+  "app.advisor.sidebar.rename": "Rename",
+  "app.advisor.sidebar.delete": "Delete",
+  "app.advisor.sidebar.deleteConfirm": "Delete this conversation? This cannot be undone.",
+  "app.advisor.sidebar.closeSidebar": "Close sidebar",
+  "app.advisor.chat.placeholder": "Ask about your crops, weather, prices…",
+  "app.advisor.chat.send": "Send",
+  "app.advisor.chat.thinking": "Thinking…",
+  "app.advisor.chat.openingGreeting": "Assalam-o-Alaikum! I'm your Agropioo farming advisor. Ask me anything about your crops, weather, mandi prices, or government schemes.",
+  "app.advisor.chat.photoRedirect": "Photo detection lives on the Detect page — tap Scan Crop to identify diseases from photos.",
+  "app.advisor.chat.nonFarmingRedirect": "I'm here to help with farming questions. How can I assist with your crops or farm?",
+  "app.advisor.errors.serviceUnavailable": "Advisor service is temporarily unavailable. Please try again in a moment.",
+  "app.advisor.errors.rateLimited": "Too many requests. Please wait a moment and try again.",
+  "app.advisor.errors.network": "Network error. Check your connection and try again.",
+  "app.advisor.errors.generic": "Something went wrong. Please try again.",
+  "app.advisor.aria.openSidebar": "Open conversations",
+  "app.advisor.aria.sendMessage": "Send message",
+  "app.advisor.aria.chatMessages": "Chat messages",
 } as const;
 
 export type CatalogKey = keyof typeof en;

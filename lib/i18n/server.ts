@@ -14,6 +14,7 @@ import { formatMessage } from "./logic";
 import { resolveAppLocale, resolveString, type ResolvedString, type StringTable } from "./logic";
 import type { DashboardBundle } from "@/app/(farmer)/(dashboard)/dashboard/dashboard-bundle";
 import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle";
+import type { AdvisorBundle } from "@/app/(farmer)/(dashboard)/advisor/advisor-bundle";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -372,6 +373,47 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
           dateRequired: t("app.records.new.errors.dateRequired").text,
         },
       },
+    },
+  };
+}
+
+/**
+ * Flat translation bundle for the advisor chat feature (sidebar + chat UI).
+ * Built server-side and passed as props to client components.
+ */
+export async function getAdvisorBundle(): Promise<AdvisorBundle> {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    pageTitle: t("app.advisor.pageTitle").text,
+    sidebar: {
+      title: t("app.advisor.sidebar.title").text,
+      newConversation: t("app.advisor.sidebar.newConversation").text,
+      noConversations: t("app.advisor.sidebar.noConversations").text,
+      rename: t("app.advisor.sidebar.rename").text,
+      delete: t("app.advisor.sidebar.delete").text,
+      deleteConfirm: t("app.advisor.sidebar.deleteConfirm").text,
+      closeSidebar: t("app.advisor.sidebar.closeSidebar").text,
+    },
+    chat: {
+      placeholder: t("app.advisor.chat.placeholder").text,
+      send: t("app.advisor.chat.send").text,
+      thinking: t("app.advisor.chat.thinking").text,
+      openingGreeting: t("app.advisor.chat.openingGreeting").text,
+      photoRedirect: t("app.advisor.chat.photoRedirect").text,
+      nonFarmingRedirect: t("app.advisor.chat.nonFarmingRedirect").text,
+    },
+    errors: {
+      serviceUnavailable: t("app.advisor.errors.serviceUnavailable").text,
+      rateLimited: t("app.advisor.errors.rateLimited").text,
+      network: t("app.advisor.errors.network").text,
+      generic: t("app.advisor.errors.generic").text,
+    },
+    aria: {
+      openSidebar: t("app.advisor.aria.openSidebar").text,
+      sendMessage: t("app.advisor.aria.sendMessage").text,
+      chatMessages: t("app.advisor.aria.chatMessages").text,
     },
   };
 }
