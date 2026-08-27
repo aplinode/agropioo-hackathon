@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import {
   TrendingUpIcon,
   TrendingDownIcon,
 } from "@/components/icons";
 import PageHeader from "@/components/shell/page-header";
+import { LatinInline } from "@/components/latin-inline";
 import { demoMandi, demoPrices } from "./demo-data";
 
 export const metadata: Metadata = {
@@ -42,6 +44,11 @@ const pctLabel = (item: PriceLike) => {
 
 /* Mandi price tracker: today's rate, the week's direction, and a plain
    sell-or-hold nudge for each crop. Sample rates, labelled as demo. */
+
+const latin = (children: ReactNode, className?: string): ReactNode => (
+  <LatinInline className={className}>{children}</LatinInline>
+);
+
 export default function PricesPage() {
   const bestMover = [...demoPrices].sort(
     (a, b) =>
@@ -66,7 +73,7 @@ export default function PricesPage() {
         </h2>
         <div className="rounded-2xl border border-agro-sprout bg-white p-4">
           <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-agro-slate">
-            Crops tracked
+            {latin("Crops tracked")}
           </p>
           <p className="mt-1 font-mono text-2xl font-bold text-agro-forest">
             {demoPrices.length}
@@ -74,23 +81,23 @@ export default function PricesPage() {
         </div>
         <div className="rounded-2xl border border-agro-sprout bg-white p-4">
           <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-agro-slate">
-            Best this week
+            {latin("Best this week")}
           </p>
           <p className="mt-1 flex items-center gap-2 font-semibold text-agro-ink">
             {bestMover.crop}
             <span className="inline-flex items-center rounded-full bg-agro-mint px-2 py-0.5 font-mono text-[0.7rem] font-bold text-agro-canopy">
               <TrendingUpIcon size={12} className="me-1" aria-hidden="true" />
-              {pctLabel(bestMover)}
+              {latin(pctLabel(bestMover))}
             </span>
           </p>
         </div>
         <div className="rounded-2xl border border-agro-sprout bg-white p-4">
           <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-agro-slate">
-            Updated
+            {latin("Updated")}
           </p>
           <p className="mt-1 flex items-center gap-2 font-semibold text-agro-ink">
             <span className="inline-flex h-1.5 w-1.5 rounded-full bg-agro-success" aria-hidden="true" />
-            Today · morning
+            {latin("Today · morning")}
           </p>
         </div>
       </section>
@@ -109,9 +116,9 @@ export default function PricesPage() {
                   <span className="text-sm font-medium text-agro-slate">{item.urduName}</span>
                 </h2>
                 <p className="mt-1 font-mono text-2xl font-bold tracking-tight text-agro-forest">
-                  Rs {item.pricePer40kg.toLocaleString("en-PK")}
+                  {latin(<>Rs {item.pricePer40kg.toLocaleString("en-PK")}</>)}
                   <span className="ms-1.5 align-middle font-sans text-xs font-medium text-agro-slate">
-                    / 40 kg
+                    {latin("/ 40 kg")}
                   </span>
                 </p>
               </div>
@@ -127,9 +134,13 @@ export default function PricesPage() {
                 ) : (
                   <TrendingDownIcon size={14} />
                 )}
-                {item.changeRs > 0 ? "+" : "−"}
-                {Math.abs(item.changeRs).toLocaleString("en-PK")} ·{" "}
-                {pctLabel(item)}
+                {latin(
+                  <>
+                    {item.changeRs > 0 ? "+" : "−"}
+                    {Math.abs(item.changeRs).toLocaleString("en-PK")} ·{" "}
+                    {pctLabel(item)}
+                  </>
+                )}
               </span>
             </div>
 
@@ -166,7 +177,7 @@ export default function PricesPage() {
                     : "bg-agro-forest text-white"
                 }`}
               >
-                {item.signal === "hold" ? "Hold" : "Sell soon"}
+                {latin(item.signal === "hold" ? "Hold" : "Sell soon")}
               </span>
               <p className="min-w-0 text-xs leading-relaxed text-agro-slate">
                 {item.signalNote}
@@ -177,7 +188,7 @@ export default function PricesPage() {
       </ul>
 
       <p className="mt-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
-        Demo build · sample rates for walkthrough only
+        {latin("Demo build · sample rates for walkthrough only")}
       </p>
     </div>
   );

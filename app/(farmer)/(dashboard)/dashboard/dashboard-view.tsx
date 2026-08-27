@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore, useState } from "react";
+import { useSyncExternalStore, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { FurrowMotif } from "@/components/FurrowMotif";
 import {
@@ -22,10 +22,18 @@ import {
 } from "@/components/icons";
 import { getDemoData } from "./demo-data";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { LatinInline } from "@/components/latin-inline";
 import type { Locale } from "@/lib/i18n/config";
 import type { DashboardBundle } from "./dashboard-bundle";
 
 const CHECKLIST_DISMISS_KEY = "agropioo-checklist-dismissed";
+
+export { LatinInline };
+
+const latin = (
+  children: ReactNode,
+  className?: string
+): ReactNode => <LatinInline className={className}>{children}</LatinInline>;
 
 /* Session-scoped store so checklist dismissal survives navigation
    without per-component state syncing effects. */
@@ -171,14 +179,14 @@ export default function DashboardView({
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-canopy">
-            {farmer.todayLabel}
+            {latin(farmer.todayLabel)}
           </p>
           <h1 className="display-heading mt-2 font-display text-[1.75rem] font-semibold leading-tight tracking-tight text-agro-forest sm:text-4xl">
             {bundle.greeting.replace("{name}", farmer.firstName)}
           </h1>
           <p className="mt-2 flex items-center gap-1.5 text-sm text-agro-slate">
             <MapPinIcon size={16} className="shrink-0 text-agro-canopy" />
-            {farmer.location}
+            {latin(farmer.location)}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
@@ -189,7 +197,7 @@ export default function DashboardView({
             className={`relative inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-canopy font-semibold text-white transition-colors ${showProfile ? "border-2 border-agro-sprout" : ""} hover:bg-agro-forest`}
           >
             <span style={{ fontWeight: "bold", color: "white" }}>
-              {farmer.firstName[0]}
+              {latin(farmer.firstName[0])}
             </span>
           </div>
           {showProfile && (
@@ -197,9 +205,9 @@ export default function DashboardView({
               className="absolute end-0 mt-2 w-48 rounded-md bg-white py-2 shadow-lg border border-agro-sprout/20 z-50 min-w-[160px]"
             >
               <div className="px-4 py-3 text-sm text-agro-forest">
-                <div className="font-medium">{farmer.firstName} {farmer.lastName}</div>
+                <div className="font-medium">{latin(<>{farmer.firstName} {farmer.lastName}</>)}</div>
                 <div className="text-agro-slate text-xs">
-                  {farmer.email}
+                  {latin(farmer.email)}
                 </div>
               </div>
             </div>
@@ -313,21 +321,21 @@ export default function DashboardView({
               </div>
               <div className="mt-4 flex items-end justify-between gap-3">
                 <p className="text-sm font-medium leading-snug text-agro-ink">
-                  {weather.condition}
+                  {latin(weather.condition)}
                 </p>
                 <p
                   className="font-mono text-[2.75rem] font-bold leading-none tracking-tight text-agro-forest"
                   aria-label={bundle.degreesCelsius.replace("{n}", String(weather.temperatureC))}
                 >
-                  {weather.temperatureC}°
+                  {latin(<>{weather.temperatureC}°</>)}
                 </p>
               </div>
               <div className="mt-4 flex flex-wrap gap-1.5">
                 <span className="rounded-md bg-agro-mint px-2 py-1 font-mono text-xs text-agro-slate">
-                  H {weather.highC}°
+                  {latin(<>H {weather.highC}°</>)}
                 </span>
                 <span className="rounded-md bg-agro-mint px-2 py-1 font-mono text-xs text-agro-slate">
-                  L {weather.lowC}°
+                  {latin(<>L {weather.lowC}°</>)}
                 </span>
               </div>
               <p className="mt-3 rounded-xl bg-agro-mint px-3 py-2.5 text-xs leading-relaxed text-agro-slate">
@@ -430,7 +438,7 @@ export default function DashboardView({
                       {alert.message}
                     </p>
                     <span className="hidden shrink-0 font-mono text-xs text-agro-slate md:block">
-                      {alert.relativeTime}
+                      {latin(alert.relativeTime)}
                     </span>
                     <ChevronRightIcon
                       className="h-4 w-4 shrink-0 text-agro-slate transition-transform duration-200 group-hover:text-agro-canopy"
