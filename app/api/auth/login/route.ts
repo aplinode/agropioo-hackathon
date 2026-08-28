@@ -4,7 +4,7 @@
    credentials on an unverified account issue a fresh verify pass and hand
    off to /verify (FR19); verified accounts get a 7-day session pass. */
 
-import { getSupabase } from "@/lib/supabase";
+import { queryOne } from "@/lib/db";
 import {
   errorResponse,
   jsonResponse,
@@ -63,13 +63,10 @@ export async function POST(request: Request): Promise<Response> {
       return errorResponse("rate_limited", COPY.TOO_MANY_ATTEMPTS, 429);
     }
 
-    const supabase = getSupabase();
-    const { data: found } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", email)
-      .maybeSingle();
-    const user = found as UserRow | null;
+    const user = await queryOne<UserRow>(
+      `SELECT * FROM users WHERE lower(email) = lower($1)`,
+      [email]
+    );
 
     const passwordMatches = await bcrypt.compare(
       password,

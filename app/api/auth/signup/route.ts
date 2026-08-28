@@ -2,7 +2,7 @@
    verify pass + code email. Duplicate VERIFIED email is the ONE explicit
    409 (FR2); duplicate UNVERIFIED re-runs verification with stored values. */
 
-import { getSupabase } from "@/lib/supabase";
+import { query, queryOne } from "@/lib/db";
 import {
   errorResponse,
   jsonResponse,
@@ -49,15 +49,11 @@ export async function POST(request: Request): Promise<Response> {
       return errorResponse("rate_limited", COPY.TOO_MANY_ATTEMPTS, 429);
     }
 
-    const supabase = getSupabase();
-
     // Existing account? Verified → explicit conflict. Unverified → reuse.
-    const { data: existing } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", email)
-      .maybeSingle();
-    let account = existing as UserRow | null;
+    let account = await queryOne<UserRow>(
+      `SELECT * FROM users WHERE lower(email) = lower($1)`,
+      [email]
+    );
 
     if (account?.email_verified) {
       return errorResponse(
@@ -69,35 +65,30 @@ export async function POST(request: Request): Promise<Response> {
 
     if (!account) {
       const passwordHash = await bcrypt.hash(password, BCRYPT_COST);
-      const { data: inserted, error: insertError } = await supabase
-        .from("users")
-        .insert({
-          email,
-          full_name: name,
-          phone,
-          password_hash: passwordHash,
-        })
-        .select("*")
-        .single();
-
-      if (insertError) {
+      try {
+        account = await queryOne<UserRow>(
+          `INSERT INTO users (email, full_name, phone, password_hash)
+           VALUES (lower($1), $2, $3, $4)
+           RETURNING *`,
+          [email, name, phone, passwordHash]
+        );
+      } catch (insertError) {
         // Concurrent race on lower(email): exactly one insert wins; the loser
         // reuses the winning row's STORED data (first-write-wins, K9).
-        if (insertError.code === "23505") {
-          const { data: winner } = await supabase
-            .from("users")
-            .select("*")
-            .eq("email", email)
-            .maybeSingle();
-          account = winner as UserRow | null;
+        const isUniqueViolation =
+          insertError instanceof Error &&
+          insertError.message.includes('duplicate key value violates unique constraint');
+        if (isUniqueViolation) {
+          account = await queryOne<UserRow>(
+            `SELECT * FROM users WHERE lower(email) = lower($1)`,
+            [email]
+          );
           if (!account) {
             return errorResponse("server_error", COPY.SERVER_ERROR, 500);
           }
         } else {
           throw insertError;
         }
-      } else {
-        account = inserted as UserRow;
       }
     }
 

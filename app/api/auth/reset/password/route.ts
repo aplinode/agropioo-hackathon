@@ -4,7 +4,7 @@
    voids outstanding reset codes/passes, kills ALL sessions of the account,
    and does NOT auto-login (founder decision). */
 
-import { getSupabase } from "@/lib/supabase";
+import { query } from "@/lib/db";
 import {
   errorResponse,
   jsonResponse,
@@ -38,38 +38,40 @@ export async function POST(request: Request): Promise<Response> {
 
     const passwordHash = await bcrypt.hash(parsed.data.password, BCRYPT_COST);
 
-    const supabase = getSupabase();
     const nowIso = new Date().toISOString();
 
     // Old hash stays authoritative up to this write; no window where neither
     // works. Unverified accounts become verified — the code proved ownership.
-    const { error: updateError } = await supabase
-      .from("users")
-      .update({
-        password_hash: passwordHash,
-        email_verified: true,
-        updated_at: nowIso,
-      })
-      .eq("id", accountId);
-    if (updateError) throw updateError;
+    await query(
+      `UPDATE users
+       SET password_hash = $1, email_verified = true, updated_at = $2
+       WHERE id = $3`,
+      [passwordHash, nowIso, accountId]
+    );
 
     // Void every outstanding reset code for this email (any state).
-    await supabase
-      .from("verification_codes")
-      .update({ voided_at: nowIso })
-      .match({ purpose: "reset", email })
-      .is("voided_at", null)
-      .is("consumed_at", null);
+    await query(
+      `UPDATE verification_codes
+       SET voided_at = $1
+       WHERE purpose = $2 AND lower(email) = lower($3)
+         AND voided_at IS NULL
+         AND consumed_at IS NULL`,
+      [nowIso, "reset", email]
+    );
 
     // Consume the reset pass so it can never set another password.
-    await supabase
-      .from("pass_states")
-      .update({ consumed_at: nowIso })
-      .eq("jti", pass.claims.jti)
-      .is("consumed_at", null);
+    await query(
+      `UPDATE pass_states
+       SET consumed_at = $1
+       WHERE jti = $2 AND consumed_at IS NULL`,
+      [nowIso, pass.claims.jti]
+    );
 
     // Kill EVERY session — all devices must sign in again (FR26).
-    await supabase.from("sessions").delete().eq("account_id", accountId);
+    await query(
+      `DELETE FROM sessions WHERE account_id = $1`,
+      [accountId]
+    );
 
     await clearPassCookies("reset", "verify");
     return jsonResponse({ ok: true });

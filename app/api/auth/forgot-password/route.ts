@@ -5,7 +5,7 @@
    (demoCode attaches only under the FR17 demo gate, which cannot hold once
    SMTP is configured — production bodies stay byte-identical.) */
 
-import { getSupabase } from "@/lib/supabase";
+import { queryOne } from "@/lib/db";
 import {
   errorResponse,
   jsonResponse,
@@ -43,18 +43,15 @@ export async function POST(request: Request): Promise<Response> {
       return errorResponse("rate_limited", COPY.TOO_MANY_ATTEMPTS, 429);
     }
 
-    const supabase = getSupabase();
-
     // Useless for unknown emails, real for known ones — issued ALWAYS so
     // response timing and body shape stay identical (FR10).
     const pass = await mintPass("reset", { email });
     await setPassCookie("reset", pass.token);
 
-    const { data: account } = await supabase
-      .from("users")
-      .select("id")
-      .eq("email", email)
-      .maybeSingle();
+    const account = await queryOne<{ id: string }>(
+      `SELECT id FROM users WHERE lower(email) = lower($1)`,
+      [email]
+    );
 
     let demoCode: string | undefined;
     if (account) {

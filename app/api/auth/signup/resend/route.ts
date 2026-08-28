@@ -2,7 +2,7 @@
    60 s cooldown enforced SERVER-side against the newest non-voided code
    (plan: Resend cooldown); last-code-wins voiding happens at issuance. */
 
-import { getSupabase } from "@/lib/supabase";
+import { query, queryOne } from "@/lib/db";
 import { errorResponse, jsonResponse } from "@/lib/http";
 import { COPY } from "@/lib/auth/copy";
 import { isResendInCooldown } from "@/lib/auth/logic";
@@ -31,34 +31,30 @@ export async function POST(): Promise<Response> {
 
     // A pass that reached the cumulative cap dies like an expired one (FR14).
     if (passRow.wrong_total >= 10 || passRow.dead_at !== null) {
-      const supabase = getSupabase();
-      await supabase
-        .from("pass_states")
-        .update({ dead_at: new Date().toISOString() })
-        .eq("jti", pass.claims.jti);
+      await query(
+        `UPDATE pass_states SET dead_at = $1 WHERE jti = $2`,
+        [new Date().toISOString(), pass.claims.jti]
+      );
       return errorResponse("unauthorized", COPY.UNAUTHORIZED_GENERIC, 401);
     }
 
-    const supabase = getSupabase();
-    const { data: newest } = await supabase
-      .from("verification_codes")
-      .select("*")
-      .match({ purpose: "verify", email: pass.claims.email })
-      .is("voided_at", null)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const newest = await queryOne<{ created_at: string }>(
+      `SELECT created_at FROM verification_codes
+       WHERE purpose = $1 AND lower(email) = lower($2) AND voided_at IS NULL
+       ORDER BY created_at DESC
+       LIMIT 1`,
+      ["verify", pass.claims.email]
+    );
 
     if (isResendInCooldown(newest?.created_at ?? null, Date.now())) {
       return errorResponse("rate_limited", COPY.TOO_MANY_ATTEMPTS, 429);
     }
 
     // Unknown email (defensive): stay neutral, send nothing.
-    const { data: account } = await supabase
-      .from("users")
-      .select("id")
-      .eq("email", pass.claims.email)
-      .maybeSingle();
+    const account = await queryOne<{ id: string }>(
+      `SELECT id FROM users WHERE lower(email) = lower($1)`,
+      [pass.claims.email]
+    );
     if (!account) {
       return jsonResponse({ ok: true });
     }

@@ -3,7 +3,7 @@
    account verified idempotently (race-safe), and clears pass cookies.
    Replay/stale-tab submissions fail the live-pass gate identically (FR11). */
 
-import { getSupabase } from "@/lib/supabase";
+import { query, queryOne } from "@/lib/db";
 import { errorResponse, jsonResponse } from "@/lib/http";
 import { COPY } from "@/lib/auth/copy";
 import { runCodeCheck } from "@/lib/auth/code-check";
@@ -14,37 +14,39 @@ export async function POST(request: Request): Promise<Response> {
     const check = await runCodeCheck("verify", request);
     if (!check.ok) return check.response;
 
-    const supabase = getSupabase();
     const nowIso = new Date().toISOString();
 
     // Consume the code; parallel double-submits both land here but only the
     // first flips consumed_at — both are treated as success (idempotent).
-    await supabase
-      .from("verification_codes")
-      .update({ consumed_at: nowIso })
-      .eq("id", check.row.id)
-      .is("consumed_at", null);
+    await query(
+      `UPDATE verification_codes
+       SET consumed_at = $1
+       WHERE id = $2 AND consumed_at IS NULL`,
+      [nowIso, check.row.id]
+    );
 
-    const { data: account } = await supabase
-      .from("users")
-      .select("id")
-      .eq("email", check.email)
-      .maybeSingle();
+    const account = await queryOne<{ id: string }>(
+      `SELECT id FROM users WHERE lower(email) = lower($1)`,
+      [check.email]
+    );
     if (!account) {
       return errorResponse("unauthorized", COPY.CODE_REJECTED, 401);
     }
 
     // Idempotent verification: setting true twice is harmless (plan note).
-    await supabase
-      .from("users")
-      .update({ email_verified: true, updated_at: nowIso })
-      .eq("id", account.id);
+    await query(
+      `UPDATE users
+       SET email_verified = true, updated_at = $1
+       WHERE id = $2`,
+      [nowIso, account.id]
+    );
 
-    await supabase
-      .from("pass_states")
-      .update({ consumed_at: nowIso })
-      .eq("jti", check.jti)
-      .is("consumed_at", null);
+    await query(
+      `UPDATE pass_states
+       SET consumed_at = $1
+       WHERE jti = $2 AND consumed_at IS NULL`,
+      [nowIso, check.jti]
+    );
 
     await clearPassCookies("verify");
     return jsonResponse({ ok: true });

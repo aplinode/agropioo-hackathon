@@ -1,7 +1,7 @@
 /* POST /api/auth/reset/resend — mirror of signup/resend for the reset
    purpose: live reset pass required, 60 s server-side cooldown, 5/h/pass. */
 
-import { getSupabase } from "@/lib/supabase";
+import { query, queryOne } from "@/lib/db";
 import { errorResponse, jsonResponse } from "@/lib/http";
 import { COPY } from "@/lib/auth/copy";
 import { isResendInCooldown } from "@/lib/auth/logic";
@@ -29,33 +29,29 @@ export async function POST(): Promise<Response> {
     }
 
     if (passRow.wrong_total >= 10 || passRow.dead_at !== null) {
-      const supabase = getSupabase();
-      await supabase
-        .from("pass_states")
-        .update({ dead_at: new Date().toISOString() })
-        .eq("jti", pass.claims.jti);
+      await query(
+        `UPDATE pass_states SET dead_at = $1 WHERE jti = $2`,
+        [new Date().toISOString(), pass.claims.jti]
+      );
       return errorResponse("unauthorized", COPY.UNAUTHORIZED_GENERIC, 401);
     }
 
-    const supabase = getSupabase();
-    const { data: newest } = await supabase
-      .from("verification_codes")
-      .select("*")
-      .match({ purpose: "reset", email: pass.claims.email })
-      .is("voided_at", null)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const newest = await queryOne<{ created_at: string }>(
+      `SELECT created_at FROM verification_codes
+       WHERE purpose = $1 AND lower(email) = lower($2) AND voided_at IS NULL
+       ORDER BY created_at DESC
+       LIMIT 1`,
+      ["reset", pass.claims.email]
+    );
 
     if (isResendInCooldown(newest?.created_at ?? null, Date.now())) {
       return errorResponse("rate_limited", COPY.TOO_MANY_ATTEMPTS, 429);
     }
 
-    const { data: account } = await supabase
-      .from("users")
-      .select("id")
-      .eq("email", pass.claims.email)
-      .maybeSingle();
+    const account = await queryOne<{ id: string }>(
+      `SELECT id FROM users WHERE lower(email) = lower($1)`,
+      [pass.claims.email]
+    );
     if (!account) {
       // Unknown email: neutral ok, nothing sent — mirrors forgot-password.
       return jsonResponse({ ok: true });
