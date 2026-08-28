@@ -102,7 +102,7 @@ export default function RecordDetailModal({ record, onClose }: Props) {
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-agro-slate transition-colors hover:bg-agro-cloud focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-agro-canopy"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-agro-slate transition-colors hover:bg-agro-mint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-agro-canopy"
             aria-label="Close"
           >
             <CloseIcon className="h-5 w-5" />
@@ -113,7 +113,7 @@ export default function RecordDetailModal({ record, onClose }: Props) {
           {fields
             .filter((f) => f.value !== null && f.value !== undefined && f.value !== "")
             .map((field) => (
-              <div key={field.label} className="flex items-baseline justify-between gap-4 rounded-xl border border-agro-sprout/60 bg-agro-cloud/40 px-4 py-2.5">
+              <div key={field.label} className="flex items-baseline justify-between gap-4 rounded-xl border border-agro-sprout/60 bg-agro-mint/40 px-4 py-2.5">
                 <span className="text-xs font-semibold uppercase tracking-wide text-agro-slate">{field.label}</span>
                 <span className="text-sm font-medium text-agro-ink text-right">{String(field.value)}</span>
               </div>

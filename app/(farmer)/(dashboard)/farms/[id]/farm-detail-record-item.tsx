@@ -42,7 +42,7 @@ export default function FarmDetailRecordItem({ record }: Props) {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-agro-slate transition-colors hover:bg-agro-cloud hover:text-agro-canopy focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-agro-canopy"
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-agro-canopy"
             aria-label="View record details"
           >
             <EyeIcon size={16} />
