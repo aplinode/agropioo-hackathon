@@ -2,7 +2,7 @@
 
 > Status: DRAFT awaiting founder sign-off. Implements `spec.md` in this folder.
 > Stack constraints honored: Next.js 16 App Router, Route Handlers as API layer,
-> Supabase as Postgres only, zero ad-hoc clients, no new runtime deps without approval.
+> Neon Lakebase Postgres, zero ad-hoc clients, no new runtime deps without approval.
 
 ## Approach in one paragraph
 
@@ -10,7 +10,7 @@ Nest every translatable page under a single `app/[locale]/…` route tree whose 
 read the locale once and emit `lang`/`dir`/fonts from one registry. A root `proxy.ts`
 (the Next-16 replacement for middleware) rewrites unprefixed URLs to their `/en`
 counterparts *internally* (browser URL stays bare), passes real prefixed URLs through,
-and owns the locale cookie. Strings live in the Supabase `translations` table as the
+and owns the locale cookie. Strings live in the Neon `translations` table as the
 single source of truth — no catalog files exist; translations are authored directly in
 the database via SQL/migrations. Pages resolve text through a server-only loader with
 per-request dedupe and short-TTL caching, falling back to isolated English when a row
@@ -23,9 +23,9 @@ load only where text uses them.
 | # | Decision | Chosen | Alternatives rejected (why) |
 |---|---|---|---|
 | K1 | Locale routing | Single `[locale]` tree + proxy **rewrite** of bare URLs to `/en/…` (URL never changes) | Duplicated English + locale trees (every future route added twice, drift); full-prefix-everywhere incl. English (breaks FR-4's "unprefixed = English"); optional-catch-all segments (fragile matching) |
-| K2 | Catalog storage | **Supabase `translations` table = single source of truth**; translations authored directly via SQL/migrations using Supabase MCP; runtime reads DB | JSON dictionaries (violates constitution's DB-managed requirement); catalog files as intermediate source (unnecessary indirection, sync drift risk); runtime-only seeding (unreviewable diffs); ad-hoc sync scripts (MCP preferred) |
+| K2 | Catalog storage | **Neon `translations` table = single source of truth**; translations authored directly via SQL/migrations using Neon MCP; runtime reads DB | JSON dictionaries (violates constitution's DB-managed requirement); catalog files as intermediate source (unnecessary indirection, sync drift risk); runtime-only seeding (unreviewable diffs); ad-hoc sync scripts (MCP preferred) |
 | K3 | i18n library | **None** — ~150-line in-house core (registry + loader + formatter) | next-intl et al. assume file catalogs + own routing; our hybrid + DB catalog fights them; new dependency needs approval anyway |
-| K4 | Cache strategy | `unstable_cache` on the whole-dictionary fetch, **60s TTL**, plus React `cache()` per-request dedupe | Tag-based invalidation (founder's SQL edits bypass app tags → stale forever until manual tag bust); no cache (extra Supabase round-trip per render) |
+| K4 | Cache strategy | `unstable_cache` on the whole-dictionary fetch, **60s TTL**, plus React `cache()` per-request dedupe | Tag-based invalidation (founder's SQL edits bypass app tags → stale forever until manual tag bust); no cache (extra DB round-trip per render) |
 | K5 | Fonts | `Noto Nastaliq Urdu` (display/headings/prose) + `Noto Sans Arabic` (UI chrome, labels, data) via `next/font/google`, subsets `arabic`; families applied only under RTL scopes so English never fetches them | Naskh everywhere (loses Nastaliq identity farmers expect); Nastaliq everywhere (clips at UI sizes, heavy); Jameel Noori/Gulzar (licensing + coverage unclear) |
 | K6 | Client strings | Client components (auth forms, SiteHeader, CTA) receive **already-translated props** from their server shells; no catalog ships to the browser | Client-side dictionary loading (bundle bloat, dual fetch paths) |
 | K7 | Cookie | `agro_locale=<slug>`, 1 year, `SameSite=Lax`, readable by JS (switcher/chip need it; non-sensitive) | httpOnly (chip dismissal + switcher highlight need JS access; nothing secret inside) |
@@ -36,7 +36,7 @@ load only where text uses them.
 
 ```
 proxy.ts                                  NEW  locale parse + rewrite-to-/en + cookie write
-supabase/migrations/0001_translations.sql NEW  translations table + seed data (INSERTs for all 8 locales)
+db/migrations/0001_translations.sql    NEW  translations table + seed data (INSERTs for all 8 locales)
 lib/i18n/config.ts                        NEW  registry: 8 entries {slug, langTag, dir, nativeName, englishName} + guards
 lib/i18n/server.ts                        NEW  server-only loader: getDictionary(locale) → t(); unstable_cache(60s) + cache()
 lib/i18n/format.ts                        NEW  formatNumber/locale digits; localeHref(path, locale)
@@ -72,7 +72,7 @@ adrs/0002-db-backed-translations.md       NEW
 - **Landing page stays fully `"use client"`** for now (out-of-scope refactor); its
   translated strings arrive as props from the server page. Same for CTA/EarlyAccess.
 - **Seed flow**: translations are seeded via SQL migration files (INSERT statements)
-  that populate the `translations` table with all 8 locales, applied through Supabase
+  that populate the `translations` table with all 8 locales, applied through Neon
   MCP. Founder edits happen directly in the DB via MCP; no re-sync needed. Coverage
   tests verify all keys × 8 locales exist before merge.
 

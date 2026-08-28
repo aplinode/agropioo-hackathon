@@ -47,13 +47,13 @@ Scope ruling (founder): the **whole farmer app ships in one release** — no pha
 - **FR-23 Honest controls:** every language control in the app either works or does not exist — no control may navigate to a 404.
 - **FR-24 Onboarding wired:** onboarding is fixed and becomes a real post-signup step — new signups land on it after account creation, with the language chosen during signup pre-selected (constitution rule), its language list matching FR-22, and completion continuing into the app. Existing users signing in continue straight to the dashboard as merged in PR #16.
 - **FR-25 Advisor works per locale:** the advisor's canned replies render in the active language, and trigger-word matching recognizes keywords authored for that locale — so a farmer typing in Urdu gets a relevant Urdu reply, not the fallback.
-- **FR-26 Supabase MCP for DB sync:** all translation DB operations use the in-project Supabase MCP connection. No ad-hoc clients, manual scripts, or catalog files — the Supabase `translations` table is the single source of truth, and all sync/migration operations go through MCP.
+- **FR-26 Neon MCP for DB sync:** all translation DB operations use the in-project Neon MCP connection. No ad-hoc clients, manual scripts, or catalog files — the Neon `translations` table is the single source of truth, and all sync/migration operations go through MCP.
 
 ## Edge cases & rules
 
 - Preference value corrupted or references a retired language → English, silently, no crash.
 - Switching language mid-form performs a full reload; unsaved input is lost. Accepted trade-off for this release (matches existing switcher behavior site-wide) — forms are short; noted honestly rather than hidden.
-- A translation missing or empty in the Supabase `translations` table falls back to
+- A translation missing or empty in the Neon `translations` table falls back to
   English per the established pipeline; a farmer must never see a raw key, blank label,
   or mixed sentence where a full English string was available.
 - Longest-language layout stress: Urdu/Pashto strings run longer than English; no surface may introduce horizontal scroll at 320px or overlap touch targets in any locale. The stress set for manual QA is fixed in AC-20.

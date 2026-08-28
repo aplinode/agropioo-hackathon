@@ -2,7 +2,7 @@
 
 > Status: DRAFT awaiting founder sign-off. Implements `spec.md` in this folder.
 > Stack constraints honored: Next.js 16 App Router, Route Handlers as the API layer,
-> Supabase as Postgres only via the shared `lib/supabase.ts` client, uniform
+> Neon Lakebase Postgres via the shared `lib/db.ts` client, uniform
 > `{ error: { code, message } }` shape, Zod at every boundary, no new dependencies
 > outside the constitution's chosen-libraries table.
 
@@ -33,7 +33,7 @@ standalone `/verify` route gated by the verify/reset pass cookie.
 | K4 | Code storage & lookup | Codes hashed **SHA-256** (no salt needed — 10^6 space, high-entropy random); lookup by (`purpose`, normalized `email`); issue marks all prior unconsumed codes for that pair `voided_at=now()` (**last-code-wins**) | Storing plaintext codes (DB dump leaks live codes); per-account token-version counters (can't express per-code 5-attempt cap cleanly) |
 | K5 | Wrong-attempt accounting | Per-code `wrong_count` (≥5 → code `dead`); per-pass `pass_states.wrong_total` (≥10 → pass `dead_at`) incremented on every failed check; both checked before acceptance | Attempts only on the JWT itself (immutable — can't count); attempts only per-code (cumulative-across-resends rule FR14 impossible) |
 | K6 | Where guards live | **Server Components layouts + handler guard**: `(farmer)/(dashboard)/layout.tsx` calls `requireSessionPage()` → `redirect('/login')`; auth layouts call the inverse; every protected API calls `requireSession()` returning 401 shape | Checks in `proxy.ts` (edge context, no DB reach for account-exists check FR27, duplicates truth); per-page discretion (explicitly forbidden by FR27) |
-| K7 | Rate limiting | In-house **fixed-window counter keyed independently by IP and by account/email**, in-process Map, windows pinned below; standard error shape on breach | `rate-limiter-flexible` etc. (new dep needs approval; overkill for single-instance demo); IP-only (CGNAT lockout, FR30 rationale); DB-backed counters (a hammering writes storms into Supabase) |
+| K7 | Rate limiting | In-house **fixed-window counter keyed independently by IP and by account/email**, in-process Map, windows pinned below; standard error shape on breach | `rate-limiter-flexible` etc. (new dep needs approval; overkill for single-instance demo); IP-only (CGNAT lockout, FR30 rationale); DB-backed counters (a hammering writes storms into the database) |
 | K8 | Enumeration resistance mechanics | On unknown email at login: run `bcrypt.compare` against a **fixed dummy hash** anyway, then return the same generic error — comparable timing by construction; forgot-password issues a real (useless) pass + generic response always (FR10/FR23) | Sleep-jitter hacks (fragile, still leaky); differing messages (forbidden) |
 | K9 | Duplicate signup / first-write-wins | `INSERT … ON CONFLICT (lower(email)) DO NOTHING` → if no row inserted, SELECT the pending row and re-issue verification using **stored** values; concurrent races resolve to the one inserted row | Upsert-with-overwrite (violates FR2); application-level check-then-insert (TOCTOU race) |
 | K10 | Shared OTP screen | New standalone route **`/verify`** (server page reads pass cookie → renders `<OtpVerify>` client component with context props); flows cross requests, stale-tab rule enforced server-side | Keeping OTP as in-form client state (login-form's Flow A dies anyway; page refresh loses pass-less state machine; spec FR7 requires pass-gated rendering context) |
@@ -47,7 +47,7 @@ standalone `/verify` route gated by the verify/reset pass cookie.
 - **nodemailer** singleton transporter in `lib/mailer.ts`; if any of `SMTP_HOST/PORT/USER/PASSWORD/EMAIL_FROM` missing → transporter reports unconfigured; sending allowed only when `DEMO_MODE !== 'true' || smtpConfigured` logic per FR17 (demo banner shows code ONLY when SMTP unconfigured AND `DEMO_MODE=true`).
 - **zod** schemas in `lib/validation/auth.ts`: `signupSchema`, `loginSchema`, `forgotSchema`, `codeSchema` (exactly 6 digits string), `resetPasswordSchema`. Email transform: trim + lowercase everywhere (edge rule).
 
-## Database schema — `supabase/migrations/0002_auth.sql`
+## Database schema — `db/migrations/0002_auth.sql`
 
 ```sql
 create table accounts (
@@ -100,8 +100,8 @@ create table sessions (
 create index sessions_account_idx on sessions (account_id);
 ```
 
-No RLS needed yet (all access flows through Route Handlers using the anon key; tables
-are reached only server-side). Sessions survive restarts because they're rows.
+No RLS needed yet (all access flows through Route Handlers; tables are reached only
+server-side). Sessions survive restarts because they're rows.
 
 ## API routes (all under `app/api/auth/`, all POST unless noted)
 
@@ -130,7 +130,7 @@ Breach → 429 neutral "Too many attempts — please try again later." (no dimen
 ## File map (new/edited)
 
 ```
-lib/supabase.ts                            EXISTS (shared client — reused as-is)
+lib/db.ts                                  EXISTS (shared client — reused as-is)
 lib/http.ts                                NEW  errorResponse(code,message,status) + json helpers
 lib/validation/auth.ts                     NEW  all Zod schemas + email-normalize transform
 lib/auth/logic.ts                          NEW  PURE fns (vitest target): code lifecycle decisions,
@@ -153,7 +153,7 @@ app/api/auth/forgot-password/route.ts      NEW
 app/api/auth/reset/verify/route.ts         NEW
 app/api/auth/reset/resend/route.ts         NEW
 app/api/auth/reset/password/route.ts       NEW
-supabase/migrations/0002_auth.sql          NEW  schema above
+db/migrations/0002_auth.sql                NEW  schema above
 app/(farmer)/verify/page.tsx               NEW  shared OTP ROUTE (server: pass-gate + context)
 app/(farmer)/verify/verify-screen.tsx      NEW  thin client wrapper around components/auth/otp-verify
 components/auth/otp-verify.tsx             EDIT cooldown 30→60 s; drop hardcoded demoCode;

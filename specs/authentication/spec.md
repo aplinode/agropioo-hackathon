@@ -2,7 +2,7 @@
 
 > Real backend for the four auth surfaces whose UI already exists (`/signup`, `/login`, `/forgot-password`, `/reset-password`) plus the shared OTP screen, including token-based access control across the app. Supersedes the demo-mode limitation recorded in `specs/otp-verification/spec.md` and `specs/forgot-password/spec.md` (their UI rules still stand; see Reconciliation at the bottom).
 
-> **Fixed by constitution** (not re-decided here): all data lives in app-owned PostgreSQL tables managed through Supabase — the Supabase Auth system itself is NOT used; passwords are stored only as salted one-way hashes (bcryptjs); all signed passes below are JWTs (jose) carried in httpOnly, Secure, SameSite cookies unreadable by page scripts; codes and emails go out via nodemailer + SMTP; every request payload is Zod-validated; every failure returns the uniform `{ error: { code, message } }` shape; auth routes get basic per-IP rate limiting. Schema, route list, and library parameters live in this feature's `plan.md`.
+> **Fixed by constitution** (not re-decided here): all data lives in app-owned PostgreSQL tables managed through Neon Lakebase Postgres — no external auth/BaaS system is used; passwords are stored only as salted one-way hashes (bcryptjs); all signed passes below are JWTs (jose) carried in httpOnly, Secure, SameSite cookies unreadable by page scripts; codes and emails go out via nodemailer + SMTP; every request payload is Zod-validated; every failure returns the uniform `{ error: { code, message } }` shape; auth routes get basic per-IP rate limiting. Schema, route list, and library parameters live in this feature's `plan.md`.
 
 ## Goal
 

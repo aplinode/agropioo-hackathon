@@ -9,7 +9,7 @@ Scope question this research answers: what exists, what breaks, what the realist
 
 **Pipeline** (all working, verified in groups 4d/4e):
 
-1. Supabase `public.translations` table — single source of truth. **671 keys × 8 locales = 5368 rows.**
+1. Neon `public.translations` table — single source of truth. **671 keys × 8 locales = 5368 rows.**
 2. Translations authored directly via SQL/migrations (no catalog files as intermediate source).
 3. Runtime: `lib/i18n/server.ts` `getDictionary(locale)` reads DB rows (`status='translated'`); missing/empty → English fallback; per-request dedupe via React `cache()`; layouts are `force-dynamic` so founder SQL edits land next request.
 4. Locale resolution for site pages: **URL only** (`next/root-params`). Proxy (`proxy.ts`, K1): bare paths rewrite internally to `/en/*`; `/{slug}/*` passes through; no cookies/headers involved (FR-4). English has **no slug** (`urlSlug: ""`), so `/en/*` is not a real URL family.

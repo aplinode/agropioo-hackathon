@@ -34,8 +34,8 @@ OpenAI Agents SDK
   │   ├── searchKnowledgeBase → pgvector similarity search
   │   ├── getWeather → reads from weather demo data / future API
   │   ├── getMarketPrices → reads from prices demo data
-  │   ├── getMyFarms → reads demo farm data (→ Supabase once farms table exists)
-  │   └── getMyRecords → reads demo farm records (→ Supabase once farm_records exists)
+  │   ├── getMyFarms → reads demo farm data (→ Neon Postgres once farms table exists)
+  │   └── getMyRecords → reads demo farm records (→ Neon Postgres once records table exists)
   │
   └── Guardrails
       ├── input: farming-only topic check
@@ -186,7 +186,7 @@ app/(farmer)/(dashboard)/advisor/
   advisor-sidebar.tsx        — Conversation list sidebar (new, "use client")
   markdown-render.tsx        — Markdown renderer component (new, "use client")
 
-supabase/migrations/
+db/migrations/
   0003_advisor.sql           — All advisor tables + pgvector
 
 data/advisor-knowledge/
@@ -198,7 +198,7 @@ data/advisor-knowledge/
   schemes.md                 — Government schemes (Kissan Card, fertilizer subsidy)
 
 scripts/
-  seed-knowledge.ts          — Parse markdown → chunk → embed → insert into Supabase
+  seed-knowledge.ts          — Parse markdown → chunk → embed → insert into Neon
 ```
 
 ### Modified Files
@@ -230,11 +230,11 @@ app/(farmer)/(dashboard)/advisor/
 ## Task Breakdown
 
 ### T1: Database Migration + Knowledge Base Seeding
-- Write `supabase/migrations/0003_advisor.sql` with all tables above
-- Apply via Supabase MCP
+- Write `db/migrations/0003_advisor.sql` with all tables above
+- Apply via Neon MCP (`npx neon psql -- -f db/migrations/0003_advisor.sql`)
 - Write `data/advisor-knowledge/*.md` articles (20-30 articles from public Pakistan agri sources)
 - Write `scripts/seed-knowledge.ts` to chunk markdown → embed via `text-embedding-3-small` → insert into `advisor_knowledge_chunks`
-- Run seed script via Supabase MCP
+- Run seed script via DATABASE_URL
 
 ### T2: Install Dependencies + Env Config
 - `npm install @openai/agents openai react-markdown`
@@ -322,7 +322,7 @@ app/(farmer)/(dashboard)/advisor/
 |---|---|---|
 | HTTP response helpers | `lib/http.ts` | `@/lib/http` → `jsonResponse`, `errorResponse`, `readJsonBody`, `clientIp` |
 | Auth guard for API | `lib/auth/guards.ts` | `@/lib/auth/guards` → `requireSessionApi()` |
-| Supabase client | `lib/supabase.ts` | `@/lib/supabase` → `getSupabase()` |
+| Neon Postgres client | `lib/db.ts` | `@/lib/db` → `query()`, `queryOne()` |
 | Rate limiter | `lib/auth/rate-limit.ts` | `@/lib/auth/rate-limit` → `hitLimiter`, `RATE_RULES` |
 | i18n bundle pattern | `lib/i18n/server.ts` | `@/lib/i18n/server` → `getAppLocale`, `getDictionary` |
 | Page header | `components/shell/page-header` | `@/components/shell/page-header` |
@@ -337,7 +337,7 @@ app/(farmer)/(dashboard)/advisor/
 ## Implementation Order
 
 1. **T2** — Dependencies + env config (unblocks everything)
-2. **T1** — Database migration + knowledge base (applied via Supabase MCP)
+2. **T1** — Database migration + knowledge base (applied via Neon MCP)
 3. **T3** — Agent definitions + tools (the AI brain)
 4. **T4** — API routes (the backend plumbing)
 5. **T5** — i18n bundle (translation keys)

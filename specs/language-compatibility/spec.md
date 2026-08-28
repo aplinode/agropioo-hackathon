@@ -78,13 +78,13 @@ to read, navigate, and sign up entirely in Saraiki.
 - FR-10 Every user-visible string on translated surfaces — headings, body, buttons,
   labels, placeholders, validation messages, aria-labels, alt text, page `<title>` and
   meta descriptions, and demo snippets such as the login advisor preview — comes from
-  the Supabase `translations` table. English rendering uses the same table (single
+  the Neon `translations` table. English rendering uses the same table (single
   source of truth; no parallel hardcoded copy drifting elsewhere).
-- FR-11 The Supabase `translations` table is the source of truth for all translated
+- FR-11 The Neon `translations` table is the source of truth for all translated
   strings (constitution). It is editable there without redeploying; each entry belongs
   to one namespace/key and one language, and a key can hold at most one value per
   language. No catalog files exist as an intermediate source — the database IS the
-  catalog. All DB sync operations use the in-project Supabase MCP connection (no
+  catalog. All DB sync operations use the in-project Neon MCP connection (no
   ad-hoc clients or manual scripts).
 - FR-12 When a string is missing or empty for a language, that segment renders the
   English value wrapped so it is announced/read as English and does not corrupt

@@ -2,7 +2,7 @@
 
 > Status: DRAFT awaiting founder sign-off. Implements `spec.md` in this folder.
 > Stack constraints honored: Next.js 16 App Router, Route Handlers as the API layer,
-> Supabase as Postgres only via the shared `lib/supabase.ts` client, uniform
+> Neon Lakebase Postgres via the shared `lib/db.ts` client, uniform
 > `{ error: { code, message } }` shape, Zod at every boundary, no new dependencies
 > outside the constitution's chosen-libraries table.
 
@@ -41,7 +41,7 @@ run in pure helpers so they are unit-testable and never leak UI concerns into ha
 - **react-leaflet** (new dependency — map UI is a hard spec requirement with no lighter alternative in the allowed set; already approved by founder for map needs).
 - **OpenWeatherMap** endpoint: `/data/2.5/weather` for current; `/data/2.5/weather` with `dt` parameter for historical by date. Key from `OPENWEATHER_API_KEY` env var. Timeout 5 s; failure → farmer manually selects condition.
 
-## Database schema — `supabase/migrations/0003_farm_records.sql`
+## Database schema — `db/migrations/0003_farm_records.sql`
 
 ```sql
 -- 0003 — Farm Records schema (specs/farm-records/spec.md)
@@ -83,8 +83,8 @@ create index if not exists records_farm_idx on public.records (farm_id, event_da
 create index if not exists records_account_idx on public.records (account_id);
 ```
 
-No RLS yet (all access flows through Route Handlers using the anon key; tables
-are reached only server-side).
+No RLS yet (all access flows through Route Handlers; tables are reached only
+server-side).
 
 ## API routes (all under `app/api/farms/` or `app/api/records/`, all POST/PATCH/DELETE unless noted)
 
@@ -122,7 +122,7 @@ Uniform responses: success = JSON body relevant to caller; failure =
 ## File map (new/edited)
 
 ```
-lib/supabase.ts                             EXISTS (shared client — reused as-is)
+lib/db.ts                                   EXISTS (shared client — reused as-is)
 lib/http.ts                                EXISTS (errorResponse helpers — reused as-is)
 lib/validation/farms.ts                    NEW  Zod schemas for farms + records + queries
 lib/validation/farms.test.ts               NEW  schema validation tests
@@ -132,7 +132,7 @@ lib/farms/weather.ts                       NEW  fetchCurrentWeather(lat, lng) �
 lib/farms/districts.ts                     NEW  PAKISTAN_DISTRICTS constant (all districts)
 lib/farms/constants.ts                     NEW  CROPS, RECORD_TYPES, SEASONS, WEATHER_CONDITIONS, STAGE_SEQUENCES
 
-supabase/migrations/0003_farm_records.sql   NEW  schema above
+db/migrations/0003_farm_records.sql         NEW  schema above
 
 app/api/farms/route.ts                     NEW  GET list + POST create
 app/api/farms/[id]/route.ts                NEW  GET detail + PATCH update + DELETE

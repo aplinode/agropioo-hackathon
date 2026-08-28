@@ -40,15 +40,15 @@ Post-retrieval chunk expansion (fetching neighboring chunks) is valuable for far
 
 ### 1.3 Vector Database Selection
 
-For the Agropioo stack (Supabase = PostgreSQL), **pgvector is the natural fit**:
+For the Agropioo stack (Neon Lakebase Postgres), **pgvector is the natural fit**:
 
 | Option | Pros | Cons | Verdict |
 |---|---|---|---|
-| **pgvector** (Supabase) | Already in the stack; no new infra; Supabase has native vector support + RPC for similarity search | Less optimized at massive scale vs. dedicated vector DBs | **Recommended** — simplest path, no new dependency |
+| **pgvector** (Neon Postgres) | Already in the stack; no new infra; Neon has native vector support + SQL functions for similarity search | Less optimized at massive scale vs. dedicated vector DBs | **Recommended** — simplest path, no new dependency |
 | **Pinecone** | Purpose-built; excellent at scale; managed service | New dependency; added cost; separate from existing DB | Overkill for demo scope |
 | **Weaviate/Qdrant** | Open source; good multilingual support | New dependency; self-hosted or managed cost | Consider if pgvector proves insufficient |
 
-Supabase provides a [documented Next.js + pgvector RAG pattern](https://supabase.com/docs/guides/ai/examples/nextjs-vector-search): enable the `vector` extension, create document/chunk tables, write a SQL similarity-matching function, and call it via RPC from a Route Handler. This aligns perfectly with the project's architecture (Route Handlers as the API layer, Supabase as DB only).
+Neon Postgres supports the same `vector` extension; the Supabase [Next.js + pgvector RAG pattern](https://supabase.com/docs/guides/ai/examples/nextjs-vector-search) applies directly: enable the extension, create document/chunk tables, write a SQL similarity-matching function, and call it from a Route Handler. This aligns with the project's architecture (Route Handlers as the API layer, Neon as core Postgres only).
 
 ### 1.4 Keeping Responses Grounded in Factual Data
 
@@ -438,10 +438,12 @@ const triage = new Agent({
 
 ### 5.4 Custom Tools (External API + Product Data Integration)
 
-Any external API, database query, or file operation can be wrapped as a `tool()`. Critically, **the advisor can query the farmer's own product data** (farm records, crop history, activity logs) from Supabase:
+Any external API, database query, or file operation can be wrapped as a `tool()`. Critically, **the advisor can query the farmer's own product data** (farm records, crop history, activity logs) from Neon Postgres:
 
 ```typescript
 // Tool that retrieves the farmer's own farm records
+import { query } from '@/lib/db';
+
 const getMyFarmRecords = tool({
   name: 'get_my_farm_records',
   description: 'Retrieve the farmer\'s own farm records — crops planted, harvest dates, yields, inputs used. Use this when the farmer asks about their own farming history or current crops.',
@@ -450,13 +452,17 @@ const getMyFarmRecords = tool({
     cropType: z.string().optional().describe('Filter by crop type'),
   }),
   async execute({ farmId, cropType }, context) {
-    let query = supabase
-      .from('farm_records')
-      .select('*')
-      .eq('account_id', context.accountId);
-    if (farmId) query = query.eq('farm_id', farmId);
-    if (cropType) query = query.ilike('crop_type', `%${cropType}%`);
-    const { data } = await query;
+    let sql = 'SELECT * FROM records WHERE account_id = $1';
+    const values: unknown[] = [context.accountId];
+    if (farmId) {
+      sql += ' AND farm_id = $2';
+      values.push(farmId);
+    }
+    if (cropType) {
+      sql += ` AND crop_type ILIKE $${values.length + 1}`;
+      values.push(`%${cropType}%`);
+    }
+    const data = await query(sql, values);
     return JSON.stringify(data);
   },
 });
@@ -467,10 +473,7 @@ const getMyFarms = tool({
   description: 'Get the farmer\'s registered farms with location, size, and crop info. Use when the farmer asks about their farms, land, or fields.',
   parameters: z.object({}),
   async execute(_, context) {
-    const { data } = await supabase
-      .from('farms')
-      .select('*')
-      .eq('account_id', context.accountId);
+    const data = await query('SELECT * FROM farms WHERE account_id = $1', [context.accountId]);
     return JSON.stringify(data);
   },
 });
@@ -487,11 +490,11 @@ const lookupCropDisease = tool({
     cropType: z.string().describe('Type of crop (wheat, rice, cotton)'),
   }),
   async execute({ symptoms, cropType }) {
-    const results = await supabase
-      .from('crop_diseases')
-      .select('*')
-      .ilike('symptoms', `%${symptoms}%`);
-    return JSON.stringify(results.data);
+    const results = await query(
+      'SELECT * FROM crop_diseases WHERE symptoms ILIKE $1',
+      [`%${symptoms}%`]
+    );
+    return JSON.stringify(results);
   },
 });
 ```
@@ -628,7 +631,7 @@ addTraceProcessor(new ConsoleSpanExporter());
 3. **No automatic hand-back:** after a handoff, control does not return automatically
 4. **Guardrail timing:** parallel mode may consume tokens before blocking; use blocking mode for cost-sensitive apps
 5. **Set `maxTurns`:** always — the SDK loops indefinitely if the agent keeps calling tools
-6. **No built-in long-term memory:** must implement conversation persistence via Supabase
+6. **No built-in long-term memory:** must implement conversation persistence via Neon Postgres
 7. **No native i18n:** multi-language handling must be implemented at the application level (dynamic instructions based on selected locale)
 8. **No workflow engine:** no built-in support for long-running tasks that survive server restarts
 
@@ -670,7 +673,7 @@ addTraceProcessor(new ConsoleSpanExporter());
 └──────────────────────────────────────────────────────┘
 ```
 
-**Product data integration:** The Farm Data Agent (or tools on the general advisor) queries the farmer's own Supabase data — farms table, farm_records, and future feature tables (detect results, price bookmarks, scheme subscriptions). All product data tools are scoped to the authenticated user via `context.accountId`. As new product features ship, new tools are added without architectural changes.
+**Product data integration:** The Farm Data Agent (or tools on the general advisor) queries the farmer's own Neon Postgres data — farms table, records, and future feature tables (detect results, price bookmarks, scheme subscriptions). All product data tools are scoped to the authenticated user via `context.accountId`. As new product features ship, new tools are added without architectural changes.
 
 Each agent's instructions include the farmer's context (language, province, crops) injected dynamically. The triage agent uses `gpt-4o-mini` for cost efficiency; specialist agents can use the same or a higher-tier model for quality.
 
@@ -746,7 +749,7 @@ Given the hackathon build order (`/advisor` is #4, text chat only), the demo sho
    - pgvector for embeddings (no new dependency)
    - `text-embedding-3-small` for cost efficiency at demo scale
    - Semantic chunking for crop guides; fixed-size with overlap for general content
-   - Similarity search via Supabase RPC
+   - Similarity search via Postgres function
 
 3. **Multilingual (English + Urdu for demo)**:
    - Accept input in English, Urdu (native script), and Roman Urdu
@@ -758,7 +761,7 @@ Given the hackathon build order (`/advisor` is #4, text chat only), the demo sho
    - Triage agent routes to specialist agents via handoffs
    - Weather Agent → weather API tool
    - Crop Advisor → crop disease database tool
-   - Farm Data Agent → get_my_farms, get_my_records tools (queries farmer's own Supabase data)
+   - Farm Data Agent → get_my_farms, get_my_records tools (queries farmer's own Neon Postgres data)
    - Schemes Agent → government schemes tool
    - General Advisor → knowledge base RAG tool
    - Fallback: "I don't have information on this. Please contact your nearest agriculture office."
@@ -786,12 +789,12 @@ Given the hackathon build order (`/advisor` is #4, text chat only), the demo sho
 | Decision | Recommendation | Rationale |
 |---|---|---|
 | Agent framework | `@openai/agents` SDK (TypeScript) | Lightweight, native handoffs, built-in guardrails/tracing, official Next.js pattern. LangChain is overkill. |
-| Vector DB | pgvector via Supabase | Already in stack; no new dependency per AGENTS.md |
+| Vector DB | pgvector via Neon Postgres | Already in stack; no new dependency per AGENTS.md |
 | Embedding model | `text-embedding-3-small` | Cost-effective; sufficient for demo; upgrade to `-large` for production |
 | LLM | `gpt-4o-mini` for demo; `gpt-4o` for production | Cost control during development; quality adequate for demo |
 | Knowledge base format | Markdown files → chunked → embedded at build time | Simple to manage; can be admin-editable later |
 | Translation approach | In-prompt translation via system instructions | Avoids separate translation API; GPT-4o handles translation well for Urdu |
-| Chat storage | New `conversations` + `messages` tables in Supabase | Persistent; queryable; aligns with existing schema approach |
+| Chat storage | New `conversations` + `messages` tables in Neon Postgres | Persistent; queryable; aligns with existing schema approach |
 | Response streaming | Server-Sent Events from Route Handler | Progressive display; better perceived latency |
 
 ### 7.3 Out of Scope for Demo
