@@ -1,13 +1,12 @@
 /**
- * Syncs catalog/ (typed source of truth) into the Supabase `translations`
+ * Syncs catalog/ (typed source of truth) into the Neon `translations`
  * table — plan K2. Idempotent full-matrix upsert: every English key gets a
  * row in every locale; untranslated keys are stored as status 'missing' with
  * a NULL value so coverage is countable (spec FR-13).
  *
- * Requires SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (service role bypasses
- * RLS; the anon key cannot write). Run: npm run sync:translations
+ * Requires DATABASE_URL. Run: npm run sync:translations
  */
-import { getSupabaseAdmin } from "../lib/supabase.ts";
+import { query } from "../lib/db.ts";
 
 import { CATALOG, CATALOG_KEYS } from "../catalog/index.ts";
 import { LOCALES } from "../lib/i18n/config.ts";
@@ -17,16 +16,6 @@ interface Row {
   locale: string;
   value: string | null;
   status: "translated" | "missing";
-}
-
-let supabase;
-try {
-  supabase = getSupabaseAdmin();
-} catch {
-  console.error(
-    "Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY. Add them to .env, then re-run.",
-  );
-  process.exit(1);
 }
 
 const rows: Row[] = [];
@@ -45,11 +34,26 @@ let missing = 0;
 
 for (let i = 0; i < rows.length; i += CHUNK) {
   const chunk = rows.slice(i, i + CHUNK);
-  const { error } = await supabase
-    .from("translations")
-    .upsert(chunk, { onConflict: "key,locale" });
-  if (error) {
-    console.error(`Upsert failed for rows ${i}–${i + chunk.length}:`, error.message);
+  const values: unknown[] = [];
+  const placeholders: string[] = [];
+  let idx = 1;
+  for (const row of chunk) {
+    placeholders.push(`($${idx}, $${idx + 1}, $${idx + 2}, $${idx + 3})`);
+    values.push(row.key, row.locale, row.value, row.status);
+    idx += 4;
+  }
+
+  try {
+    await query(
+      `INSERT INTO translations (key, locale, value, status)
+       VALUES ${placeholders.join(", ")}
+       ON CONFLICT (key, locale)
+       DO UPDATE SET value = EXCLUDED.value, status = EXCLUDED.status, updated_at = now()`,
+      values
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Upsert failed for rows ${i}–${i + chunk.length}:`, message);
     process.exit(1);
   }
 }

@@ -1,16 +1,16 @@
 /**
  * Seeds the advisor knowledge base: reads markdown articles from
  * data/advisor-knowledge/, chunks them, embeds via OpenAI, and
- * inserts into Supabase advisor_knowledge_documents + advisor_knowledge_chunks.
+ * inserts into Neon advisor_knowledge_documents + advisor_knowledge_chunks.
  *
  * Idempotent: deletes existing advisor KB rows before re-seeding.
  *
- * Requires: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, OPENAI_API_KEY
+ * Requires: DATABASE_URL, OPENAI_API_KEY
  * Run: node --experimental-strip-types --env-file-if-exists=.env scripts/seed-knowledge.ts
  */
 import { readdir, readFile } from "node:fs/promises";
 import { join, basename, extname } from "node:path";
-import { getSupabaseAdmin } from "../lib/supabase.ts";
+import { query, queryOne } from "../lib/db.ts";
 
 const KB_DIR = join(import.meta.dirname, "..", "data", "advisor-knowledge");
 const EMBEDDING_MODEL = process.env.ADVISOR_EMBEDDING_MODEL ?? "text-embedding-3-small";
@@ -157,64 +157,60 @@ async function main() {
   const embeddings = await embedChunks(allChunks.map(c => c.content));
   console.log(`Done. ${embeddings.length} embeddings generated.\n`);
 
-  // 4. Insert into Supabase
-  let supabase;
-  try {
-    supabase = getSupabaseAdmin();
-  } catch {
-    console.error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY. Add them to .env, then re-run.");
-    process.exit(1);
-  }
-
+  // 4. Insert into Neon
   // Clear existing KB data
   console.log("Clearing existing knowledge base...");
-  await supabase.from("advisor_knowledge_chunks").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-  await supabase.from("advisor_knowledge_documents").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+  await query(`DELETE FROM advisor_knowledge_chunks WHERE id IS NOT NULL`);
+  await query(`DELETE FROM advisor_knowledge_documents WHERE id IS NOT NULL`);
 
   // Insert documents
   console.log("Inserting documents...");
+  const docIdMap = new Map<string, string>();
   for (const article of articles) {
-    const { error } = await supabase.from("advisor_knowledge_documents").insert({
-      title: article.title,
-      content: article.content,
-      crop_type: article.cropType,
-      category: article.category,
-      source: `data/advisor-knowledge/${article.filename}`,
-    });
-    if (error) {
-      console.error(`Error inserting document ${article.title}:`, error.message);
+    const row = await queryOne<{ id: string }>(
+      `INSERT INTO advisor_knowledge_documents (title, content, crop_type, category, source)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id`,
+      [article.title, article.content, article.cropType, article.category, `data/advisor-knowledge/${article.filename}`]
+    );
+    if (!row) {
+      console.error(`Error inserting document ${article.title}`);
       process.exit(1);
     }
-  }
-
-  // Fetch document IDs for chunk insertion
-  const { data: docs } = await supabase
-    .from("advisor_knowledge_documents")
-    .select("id, title");
-
-  const docIdMap = new Map<string, string>();
-  for (const doc of docs ?? []) {
-    docIdMap.set(doc.title, doc.id);
+    docIdMap.set(article.title, row.id);
   }
 
   // Insert chunks with embeddings
   console.log("Inserting chunks with embeddings...");
-  const chunkRows = allChunks.map((chunk, i) => ({
-    document_id: docIdMap.get(chunk.article.title),
-    content: chunk.content,
-    embedding: JSON.stringify(embeddings[i]),
-    chunk_index: chunk.index,
-  }));
+  for (let i = 0; i < allChunks.length; i += 50) {
+    const batch = allChunks.slice(i, i + 50);
+    const values: unknown[] = [];
+    const placeholders: string[] = [];
+    let idx = 1;
+    for (let j = 0; j < batch.length; j++) {
+      const chunk = batch[j];
+      const documentId = docIdMap.get(chunk.article.title);
+      if (!documentId) {
+        console.error(`Missing document id for ${chunk.article.title}`);
+        process.exit(1);
+      }
+      placeholders.push(`($${idx}, $${idx + 1}, $${idx + 2}::vector, $${idx + 3})`);
+      values.push(documentId, chunk.content, `[${embeddings[i + j].join(",")}]`, chunk.index);
+      idx += 4;
+    }
 
-  // Insert in batches of 50
-  for (let i = 0; i < chunkRows.length; i += 50) {
-    const batch = chunkRows.slice(i, i + 50);
-    const { error } = await supabase.from("advisor_knowledge_chunks").insert(batch);
-    if (error) {
-      console.error(`Error inserting chunk batch:`, error.message);
+    try {
+      await query(
+        `INSERT INTO advisor_knowledge_chunks (document_id, content, embedding, chunk_index)
+         VALUES ${placeholders.join(", ")}`,
+        values
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Error inserting chunk batch:`, message);
       process.exit(1);
     }
-    console.log(`  Inserted ${Math.min(i + 50, chunkRows.length)}/${chunkRows.length} chunks`);
+    console.log(`  Inserted ${Math.min(i + 50, allChunks.length)}/${allChunks.length} chunks`);
   }
 
   console.log("\n=== Seeding complete ===");

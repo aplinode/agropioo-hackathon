@@ -1,14 +1,8 @@
-import { getSupabase } from '@/lib/supabase'
+import { queryOne } from '@/lib/db'
 
 export async function GET() {
   try {
-    const supabase = getSupabase()
-    const { error } = await supabase.from('users').select('id').limit(1)
-
-    if (error) {
-      return Response.json({ status: 'error', message: error.message }, { status: 500 })
-    }
-
+    await queryOne(`SELECT 1 as ok`)
     return Response.json({ status: 'ok', database: 'connected' })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'

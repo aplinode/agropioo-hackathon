@@ -25,7 +25,6 @@ export const searchKnowledgeBase = tool({
     category: z.enum(["disease", "agronomy", "fertilizer", "scheme", "general"]).optional().describe("Filter by category"),
   }),
   async execute({ query, cropType, category }) {
-    const supabase = getSupabase();
     const openai = getOpenAI();
     const embeddingModel = process.env.ADVISOR_EMBEDDING_MODEL ?? "text-embedding-3-small";
 

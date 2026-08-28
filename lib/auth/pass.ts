@@ -112,7 +112,6 @@ export async function mintPass(
   kind: PassKind,
   input: { accountId?: string; email: string },
 ): Promise<{ token: string; jti: string; expiresAt: Date }> {
-  const supabase = getSupabase();
   const jti = randomUUID();
   const expiresAt = new Date(Date.now() + PASS_TTL_SECONDS[kind] * 1000);
   const token = await signPassToken(
