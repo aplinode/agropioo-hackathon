@@ -2,7 +2,7 @@
    PATCH  /api/advisor/conversations/[id] — rename a conversation
    DELETE /api/advisor/conversations/[id] — delete a conversation and its messages */
 
-import { getSupabase } from "@/lib/supabase";
+import { query, queryOne } from "@/lib/db";
 import { requireSessionApi } from "@/lib/auth/guards";
 import { errorResponse, jsonResponse, readJsonBody } from "@/lib/http";
 import { renameConversationSchema } from "@/lib/validation/advisor";
@@ -15,16 +15,15 @@ export async function GET(
   if (!session) return errorResponse("unauthorized", "Sign in to view conversations.", 401);
 
   const { id } = await params;
-  const supabase = getSupabase();
 
-  const { data: conv, error } = await supabase
-    .from("advisor_conversations")
-    .select("id, title, language, created_at, updated_at")
-    .eq("id", id)
-    .eq("account_id", session.accountId)
-    .single();
+  const conv = await queryOne<{ id: string; title: string; language: string; created_at: string; updated_at: string }>(
+    `SELECT id, title, language, created_at, updated_at
+     FROM advisor_conversations
+     WHERE id = $1 AND account_id = $2`,
+    [id, session.accountId]
+  );
 
-  if (error || !conv) {
+  if (!conv) {
     return errorResponse("server_error", "Conversation not found.", 404);
   }
 
@@ -45,16 +44,15 @@ export async function PATCH(
     return errorResponse("validation_error", parsed.error.issues[0]?.message ?? "Invalid input.", 422);
   }
 
-  const supabase = getSupabase();
-  const { data: conv, error } = await supabase
-    .from("advisor_conversations")
-    .update({ title: parsed.data.title, updated_at: new Date().toISOString() })
-    .eq("id", id)
-    .eq("account_id", session.accountId)
-    .select("id, title, language, created_at, updated_at")
-    .single();
+  const conv = await queryOne<{ id: string; title: string; language: string; created_at: string; updated_at: string }>(
+    `UPDATE advisor_conversations
+     SET title = $1, updated_at = $2
+     WHERE id = $3 AND account_id = $4
+     RETURNING id, title, language, created_at, updated_at`,
+    [parsed.data.title, new Date().toISOString(), id, session.accountId]
+  );
 
-  if (error || !conv) {
+  if (!conv) {
     return errorResponse("server_error", "Conversation not found.", 404);
   }
 
@@ -69,17 +67,11 @@ export async function DELETE(
   if (!session) return errorResponse("unauthorized", "Sign in to delete conversations.", 401);
 
   const { id } = await params;
-  const supabase = getSupabase();
 
-  const { error } = await supabase
-    .from("advisor_conversations")
-    .delete()
-    .eq("id", id)
-    .eq("account_id", session.accountId);
-
-  if (error) {
-    return errorResponse("server_error", "Could not delete conversation.", 500);
-  }
+  await query(
+    `DELETE FROM advisor_conversations WHERE id = $1 AND account_id = $2`,
+    [id, session.accountId]
+  );
 
   return jsonResponse({ deleted: true });
 }

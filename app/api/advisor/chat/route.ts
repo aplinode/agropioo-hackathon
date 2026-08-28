@@ -3,7 +3,7 @@
    Saves both farmer and advisor messages to the database after the stream
    completes. Gracefully degrades with a 503 when the model is unavailable. */
 
-import { getSupabase } from "@/lib/supabase";
+import { query, queryOne } from "@/lib/db";
 import { requireSessionApi } from "@/lib/auth/guards";
 import { errorResponse, readJsonBody, clientIp } from "@/lib/http";
 import { hitLimiter, HOUR_MS } from "@/lib/auth/rate-limit";
@@ -14,24 +14,18 @@ import type { FarmerContext, FarmSummary } from "@/lib/advisor/context";
 import { run } from "@openai/agents";
 import { toSSEStream, sseHeaders } from "@/lib/advisor/streaming";
 import { demoFarms } from "@/app/(farmer)/(dashboard)/dashboard/demo-data";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 async function createConversation(
-  supabase: SupabaseClient,
   accountId: string,
   firstMessage: string,
 ): Promise<string | undefined> {
-  const { data, error } = await supabase
-    .from("advisor_conversations")
-    .insert({
-      account_id: accountId,
-      title: firstMessage.slice(0, 60) || "New conversation",
-      language: "en",
-    })
-    .select("id")
-    .single();
-  if (error) return undefined;
-  return data?.id;
+  const row = await queryOne<{ id: string }>(
+    `INSERT INTO advisor_conversations (account_id, title, language)
+     VALUES ($1, $2, $3)
+     RETURNING id`,
+    [accountId, firstMessage.slice(0, 60) || "New conversation", "en"]
+  );
+  return row?.id;
 }
 
 export async function POST(request: Request) {
@@ -49,22 +43,21 @@ export async function POST(request: Request) {
   }
   const { conversationId, message } = parsed.data;
 
-  const supabase = getSupabase();
-
   const convId =
-    conversationId ?? (await createConversation(supabase, session.accountId, message));
+    conversationId ?? (await createConversation(session.accountId, message));
   if (!convId) {
     return errorResponse("server_error", "Could not create conversation.", 500);
   }
 
   const farmerMessage = message;
 
-  const { data: existingMessages } = await supabase
-    .from("advisor_messages")
-    .select("role, content")
-    .eq("conversation_id", convId)
-    .order("created_at", { ascending: true })
-    .limit(20);
+  const existingMessages = await query<{ role: string; content: string }>(
+    `SELECT role, content FROM advisor_messages
+     WHERE conversation_id = $1
+     ORDER BY created_at ASC
+     LIMIT 20`,
+    [convId]
+  );
 
   const historyText = (existingMessages ?? [])
     .map((m: { role: string; content: string }) =>
@@ -106,15 +99,15 @@ export async function POST(request: Request) {
   }
 
   const sseStream = toSSEStream(result, convId, async (advisorOutput) => {
-    await supabase.from("advisor_messages").insert([
-      { conversation_id: convId, role: "farmer", content: farmerMessage },
-      { conversation_id: convId, role: "advisor", content: advisorOutput },
-    ]);
+    await query(
+      `INSERT INTO advisor_messages (conversation_id, role, content) VALUES ($1, $2, $3), ($1, $4, $5)`,
+      [convId, "farmer", farmerMessage, "advisor", advisorOutput]
+    );
 
-    await supabase
-      .from("advisor_conversations")
-      .update({ updated_at: new Date().toISOString() })
-      .eq("id", convId);
+    await query(
+      `UPDATE advisor_conversations SET updated_at = $1 WHERE id = $2`,
+      [new Date().toISOString(), convId]
+    );
   });
 
   return new Response(sseStream, { headers: sseHeaders });

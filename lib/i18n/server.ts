@@ -7,7 +7,7 @@ import { locale as rootLocale } from "next/root-params";
 
 import { CATALOG, ENGLISH_TABLE, type CatalogKey } from "@/catalog";
 import { APP_LOCALE_COOKIE, isLocale } from "./config";
-import { getSupabase } from "@/lib/supabase";
+import { query } from "@/lib/db";
 
 import type { Locale } from "./config";
 import { formatMessage } from "./logic";
@@ -49,31 +49,28 @@ export const getDictionary = cache(async (localeCode: Locale): Promise<Dictionar
   let english: StringTable = ENGLISH_TABLE;
 
   try {
-    const supabase = getSupabase();
-    const { data, error } = await supabase
-      .from("translations")
-      .select("key,locale,value")
-      .in("locale", [localeCode, "en"])
-      .eq("status", "translated");
+    const rows = await query<{ key: string; locale: string; value: string | null }>(
+      `SELECT key, locale, value FROM translations
+       WHERE locale = ANY($1) AND status = 'translated'`,
+      [[localeCode, "en"]]
+    );
 
-    if (!error && data) {
-      const localizedRows: { key: string; value: string | null }[] = [];
-      const englishRows: { key: string; value: string | null }[] = [];
-      for (const row of data) {
-        if (row.locale === localeCode) localizedRows.push(row);
-        else englishRows.push(row);
-      }
-      // DB rows overlay the drafted baseline — they can override copy but a
-      // missing/empty DB (or locale gap) must never erase the catalog.
-      primary = {
-        ...fallbackTableFor(localeCode),
-        ...buildTable(localizedRows),
-      };
-      const dbEnglish = buildTable(englishRows);
-      english = { ...ENGLISH_TABLE, ...dbEnglish };
+    const localizedRows: { key: string; value: string | null }[] = [];
+    const englishRows: { key: string; value: string | null }[] = [];
+    for (const row of rows) {
+      if (row.locale === localeCode) localizedRows.push(row);
+      else englishRows.push(row);
     }
+    // DB rows overlay the drafted baseline — they can override copy but a
+    // missing/empty DB (or locale gap) must never erase the catalog.
+    primary = {
+      ...fallbackTableFor(localeCode),
+      ...buildTable(localizedRows),
+    };
+    const dbEnglish = buildTable(englishRows);
+    english = { ...ENGLISH_TABLE, ...dbEnglish };
   } catch {
-    // Supabase unavailable — keep the build-time fallback tables.
+    // Database unavailable — keep the build-time fallback tables.
   }
 
   const t: Translator = (key, params) => {

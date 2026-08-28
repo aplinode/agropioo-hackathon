@@ -1,6 +1,6 @@
 import { tool } from "@openai/agents";
 import { z } from "zod";
-import { getSupabase } from "@/lib/supabase";
+import { query } from "@/lib/db";
 import OpenAI from "openai";
 
 let openaiClient: OpenAI | null = null;
@@ -40,18 +40,21 @@ export const searchKnowledgeBase = tool({
       return "Knowledge base search is unavailable (embedding model not supported by current provider). Answer from your general farming knowledge and suggest the farmer consult a local extension officer for specific advice.";
     }
 
-    // Search via Supabase RPC
-    const { data, error } = await supabase.rpc("advisor_search_similar", {
-      query_embedding: queryEmbedding,
-      match_count: 5,
-      match_threshold: 0.4,
-    });
+    // Search via Postgres function
+    const vectorLiteral = `[${queryEmbedding.join(",")}]`;
+    const data = await query<{
+      content: string;
+      document_title: string;
+      crop_type: string | null;
+      category: string;
+      source: string | null;
+      similarity: number;
+    }>(
+      `SELECT * FROM advisor_search_similar($1::vector, $2, $3)`,
+      [vectorLiteral, 5, 0.4]
+    );
 
-    if (error) {
-      return `Knowledge base search error: ${error.message}. Falling back to general farming knowledge.`;
-    }
-
-    if (!data || data.length === 0) {
+    if (data.length === 0) {
       return "No relevant information found in the knowledge base for this query. Suggest the farmer consult a local extension officer for this specific question.";
     }
 

@@ -1,6 +1,6 @@
 /* GET /api/advisor/messages/[conversationId] — load messages for a conversation */
 
-import { getSupabase } from "@/lib/supabase";
+import { query, queryOne } from "@/lib/db";
 import { requireSessionApi } from "@/lib/auth/guards";
 import { errorResponse, jsonResponse } from "@/lib/http";
 
@@ -12,28 +12,23 @@ export async function GET(
   if (!session) return errorResponse("unauthorized", "Sign in to view messages.", 401);
 
   const { conversationId } = await params;
-  const supabase = getSupabase();
 
-  const { data: conv } = await supabase
-    .from("advisor_conversations")
-    .select("id")
-    .eq("id", conversationId)
-    .eq("account_id", session.accountId)
-    .single();
+  const conv = await queryOne<{ id: string }>(
+    `SELECT id FROM advisor_conversations
+     WHERE id = $1 AND account_id = $2`,
+    [conversationId, session.accountId]
+  );
 
   if (!conv) {
     return errorResponse("server_error", "Conversation not found.", 404);
   }
 
-  const { data: messages, error } = await supabase
-    .from("advisor_messages")
-    .select("id, role, content, created_at")
-    .eq("conversation_id", conversationId)
-    .order("created_at", { ascending: true });
+  const messages = await query<{ id: string; role: string; content: string; created_at: string }>(
+    `SELECT id, role, content, created_at FROM advisor_messages
+     WHERE conversation_id = $1
+     ORDER BY created_at ASC`,
+    [conversationId]
+  );
 
-  if (error) {
-    return errorResponse("server_error", "Could not load messages.", 500);
-  }
-
-  return jsonResponse({ messages: messages ?? [] });
+  return jsonResponse({ messages });
 }
