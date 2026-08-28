@@ -9,7 +9,7 @@ import { randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
 import { connection } from "next/server";
 import { SignJWT, jwtVerify } from "jose";
-import { getSupabase } from "@/lib/supabase";
+import { query, queryOne } from "@/lib/db";
 import { sessionRowIsActive } from "@/lib/auth/logic";
 
 export type PassKind = "verify" | "reset" | "session";
@@ -127,21 +127,15 @@ export async function mintPass(
 
   if (kind === "session") {
     if (!input.accountId) throw new Error("Session pass requires an account id.");
-    const { error } = await supabase.from("sessions").insert({
-      id: jti,
-      account_id: input.accountId,
-      expires_at: expiresAt.toISOString(),
-    });
-    if (error) throw error;
+    await query(
+      `INSERT INTO sessions (id, account_id, expires_at) VALUES ($1, $2, $3)`,
+      [jti, input.accountId, expiresAt.toISOString()]
+    );
   } else {
-    const { error } = await supabase.from("pass_states").insert({
-      jti,
-      kind,
-      email: input.email,
-      account_id: input.accountId ?? null,
-      expires_at: expiresAt.toISOString(),
-    });
-    if (error) throw error;
+    await query(
+      `INSERT INTO pass_states (jti, kind, email, account_id, expires_at) VALUES ($1, $2, $3, $4, $5)`,
+      [jti, kind, input.email, input.accountId ?? null, expiresAt.toISOString()]
+    );
   }
 
   return { token, jti, expiresAt };
@@ -150,24 +144,20 @@ export async function mintPass(
 async function loadLivePassStateRow(
   claims: PassClaims,
 ): Promise<PassStateRow | null> {
-  const supabase = getSupabase();
-  const { data } = await supabase
-    .from("pass_states")
-    .select("*")
-    .eq("jti", claims.jti)
-    .maybeSingle();
-  const row = data as PassStateRow | null;
+  const row = await queryOne<PassStateRow>(
+    `SELECT * FROM pass_states WHERE jti = $1`,
+    [claims.jti]
+  );
   if (!row || row.kind !== claims.typ) return null;
   if (row.consumed_at !== null || row.dead_at !== null) return null;
   if (Date.parse(row.expires_at) <= Date.now()) return null;
   if (row.email !== claims.email) return null;
   // Account binding integrity: a bound pass must point at a real account.
   if (row.account_id) {
-    const { data: account } = await supabase
-      .from("users")
-      .select("id")
-      .eq("id", row.account_id)
-      .maybeSingle();
+    const account = await queryOne<{ id: string }>(
+      `SELECT id FROM users WHERE id = $1`,
+      [row.account_id]
+    );
     if (!account) return null;
   }
   return row;
@@ -176,19 +166,15 @@ async function loadLivePassStateRow(
 async function loadLiveSessionRow(
   claims: PassClaims,
 ): Promise<SessionRow | null> {
-  const supabase = getSupabase();
-  const { data } = await supabase
-    .from("sessions")
-    .select("*")
-    .eq("id", claims.jti)
-    .maybeSingle();
-  const row = data as SessionRow | null;
+  const row = await queryOne<SessionRow>(
+    `SELECT * FROM sessions WHERE id = $1`,
+    [claims.jti]
+  );
   if (!row || !sessionRowIsActive(row, Date.now())) return null;
-  const { data: account } = await supabase
-    .from("users")
-    .select("id")
-    .eq("id", row.account_id)
-    .maybeSingle();
+  const account = await queryOne<{ id: string }>(
+    `SELECT id FROM users WHERE id = $1`,
+    [row.account_id]
+  );
   if (!account) return null;
   return row;
 }

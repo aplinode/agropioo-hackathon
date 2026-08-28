@@ -4,7 +4,7 @@
    Every rejection is the uniform error shape; nothing reveals WHICH check
    failed beyond the intentional generic copy. */
 
-import { getSupabase } from "@/lib/supabase";
+import { query, queryOne } from "@/lib/db";
 import { errorResponse, clientIp, readJsonBody } from "@/lib/http";
 import { COPY } from "@/lib/auth/copy";
 import {
@@ -31,15 +31,13 @@ async function loadNewestCode(
   purpose: "verify" | "reset",
   email: string,
 ): Promise<CheckedCodeRow | null> {
-  const supabase = getSupabase();
-  const { data } = await supabase
-    .from("verification_codes")
-    .select("*")
-    .match({ purpose, email })
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  return data as CheckedCodeRow | null;
+  return queryOne<CheckedCodeRow>(
+    `SELECT * FROM verification_codes
+     WHERE purpose = $1 AND email = $2
+     ORDER BY created_at DESC
+     LIMIT 1`,
+    [purpose, email]
+  );
 }
 
 /** Runs the full code-check gate; `request.body` is consumed here. */
@@ -103,21 +101,18 @@ export async function runCodeCheck(
   if (!codeMatches(codeRow, parsed.data.code)) {
     const next = applyWrongEntry(codeRow.wrong_count, passRow.wrong_total);
     const nowIso = new Date().toISOString();
-    const supabase = getSupabase();
-    await supabase
-      .from("verification_codes")
-      .update({
-        wrong_count: next.nextCodeWrongCount,
-        ...(next.codeNowDead ? { dead_at: nowIso } : {}),
-      })
-      .eq("id", codeRow.id);
-    await supabase
-      .from("pass_states")
-      .update({
-        wrong_total: next.nextPassWrongTotal,
-        ...(next.passNowDead ? { dead_at: nowIso } : {}),
-      })
-      .eq("jti", jti);
+    await query(
+      `UPDATE verification_codes
+       SET wrong_count = $1, dead_at = COALESCE($2, dead_at)
+       WHERE id = $3`,
+      [next.nextCodeWrongCount, next.codeNowDead ? nowIso : null, codeRow.id]
+    );
+    await query(
+      `UPDATE pass_states
+       SET wrong_total = $1, dead_at = COALESCE($2, dead_at)
+       WHERE jti = $3`,
+      [next.nextPassWrongTotal, next.passNowDead ? nowIso : null, jti]
+    );
     return { ok: false, response: unauthorized(COPY.CODE_REJECTED) };
   }
 

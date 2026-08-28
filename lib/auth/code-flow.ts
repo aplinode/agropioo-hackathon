@@ -3,7 +3,7 @@
    issuing a new code instantly voids every earlier unconsumed, undead code
    for that (purpose, email). */
 
-import { getSupabase } from "@/lib/supabase";
+import { query } from "@/lib/db";
 import { sendCode, type CodePurpose, type SendCodeResult } from "@/lib/mailer";
 import { CODE_TTL_MS, generateCode, sha256Hex } from "@/lib/auth/logic";
 
@@ -17,26 +17,23 @@ export async function issueVerificationCode(
   email: string,
   accountId: string | null,
 ): Promise<string> {
-  const supabase = getSupabase();
-
-  await supabase
-    .from("verification_codes")
-    .update({ voided_at: new Date().toISOString() })
-    .match({ purpose, email })
-    .is("consumed_at", null)
-    .is("dead_at", null)
-    .is("voided_at", null);
+  await query(
+    `UPDATE verification_codes
+     SET voided_at = $1
+     WHERE purpose = $2 AND email = $3
+       AND consumed_at IS NULL
+       AND dead_at IS NULL
+       AND voided_at IS NULL`,
+    [new Date().toISOString(), purpose, email]
+  );
 
   const code = generateCode();
   const expiresAt = new Date(Date.now() + CODE_TTL_MS).toISOString();
-  const { error } = await supabase.from("verification_codes").insert({
-    purpose,
-    email,
-    account_id: accountId,
-    code_hash: sha256Hex(code),
-    expires_at: expiresAt,
-  });
-  if (error) throw error;
+  await query(
+    `INSERT INTO verification_codes (purpose, email, account_id, code_hash, expires_at)
+     VALUES ($1, $2, $3, $4, $5)`,
+    [purpose, email, accountId, sha256Hex(code), expiresAt]
+  );
 
   return code;
 }
