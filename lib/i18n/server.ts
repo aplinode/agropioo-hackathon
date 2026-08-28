@@ -288,12 +288,14 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
         district: t("app.farms.new.fields.district").text,
         crop: t("app.farms.new.fields.crop").text,
         acres: t("app.farms.new.fields.acres").text,
+        location: t("app.farms.new.fields.location").text,
       },
       placeholders: {
         name: t("app.farms.new.placeholders.name").text,
         district: t("app.farms.new.placeholders.district").text,
         crop: t("app.farms.new.placeholders.crop").text,
         acres: t("app.farms.new.placeholders.acres").text,
+        location: t("app.farms.new.placeholders.location").text,
       },
       buttons: {
         saving: t("app.farms.new.buttons.saving").text,

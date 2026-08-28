@@ -852,6 +852,8 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.farms.new.placeholders.crop": "فصل منتخب کریں",
   "app.farms.new.fields.acres": "رقبہ (ایکڑ)",
   "app.farms.new.placeholders.acres": "مثلاً ۱۲.۵",
+  "app.farms.new.fields.location": "مقام / گاوں",
+  "app.farms.new.placeholders.location": "گاؤں یا شہر کا نام لکھیں",
   "app.farms.new.buttons.saving": "محفوظ ہو رہا ہے…",
   "app.farms.new.buttons.save": "کھیت محفوظ کریں",
   "app.farms.new.demoNotice": "ڈیمو — محفوظ کرنا ابھی ڈیٹابیس سے نہیں جڑا",

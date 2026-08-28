@@ -56,12 +56,14 @@ export type FarmsBundle = {
       district: string;
       crop: string;
       acres: string;
+      location: string;
     };
     placeholders: {
       name: string;
       district: string;
       crop: string;
       acres: string;
+      location: string;
     };
     buttons: {
       saving: string;

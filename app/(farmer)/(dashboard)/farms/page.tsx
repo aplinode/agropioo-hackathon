@@ -63,13 +63,22 @@ export default async function FarmsPage() {
         title={bundle.list.heading}
         description={bundle.list.description}
         action={
-          <Link
-            href="/farms/new"
-            className="inline-flex min-h-11 items-center gap-1 rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline lg:hidden"
-          >
-            <PlusIcon className="h-4 w-4" />
-            {bundle.list.addLink}
-          </Link>
+          <>
+            <Link
+              href="/farms/new"
+              className="inline-flex min-h-11 items-center gap-1 rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline lg:hidden"
+            >
+              <PlusIcon className="h-4 w-4" />
+              {bundle.list.addLink}
+            </Link>
+            <Link
+              href="/farms/new"
+              className="hidden lg:inline-flex h-11 items-center gap-2 rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md"
+            >
+              <PlusIcon className="h-4 w-4" />
+              {bundle.list.addNewFarm}
+            </Link>
+          </>
         }
       />
 

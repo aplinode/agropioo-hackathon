@@ -856,6 +856,8 @@ export const en = {
   "app.farms.new.placeholders.crop": "Choose crop",
   "app.farms.new.fields.acres": "Area (acres)",
   "app.farms.new.placeholders.acres": "e.g. 12.5",
+  "app.farms.new.fields.location": "Location / Village",
+  "app.farms.new.placeholders.location": "Type village or city name",
   "app.farms.new.buttons.saving": "Saving\u2026",
   "app.farms.new.buttons.save": "Save farm",
   "app.farms.new.demoNotice": "DEMO \u00b7 saving isn\u2019t wired to a database yet",

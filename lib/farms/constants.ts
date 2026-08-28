@@ -1,4 +1,12 @@
-export const CROPS = ['wheat', 'cotton', 'sugarcane', 'maize', 'rice'] as const;
+export const CROPS = [
+  'wheat', 'cotton', 'sugarcane', 'maize', 'rice',
+  'barley', 'mustard', 'sunflower', 'sesame', 'peanut',
+  'millet', 'sorghum', 'gram', 'lentil', 'mung bean',
+  'onion', 'potato', 'tomato', 'cauliflower', 'cabbage',
+  'carrot', 'radish', 'spinach', 'okra', 'chili',
+  'cucumber', 'watermelon', 'muskmelon', 'citrus', 'mango',
+  'banana', 'apple', 'grape', 'olive', 'date palm'
+] as const;
 export type Crop = (typeof CROPS)[number];
 
 export const RECORD_TYPES = ['sowing', 'planting', 'irrigation', 'fertilizer', 'pesticide', 'disease', 'harvest'] as const;

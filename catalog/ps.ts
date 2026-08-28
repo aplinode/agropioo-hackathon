@@ -850,6 +850,8 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.farms.new.placeholders.crop": "زبڼه وټاکئ",
   "app.farms.new.fields.acres": "اندازه (ایکړ)",
   "app.farms.new.placeholders.acres": "لکه ۱۲.۵",
+  "app.farms.new.fields.location": "ځای / کلیو",
+  "app.farms.new.placeholders.location": "کلیو یا ښار نوم لیکئ",
   "app.farms.new.buttons.saving": "خونديږي…",
   "app.farms.new.buttons.save": "کډه خوندي کړئ",
   "app.farms.new.demoNotice": "ډیمو — خوندي کول اوسه د ډیټابیس سره نه لري",
