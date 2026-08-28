@@ -2,7 +2,7 @@
    verify pass + code email. Duplicate VERIFIED email is the ONE explicit
    409 (FR2); duplicate UNVERIFIED re-runs verification with stored values. */
 
-import { query, queryOne } from "@/lib/db";
+import { queryOne } from "@/lib/db";
 import {
   errorResponse,
   jsonResponse,

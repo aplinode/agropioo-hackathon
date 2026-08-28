@@ -1,4 +1,4 @@
-import { query, queryOne, withTransaction } from '@/lib/db';
+import { queryOne, withTransaction } from '@/lib/db';
 import { errorResponse, jsonResponse, readJsonBody } from '@/lib/http';
 import { requireSessionApi } from '@/lib/auth/guards';
 import { createRecordSchema } from '@/lib/validation/farms';

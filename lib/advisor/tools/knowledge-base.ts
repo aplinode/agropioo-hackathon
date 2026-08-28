@@ -1,6 +1,6 @@
 import { tool } from "@openai/agents";
 import { z } from "zod";
-import { query } from "@/lib/db";
+import { query as dbQuery } from "@/lib/db";
 import OpenAI from "openai";
 
 let openaiClient: OpenAI | null = null;
@@ -41,7 +41,7 @@ export const searchKnowledgeBase = tool({
 
     // Search via Postgres function
     const vectorLiteral = `[${queryEmbedding.join(",")}]`;
-    const data = await query<{
+    const data = await dbQuery<{
       content: string;
       document_title: string;
       crop_type: string | null;
