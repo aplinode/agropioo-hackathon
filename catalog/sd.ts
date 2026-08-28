@@ -851,6 +851,8 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.farms.new.placeholders.crop": "فصل ڏيڪھيو",
   "app.farms.new.fields.acres": "اندازه (ایکڙ)",
   "app.farms.new.placeholders.acres": "مثال طور ۱۲.۵",
+  "app.farms.new.fields.location": "مقام / ڳوٺ",
+  "app.farms.new.placeholders.location": "ڳوٺ یا شھر جو نالو لکو",
   "app.farms.new.buttons.saving": "خوندي ٿي رهيو آهي…",
   "app.farms.new.buttons.save": "کيثر خوندي ڪريو",
   "app.farms.new.demoNotice": "ڊيمو — خوندي ڪرڻ هن وقت ڊيٽابیس سان نه جوڑي",

@@ -850,6 +850,8 @@ export const hno: Partial<Record<CatalogKey, string>> = {
   "app.farms.new.placeholders.crop": "فصل چنو",
   "app.farms.new.fields.acres": "رقبہ (ایکڑ)",
   "app.farms.new.placeholders.acres": "مثلاً ۱۲.۵",
+  "app.farms.new.fields.location": "مقام / گاں",
+  "app.farms.new.placeholders.location": "گاں یا شہر دا ناں لکھو",
   "app.farms.new.buttons.saving": "محفوظ ہو رہا اے…",
   "app.farms.new.buttons.save": "کھیت محفوظ کرو",
   "app.farms.new.demoNotice": "ڈیمو — محفوظ کرنا ہُن ڈیٹابیس نال نہیں جُڑیا",

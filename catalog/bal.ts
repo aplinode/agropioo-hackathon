@@ -850,6 +850,8 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "app.farms.new.placeholders.crop": "فصل چنئ",
   "app.farms.new.fields.acres": "رقبہ (ایکڑ)",
   "app.farms.new.placeholders.acres": "مسلاں ۱۲.۵",
+  "app.farms.new.fields.location": "مقام / گاں",
+  "app.farms.new.placeholders.location": "گاں یا شہر ناں لکھئ",
   "app.farms.new.buttons.saving": "محفوظ ہوی رہا آ…",
   "app.farms.new.buttons.save": "شُتُم محفوظ کنئ",
   "app.farms.new.demoNotice": "ڈیمو — محفوظ کرنا ہُن ڈیٹابیس نال نہیں جُڑیا",
