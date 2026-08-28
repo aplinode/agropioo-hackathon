@@ -4,18 +4,14 @@ import Link from "next/link";
 import {
   CloudRainIcon,
   LeafIcon,
-  SproutIcon,
-  WheatIcon,
-  FlaskIcon,
-  BugIcon,
   ArrowRightIcon,
   MapPinIcon,
-  RecordIcon,
 } from "@/components/icons";
 import { getFarmsBundle } from "@/lib/i18n/server";
 import { requireSessionPage } from "@/lib/auth/guards";
 import { getSupabase } from "@/lib/supabase";
 import { computeFarmHealth } from "@/lib/farms/health";
+import FarmDetailRecordItem from "./farm-detail-record-item";
 
 export const metadata: Metadata = {
   title: "Farm details — Agropioo",
@@ -25,16 +21,6 @@ const healthChip = {
   good: "bg-agro-mint text-agro-canopy",
   watch: "border border-white/30 bg-white/10 text-white",
 } as const;
-
-const recordKindIcon: Record<string, React.ComponentType<{size?: number}>> = {
-  irrigation: CloudRainIcon,
-  fertilizer: SproutIcon,
-  pesticide: FlaskIcon,
-  disease: BugIcon,
-  harvest: WheatIcon,
-  sowing: SproutIcon,
-  planting: LeafIcon,
-};
 
 const stageTrackByCrop: Record<string, string[]> = {
   wheat: ['sowing', 'tillering', 'vegetative', 'grainFilling', 'ready'],
@@ -73,13 +59,13 @@ export default async function FarmDetailPage({
       .maybeSingle();
 
     if (!error && data) {
-      const { data: recentRecords } = await supabase
-        .from('records')
-        .select('*')
-        .eq('farm_id', id)
-        .order('event_date', { ascending: false })
-        .order('created_at', { ascending: false })
-        .limit(5);
+        const { data: recentRecords } = await supabase
+          .from('records')
+          .select('*')
+          .eq('farm_id', id)
+          .order('event_date', { ascending: false })
+          .order('created_at', { ascending: false })
+          .limit(6);
 
       const health = computeFarmHealth(data.growth_stages as Record<string, string>, recentRecords ?? []);
 
@@ -196,33 +182,19 @@ export default async function FarmDetailPage({
           </Link>
         </div>
         <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
-          {(recentRecords as Record<string, unknown>[]).map((record) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const r = record as any;
-            const KindIcon = recordKindIcon[r.type] || RecordIcon;
-            return (
-              <li key={r.id} className="flex items-start gap-3 p-4">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-agro-mint text-agro-canopy">
-                  <KindIcon size={18} />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold leading-snug text-agro-ink">{r.title || r.type}</p>
-                  <p className="mt-0.5 line-clamp-1 text-xs leading-relaxed text-agro-slate">{r.note}</p>
-                </div>
-                <span className="shrink-0 font-mono text-[0.7rem] uppercase tracking-wide text-agro-slate">{r.event_date}</span>
-              </li>
-            );
-          })}
+          {(recentRecords as Record<string, unknown>[]).map((record) => (
+            <FarmDetailRecordItem key={record.id as string} record={record} />
+          ))}
         </ul>
       </section>
 
       <div className="flex flex-col gap-3 sm:flex-row">
-        <Link href={`/records/new?farm=${f.id}`} className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0">
+        <Link href={`/records/new?farm=${f.id}`} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 sm:w-auto">
           {bundle.detail.logFieldEvent}
           <ArrowRightIcon size={16} />
         </Link>
         <form action={`/api/farms/${f.id}/archive`} method="POST">
-          <button type="submit" className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors duration-200 hover:border-agro-canopy hover:bg-agro-mint">
+          <button type="submit" className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors duration-200 hover:border-agro-canopy hover:bg-agro-mint sm:w-auto">
             <MapPinIcon size={16} className="text-agro-canopy" />
             Archive farm
           </button>

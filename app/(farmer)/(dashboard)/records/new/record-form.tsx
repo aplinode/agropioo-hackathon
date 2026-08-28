@@ -147,14 +147,11 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
         {isFarmLocked ? (
           <div className="mt-2">
             {lockedFarmName === null ? (
-              <div className="flex h-12 items-center rounded-xl border border-agro-sprout bg-agro-cloud/40 px-4 text-sm text-agro-slate">
+              <div className="flex h-12 items-center rounded-xl border border-agro-sprout/60 bg-agro-cloud px-4 text-sm text-agro-slate">
                 Loading farm…
               </div>
             ) : (
-              <div className="flex h-12 items-center gap-2 rounded-xl border border-agro-sprout bg-agro-cloud/40 px-4 text-sm font-semibold text-agro-ink">
-                <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-agro-mint text-agro-canopy" aria-hidden="true">
-                  <CheckIcon size={14} />
-                </span>
+              <div className="flex h-12 items-center rounded-xl border border-agro-sprout/60 bg-agro-cloud px-4 text-sm text-agro-slate">
                 {lockedFarmName}
               </div>
             )}
