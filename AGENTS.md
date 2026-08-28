@@ -42,8 +42,8 @@
 ### Stack & architecture (fixed)
 
 - Full-stack Next.js. Route Handlers ARE the API layer — no separate Express/Node backend. Form submissions also go through Route Handlers; Server Actions are not used.
-- Supabase is the PostgreSQL database ONLY (no Supabase Auth, Storage APIs, or Edge Functions). Data access always flows Client → Route Handler → Supabase; never client-to-DB directly.
-- One shared database client module (`lib/supabase.ts`). All handlers import from it — no ad-hoc clients.
+- Neon Lakebase Postgres is the PostgreSQL database. Data access always flows Client → Route Handler → Postgres; never client-to-DB directly.
+- One shared database client module (`lib/db.ts`). All handlers import from it — no ad-hoc clients.
 - Schema changes live as migration files in the repo, applied in order. Dashboard-only schema edits are not allowed.
 - TypeScript + Tailwind CSS v4 stay. React Server Components by default.
 - This is NOT stock Next.js — read the relevant guide in `node_modules/next/dist/docs/` before writing any code (see block below).

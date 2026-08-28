@@ -1,6 +1,6 @@
 # Agropioo — Information Architecture
 
-> Roles, pages, and API routes for the full product. Aligned with `Agropioo_Project_Documentation.md` (Pakistan-first AI agriculture platform) and `Agropioo Tech Stack.md` (Next.js + Supabase PostgreSQL).
+> Roles, pages, and API routes for the full product. Aligned with `Agropioo_Project_Documentation.md` (Pakistan-first AI agriculture platform) and `Agropioo Tech Stack.md` (Next.js + Neon Lakebase Postgres).
 
 ---
 
@@ -90,7 +90,7 @@ app/api/notifications
 app/api/admin/*
 ```
 
-All DB access flows through Next.js Route Handlers → Supabase PostgreSQL (no direct client-to-DB).
+All DB access flows through Next.js Route Handlers → Neon Lakebase Postgres (no direct client-to-DB).
 
 ---
 

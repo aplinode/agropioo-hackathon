@@ -13,7 +13,7 @@ Next.js will handle both:
 - Email operations
 - Database communication
 
-Supabase will be used **only as the PostgreSQL database**.
+Neon Lakebase Postgres will be used as the PostgreSQL database.
 
 ---
 
@@ -119,11 +119,11 @@ The backend will handle:
 
 ## 4. Database
 
-### Supabase PostgreSQL
+### Neon Lakebase Postgres
 
-Supabase will be used **only as the PostgreSQL database provider**.
+Neon Lakebase Postgres will be used as the PostgreSQL database provider.
 
-The application will use Supabase for:
+The application will use Postgres for:
 
 - PostgreSQL database
 - Tables
@@ -143,7 +143,7 @@ Next.js Client
       ↓
 Next.js Server-side Logic / Route Handler
       ↓
-Supabase PostgreSQL
+Neon Lakebase Postgres
 ```
 
 ---
@@ -173,7 +173,7 @@ Next.js Server
       ↓
 bcryptjs Hashing
       ↓
-Supabase PostgreSQL
+Neon Lakebase Postgres
 ```
 
 ### JWT Authentication
@@ -271,8 +271,8 @@ Sensitive credentials must never be hardcoded.
 Example `.env.local` structure:
 
 ```env
-SUPABASE_URL=
-SUPABASE_ANON_KEY=
+DATABASE_URL=
+DATABASE_URL_UNPOOLED=
 
 JWT_SECRET=
 
@@ -292,7 +292,7 @@ Sensitive environment variables must only be accessed from server-side code.
 Install the core packages:
 
 ```bash
-npm install @supabase/supabase-js bcryptjs jose nodemailer zod react-hook-form @hookform/resolvers
+npm install pg @types/pg bcryptjs jose nodemailer zod react-hook-form @hookform/resolvers
 ```
 
 ---
@@ -317,7 +317,7 @@ npm install @supabase/supabase-js bcryptjs jose nodemailer zod react-hook-form @
                  └─────────┼──────────┘
                            │
                            ▼
-                 Supabase PostgreSQL
+                 Neon Lakebase Postgres
 ```
 
 ---
@@ -330,8 +330,8 @@ npm install @supabase/supabase-js bcryptjs jose nodemailer zod react-hook-form @
 | Frontend | React + Next.js |
 | Styling | Tailwind CSS |
 | Backend/API | Next.js Route Handlers |
-| Database | Supabase PostgreSQL |
-| Database Client | `@supabase/supabase-js` |
+| Database | Neon Lakebase Postgres |
+| Database Client | `pg` |
 | Password Hashing | `bcryptjs` |
 | JWT Authentication | `jose` |
 | Email Library | Nodemailer |
@@ -350,7 +350,7 @@ npm install @supabase/supabase-js bcryptjs jose nodemailer zod react-hook-form @
 Next.js
 + Tailwind CSS
 + Next.js Route Handlers
-+ Supabase PostgreSQL (Database Only)
++ Neon Lakebase Postgres (Database Only)
 + bcryptjs
 + jose
 + Nodemailer
@@ -362,4 +362,4 @@ Next.js
 
 **No separate Node.js + Express.js backend will be used.**
 
-Next.js will function as the complete full-stack application, while Supabase will be used primarily for PostgreSQL database storage.
+Next.js will function as the complete full-stack application, while Neon Lakebase Postgres provides the PostgreSQL database.
