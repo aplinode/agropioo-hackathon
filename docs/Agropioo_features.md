@@ -138,29 +138,7 @@
 
 ---
 
-### Feature #6: Government Scheme Matcher
-
-**Problem:** Thousands of government schemes exist for farmers, but most farmers are unaware of schemes they qualify for.
-
-**Solution:** Farmer enters basic profile (crop, land size, location, caste category, income) → AI matches them to all eligible government schemes → shows benefits, required documents, and direct apply links.
-
-**How It Works (No Hardware):**
-- Comprehensive database of central + state government agricultural schemes
-- Farmer profile captured via simple form
-- Rule-based + ML matching engine filters eligible schemes
-- Results ranked by relevance and benefit value
-- One-click redirect to official application portal
-
-**APIs / Tech Stack:**
-- Custom scheme database (scraped from **pmkisan.gov.in**, **nabard.org**, state agri portals)
-- Fuzzy matching algorithm for eligibility rules
-- PDF generation for document checklist
-
-**Impact Metric:** Average farmer misses out on ₹12,000-₹50,000/year in eligible subsidies.
-
----
-
-### Feature #7: Crop Recommendation Engine
+### Feature #6: Crop Recommendation Engine
 
 **Problem:** Farmers often plant the same crop every year without considering market demand, soil depletion, or climate shifts — leading to low profits and soil degradation.
 
@@ -184,7 +162,7 @@
 
 ---
 
-### Feature #8: Farm Profit/Loss Calculator & Forecast
+### Feature #7: Farm Profit/Loss Calculator & Forecast
 
 **Problem:** Farmers lack financial planning tools and often realize losses only after harvest.
 
@@ -207,7 +185,7 @@
 
 ---
 
-### Feature #9: Community Forum + Expert Connect
+### Feature #8: Community Forum + Expert Connect
 
 **Problem:** Farmers face unique local problems but have no platform to share knowledge or get expert advice.
 
@@ -235,7 +213,7 @@
 
 ---
 
-### Feature #10: Satellite Change Detection (Time-Lapse Analysis)
+### Feature #9: Satellite Change Detection (Time-Lapse Analysis)
 
 **Problem:** Farmers and agri-officers cannot easily track how their fields change over weeks/months.
 
@@ -258,7 +236,7 @@
 
 ---
 
-### Feature #11: AI Pest Outbreak Prediction
+### Feature #10: AI Pest Outbreak Prediction
 
 **Problem:** Pest attacks destroy entire harvests overnight because farmers react too late.
 
@@ -281,7 +259,7 @@
 
 ---
 
-### Feature #12: Voice-First UI (Phone Call Mode)
+### Feature #11: Voice-First UI (Phone Call Mode)
 
 **Problem:** Many farmers in rural areas don't own smartphones or can't read — a traditional app UI excludes them entirely.
 
@@ -305,7 +283,7 @@
 
 ---
 
-### Feature #13: Carbon Footprint Tracker & Carbon Credit Estimator
+### Feature #12: Carbon Footprint Tracker & Carbon Credit Estimator
 
 **Problem:** Sustainable farmers are not rewarded for eco-friendly practices, and carbon credit markets are inaccessible to smallholder farmers.
 
@@ -329,7 +307,7 @@
 
 ---
 
-### Feature #14: Offline-First PWA + SMS Alerts
+### Feature #13: Offline-First PWA + SMS Alerts
 
 **Problem:** Rural areas have poor or no internet connectivity — apps that require constant internet are useless in the field.
 
