@@ -749,6 +749,7 @@ export const ps: Partial<Record<CatalogKey, string>> = {
     "تaci په څنګه یو عکس اپلوډ کړئ — فوري تشخیص او راتلونکی ګام ستا په موبایل کې.",
   "app.dashboard.myFarms": "زما کډې",
   "app.dashboard.addFarm": "کډه اضافه کړئ",
+  "app.dashboard.viewAllFarms": "ټولې کډې وګورئ",
   "app.dashboard.health.good": "چنګه",
   "app.dashboard.health.watch": "خبردار",
   "app.dashboard.setupChecklist": "خپله کډه ټکار کړئ",

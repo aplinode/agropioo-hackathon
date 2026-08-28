@@ -750,6 +750,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
     "متاثرے پتے کی تصیر اپلوڈ کریں — فوری تشخیص اور اگلا قدم آپ کے فون پر۔",
   "app.dashboard.myFarms": "میرے کھیت",
   "app.dashboard.addFarm": "کھیت شامل کریں",
+  "app.dashboard.viewAllFarms": "تمام کھیت دیکھیں",
   "app.dashboard.health.good": "اچھا",
   "app.dashboard.health.watch": "خبردار",
   "app.dashboard.setupChecklist": "اپنا کھیت ترتیب دیں",

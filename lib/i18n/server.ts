@@ -184,6 +184,7 @@ export async function getDashboardBundle(): Promise<DashboardBundle> {
     detectBody: t("app.dashboard.detectBody").text,
     myFarms: t("app.dashboard.myFarms").text,
     addFarm: t("app.dashboard.addFarm").text,
+    viewAllFarms: t("app.dashboard.viewAllFarms").text,
     healthGood: t("app.dashboard.health.good").text,
     healthWatch: t("app.dashboard.health.watch").text,
     setupChecklist: t("app.dashboard.setupChecklist").text,

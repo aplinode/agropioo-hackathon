@@ -749,6 +749,7 @@ export const skr: Partial<Record<CatalogKey, string>> = {
     "متاثرے پتے دی تصویر اپلوڈ کaro — فوری تشخیص تے اگلا قدم تہاڈے فون تے۔",
   "app.dashboard.myFarms": "میرے کھیت",
   "app.dashboard.addFarm": "کھیت شامل کرو",
+  "app.dashboard.viewAllFarms": "سارے کھیت ویکھو",
   "app.dashboard.health.good": "چنگا",
   "app.dashboard.health.watch": "خبردار",
   "app.dashboard.setupChecklist": "اپنا کھیت ترتیب کرو",

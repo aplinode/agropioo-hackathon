@@ -749,6 +749,7 @@ export const sd: Partial<Record<CatalogKey, string>> = {
     "متاثريل پتي جو تصویر اپلوڊ ڪريو — فوري تشخيص ۽ اڳلا قدم توھان جي فون تي.",
   "app.dashboard.myFarms": "منھنجا کيثر",
   "app.dashboard.addFarm": "کيثر شامل ڪريو",
+  "app.dashboard.viewAllFarms": "سڀيو کيثر ڏيڪھو",
   "app.dashboard.health.good": "چڱو",
   "app.dashboard.health.watch": "خبردار",
   "app.dashboard.setupChecklist": "پنھو کيثر ترتيب ڪريو",
