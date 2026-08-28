@@ -749,6 +749,7 @@ export const bal: Partial<Record<CatalogKey, string>> = {
     "متاثرے پتے ئی تصویر اپلوڈ کنئ — فوری تشخیص اور اڳلا قدم ئی فون تی۔",
   "app.dashboard.myFarms": "میں شُتُم",
   "app.dashboard.addFarm": "شُتُم شامل کنئ",
+  "app.dashboard.viewAllFarms": "ہر شُتُم دیکھئ",
   "app.dashboard.health.good": "اچھا",
   "app.dashboard.health.watch": "خبردار",
   "app.dashboard.setupChecklist": "شُتُم ترتیب کنئ",

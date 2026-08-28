@@ -141,6 +141,8 @@ type DashboardViewProps = {
   appLocale?: Locale;
   /** Server-resolved translation bundle (all dashboard strings). */
   bundle: DashboardBundle;
+  /** Real farms fetched from the database (server-passed). */
+  farms?: Array<Record<string, unknown>>;
 };
 
 /* Farmer home screen — answers "kya karoon aaj?" in one scan.
@@ -153,6 +155,7 @@ export default function DashboardView({
   weatherAvailable = true,
   appLocale,
   bundle,
+  farms: realFarms,
 }: DashboardViewProps) {
   const isEmpty = variant === "empty";
   const completedCount = isEmpty ? 0 : 1;
@@ -166,6 +169,20 @@ export default function DashboardView({
   const { farmer, advisory, seasonTip, weather, alerts: demoAlerts, farms: demoFarms, checklistItems, quickActions } = getDemoData(bundle);
   const advisory_ = isEmpty ? seasonTip : advisory;
   const topAlerts = demoAlerts.slice(0, 3);
+
+  const displayFarms = realFarms && realFarms.length > 0
+    ? realFarms.map((f: Record<string, unknown>) => ({
+        id: f.id as string,
+        name: f.name as string,
+        location: f.location as string,
+        acres: f.acres as number,
+        crops: Array.isArray(f.crops) ? (f.crops as string[]).join(', ') : String(f.crops),
+        stage: f.growth_stages && typeof f.growth_stages === 'object'
+          ? Object.values(f.growth_stages as Record<string, string>).filter(Boolean).join(', ') || 'Active'
+          : 'Active',
+        health: (f.health as 'good' | 'watch') || 'good',
+      }))
+    : demoFarms;
 
   const severityWord = {
     critical: bundle.severityCritical,
@@ -513,19 +530,19 @@ export default function DashboardView({
           <SectionHead
             id="farms-heading"
             title={bundle.myFarms}
-            meta={String(demoFarms.length)}
+            meta={String(displayFarms.length)}
             action={
               <Link
-                href="/farms/new"
+                href="/farms"
                 className="inline-flex min-h-11 items-center gap-1 rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline"
               >
-                <PlusIcon className="h-4 w-4" />
-                {bundle.addFarm}
+                {bundle.viewAllFarms}
+                <ArrowRightIcon className="h-4 w-4" />
               </Link>
             }
           />
           <ul className="mt-3 flex flex-wrap gap-4 pb-2 lg:grid lg:grid-cols-3 lg:pb-0">
-            {demoFarms.map((farm) => (
+            {displayFarms.map((farm) => (
               <li key={farm.id} className="w-full min-w-[min(16rem,100%)] flex-1 basis-64 sm:basis-72 lg:w-auto">
                 <Link
                   href={`/farms/${farm.id}`}

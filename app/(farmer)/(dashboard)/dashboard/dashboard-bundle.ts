@@ -33,6 +33,7 @@ export type DashboardBundle = {
   detectBody: string;
   myFarms: string;
   addFarm: string;
+  viewAllFarms: string;
   healthGood: string;
   healthWatch: string;
   setupChecklist: string;

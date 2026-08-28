@@ -754,6 +754,7 @@ export const en = {
     "Upload a photo of an affected leaf \u2014 get a diagnosis and what to do next, right on your phone.",
   "app.dashboard.myFarms": "My farms",
   "app.dashboard.addFarm": "Add farm",
+  "app.dashboard.viewAllFarms": "View all farms",
   "app.dashboard.health.good": "Good",
   "app.dashboard.health.watch": "Watch",
   "app.dashboard.setupChecklist": "Set up your farm",
