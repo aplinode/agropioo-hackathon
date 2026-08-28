@@ -1,4 +1,4 @@
-import { getSupabase } from '@/lib/supabase';
+import { query, queryOne } from '@/lib/db';
 import { errorResponse, jsonResponse, readJsonBody } from '@/lib/http';
 import { requireSessionApi } from '@/lib/auth/guards';
 import { createFarmSchema } from '@/lib/validation/farms';
@@ -11,29 +11,27 @@ export async function GET() {
   if (!session) return errorResponse('unauthorized', 'Unauthorized', 401);
 
   try {
-    const supabase = getSupabase();
-    const { data: farms, error } = await supabase
-      .from('farms')
-      .select('*')
-      .eq('account_id', session.accountId)
-      .is('archived_at', null)
-      .order('created_at', { ascending: false });
-
-    if (error) return errorResponse('server_error', error.message, 500);
+    const farms = await query(
+      `SELECT * FROM farms
+       WHERE account_id = $1 AND archived_at IS NULL
+       ORDER BY created_at DESC`,
+      [session.accountId]
+    );
 
     const enriched = await Promise.all(
       (farms ?? []).map(async (farm) => {
-        const { data: recent } = await supabase
-          .from('records')
-          .select('type, event_date')
-          .eq('farm_id', farm.id)
-          .order('event_date', { ascending: false })
-          .limit(5);
+        const recent = await query(
+          `SELECT type, event_date FROM records
+           WHERE farm_id = $1
+           ORDER BY event_date DESC
+           LIMIT 5`,
+          [farm.id]
+        );
 
-        const { data: seasons } = await supabase
-          .from('records')
-          .select('season, year')
-          .eq('farm_id', farm.id);
+        const seasons = await query(
+          `SELECT season, year FROM records WHERE farm_id = $1`,
+          [farm.id]
+        );
 
         const seasonsSet = new Set<string>();
         (seasons ?? []).forEach((r) => seasonsSet.add(`${r.season} ${r.year}`));
@@ -66,26 +64,27 @@ export async function POST(request: Request) {
     }
 
     const input = parsed.data as CreateFarmInput;
-    const supabase = getSupabase();
     const growthStages = defaultStagesForCrops(input.crops);
 
-    const { data, error } = await supabase
-      .from('farms')
-      .insert({
-        account_id: session.accountId,
-        name: input.name,
-        location: input.location,
-        district: input.district,
-        lat: input.lat,
-        lng: input.lng,
-        crops: input.crops,
-        acres: input.acres,
-        growth_stages: growthStages,
-      })
-      .select()
-      .single();
+    const data = await queryOne(
+      `INSERT INTO farms (
+         account_id, name, location, district, lat, lng, crops, acres, growth_stages
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING *`,
+      [
+        session.accountId,
+        input.name,
+        input.location,
+        input.district,
+        input.lat,
+        input.lng,
+        JSON.stringify(input.crops),
+        input.acres,
+        JSON.stringify(growthStages),
+      ]
+    );
 
-    if (error) return errorResponse('server_error', error.message, 500);
+    if (!data) return errorResponse('server_error', 'Failed to create farm', 500);
     return jsonResponse(data, 201);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';

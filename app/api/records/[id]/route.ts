@@ -1,21 +1,21 @@
-import { getSupabase } from '@/lib/supabase';
+import { query, queryOne } from '@/lib/db';
 import { errorResponse, jsonResponse, readJsonBody } from '@/lib/http';
 import { requireSessionApi } from '@/lib/auth/guards';
 import { updateRecordSchema } from '@/lib/validation/farms';
 import type { UpdateRecordInput } from '@/lib/validation/farms';
 
 async function getOwnedRecord(recordId: string, accountId: string) {
-  const supabase = getSupabase();
-  const { data, error } = await supabase
-    .from('records')
-    .select('*, farm:farms!inner(account_id, archived_at)')
-    .eq('id', recordId)
-    .eq('farm.account_id', accountId)
-    .is('farm.archived_at', null)
-    .maybeSingle();
-
-  if (error) return { record: null, error };
-  return { record: data, error: null };
+  try {
+    const record = await queryOne(
+      `SELECT r.* FROM records r
+       JOIN farms f ON f.id = r.farm_id
+       WHERE r.id = $1 AND f.account_id = $2 AND f.archived_at IS NULL`,
+      [recordId, accountId]
+    );
+    return { record, error: null };
+  } catch (error) {
+    return { record: null, error };
+  }
 }
 
 export async function PATCH(_request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -36,7 +36,6 @@ export async function PATCH(_request: Request, { params }: { params: Promise<{ i
     }
 
     const input = parsed.data as UpdateRecordInput;
-    const supabase = getSupabase();
     const updatePayload: Record<string, unknown> = { ...input };
     if (input.weather_condition !== undefined) {
       const existingWeather = (record.weather as Record<string, unknown>) ?? {};
@@ -47,14 +46,25 @@ export async function PATCH(_request: Request, { params }: { params: Promise<{ i
       };
     }
 
-    const { data, error: updateError } = await supabase
-      .from('records')
-      .update(updatePayload)
-      .eq('id', id)
-      .select()
-      .single();
+    const setClauses: string[] = [];
+    const values: unknown[] = [];
+    let idx = 1;
+    for (const [key, value] of Object.entries(updatePayload)) {
+      if (value === undefined) continue;
+      setClauses.push(`${key} = $${idx}`);
+      values.push(value);
+      idx++;
+    }
+    values.push(id);
 
-    if (updateError) return errorResponse('server_error', updateError.message, 500);
+    const data = await queryOne(
+      `UPDATE records SET ${setClauses.join(', ')}
+       WHERE id = $${idx}
+       RETURNING *`,
+      values
+    );
+
+    if (!data) return errorResponse('server_error', 'Failed to update record', 500);
     return jsonResponse(data);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
@@ -72,8 +82,10 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     if (error) return errorResponse('server_error', error.message, 500);
     if (!record) return errorResponse('not_found', 'Record not found', 404);
 
-    const supabase = getSupabase();
-    await supabase.from('records').delete().eq('id', id);
+    await query(
+      `DELETE FROM records WHERE id = $1`,
+      [id]
+    );
     return jsonResponse({ ok: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';

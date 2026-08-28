@@ -1,4 +1,4 @@
-import { getSupabase } from '@/lib/supabase';
+import { query, queryOne } from '@/lib/db';
 import { errorResponse, jsonResponse } from '@/lib/http';
 import { requireSessionApi } from '@/lib/auth/guards';
 import { listRecordsQuerySchema } from '@/lib/validation/farms';
@@ -19,43 +19,47 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     if (!parsed.success) {
       return errorResponse('validation_error', 'Invalid query params', 422);
     }
-    const query = parsed.data;
+    const filters = parsed.data;
 
-    const supabase = getSupabase();
-    const { data: farm, error: farmError } = await supabase
-      .from('farms')
-      .select('id')
-      .eq('id', id)
-      .eq('account_id', session.accountId)
-      .is('archived_at', null)
-      .maybeSingle();
+    const farm = await queryOne<{ id: string }>(
+      `SELECT id FROM farms
+       WHERE id = $1 AND account_id = $2 AND archived_at IS NULL`,
+      [id, session.accountId]
+    );
 
-    if (farmError) return errorResponse('server_error', farmError.message, 500);
     if (!farm) return errorResponse('not_found', 'Farm not found', 404);
 
-    let recordsQuery = supabase
-      .from('records')
-      .select('*')
-      .eq('farm_id', id)
-      .order('event_date', { ascending: false })
-      .order('created_at', { ascending: false })
-      .limit(query.limit);
+    const conditions = ['farm_id = $1'];
+    const values: unknown[] = [id];
+    let idx = 2;
 
-    if (query.season) {
-      recordsQuery = recordsQuery.eq('season', query.season);
+    if (filters.season) {
+      conditions.push(`season = $${idx}`);
+      values.push(filters.season);
+      idx++;
     }
-    if (query.year) {
-      recordsQuery = recordsQuery.eq('year', query.year);
+    if (filters.year) {
+      conditions.push(`year = $${idx}`);
+      values.push(filters.year);
+      idx++;
     }
-    if (query.cursor) {
-      const [cursorCreatedAt, cursorId] = query.cursor.split('|');
-      if (cursorCreatedAt && cursorId) {
-        recordsQuery = recordsQuery.or(`and(event_date.lt.${cursorCreatedAt}),and(event_date.eq.${cursorCreatedAt},id.lt.${cursorId})`);
+    if (filters.cursor) {
+      const [cursorEventDate, cursorId] = filters.cursor.split('|');
+      if (cursorEventDate && cursorId) {
+        conditions.push(`(event_date < $${idx} OR (event_date = $${idx} AND id < $${idx + 1}))`);
+        values.push(cursorEventDate, cursorId);
+        idx += 2;
       }
     }
 
-    const { data, error } = await recordsQuery;
-    if (error) return errorResponse('server_error', error.message, 500);
+    const data = await query(
+      `SELECT * FROM records
+       WHERE ${conditions.join(' AND ')}
+       ORDER BY event_date DESC, created_at DESC
+       LIMIT $${idx}`,
+      [...values, filters.limit]
+    );
+
     return jsonResponse(data ?? []);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';

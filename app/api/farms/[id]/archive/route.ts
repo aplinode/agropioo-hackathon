@@ -1,4 +1,4 @@
-import { getSupabase } from '@/lib/supabase';
+import { queryOne } from '@/lib/db';
 import { errorResponse, jsonResponse } from '@/lib/http';
 import { requireSessionApi } from '@/lib/auth/guards';
 
@@ -8,17 +8,14 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
 
   try {
     const { id } = await params;
-    const supabase = getSupabase();
-    const { data, error } = await supabase
-      .from('farms')
-      .update({ archived_at: new Date().toISOString() })
-      .eq('id', id)
-      .eq('account_id', session.accountId)
-      .is('archived_at', null)
-      .select()
-      .maybeSingle();
+    const data = await queryOne(
+      `UPDATE farms
+       SET archived_at = $1, updated_at = now()
+       WHERE id = $2 AND account_id = $3 AND archived_at IS NULL
+       RETURNING *`,
+      [new Date().toISOString(), id, session.accountId]
+    );
 
-    if (error) return errorResponse('server_error', error.message, 500);
     if (!data) return errorResponse('not_found', 'Farm not found', 404);
     return jsonResponse({ ok: true });
   } catch (err) {

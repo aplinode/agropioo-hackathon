@@ -1,4 +1,4 @@
-import { getSupabase } from '@/lib/supabase';
+import { query, queryOne, withTransaction } from '@/lib/db';
 import { errorResponse, jsonResponse, readJsonBody } from '@/lib/http';
 import { requireSessionApi } from '@/lib/auth/guards';
 import { createRecordSchema } from '@/lib/validation/farms';
@@ -19,17 +19,13 @@ export async function POST(request: Request) {
     }
 
     const input = parsed.data as CreateRecordInput;
-    const supabase = getSupabase();
 
-    const { data: farm, error: farmError } = await supabase
-      .from('farms')
-      .select('lat, lng, crops, growth_stages, name')
-      .eq('id', input.farm_id)
-      .eq('account_id', session.accountId)
-      .is('archived_at', null)
-      .maybeSingle();
+    const farm = await queryOne<{ lat: number; lng: number; crops: unknown; growth_stages: unknown; name: string }>(
+      `SELECT lat, lng, crops, growth_stages, name FROM farms
+       WHERE id = $1 AND account_id = $2 AND archived_at IS NULL`,
+      [input.farm_id, session.accountId]
+    );
 
-    if (farmError) return errorResponse('server_error', farmError.message, 500);
     if (!farm) return errorResponse('not_found', 'Farm not found', 404);
 
     const weatherCondition = input.weather_condition ?? null;
@@ -47,37 +43,42 @@ export async function POST(request: Request) {
       weatherSnapshot.fetched_at = new Date().toISOString();
     }
 
-    const { data: record, error } = await supabase
-      .from('records')
-      .insert({
-        account_id: session.accountId,
-        farm_id: input.farm_id,
-        type: input.type,
-        season: input.season,
-        year: input.year,
-        event_date: input.event_date,
-        title: input.title,
-        note: input.note,
-        weather: weatherSnapshot,
-        yield_qty: input.yield_qty,
-        labor_cost: input.labor_cost,
-        transport_cost: input.transport_cost,
-      })
-      .select()
-      .single();
-
-    if (error) return errorResponse('server_error', error.message, 500);
-
     const crops = Array.isArray(farm.crops) ? farm.crops.map(String) : [];
     let growthStages = { ...(farm.growth_stages as Record<string, string>) };
     for (const crop of crops) {
       growthStages = autoAdvanceStage(growthStages, input.type, crop);
     }
 
-    await supabase
-      .from('farms')
-      .update({ growth_stages: growthStages })
-      .eq('id', input.farm_id);
+    const record = await withTransaction(async (client) => {
+      const insertResult = await client.query(
+        `INSERT INTO records (
+           account_id, farm_id, type, season, year, event_date,
+           title, note, weather, yield_qty, labor_cost, transport_cost
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+         RETURNING *`,
+        [
+          session.accountId,
+          input.farm_id,
+          input.type,
+          input.season,
+          input.year,
+          input.event_date,
+          input.title ?? null,
+          input.note ?? null,
+          JSON.stringify(weatherSnapshot),
+          input.yield_qty ?? null,
+          input.labor_cost ?? null,
+          input.transport_cost ?? null,
+        ]
+      );
+
+      await client.query(
+        `UPDATE farms SET growth_stages = $1, updated_at = now() WHERE id = $2`,
+        [JSON.stringify(growthStages), input.farm_id]
+      );
+
+      return insertResult.rows[0];
+    });
 
     return jsonResponse(record, 201);
   } catch (err) {
