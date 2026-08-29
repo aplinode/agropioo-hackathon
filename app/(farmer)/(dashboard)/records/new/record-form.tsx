@@ -122,11 +122,11 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
           {bundle.records.new.success.description}
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <button type="button" onClick={() => router.push('/farms')} className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0">
+          <button type="button" onClick={() => router.push('/farms')} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0">
             {bundle.records.new.success.viewFarms}
             <ArrowRightIcon size={16} />
           </button>
-          <button type="button" onClick={() => setStatus('idle')} className="inline-flex h-12 items-center justify-center rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors duration-200 hover:border-agro-canopy hover:bg-agro-mint">
+          <button type="button" onClick={() => setStatus('idle')} className="inline-flex min-h-12 items-center justify-center rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors duration-200 hover:border-agro-canopy hover:bg-agro-mint">
             Log another
           </button>
         </div>
@@ -135,7 +135,7 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
   }
 
   const inputClass = (err?: string) =>
-    `focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+    `focus-ring-none mt-2 min-h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
       err ? 'border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20' : 'border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20'
     }`;
 
@@ -206,7 +206,7 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
 
       <div>
         <label htmlFor="record-note" className="block text-sm font-semibold text-agro-ink">{bundle.records.new.fields.details}</label>
-        <textarea id="record-note" rows={3} {...register('note')} className={inputClass(errors.note?.message)} />
+        <textarea id="record-note" rows={3} {...register('note')} className={`${inputClass(errors.note?.message)} resize-y`} />
       </div>
 
       {isHarvest && (
@@ -246,7 +246,7 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
       <button
         type="submit"
         disabled={isSubmitting || status === 'loading'}
-        className="inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-agro-canopy text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
+        className="inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-agro-canopy text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
       >
         {status === 'loading' ? (
           <>

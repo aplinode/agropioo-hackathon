@@ -346,7 +346,7 @@ export default function AdvisorChat({ bundle, appLocale, initialDraft }: Props) 
                     className="max-w-[85%] rounded-2xl rounded-es-md border border-agro-sprout bg-white px-4 py-3 text-sm leading-relaxed text-agro-ink sm:max-w-[75%]"
                   >
                     <MarkdownRender text={streamingText} />
-                    <span className="ml-1 inline-block h-4 w-0.5 animate-pulse bg-agro-canopy" />
+                    <span className="ms-1 inline-block h-4 w-0.5 animate-pulse bg-agro-canopy" />
                   </div>
                 </div>
               )}

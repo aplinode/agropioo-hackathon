@@ -111,7 +111,7 @@ export default function PricesPage() {
             {/* Rate header */}
             <div className="flex items-start justify-between gap-3 p-5 pb-4">
               <div className="min-w-0">
-                <h2 className="truncate text-base font-semibold leading-snug text-agro-ink">
+                <h2 className="text-base font-semibold leading-snug text-agro-ink">
                   {item.crop}{" "}
                   <span className="text-sm font-medium text-agro-slate">{item.urduName}</span>
                 </h2>

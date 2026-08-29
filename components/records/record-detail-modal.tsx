@@ -115,7 +115,7 @@ export default function RecordDetailModal({ record, onClose }: Props) {
             .map((field) => (
               <div key={field.label} className="flex items-baseline justify-between gap-4 rounded-xl border border-agro-sprout/60 bg-agro-mint/40 px-4 py-2.5">
                 <span className="text-xs font-semibold uppercase tracking-wide text-agro-slate">{field.label}</span>
-                <span className="text-sm font-medium text-agro-ink text-right">{String(field.value)}</span>
+                <span className="text-sm font-medium text-agro-ink text-end">{String(field.value)}</span>
               </div>
             ))}
         </div>

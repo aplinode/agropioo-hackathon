@@ -100,7 +100,7 @@ function CropSearchSelect({
             Add crop
           </button>
           {open && (
-            <div className="absolute left-0 z-[9999] mt-1 w-64 overflow-auto rounded-xl border border-agro-sprout bg-white shadow-xl">
+            <div className="absolute start-0 z-[9999] mt-1 w-64 max-w-[calc(100vw-2rem)] overflow-auto rounded-xl border border-agro-sprout bg-white shadow-xl">
               <div className="p-2">
                 <input
                   autoFocus
@@ -115,7 +115,7 @@ function CropSearchSelect({
                   <button
                     key={crop}
                     type="button"
-                    className="flex w-full items-center px-4 py-2.5 text-left text-sm capitalize text-agro-ink transition-colors hover:bg-agro-mint"
+                    className="flex w-full items-center px-4 py-2.5 text-start text-sm capitalize text-agro-ink transition-colors hover:bg-agro-mint"
                     onClick={() => {
                       onToggle(crop);
                       setQuery("");
@@ -353,14 +353,14 @@ function LocationSearch({
             onChange(e.target.value);
           }}
           placeholder={`Type village or area in ${district || "your district"}...`}
-          className={`focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 pr-10 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+          className={`focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 pe-10 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
             error
               ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
               : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
           }`}
         />
         {loading && (
-          <div className="absolute right-3 top-1/2 mt-1">
+          <div className="absolute end-3 top-1/2 mt-1">
             <svg
               className="h-4 w-4 animate-spin text-agro-slate"
               viewBox="0 0 24 24"
@@ -392,12 +392,12 @@ function LocationSearch({
               <button
                 key={idx}
                 type="button"
-                className="flex w-full items-start px-4 py-3 text-left text-sm text-agro-ink transition-colors hover:bg-agro-mint"
+                className="flex w-full items-start px-4 py-3 text-start text-sm text-agro-ink transition-colors hover:bg-agro-mint"
                 onClick={() => handleSelect(item)}
               >
                 <MapPinIcon
                   size={16}
-                  className="mt-0.5 mr-2 shrink-0 text-agro-canopy"
+                  className="mt-0.5 me-2 shrink-0 text-agro-canopy"
                 />
                 <span className="line-clamp-2">{item.display_name}</span>
               </button>
@@ -577,14 +577,14 @@ function DistrictCitySearch({
           }}
           onFocus={() => setOpen(true)}
           placeholder="Search district or city..."
-          className={`focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 pr-10 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+          className={`focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 pe-10 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
             error
               ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
               : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
           }`}
         />
         {loading && (
-          <div className="absolute right-3 top-1/2 mt-1">
+          <div className="absolute end-3 top-1/2 mt-1">
             <svg
               className="h-4 w-4 animate-spin text-agro-slate"
               viewBox="0 0 24 24"
@@ -636,11 +636,11 @@ function DistrictCitySearch({
               className="flex w-full items-start px-4 py-3 text-left text-sm text-agro-ink transition-colors hover:bg-agro-mint"
               onClick={() => handleSelect(item)}
             >
-              <MapPinIcon
-                size={16}
-                className="mt-0.5 mr-2 shrink-0 text-agro-canopy"
-              />
-              <span className="line-clamp-2">{getCityDisplayName(item)}</span>
+                <MapPinIcon
+                  size={16}
+                  className="mt-0.5 me-2 shrink-0 text-agro-canopy"
+                />
+                <span className="line-clamp-2">{getCityDisplayName(item)}</span>
             </button>
           ))}
         </div>
@@ -798,14 +798,14 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
           <button
             type="button"
             onClick={() => router.push("/farms")}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0"
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0"
           >
             {bundle.new.success.goToFarms}
             <ArrowRightIcon size={16} />
           </button>
           <Link
             href="/dashboard"
-            className="inline-flex h-12 items-center justify-center rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors duration-200 hover:border-agro-canopy hover:bg-agro-mint"
+            className="inline-flex min-h-12 items-center justify-center rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors duration-200 hover:border-agro-canopy hover:bg-agro-mint"
           >
             {bundle.new.success.backToDashboard}
           </Link>
@@ -918,7 +918,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
       <button
         type="submit"
         disabled={isSubmitting || status === "loading"}
-        className="inline-flex h-12 w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-agro-canopy text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
+        className="inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2.5 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
       >
         {status === "loading" ? (
           <>

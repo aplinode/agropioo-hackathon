@@ -258,7 +258,7 @@ export default function SignupForm({ copy }: { copy: SignupCopy }) {
             href={prefix ? prefix : "/"}
             className="mb-10 inline-flex w-fit items-center gap-2 text-sm font-medium text-agro-canopy underline-offset-4 hover:underline"
           >
-            <span aria-hidden="true">←</span> {copy.backHome}
+            <span aria-hidden="true" data-flip-rtl>←</span> {copy.backHome}
           </Link>
 
           <p className="eyebrow text-agro-canopy">{copy.eyebrow}</p>
@@ -422,7 +422,7 @@ export default function SignupForm({ copy }: { copy: SignupCopy }) {
                         />
                       ))}
                     </div>
-                    <span className="w-16 text-right font-mono text-[0.65rem] uppercase tracking-wide text-agro-slate">
+                    <span className="w-16 shrink-0 text-end font-mono text-[0.65rem] uppercase tracking-wide text-agro-slate">
                       {copy.strengthLabels[strength]}
                     </span>
                   </div>
