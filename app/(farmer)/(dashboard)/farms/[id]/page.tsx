@@ -183,12 +183,12 @@ export default async function FarmDetailPage({
       </section>
 
       <div className="flex flex-col gap-3 sm:flex-row">
-        <Link href={`/records/new?farm=${f.id}`} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 sm:w-auto">
+        <Link href={`/records/new?farm=${f.id}`} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 sm:w-auto">
           {bundle.detail.logFieldEvent}
           <ArrowRightIcon size={16} />
         </Link>
         <form action={`/api/farms/${f.id}/archive`} method="POST">
-          <button type="submit" className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors duration-200 hover:border-agro-canopy hover:bg-agro-mint sm:w-auto">
+          <button type="submit" className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors duration-200 hover:border-agro-canopy hover:bg-agro-mint sm:w-auto">
             <MapPinIcon size={16} className="text-agro-canopy" />
             Archive farm
           </button>

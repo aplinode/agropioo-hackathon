@@ -7,6 +7,7 @@ export const pa: Partial<Record<CatalogKey, string>> = {
   "nav.howItWorks": "ایہ کویں کم کردا اے",
   "nav.vision": "ساڈا وژن",
   "nav.signIn": "سائن اِن کرو",
+  "nav.signUp": "سائن اپ کرو",
   "nav.getEarlyAccess": "شروعاتی رسائی حاصل کرو",
   "nav.openMenu": "مینیو کھولو",
   "nav.closeMenu": "مینیو بند کرو",

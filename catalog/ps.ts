@@ -7,6 +7,7 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "nav.howItWorks": "دا څنګه کار کوي",
   "nav.vision": "زموږ لیدلوری",
   "nav.signIn": "ننوتل",
+  "nav.signUp": "نوم لیکنه",
   "nav.getEarlyAccess": "لومړنی لاسرسی ترلاسه کړئ",
   "nav.openMenu": "مینو پرانیستل",
   "nav.closeMenu": "مینو بندول",

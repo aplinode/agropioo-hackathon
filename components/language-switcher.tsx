@@ -98,7 +98,7 @@ export function LanguageSwitcher({
           role="menu"
           aria-label={label}
           aria-busy={leaving}
-          className="absolute end-0 z-[70] mt-2 w-60 rounded-2xl border border-agro-sprout bg-agro-paper p-1.5 shadow-xl"
+          className="absolute end-0 z-[70] mt-2 w-60 max-w-[calc(100vw-2rem)] rounded-2xl border border-agro-sprout bg-agro-paper p-1.5 shadow-xl"
         >
           {LOCALES.map((code) => {
             const entry = LOCALE_REGISTRY[code];

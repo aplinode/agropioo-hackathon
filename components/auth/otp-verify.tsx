@@ -313,7 +313,7 @@ export default function OtpVerify({
         onClick={onEscape}
         className="mt-6 inline-flex h-11 w-fit cursor-pointer items-center gap-2 self-center rounded-md px-2 text-sm font-medium text-agro-slate underline-offset-4 transition-colors hover:text-agro-canopy hover:underline"
       >
-        <span aria-hidden="true">←</span> {escapeLabel}
+        <span aria-hidden="true" data-flip-rtl>←</span> {escapeLabel}
       </button>
     </div>
   );

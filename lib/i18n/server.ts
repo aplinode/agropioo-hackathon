@@ -488,6 +488,7 @@ export function siteHeaderStrings(t: Translator) {
     howItWorks: t("nav.howItWorks").text,
     vision: t("nav.vision").text,
     signIn: t("nav.signIn").text,
+    signUp: t("nav.signUp").text,
     getEarlyAccess: t("nav.getEarlyAccess").text,
     openMenu: t("nav.openMenu").text,
     closeMenu: t("nav.closeMenu").text,

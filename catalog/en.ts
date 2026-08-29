@@ -10,6 +10,7 @@ export const en = {
   "nav.howItWorks": "How it works",
   "nav.vision": "Vision",
   "nav.signIn": "Sign in",
+  "nav.signUp": "Sign up",
   "nav.getEarlyAccess": "Get early access",
   "nav.openMenu": "Open menu",
   "nav.closeMenu": "Close menu",

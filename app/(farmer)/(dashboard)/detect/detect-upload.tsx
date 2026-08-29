@@ -275,7 +275,7 @@ export default function DetectUpload({
           type="button"
           onClick={handleSaveToFarm}
           disabled={saveState === "saving"}
-          className="inline-flex h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg bg-agro-wheat text-agro-forest font-semibold shadow-sm transition-colors hover:bg-agro-wheat/90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg bg-agro-wheat text-agro-forest font-semibold shadow-sm transition-colors hover:bg-agro-wheat/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <CheckIcon size={16} aria-hidden="true" />
           {saveState === "saved"
@@ -285,7 +285,7 @@ export default function DetectUpload({
       )}
       <Link
         href={`/advisor?draft=${encodeURI(composeAdvisorDraft(displayedScan as DiagnosisResult, bundle))}`}
-        className="inline-flex h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint"
+        className="inline-flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint"
       >
         {bundle.discussAdvisor}
         <ArrowRightIcon size={16} />
@@ -293,7 +293,7 @@ export default function DetectUpload({
       <button
         type="button"
         onClick={resetToIdle}
-        className="inline-flex h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint"
+        className="inline-flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint"
       >
         <CheckIcon size={16} aria-hidden="true" />
         {bundle.scanAnother}
@@ -320,7 +320,7 @@ export default function DetectUpload({
           type="button"
           aria-label={bundle.dismiss}
           onClick={() => setNoFarmsModalOpen(false)}
-          className="float-right inline-flex h-8 w-8 items-center justify-center rounded-lg text-agro-slate hover:bg-agro-mint"
+          className="float-end inline-flex h-8 w-8 items-center justify-center rounded-lg text-agro-slate hover:bg-agro-mint"
         >
           <XIcon size={16} />
         </button>
@@ -333,7 +333,7 @@ export default function DetectUpload({
         <div className="mt-5 flex gap-3">
           <Link
             href="/farms/new"
-            className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white"
+            className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white"
             onClick={() => setNoFarmsModalOpen(false)}
           >
             {bundle.addFarm}
@@ -341,7 +341,7 @@ export default function DetectUpload({
           <button
             type="button"
             onClick={() => setNoFarmsModalOpen(false)}
-            className="inline-flex h-12 flex-1 cursor-pointer items-center justify-center rounded-lg border border-agro-sprout bg-white px-5 text-sm font-semibold text-agro-forest hover:bg-agro-mint"
+            className="inline-flex min-h-12 flex-1 cursor-pointer items-center justify-center rounded-lg border border-agro-sprout bg-white px-5 text-sm font-semibold text-agro-forest hover:bg-agro-mint"
           >
             {bundle.dismiss}
           </button>
@@ -457,7 +457,7 @@ export default function DetectUpload({
                 <button
                   type="button"
                   onClick={resetToIdle}
-                  className="inline-flex h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest hover:border-agro-canopy hover:bg-agro-mint"
+                  className="inline-flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest hover:border-agro-canopy hover:bg-agro-mint"
                 >
                   {bundle.scanAnother}
                 </button>
@@ -484,7 +484,7 @@ export default function DetectUpload({
             <button
               type="button"
               onClick={resetToIdle}
-              className="inline-flex h-12 cursor-pointer items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white hover:bg-agro-forest"
+              className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white hover:bg-agro-forest"
             >
               {bundle.retry}
             </button>
@@ -494,7 +494,7 @@ export default function DetectUpload({
                 onClick={() => {
                   if (previewUrl) handleSample();
                 }}
-                className="inline-flex h-12 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest hover:border-agro-canopy hover:bg-agro-mint"
+                className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest hover:border-agro-canopy hover:bg-agro-mint"
               >
                 {bundle.sampleScan}
               </button>
