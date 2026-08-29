@@ -27,6 +27,7 @@
 - Local languages roll out in priority order above (Urdu first, then by speaker share).
 - A visible language switcher lives in the nav everywhere — public pages, `/signup`, `/login`, and inside the farmer app — not hidden in settings. Language chosen before/during signup carries into onboarding as the pre-selected default.
 - Translated strings are managed in the database (admin-editable), not hardcoded dictionary files.
+- Any UI change spec or work that introduces new visible strings must also add the corresponding translation keys for all 8 locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) into the Neon `translations` table. Catalog files alone are not enough — the database is the source of truth at runtime. Use the Neon MCP or `scripts/sync-translations.mts` to insert/update rows before the change is considered done.
 - Urdu and Pashto render right-to-left with mirrored layout from the moment each ships.
 - Voice input/output for the advisor is out of scope for now; text chat only until separately specced.
 
@@ -98,6 +99,7 @@ Out of scope for demo: expert/agronomist role, community forum, IVR phone mode, 
 A change is done when ALL hold:
 
 - Behaviour matches the spec including edge cases; acceptance criteria actually checked (tests or manual run-through).
+- New or updated UI strings have translation keys inserted in the Neon `translations` table for all 8 locales before merge.
 - `npm run lint` and `npm run build` pass.
 - The diff has been reviewed against the spec (solo review counts).
 - Committed atomically with a meaningful message; pushed if a feature milestone.

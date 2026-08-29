@@ -13,6 +13,7 @@ export const en = {
   "nav.getEarlyAccess": "Get early access",
   "nav.openMenu": "Open menu",
   "nav.closeMenu": "Close menu",
+  "nav.dashboard": "Dashboard",
   "common.languageSwitcherLabel": "Change language",
   "notFound.title": "Page not found",
   "notFound.body": "The page you are looking for does not exist or may have moved.",

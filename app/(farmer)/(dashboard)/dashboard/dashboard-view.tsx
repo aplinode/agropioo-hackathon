@@ -143,6 +143,8 @@ type DashboardViewProps = {
   bundle: DashboardBundle;
   /** Real farms fetched from the database (server-passed). */
   farms?: Array<Record<string, unknown>>;
+  /** Real user profile from the database. */
+  user?: { fullName: string; email: string };
 };
 
 /* Farmer home screen — answers "kya karoon aaj?" in one scan.
@@ -156,6 +158,7 @@ export default function DashboardView({
   appLocale,
   bundle,
   farms: realFarms,
+  user: realUser,
 }: DashboardViewProps) {
   const isEmpty = variant === "empty";
   const completedCount = isEmpty ? 0 : 1;
@@ -184,6 +187,20 @@ export default function DashboardView({
       }))
     : demoFarms;
 
+  const displayUser = realUser
+    ? {
+        firstName: realUser.fullName.split(" ")[0],
+        lastName: realUser.fullName.split(" ").slice(1).join(" "),
+        initials: realUser.fullName.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase(),
+        email: realUser.email,
+      }
+    : {
+        firstName: farmer.firstName,
+        lastName: farmer.lastName,
+        initials: farmer.initials,
+        email: farmer.email,
+      };
+
   const severityWord = {
     critical: bundle.severityCritical,
     warning: bundle.severityWatch,
@@ -199,7 +216,7 @@ export default function DashboardView({
             {latin(farmer.todayLabel)}
           </p>
           <h1 className="display-heading mt-2 font-display text-[1.75rem] font-semibold leading-tight tracking-tight text-agro-forest sm:text-4xl">
-            {bundle.greeting.replace("{name}", farmer.firstName)}
+            {bundle.greeting.replace("{name}", displayUser.firstName)}
           </h1>
           <p className="mt-2 flex items-center gap-1.5 text-sm text-agro-slate">
             <MapPinIcon size={16} className="shrink-0 text-agro-canopy" />
@@ -214,7 +231,7 @@ export default function DashboardView({
             className={`relative inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-canopy font-semibold text-white transition-colors ${showProfile ? "border-2 border-agro-sprout" : ""} hover:bg-agro-forest`}
           >
             <span style={{ fontWeight: "bold", color: "white" }}>
-              {latin(farmer.firstName[0])}
+              {latin(displayUser.initials)}
             </span>
           </div>
           {showProfile && (
@@ -222,9 +239,9 @@ export default function DashboardView({
               className="absolute end-0 mt-2 w-48 rounded-md bg-white py-2 shadow-lg border border-agro-sprout/20 z-50 min-w-[160px]"
             >
               <div className="px-4 py-3 text-sm text-agro-forest">
-                <div className="font-medium">{latin(<>{farmer.firstName} {farmer.lastName}</>)}</div>
+                <div className="font-medium">{latin(<>{displayUser.firstName} {displayUser.lastName}</>)}</div>
                 <div className="text-agro-slate text-xs">
-                  {latin(farmer.email)}
+                  {latin(displayUser.email)}
                 </div>
               </div>
             </div>

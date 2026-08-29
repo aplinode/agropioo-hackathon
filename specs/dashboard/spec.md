@@ -1,6 +1,6 @@
 # Dashboard — Spec
 
-> Farmer app home screen. UI-only demo build; data comes from demo mock data.
+> Farmer app home screen. Uses live database data for user profile and farms; demo data as fallback when no real data exists.
 
 ## Goal
 
@@ -17,7 +17,7 @@ Give the farmer one screen that answers "kya karoon aaj?" — today's most impor
 ## Functional requirements
 
 - **FR1 App shell.** Mobile: bottom tab bar with exactly 5 tabs — Dashboard, Farms, Advisor, Detect, More. Desktop (≥ lg): left sidebar listing all tools — Dashboard, Farms, Advisor, Detect, Prices, Notifications, Settings — plus logo and sign-out. Active item visually distinct on both. (Schemes removed from the demo by founder decision 2026-08-23.)
-- **FR2 Header.** Top of page: time-neutral greeting with farmer's first name, notification bell with unread badge count, visible language control showing "EN" (placeholder — visibly interactive target but non-functional this release), avatar/profile affordance. Every element ≥44×44px touch target.
+- **FR2 Header.** Top of page: time-neutral greeting with the farmer's real first name (from users.full_name in the database), notification bell with unread badge count, visible language control showing "EN" (placeholder — visibly interactive target but non-functional this release), avatar with real initials derived from the farmer's full name, and profile dropdown showing real name and email. Every element ≥44×44px touch target.
 - **FR3 Today's advisory.** One primary card: crop name + growth stage tag, the single recommended action in plain words, a one-line "why", and a link into the advisor. Dated "Today".
 - **FR4 Weather snapshot.** Location name, current temperature °C, condition label with icon, today's high/low, rain-chance line, link to full weather view.
 - **FR5 Alerts strip.** Active alerts sorted by severity (critical → warning → info); each row: type icon, message, relative time. Show top 3 maximum, then "View all alerts".
@@ -26,7 +26,7 @@ Give the farmer one screen that answers "kya karoon aaj?" — today's most impor
 - **FR8 My farms overview.** Card per farm: farm name, crops grown, growth stage, simple health indicator. Horizontal scroll on mobile, grid on desktop. Final tile = "+ Add farm". Tap → farm detail.
 - **FR9 Setup checklist.** Card shown while items are incomplete: add first farm, ask the advisor once, run first detection. Shows progress count; dismissible via close icon.
 - **FR10 Empty states.** (a) No farms: welcome hero + "Add your first farm" primary CTA + checklist; hide FR3 crop-specifics and FR5 list (show calm message). (b) No alerts: "No alerts today — your crops are calm." (c) Weather unavailable: explanatory fallback line, not an error dump.
-- **FR11 Demo data.** All content from typed mock data with Pakistan-first realism (Pakistani names, Multan/Sahiwal-class locations, wheat/cotton/sugarcane/maize, °C). No invented "proven results" or fake testimonials anywhere.
+- **FR11 Data sources.** User profile (name, email) comes from the live users table. Farm data comes from the live farms and records tables. When no real data exists (new user with no farms), demo data is used as fallback. All content maintains Pakistan-first realism (Pakistani names, Multan/Sahiwal-class locations, wheat/cotton/sugarcane/maize, °C). No invented "proven results" or fake testimonials anywhere.
 - **FR12 Copy & i18n readiness.** English at launch, farmer-first plain language ("what to do, when to do it"). Strings centralized so DB-driven translations can replace them later.
 - **FR13 Accessibility & layout rules.** Body text ≥4.5:1 contrast; visible focus rings; no horizontal page scroll at 320px (contained horizontal scroll allowed only inside the farms carousel); respects `prefers-reduced-motion`; layout uses logical properties so Urdu/Pashto RTL mirrors cleanly when those ship.
 
@@ -42,7 +42,7 @@ Give the farmer one screen that answers "kya karoon aaj?" — today's most impor
 
 ## Out of scope
 
-- Real API/database wiring, live weather/prices, real authentication state
+- Live weather/prices APIs (weather stub is acceptable; prices remain demo)
 - Notifications center page content, settings page, farm detail pages (nav links may point at placeholder routes)
 - Language switching behaviour (placeholder only), RTL rendering itself
 - Pull-to-refresh, push notifications, offline/PWA behaviour, dark mode

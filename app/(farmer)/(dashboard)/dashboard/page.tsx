@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getAppLocale, getDashboardBundle } from "@/lib/i18n/server";
 import DashboardView from "./dashboard-view";
 import { requireSessionPage } from "@/lib/auth/guards";
-import { query } from "@/lib/db";
+import { query, queryOne } from "@/lib/db";
 import { computeFarmHealth } from "@/lib/farms/health";
 
 export const metadata: Metadata = {
@@ -24,6 +24,15 @@ export default async function DashboardPage({
 
   const session = await requireSessionPage();
   let farms: Array<Record<string, unknown>> = [];
+
+  const userRow = await queryOne<{ full_name: string }>(
+    `SELECT full_name FROM users WHERE id = $1`,
+    [session.accountId],
+  );
+  const user = {
+    fullName: userRow?.full_name ?? "Farmer",
+    email: session.email,
+  };
 
   try {
     const rawFarms = await query<Record<string, unknown>>(
@@ -55,6 +64,7 @@ export default async function DashboardPage({
       appLocale={appLocale}
       bundle={bundle}
       farms={farms}
+      user={user}
     />
   );
 }
