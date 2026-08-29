@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 import path from "path";
+import { setServers } from "node:dns/promises";
+
+setServers(["8.8.8.8", "1.1.1.1"]);
 
 const nextConfig: NextConfig = {
   experimental: {
