@@ -5,7 +5,7 @@ import OpenAI from "openai";
 
 let openaiClient: OpenAI | null = null;
 
-function getOpenAI(): OpenAI {
+export function getOpenAI(): OpenAI {
   if (!openaiClient) {
     openaiClient = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
