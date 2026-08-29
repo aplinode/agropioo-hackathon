@@ -440,6 +440,6 @@ export function siteHeaderStrings(t: Translator) {
     openMenu: t("nav.openMenu").text,
     closeMenu: t("nav.closeMenu").text,
     languageSwitcher: t("common.languageSwitcherLabel").text,
-    dashboard: t("app.shell.nav.dashboard").text,
+    dashboard: t("nav.dashboard").text,
   };
 }

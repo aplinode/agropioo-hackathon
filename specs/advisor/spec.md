@@ -6,7 +6,7 @@
 
 ## 1. Goal
 
-Give every farmer a knowledgeable advisor they can talk to in their own language — one that understands their question, looks up the right information (from a verified farming knowledge base, real-time data sources, and the farmer's own records), and gives a clear, actionable answer. The advisor has a professional-but-warm tone: friendly in greetings and encouragement, direct and actionable when delivering advice. It proactively cross-references data to surface risks the farmer may not have noticed. The advisor replaces the current demo's canned keyword-matched replies with a real AI that can reason about farming problems.
+Give every farmer a knowledgeable advisor they can talk to in their own language — one that understands their question, looks up the right information (from a verified farming knowledge base, live weather data, their own farm records, and past conversations), and gives a clear, actionable answer. The advisor has a warm professional tone: friendly in greetings and encouragement, direct and actionable when delivering advice. It proactively cross-references data to surface risks the farmer may not have noticed, includes approximate costs for recommended inputs, and is aware of the current seasonal crop calendar and month-specific risks. The advisor covers crops (wheat, cotton, rice, sugarcane, maize, vegetables, fruits, pulses) and basic livestock health (cattle, buffalo, goat, poultry). It replaces the current demo's canned keyword-matched replies with a real AI that can reason about farming problems.
 
 ---
 
@@ -70,65 +70,90 @@ Give every farmer a knowledgeable advisor they can talk to in their own language
 - **FR-4.3:** Multi-intent queries (e.g. "what's the weather and when should I spray my cotton?") are handled by invoking multiple specialists and combining the results into one coherent answer.
 
 ### FR-5: Farming Knowledge Base (RAG)
-- **FR-5.1:** The advisor retrieves answers from a curated, expert-verified knowledge base covering Pakistan's major crops (wheat, cotton, rice, sugarcane, maize).
+- **FR-5.1:** The advisor retrieves answers from a curated, expert-verified knowledge base covering Pakistan's major crops (wheat, cotton, rice, sugarcane, maize), common vegetables (tomato, onion, potato, okra, bitter gourd), fruits (mango, kinnow, pomegranate, grapes), pulses (moong, mash, masoor, chana), and basic livestock topics (cattle, buffalo, goat, poultry diseases and vaccination).
 - **FR-5.2:** Knowledge base content includes: crop calendars (sowing/harvesting windows), top diseases per crop (identification + treatment), fertilizer schedules, and government scheme information (eligibility, benefits, how to apply).
 - **FR-5.3:** Retrieved context is used to ground the response — the advisor does not invent facts, statistics, or treatment recommendations not found in the knowledge base.
 - **FR-5.4:** When retrieval confidence is low (no relevant content found), the advisor states clearly that it does not have information and suggests consulting a local extension officer.
 - **FR-5.5:** Knowledge base content is written from public Pakistan agriculture sources (Punjab Agriculture Department advisories, PAR publications, extension guides). Approximately 20–30 articles covering the major crops and common issues.
 
 ### FR-6: Product Data Integration
-- **FR-6.1:** The advisor can retrieve the farmer's own registered farms (name, location, size, crop types) when answering questions about their land or fields.
-- **FR-6.2:** The advisor can retrieve the farmer's farm records (planting dates, harvest dates, inputs used, yields, crop stage) when answering questions about their farming history or current crop status.
-- **FR-6.3:** When returning farm data, the advisor provides a smart summary with analysis and advice — not a raw data dump. For example: "Your wheat on Farm A was sown Nov 15. It's now 45 days old — first irrigation is due. Recommended: 60mm."
-- **FR-6.4:** The advisor uses the farmer's profile data (location, crops, farm size) from onboarding to provide location-specific and crop-specific advice without the farmer having to repeat it.
+- **FR-6.1:** The advisor retrieves the farmer's own registered farms (name, location, district, size, crop types) from the live database when answering questions about their land or fields.
+- **FR-6.2:** The advisor retrieves the farmer's farm records (planting dates, harvest dates, inputs used, yields, crop stage, costs) from the live database when answering questions about their farming history or current crop status.
+- **FR-6.3:** When returning farm data, the advisor provides a smart summary with analysis and advice — not a raw data dump. It includes approximate costs in PKR where available (fertilizer, pesticide per acre, labor, transport). For example: "Your wheat on Farm A was sown Nov 15. It's now 45 days old — first irrigation is due. Recommended: 60mm. Approximate irrigation cost: Rs 2,500/acre."
+- **FR-6.4:** The advisor uses the farmer's real profile data (full name, location from farm district, crops, farm size) from the database to provide location-specific and crop-specific advice without the farmer having to repeat it.
 - **FR-6.5:** All product data retrieval is scoped to the authenticated farmer — the advisor can only access the logged-in farmer's own data, never another farmer's.
 - **FR-6.6:** Product data tools are extensible: as new product features ship (detect results, price bookmarks), corresponding advisor tools can be added without changing the architecture.
+- **FR-6.7:** The advisor proactively checks for overdue actions (irrigation due based on crop stage and days since last irrigation, fertilizer windows missed, pest scouting overdue) and flags them even when the farmer doesn't ask.
 
 ### FR-7: Real-Time Data
-- **FR-7.1:** The advisor's weather tool uses the same data source as the `/weather` page — ensuring consistent weather information across the product.
-- **FR-7.2:** The advisor can fetch market price data when asked about mandi prices (using available price data; stub data is acceptable for launch).
+- **FR-7.1:** The advisor's weather tool uses live OpenWeatherMap data for any location in Pakistan, using the farmer's farm coordinates (lat/lng) or district — ensuring consistent weather information across the product and covering all districts, not just hardcoded cities.
+- **FR-7.2:** Weather data includes farming interpretations: fungal disease risk when humidity is high with warm temperatures, heat stress warnings above 38°C, frost risk below 5°C, and spray window recommendations.
+- **FR-7.3:** The advisor can fetch market price data when asked about mandi prices (using available price data; stub data is acceptable for launch).
 
 ### FR-8: Proactive Advisory
 - **FR-8.1:** The advisor cross-references available data to proactively surface risks and recommendations. For example: if the farmer asks about spraying pesticide and the weather forecast shows rain tomorrow, the advisor volunteers a warning.
 - **FR-8.2:** When the farmer asks about a specific crop, the advisor checks farm records for planting dates and crop stage to tailor advice (e.g. "Your cotton is at flowering stage — check for bollworm").
 - **FR-8.3:** Proactive advisories are relevant and concise — not generic warnings appended to every response.
+- **FR-8.4:** The advisor is aware of the current seasonal crop calendar and month-specific risks, and proactively mentions them when relevant to the farmer's crops and location (e.g. "It's peak yellow rust season — make sure you're scouting regularly").
 
-### FR-9: Response Formatting
-- **FR-9.1:** Farming advice responses follow a structured template where applicable: **Problem** → **Cause** → **What to do** (numbered steps) → **When** → **Caution**.
-- **FR-9.2:** Responses use short sentences (maximum 15–20 words per sentence), plain language, and local measurements (maunds, kanals, marlas) instead of only metric units.
-- **FR-9.3:** Responses never contain fabricated statistics, invented research citations, or made-up testimonials.
-- **FR-9.4:** Where the knowledge base provides source attribution, the response includes it (e.g. "According to Punjab Agriculture Department advisory…").
-- **FR-9.5:** Responses render markdown formatting (bold, italics, bullet points, numbered lists, headings) for readability.
+### FR-9: Seasonal Awareness
+- **FR-9.1:** The advisor maintains awareness of the current agricultural season and sub-phase (early/mid/late Kharif or Rabi) based on the current date.
+- **FR-9.2:** The advisor has access to a crop calendar that maps each month to stage-specific guidance for major crops: sowing windows, critical irrigation stages, common pest/disease periods, and harvest timing.
+- **FR-9.3:** The advisor has access to month-specific seasonal risk warnings (heat stress, frost, monsoon diseases, pest pressure peaks).
+- **FR-9.4:** Seasonal awareness is included in the system context for every response, so the advisor can relate its advice to the current agricultural calendar without the farmer having to mention it.
 
-### FR-10: Conversation Persistence & Management
-- **FR-10.1:** Each conversation session is stored in the database with its messages, timestamps, and language.
-- **FR-10.2:** The farmer can see a list of their past conversations in a sidebar within the `/advisor` page. The sidebar is toggleable (collapsed by default on mobile, visible on desktop).
-- **FR-10.3:** The farmer can start a new conversation at any time via a "New Conversation" button.
-- **FR-10.4:** The farmer can delete individual conversations from the sidebar.
-- **FR-10.5:** The farmer can rename individual conversations for easy reference.
-- **FR-10.6:** The last 10 messages from the current conversation are included as context in each advisor request, so the advisor maintains continuity.
-- **FR-10.7:** All messages a farmer sends without switching conversations belong to the same conversation session — the client learns the conversation id from the first response and reuses it for follow-up messages. A new session is created only via the "New Conversation" button or after page reload without a selected conversation.
-- **FR-10.8:** Selecting a conversation in the sidebar loads that conversation's full message history into the chat area, replacing whatever is currently displayed, and marks it as the active conversation for subsequent messages.
-- **FR-10.9:** Destructive actions (conversation deletion) are confirmed through an in-app modal dialog — never native browser dialogs (`window.confirm`/`alert`). The modal states the action cannot be undone, and can be dismissed via a cancel button, the Escape key, or tapping the backdrop.
+### FR-10: Cost Awareness
+- **FR-10.1:** When recommending inputs (fertilizer, pesticide, seed, labor), the advisor includes approximate costs in PKR per acre using current Pakistani market rates.
+- **FR-10.2:** When summarizing farm records, the advisor includes cost totals (labor + transport + inputs) if the data is available.
+- **FR-10.3:** Cost figures are approximate and presented with qualifiers ("approximately", "around") — never stated as exact guarantees.
 
-### FR-11: Safety & Boundaries
-- **FR-11.1:** The advisor refuses non-farming queries politely (e.g. politics, sports, personal advice) and redirects to farming topics.
-- **FR-11.2:** The advisor never provides specific financial advice (invest, loans beyond scheme information) or medical advice.
-- **FR-11.3:** The advisor never recommends pesticide dosages or chemical quantities that are not sourced from the verified knowledge base.
-- **FR-11.4:** Rate limiting applies to advisor messages to protect limited API credits (specific limits defined in the plan).
-- **FR-11.5:** The advisor has a professional-but-warm tone: friendly and encouraging in greetings and follow-ups, direct and factual when delivering advice.
+### FR-11: Smart Unknowns
+- **FR-11.1:** For safety-critical questions (chemical dosages, unknown diseases, toxic reactions) where the advisor lacks verified data, it says "I don't have verified information on this. Please consult your local extension officer." — it never guesses.
+- **FR-11.2:** For general farming knowledge (common practices, well-known techniques, traditional methods), the advisor answers confidently from its training knowledge even without a knowledge base match.
+- **FR-11.3:** The distinction between safety-critical and general knowledge is made in every specialist agent's instructions.
 
-### FR-12: Model Flexibility
-- **FR-12.1:** The advisor architecture supports any LLM provider and model — not hardcoded to a specific model or API provider. The model and API key are configured via environment variables.
-- **FR-12.2:** Switching models (e.g. from GPT-4o to Gemini to an open-source model) does not require code changes — only configuration changes.
+### FR-12: Conversation Memory
+- **FR-12.1:** Each conversation is automatically summarized (1-2 sentences) after the exchange completes, stored in the database.
+- **FR-12.2:** The advisor has access to the last 3 conversation summaries as context, so it can reference recent topics without the farmer having to repeat themselves.
+- **FR-12.3:** The advisor can search past conversations by topic keyword to find relevant context from previous discussions.
+- **FR-12.4:** Summary generation is non-fatal — if the summarization service is unavailable, conversations still work normally without summaries.
 
-### FR-13: Authentication
-- **FR-13.1:** The advisor is only available to authenticated farmers — unauthenticated users are redirected to login.
-- **FR-13.2:** Every advisor API request validates the farmer's session before processing.
+### FR-13: Response Formatting
+- **FR-13.1:** Farming advice responses follow a structured template where applicable: **Problem** → **Cause** → **What to do** (numbered steps) → **When** → **Caution**.
+- **FR-13.2:** Responses use short sentences (maximum 15–20 words per sentence), plain language, and local measurements (maunds, kanals, marlas) instead of only metric units.
+- **FR-13.3:** Responses never contain fabricated statistics, invented research citations, or made-up testimonials.
+- **FR-13.4:** Where the knowledge base provides source attribution, the response includes it (e.g. "According to Punjab Agriculture Department advisory…").
+- **FR-13.5:** Responses render markdown formatting (bold, italics, bullet points, numbered lists, headings) for readability.
 
-### FR-14: Graceful Degradation
-- **FR-14.1:** When the AI service is unavailable, the advisor shows a clear "service temporarily unavailable" message — not a crash or blank screen.
-- **FR-14.2:** The message includes a retry option so the farmer can try again without reloading the page.
+### FR-14: Conversation Persistence & Management
+- **FR-14.1:** Each conversation session is stored in the database with its messages, timestamps, and language.
+- **FR-14.2:** The farmer can see a list of their past conversations in a sidebar within the `/advisor` page. The sidebar is toggleable (collapsed by default on mobile, visible on desktop).
+- **FR-14.3:** The farmer can start a new conversation at any time via a "New Conversation" button.
+- **FR-14.4:** The farmer can delete individual conversations from the sidebar.
+- **FR-14.5:** The farmer can rename individual conversations for easy reference.
+- **FR-14.6:** The last 10 messages from the current conversation are included as context in each advisor request, so the advisor maintains continuity.
+- **FR-14.7:** All messages a farmer sends without switching conversations belong to the same conversation session — the client learns the conversation id from the first response and reuses it for follow-up messages. A new session is created only via the "New Conversation" button or after page reload without a selected conversation.
+- **FR-14.8:** Selecting a conversation in the sidebar loads that conversation's full message history into the chat area, replacing whatever is currently displayed, and marks it as the active conversation for subsequent messages.
+- **FR-14.9:** Destructive actions (conversation deletion) are confirmed through an in-app modal dialog — never native browser dialogs (`window.confirm`/`alert`). The modal states the action cannot be undone, and can be dismissed via a cancel button, the Escape key, or tapping the backdrop.
+
+### FR-15: Safety & Boundaries
+- **FR-15.1:** The advisor refuses non-farming queries politely (e.g. politics, sports, personal advice) and redirects to farming topics. Guardrails cover both English and Urdu/transliteration keywords including vegetables, fruits, pulses, and livestock terms.
+- **FR-15.2:** The advisor never provides specific financial advice (invest, loans beyond scheme information) or medical advice.
+- **FR-15.3:** The advisor never recommends pesticide dosages or chemical quantities that are not sourced from the verified knowledge base.
+- **FR-15.4:** Rate limiting applies to advisor messages to protect limited API credits (specific limits defined in the plan).
+- **FR-15.5:** The advisor has a warm professional tone: friendly and encouraging in greetings and follow-ups, direct and factual when delivering advice.
+
+### FR-16: Model Flexibility
+- **FR-16.1:** The advisor architecture supports any LLM provider and model — not hardcoded to a specific model or API provider. The model and API key are configured via environment variables.
+- **FR-16.2:** Switching models (e.g. from GPT-4o to Gemini to an open-source model) does not require code changes — only configuration changes.
+
+### FR-17: Authentication
+- **FR-17.1:** The advisor is only available to authenticated farmers — unauthenticated users are redirected to login.
+- **FR-17.2:** Every advisor API request validates the farmer's session before processing.
+
+### FR-18: Graceful Degradation
+- **FR-18.1:** When the AI service is unavailable, the advisor shows a clear "service temporarily unavailable" message — not a crash or blank screen.
+- **FR-18.2:** The message includes a retry option so the farmer can try again without reloading the page.
 
 ---
 
