@@ -75,93 +75,6 @@ function DraggableMarker({
   );
 }
 
-function SearchableSelect({
-  value,
-  onSelect,
-  options,
-  placeholder,
-  label,
-  error,
-}: {
-  value: string;
-  onSelect: (val: string) => void;
-  options: readonly string[];
-  placeholder: string;
-  label: string;
-  error?: string;
-}) {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const ref = useRef<HTMLDivElement>(null);
-
-  const filtered = options.filter((o) =>
-    o.toLowerCase().includes(query.toLowerCase())
-  );
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setQuery(value);
-  }, [value]);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-        setQuery(value);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [value]);
-
-  return (
-    <div ref={ref} className="relative z-[9999]">
-      <label className="block text-sm font-semibold text-agro-ink">
-        {label}
-      </label>
-      <input
-        value={query}
-        onChange={(e) => {
-          setQuery(e.target.value);
-          setOpen(true);
-        }}
-        onFocus={() => setOpen(true)}
-        placeholder={placeholder}
-        className={`focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
-          error
-            ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
-            : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
-        }`}
-      />
-      {open && filtered.length > 0 && (
-        <div className="absolute left-0 right-0 z-[9999] mt-1 max-h-60 overflow-auto rounded-xl border border-agro-sprout bg-white shadow-xl">
-          {filtered.map((opt) => (
-            <button
-              key={opt}
-              type="button"
-              className={`flex w-full items-center px-4 py-2.5 text-left text-sm transition-colors hover:bg-agro-mint ${
-                opt === value
-                  ? "bg-agro-mint text-agro-canopy font-medium"
-                  : "text-agro-ink"
-              }`}
-              onClick={() => {
-                onSelect(opt);
-                setQuery(opt);
-                setOpen(false);
-              }}
-            >
-              {opt}
-            </button>
-          ))}
-        </div>
-      )}
-      {error && (
-        <p className="mt-1.5 text-sm font-medium text-agro-forest">{error}</p>
-      )}
-    </div>
-  );
-}
-
 function CropSearchSelect({
   selected,
   onToggle,
@@ -530,6 +443,190 @@ function LocationSearch({
   );
 }
 
+function DistrictCitySearch({
+  value,
+  onChange,
+  onLocationPick,
+  onPlaceSelect,
+  onDisplayName,
+  error,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  onLocationPick: (lat: number, lng: number) => void;
+  onPlaceSelect?: (placeName: string) => void;
+  onDisplayName?: (name: string) => void;
+  error?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<
+    Array<{ display_name: string; lat: string; lon: string; address?: Record<string, string> }>
+  >([]);
+  const [loading, setLoading] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setQuery(value);
+  }, [value]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setQuery(value);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [value]);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (query.length < 2) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setResults([]);
+      return;
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true);
+    debounceRef.current = window.setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ", Pakistan")}&countrycodes=pk&limit=8&addressdetails=1`
+        );
+        const data = await res.json();
+        setResults(data);
+        setOpen(data.length > 0);
+      } catch {
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query]);
+
+  const extractDistrict = (
+    addr: Record<string, string>,
+    displayName: string
+  ): string => {
+    const candidates = [
+      addr.city_district,
+      addr.state_district,
+      addr.county,
+      addr.city,
+      addr.town,
+      addr.village,
+      addr.suburb,
+      addr.neighbourhood,
+    ].filter(Boolean);
+
+    const matchedDistrict = PAKISTAN_DISTRICTS.find((d) =>
+      candidates.some((c) => c!.toLowerCase() === d.toLowerCase())
+    );
+
+    if (matchedDistrict) return matchedDistrict;
+
+    const fullLower = displayName.toLowerCase();
+    for (const d of PAKISTAN_DISTRICTS) {
+      if (fullLower.includes(d.toLowerCase())) return d;
+    }
+
+    return candidates[0] || displayName.split(",")[0];
+  };
+
+  const handleSelect = (item: {
+    display_name: string;
+    lat: string;
+    lon: string;
+    address?: Record<string, string>;
+  }) => {
+    const district = extractDistrict(item.address || {}, item.display_name);
+    const placeName = item.display_name.split(",")[0];
+    onChange(district);
+    if (onPlaceSelect) onPlaceSelect(placeName);
+    onLocationPick(parseFloat(item.lat), parseFloat(item.lon));
+    if (onDisplayName) onDisplayName(item.display_name);
+    setOpen(false);
+    setQuery(district);
+  };
+
+  return (
+    <div ref={ref} className="relative z-[9999]">
+      <label className="block text-sm font-semibold text-agro-ink">
+        District / City
+      </label>
+      <div className="relative">
+        <input
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          placeholder="Search district or city..."
+          className={`focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 pr-10 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+            error
+              ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
+              : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
+          }`}
+        />
+        {loading && (
+          <div className="absolute right-3 top-1/2 mt-1">
+            <svg
+              className="h-4 w-4 animate-spin text-agro-slate"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                opacity="0.25"
+              />
+              <path
+                fill="currentColor"
+                opacity="0.75"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              />
+            </svg>
+          </div>
+        )}
+      </div>
+      {open && results.length > 0 && (
+        <div className="absolute left-0 right-0 z-[9999] mt-1 max-h-60 overflow-auto rounded-xl border border-agro-sprout bg-white shadow-xl">
+          {results.map((item, idx) => (
+            <button
+              key={idx}
+              type="button"
+              className="flex w-full items-start px-4 py-3 text-left text-sm text-agro-ink transition-colors hover:bg-agro-mint"
+              onClick={() => handleSelect(item)}
+            >
+              <MapPinIcon
+                size={16}
+                className="mt-0.5 mr-2 shrink-0 text-agro-canopy"
+              />
+              <span className="line-clamp-2">{item.display_name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      {error && (
+        <p className="mt-1.5 text-sm font-medium text-agro-forest">{error}</p>
+      )}
+    </div>
+  );
+}
+
 export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
   const router = useRouter();
   const [status, setStatus] = useState<
@@ -596,51 +693,31 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
         setSelectedLocationName(fullName);
         setValue("location", placeName);
 
-        // Auto-match District / City
-        const matchedDistrict = PAKISTAN_DISTRICTS.find(
-          (d) =>
-            fullName.toLowerCase().includes(d.toLowerCase()) ||
-            (addr.state_district &&
-              addr.state_district.toLowerCase().includes(d.toLowerCase())) ||
-            (addr.county &&
-              addr.county.toLowerCase().includes(d.toLowerCase())) ||
-            (addr.city && addr.city.toLowerCase().includes(d.toLowerCase()))
+        const districtCandidates = [
+          addr.city_district,
+          addr.state_district,
+          addr.county,
+          addr.city,
+          addr.town,
+          addr.village,
+        ].filter(Boolean);
+
+        let district = districtCandidates[0] || placeName;
+        const matchedDistrict = PAKISTAN_DISTRICTS.find((d) =>
+          districtCandidates.some((c) => c!.toLowerCase() === d.toLowerCase())
         );
 
         if (matchedDistrict) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          setValue("district", matchedDistrict as any);
+          district = matchedDistrict;
         }
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setValue("district", district as any);
       }
     } catch (err) {
       console.error("Reverse geocoding error:", err);
     } finally {
       setIsGeocoding(false);
-    }
-  };
-
-  const handleDistrictSelect = async (val: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setValue("district", val as any);
-    setValue("location", "");
-    setSelectedLocationName("");
-
-    try {
-      const queryStr = `${val}, Pakistan`;
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryStr)}&countrycodes=pk&limit=1`
-      );
-      const data = await res.json();
-      if (data && data[0]) {
-        const lat = parseFloat(data[0].lat);
-        const lng = parseFloat(data[0].lon);
-        setMarker({ lat, lng });
-        setValue("lat", lat);
-        setValue("lng", lng);
-        setSelectedLocationName(data[0].display_name);
-      }
-    } catch (err) {
-      console.error("District geocoding error:", err);
     }
   };
 
@@ -742,12 +819,16 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <SearchableSelect
+        <DistrictCitySearch
           value={selectedDistrict}
-          onSelect={(val) => handleDistrictSelect(val)}
-          options={PAKISTAN_DISTRICTS}
-          placeholder={bundle.new.placeholders.district}
-          label={bundle.new.fields.district || "District / City"}
+          onChange={(val) => setValue("district", val)}
+          onLocationPick={(lat, lng) => {
+            setMarker({ lat, lng });
+            setValue("lat", lat);
+            setValue("lng", lng);
+          }}
+          onPlaceSelect={(placeName) => setValue("location", placeName)}
+          onDisplayName={(name) => setSelectedLocationName(name)}
           error={errors.district?.message || serverErrors.district}
         />
         <div>
