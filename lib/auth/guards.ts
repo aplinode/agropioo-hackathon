@@ -35,3 +35,10 @@ export async function requireSessionApi(): Promise<SessionContext | null> {
   if (!pass) return null;
   return toSessionContext(pass);
 }
+
+/** For public pages that optionally adapt UI for signed-in visitors. */
+export async function getSessionOptional(): Promise<SessionContext | null> {
+  const pass = await readValidPass("session");
+  if (!pass) return null;
+  return toSessionContext(pass);
+}

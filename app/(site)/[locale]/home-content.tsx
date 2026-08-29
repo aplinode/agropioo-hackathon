@@ -1,5 +1,5 @@
 import SiteHeader from "@/components/SiteHeader";
-import type { SiteHeaderStrings } from "@/components/SiteHeader";
+import type { SiteHeaderStrings, SessionUser } from "@/components/SiteHeader";
 import Hero from "./sections/Hero";
 import CapabilityTicker from "./sections/CapabilityTicker";
 import Problem from "./sections/Problem";
@@ -12,10 +12,16 @@ import TargetUsers from "./sections/TargetUsers";
 import CTA from "./sections/CTA";
 import Footer from "./sections/Footer";
 
-export default function HomeContent({ headerStrings }: { headerStrings: SiteHeaderStrings }) {
+export default function HomeContent({
+  headerStrings,
+  session,
+}: {
+  headerStrings: SiteHeaderStrings;
+  session?: SessionUser | null;
+}) {
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden">
-      <SiteHeader strings={headerStrings} />
+      <SiteHeader strings={headerStrings} session={session} />
 
       <main className="flex flex-1 flex-col">
         <Hero />
