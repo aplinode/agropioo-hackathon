@@ -1,13 +1,15 @@
 import { z } from 'zod';
-import { PAKISTAN_DISTRICTS } from '@/lib/farms/districts';
 import { CROPS } from '@/lib/farms/constants';
 import { RECORD_TYPES } from '@/lib/farms/constants';
 import { SEASONS } from '@/lib/farms/constants';
 import { WEATHER_CONDITIONS } from '@/lib/farms/constants';
 import { YEAR_OPTIONS } from '@/lib/farms/constants';
 
-const districtEnum = z.enum(PAKISTAN_DISTRICTS).superRefine((val, ctx) => {
-  if (!PAKISTAN_DISTRICTS.includes(val)) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Select a valid district' });
+const districtSchema = z.string().min(1, 'District is required').superRefine((val, ctx) => {
+  const trimmed = val.trim();
+  if (trimmed.length < 2) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Select a valid district' });
+  }
 });
 
 const cropEnum = z.enum(CROPS);
@@ -19,7 +21,7 @@ const yearEnum = z.enum(YEAR_OPTIONS as unknown as [string, ...string[]]);
 export const createFarmSchema = z.object({
   name: z.string().min(1, 'Name is required').max(120),
   location: z.string().min(1, 'Location is required'),
-  district: districtEnum,
+  district: districtSchema,
   crops: z.array(cropEnum).min(1, 'Select at least one crop').max(10),
   acres: z.coerce.number().positive('Acres must be greater than 0').max(99999),
   lat: z.coerce.number().min(-90).max(90),
@@ -29,7 +31,7 @@ export const createFarmSchema = z.object({
 export const updateFarmSchema = z.object({
   name: z.string().min(1, 'Name is required').max(120).optional(),
   location: z.string().min(1, 'Location is required').optional(),
-  district: districtEnum.optional(),
+  district: districtSchema.optional(),
   crops: z.array(cropEnum).min(1, 'Select at least one crop').max(10).optional(),
   acres: z.coerce.number().positive('Acres must be greater than 0').max(99999).optional(),
   lat: z.coerce.number().min(-90).max(90).optional(),
