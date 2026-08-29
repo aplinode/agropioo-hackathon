@@ -7,7 +7,7 @@ import MarkdownRender from "./markdown-render";
 import { MenuIcon } from "@/components/icons";
 import { LOCALE_REGISTRY, type Locale } from "@/lib/i18n/config";
 
-type Props = { bundle: AdvisorBundle; appLocale?: Locale };
+type Props = { bundle: AdvisorBundle; appLocale?: Locale; initialDraft?: string };
 
 type ChatMessage = {
   id: string;
@@ -22,19 +22,26 @@ function textDirection(text: string): "rtl" | "ltr" {
   return ARABIC_URDU_RE.test(text) ? "rtl" : "ltr";
 }
 
-export default function AdvisorChat({ bundle, appLocale }: Props) {
+export default function AdvisorChat({ bundle, appLocale, initialDraft }: Props) {
   const localeDir = appLocale ? LOCALE_REGISTRY[appLocale].dir : "ltr";
   const [conversations, setConversations] = useState<ConversationMeta[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [draft, setDraft] = useState("");
+  const [draft, setDraft] = useState(initialDraft ?? "");
   const [thinking, setThinking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [streamingText, setStreamingText] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
   const nextIdRef = useRef(0);
   const endRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    if (initialDraft && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [initialDraft]);
 
   const loadConversations = useCallback(async () => {
     try {
@@ -383,6 +390,7 @@ export default function AdvisorChat({ bundle, appLocale }: Props) {
               placeholder={bundle.chat.placeholder}
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
+              ref={inputRef}
               className="h-11 min-w-0 flex-1 bg-transparent px-3 text-sm text-agro-ink placeholder:text-agro-cloud outline-none"
             />
             <button
