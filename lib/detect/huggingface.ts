@@ -22,39 +22,6 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function resolveHost(hostname: string): Promise<string> {
-  const mod = await import("node:dns/promises");
-  const ns = ["8.8.8.8", "1.1.1.1"];
-  for (const server of ns) {
-    try {
-      const { setServers, resolve4 } = mod as typeof import("node:dns/promises");
-      setServers([server]);
-      const addresses = await resolve4(hostname);
-      if (addresses && addresses.length > 0) return addresses[0];
-    } catch {
-      // try next nameserver
-    }
-  }
-  return hostname;
-}
-
-async function fetchWithResolvedDns(url: string, init: RequestInit = {}): Promise<Response> {
-  const urlObj = new URL(url);
-  const originalHost = urlObj.hostname;
-  try {
-    const ip = await resolveHost(originalHost);
-    if (ip !== originalHost) {
-      urlObj.hostname = ip;
-      const headers = new Headers(init.headers);
-      headers.set("Host", originalHost);
-      return fetch(urlObj.toString(), { ...init, headers });
-    }
-  } catch {
-    // fall back to normal fetch
-  }
-  return fetch(url, init);
-}
-
 export async function callHuggingFace(
   imageBuffer: Buffer,
   signal?: AbortSignal,
@@ -70,7 +37,7 @@ export async function callHuggingFace(
     if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
 
     try {
-      const res = await fetchWithResolvedDns(HF_ENDPOINT, {
+      const res = await fetch(HF_ENDPOINT, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${apiKey}`,
