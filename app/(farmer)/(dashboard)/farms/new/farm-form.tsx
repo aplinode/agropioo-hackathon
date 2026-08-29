@@ -115,7 +115,7 @@ function SearchableSelect({
   }, [value]);
 
   return (
-    <div ref={ref} className="relative z-30">
+    <div ref={ref} className="relative z-[9999]">
       <label className="block text-sm font-semibold text-agro-ink">
         {label}
       </label>
@@ -193,7 +193,7 @@ function CropSearchSelect({
   }, []);
 
   return (
-    <div ref={ref} className="relative z-20">
+    <div ref={ref} className="relative z-[9999]">
       <label className="block text-sm font-semibold text-agro-ink mb-1">
         Crops
       </label>
@@ -370,6 +370,40 @@ function LocationSearch({
     };
   }, [query, district]);
 
+  const locationPickRef = useRef(onLocationPick);
+  useEffect(() => {
+    locationPickRef.current = onLocationPick;
+  });
+
+  const autoGeocodeRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (autoGeocodeRef.current) clearTimeout(autoGeocodeRef.current);
+    if (query.length < 3 || open) return;
+
+    autoGeocodeRef.current = window.setTimeout(async () => {
+      try {
+        const searchQuery = `${query}, ${district || "Pakistan"}`;
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=pk&limit=1&addressdetails=1`
+        );
+        const data = await res.json();
+        if (data && data[0]) {
+          locationPickRef.current(
+            parseFloat(data[0].lat),
+            parseFloat(data[0].lon)
+          );
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }, 1000);
+
+    return () => {
+      if (autoGeocodeRef.current) clearTimeout(autoGeocodeRef.current);
+    };
+  }, [query, district, open]);
+
   const handleSelect = (item: {
     display_name: string;
     lat: string;
@@ -402,7 +436,7 @@ function LocationSearch({
   };
 
   return (
-    <div ref={ref} className="relative z-10">
+    <div ref={ref} className="relative z-[9999]">
       <label htmlFor="farm-location" className="block text-sm font-semibold text-agro-ink">
         Location / Village
       </label>
@@ -588,6 +622,8 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
   const handleDistrictSelect = async (val: string) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setValue("district", val as any);
+    setValue("location", "");
+    setSelectedLocationName("");
 
     try {
       const queryStr = `${val}, Pakistan`;
@@ -761,7 +797,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
         <label className="block text-sm font-semibold text-agro-ink mb-1">
           Farm Location (Google Maps Pin)
         </label>
-        <div className="relative z-0 h-[320px] w-full overflow-hidden rounded-2xl border border-agro-sprout shadow-sm">
+        <div className="relative h-[320px] w-full overflow-hidden rounded-2xl border border-agro-sprout shadow-sm">
           <MapContainer
             center={[marker.lat, marker.lng]}
             zoom={8}
