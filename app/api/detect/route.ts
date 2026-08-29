@@ -77,6 +77,13 @@ export async function POST(request: Request) {
         // E10: navigated away mid-analysis — abort silently, keep nothing.
         return new Response(null, { status: 499 });
       }
+      if (err instanceof Error && err.message === "Missing HUGGINGFACE_API_KEY") {
+        return errorResponse(
+          "server_error",
+          "Detection service is not configured. Please contact support.",
+          503,
+        );
+      }
       // E7 / E16: AI service unavailable or HF rate-limited.
       return errorResponse(
         "server_error",
