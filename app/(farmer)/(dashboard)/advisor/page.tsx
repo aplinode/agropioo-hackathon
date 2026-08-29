@@ -6,13 +6,20 @@ export const metadata: Metadata = {
   title: "Advisor — Agropioo",
 };
 
-export default async function AdvisorPage() {
-  const bundle = await getAdvisorBundle();
-  const appLocale = await getAppLocale();
+interface AdvisorPageProps {
+  searchParams: Promise<{ draft?: string }>;
+}
+
+export default async function AdvisorPage({ searchParams }: AdvisorPageProps) {
+  const [bundle, appLocale, { draft }] = await Promise.all([
+    getAdvisorBundle(),
+    getAppLocale(),
+    searchParams,
+  ]);
 
   return (
     <div className="flex min-h-[calc(100dvh-8rem)] flex-col lg:min-h-[calc(100dvh-11rem)]">
-      <AdvisorChat bundle={bundle} appLocale={appLocale} />
+      <AdvisorChat bundle={bundle} appLocale={appLocale} initialDraft={draft} />
     </div>
   );
 }

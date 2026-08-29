@@ -4,8 +4,8 @@ import { detectSaveSchema } from "@/lib/validation/detect";
 describe("detectSaveSchema", () => {
   it("accepts valid input", () => {
     const result = detectSaveSchema.safeParse({
-      scanId: "00000000-0000-0000-0000-000000000000",
-      farmId: "11111111-1111-1111-1111-111111111111",
+      scanId: "550e8400-e29b-41d4-a716-446655440000",
+      farmId: "550e8400-e29b-41d4-a716-446655440001",
     });
     expect(result.success).toBe(true);
   });
@@ -13,14 +13,14 @@ describe("detectSaveSchema", () => {
   it("rejects an invalid scanId", () => {
     const result = detectSaveSchema.safeParse({
       scanId: "not-a-uuid",
-      farmId: "11111111-1111-1111-1111-111111111111",
+      farmId: "550e8400-e29b-41d4-a716-446655440001",
     });
     expect(result.success).toBe(false);
   });
 
   it("rejects an invalid farmId", () => {
     const result = detectSaveSchema.safeParse({
-      scanId: "00000000-0000-0000-0000-000000000000",
+      scanId: "550e8400-e29b-41d4-a716-446655440000",
       farmId: "also-not-a-uuid",
     });
     expect(result.success).toBe(false);
