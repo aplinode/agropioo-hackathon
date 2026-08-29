@@ -6,7 +6,7 @@ import type { UpdateRecordInput } from '@/lib/validation/farms';
 
 async function getOwnedRecord(recordId: string, accountId: string) {
   try {
-    const record = await queryOne(
+    const record = await queryOne<Record<string, unknown>>(
       `SELECT r.* FROM records r
        JOIN farms f ON f.id = r.farm_id
        WHERE r.id = $1 AND f.account_id = $2 AND f.archived_at IS NULL`,
@@ -14,7 +14,7 @@ async function getOwnedRecord(recordId: string, accountId: string) {
     );
     return { record, error: null };
   } catch (error) {
-    return { record: null, error };
+    return { record: null, error: error instanceof Error ? error : new Error(String(error)) };
   }
 }
 

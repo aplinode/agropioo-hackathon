@@ -6,14 +6,14 @@ import type { UpdateFarmInput } from '@/lib/validation/farms';
 
 async function getOwnedFarm(farmId: string, accountId: string) {
   try {
-    const farm = await queryOne(
+    const farm = await queryOne<Record<string, unknown>>(
       `SELECT * FROM farms
        WHERE id = $1 AND account_id = $2 AND archived_at IS NULL`,
       [farmId, accountId]
     );
     return { farm, error: null };
   } catch (error) {
-    return { farm: null, error };
+    return { farm: null, error: error instanceof Error ? error : new Error(String(error)) };
   }
 }
 

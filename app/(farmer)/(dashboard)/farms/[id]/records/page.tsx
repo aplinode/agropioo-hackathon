@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PageHeader from "@/components/shell/page-header";
 import { getFarmsBundle } from "@/lib/i18n/server";
 import { requireSessionPage } from "@/lib/auth/guards";
-import { getSupabase } from "@/lib/supabase";
+import { query } from "@/lib/db";
 import FarmRecordItem from "./farm-record-item";
 
 export const metadata: Metadata = {
@@ -18,25 +18,16 @@ export default async function FarmRecordsPage({
   const { id } = await params;
   let records: Array<Record<string, unknown>> = [];
   try {
-    const supabase = getSupabase();
-    // First verify farm belongs to session
-    const { data: farm } = await supabase
-      .from('farms')
-      .select('id')
-      .eq('id', id)
-      .eq('account_id', session.accountId)
-      .is('archived_at', null)
-      .maybeSingle();
+    const farmRows = await query<{ id: string }>(
+      `SELECT id FROM farms WHERE id = $1 AND account_id = $2 AND archived_at IS NULL`,
+      [id, session.accountId]
+    );
 
-    if (farm) {
-      const { data } = await supabase
-        .from('records')
-        .select('*')
-        .eq('farm_id', id)
-        .order('event_date', { ascending: false })
-        .order('created_at', { ascending: false });
-
-      if (data) records = data;
+    if (farmRows.length > 0) {
+      records = await query<Record<string, unknown>>(
+        `SELECT * FROM records WHERE farm_id = $1 ORDER BY event_date DESC, created_at DESC`,
+        [id]
+      );
     }
   } catch (err) {
     console.error("Error fetching farm records:", err);

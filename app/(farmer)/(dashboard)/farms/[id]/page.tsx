@@ -9,7 +9,7 @@ import {
 } from "@/components/icons";
 import { getFarmsBundle } from "@/lib/i18n/server";
 import { requireSessionPage } from "@/lib/auth/guards";
-import { getSupabase } from "@/lib/supabase";
+import { query } from "@/lib/db";
 import { computeFarmHealth } from "@/lib/farms/health";
 import FarmDetailRecordItem from "./farm-detail-record-item";
 
@@ -49,30 +49,24 @@ export default async function FarmDetailPage({
   const { id } = await params;
   let farm: Record<string, unknown> | null = null;
   try {
-    const supabase = getSupabase();
-    const { data, error } = await supabase
-      .from('farms')
-      .select('*')
-      .eq('id', id)
-      .eq('account_id', session.accountId)
-      .is('archived_at', null)
-      .maybeSingle();
+    const rows = await query<Record<string, unknown>>(
+      `SELECT * FROM farms WHERE id = $1 AND account_id = $2 AND archived_at IS NULL`,
+      [id, session.accountId]
+    );
+    const data = rows[0] ?? null;
 
-    if (!error && data) {
-        const { data: recentRecords } = await supabase
-          .from('records')
-          .select('*')
-          .eq('farm_id', id)
-          .order('event_date', { ascending: false })
-          .order('created_at', { ascending: false })
-          .limit(6);
+    if (data) {
+      const recentRecords = await query<{ type: string; event_date: string }>(
+        `SELECT * FROM records WHERE farm_id = $1 ORDER BY event_date DESC, created_at DESC LIMIT 6`,
+        [id]
+      );
 
-      const health = computeFarmHealth(data.growth_stages as Record<string, string>, recentRecords ?? []);
+      const health = computeFarmHealth(data.growth_stages as Record<string, string>, recentRecords);
 
       farm = {
         ...data,
         health,
-        recent_records: recentRecords ?? [],
+        recent_records: recentRecords,
       };
     }
   } catch (err) {

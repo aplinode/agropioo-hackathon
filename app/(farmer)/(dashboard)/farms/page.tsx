@@ -9,7 +9,7 @@ import {
 } from "@/components/icons";
 import { getFarmsBundle } from "@/lib/i18n/server";
 import { requireSessionPage } from "@/lib/auth/guards";
-import { getSupabase } from "@/lib/supabase";
+import { query } from "@/lib/db";
 import { computeFarmHealth } from "@/lib/farms/health";
 
 export const metadata: Metadata = {
@@ -27,31 +27,24 @@ export default async function FarmsPage() {
   let farms: Array<Record<string, unknown>> = [];
 
   try {
-    const supabase = getSupabase();
-    const { data: rawFarms, error } = await supabase
-      .from('farms')
-      .select('*')
-      .eq('account_id', session.accountId)
-      .is('archived_at', null)
-      .order('created_at', { ascending: false });
+    const rawFarms = await query<Record<string, unknown>>(
+      `SELECT * FROM farms WHERE account_id = $1 AND archived_at IS NULL ORDER BY created_at DESC`,
+      [session.accountId]
+    );
 
-    if (!error && rawFarms) {
-      farms = await Promise.all(
-        rawFarms.map(async (farm) => {
-          const { data: recent } = await supabase
-            .from('records')
-            .select('type, event_date')
-            .eq('farm_id', farm.id)
-            .order('event_date', { ascending: false })
-            .limit(5);
+    farms = await Promise.all(
+      rawFarms.map(async (farm) => {
+        const recent = await query<{ type: string; event_date: string }>(
+          `SELECT type, event_date FROM records WHERE farm_id = $1 ORDER BY event_date DESC LIMIT 5`,
+          [farm.id]
+        );
 
-          return {
-            ...farm,
-            health: computeFarmHealth(farm.growth_stages as Record<string, string>, recent ?? []),
-          };
-        })
-      );
-    }
+        return {
+          ...farm,
+          health: computeFarmHealth(farm.growth_stages as Record<string, string>, recent),
+        };
+      })
+    );
   } catch (err) {
     console.error("Error fetching farms:", err);
   }

@@ -93,6 +93,9 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     // Fresh verification round for this account (new or pending).
+    if (!account) {
+      return errorResponse("server_error", COPY.SERVER_ERROR, 500);
+    }
     const code = await issueVerificationCode("verify", email, account.id);
     const pass = await mintPass("verify", { accountId: account.id, email });
     await setPassCookie("verify", pass.token);

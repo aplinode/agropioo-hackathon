@@ -11,7 +11,7 @@ export async function GET() {
   if (!session) return errorResponse('unauthorized', 'Unauthorized', 401);
 
   try {
-    const farms = await query(
+    const farms = await query<Record<string, unknown>>(
       `SELECT * FROM farms
        WHERE account_id = $1 AND archived_at IS NULL
        ORDER BY created_at DESC`,
@@ -20,7 +20,7 @@ export async function GET() {
 
     const enriched = await Promise.all(
       (farms ?? []).map(async (farm) => {
-        const recent = await query(
+        const recent = await query<{ type: string; event_date: string }>(
           `SELECT type, event_date FROM records
            WHERE farm_id = $1
            ORDER BY event_date DESC
@@ -28,7 +28,7 @@ export async function GET() {
           [farm.id]
         );
 
-        const seasons = await query(
+        const seasons = await query<{ season: string; year: string }>(
           `SELECT season, year FROM records WHERE farm_id = $1`,
           [farm.id]
         );
