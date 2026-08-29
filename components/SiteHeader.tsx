@@ -16,6 +16,7 @@ export interface SiteHeaderStrings {
   howItWorks: string;
   vision: string;
   signIn: string;
+  signUp: string;
   getEarlyAccess: string;
   openMenu: string;
   closeMenu: string;
@@ -144,6 +145,12 @@ export default function SiteHeader({
                   className="text-lg font-medium text-agro-slate underline-offset-8 transition-colors hover:text-agro-canopy hover:underline hover:decoration-agro-sprout hover:decoration-2"
                 >
                   {strings.signIn}
+                </Link>
+                <Link
+                  href={`${prefix}/signup`}
+                  className="inline-flex h-11 items-center justify-center rounded-lg border border-agro-sprout bg-white px-6 text-base font-semibold whitespace-nowrap text-agro-forest shadow-sm transition-all duration-200 hover:border-agro-canopy hover:bg-agro-mint"
+                >
+                  {strings.signUp}
                 </Link>
                 <Link
                   href={ctaHref}
@@ -278,6 +285,13 @@ export default function SiteHeader({
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {strings.getEarlyAccess}
+                </Link>
+                <Link
+                  href={`${prefix}/signup`}
+                  className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-lg border border-agro-sprout bg-white px-5 text-base font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {strings.signUp}
                 </Link>
                 <Link
                   href={`${prefix}/login`}

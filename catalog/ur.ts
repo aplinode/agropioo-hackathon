@@ -7,6 +7,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "nav.howItWorks": "یہ کیسے کام کرتا ہے",
   "nav.vision": "ہمارا وژن",
   "nav.signIn": "سائن اِن کریں",
+  "nav.signUp": "سائن اپ کریں",
   "nav.getEarlyAccess": "ابتدائی رسائی حاصل کریں",
   "nav.openMenu": "مینیو کھولیں",
   "nav.closeMenu": "مینیو بند کریں",
