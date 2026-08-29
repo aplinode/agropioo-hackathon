@@ -15,7 +15,7 @@ import { resolveClass } from "@/lib/detect/plantvillage-map";
 import { getFastDictionary, requestLocale } from "@/lib/i18n/resolve";
 
 const CONFIDENCE_THRESHOLD = 0.5;
-const HF_TIMEOUT_MS = 15000;
+const HF_TIMEOUT_MS = 30000;
 
 export async function POST(request: Request) {
   const session = await requireSessionApi();

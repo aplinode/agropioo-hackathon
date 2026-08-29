@@ -16,6 +16,13 @@ export interface HfPrediction {
 const HF_ENDPOINT =
   "https://api-inference.huggingface.co/models/animeshakr/plant-disease-efficientnetv2s";
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 2000;
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export async function callHuggingFace(
   imageBuffer: Buffer,
   signal?: AbortSignal,
@@ -25,27 +32,43 @@ export async function callHuggingFace(
     throw new Error("Missing HUGGINGFACE_API_KEY");
   }
 
-  const res = await fetch(HF_ENDPOINT, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/octet-stream",
-      Accept: "application/json",
-    },
-    body: new Uint8Array(imageBuffer),
-    signal,
-  });
+  let lastError: Error | null = null;
 
-  if (res.status === 503) throw new Error("SERVICE_UNAVAILABLE");
-  if (res.status === 429) throw new Error("RATE_LIMITED");
-  if (!res.ok) {
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+
+    const res = await fetch(HF_ENDPOINT, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/octet-stream",
+        Accept: "application/json",
+      },
+      body: new Uint8Array(imageBuffer),
+      signal,
+    });
+
+    if (res.status === 200) {
+      const data = (await res.json()) as HfPrediction[] | { error?: string; estimated_time?: number };
+      if (Array.isArray(data)) return data;
+      if (data && typeof data.error === "string") {
+        throw new Error("SERVICE_UNAVAILABLE");
+      }
+      return [];
+    }
+
+    if (res.status === 503) {
+      lastError = new Error("SERVICE_UNAVAILABLE");
+      if (attempt < MAX_RETRIES) {
+        const retryAfter = Number(res.headers.get("retry-after")) || RETRY_DELAY_MS;
+        await delay(retryAfter * (attempt + 1));
+        continue;
+      }
+    }
+
+    if (res.status === 429) throw new Error("RATE_LIMITED");
     throw new Error(`HF error ${res.status}`);
   }
 
-  const data = (await res.json()) as HfPrediction[] | { error?: string };
-  if (Array.isArray(data)) return data;
-  if (data && typeof data.error === "string") {
-    throw new Error("SERVICE_UNAVAILABLE");
-  }
-  return [];
+  throw lastError ?? new Error("SERVICE_UNAVAILABLE");
 }
