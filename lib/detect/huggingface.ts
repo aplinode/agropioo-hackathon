@@ -13,7 +13,7 @@ export interface HfPrediction {
   score: number;
 }
 
-const HF_ENDPOINT = "https://api-inference.huggingface.co/models/linkanjarad/mobilenet_v2_1.0_224-plant-disease-identification";
+const HF_ENDPOINT = "https://router.huggingface.co/hf-inference/models/linkanjarad/mobilenet_v2_1.0_224-plant-disease-identification";
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 2000;
