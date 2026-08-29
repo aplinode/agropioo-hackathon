@@ -1,11 +1,15 @@
 /**
  * Seeds the advisor knowledge base: reads markdown articles from
- * data/advisor-knowledge/, chunks them, embeds via OpenAI, and
- * inserts into Neon advisor_knowledge_documents + advisor_knowledge_chunks.
+ * data/advisor-knowledge/, chunks them, embeds locally via Ollama (free,
+ * on-device — no API key), and inserts into Neon
+ * advisor_knowledge_documents + advisor_knowledge_chunks.
  *
  * Idempotent: deletes existing advisor KB rows before re-seeding.
  *
- * Requires: DATABASE_URL, OPENAI_API_KEY
+ * Requires: DATABASE_URL + a running Ollama daemon with the embed model pulled.
+ * Config: OLLAMA_HOST (default http://localhost:11434),
+ *         OLLAMA_EMBED_MODEL (default nomic-embed-text, 768-dim),
+ *         OLLAMA_EMBED_DIM (default 768 — must match db/migrations/0006).
  * Run: node --experimental-strip-types --env-file-if-exists=.env scripts/seed-knowledge.ts
  */
 import { readdir, readFile } from "node:fs/promises";
@@ -13,7 +17,8 @@ import { join, basename, extname } from "node:path";
 import { query, queryOne } from "../lib/db.ts";
 
 const KB_DIR = join(import.meta.dirname, "..", "data", "advisor-knowledge");
-const EMBEDDING_MODEL = process.env.ADVISOR_EMBEDDING_MODEL ?? "text-embedding-3-small";
+const OLLAMA_HOST = process.env.OLLAMA_HOST ?? "http://localhost:11434";
+const EMBEDDING_MODEL = process.env.OLLAMA_EMBED_MODEL ?? "nomic-embed-text";
 const CHUNK_SIZE = 800; // approximate token target per chunk
 const CHUNK_OVERLAP = 80; // approximate token overlap
 
@@ -70,42 +75,29 @@ function splitIntoChunks(text: string): string[] {
 }
 
 async function embedChunks(chunks: string[]): Promise<number[][]> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  const baseUrl = process.env.OPENAI_BASE_URL ?? "https://api.openai.com/v1";
-
-  if (!apiKey) {
-    console.error("Missing OPENAI_API_KEY. Add it to .env, then re-run.");
-    process.exit(1);
-  }
-
-  const batchSize = 100;
+  const batchSize = 50;
   const allEmbeddings: number[][] = [];
 
   for (let i = 0; i < chunks.length; i += batchSize) {
     const batch = chunks.slice(i, i + batchSize);
-    console.log(`  Embedding batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(chunks.length / batchSize)} (${batch.length} chunks)...`);
+    console.log(`  Embedding batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(chunks.length / batchSize)} (${batch.length} chunks) via ${EMBEDDING_MODEL} @ ${OLLAMA_HOST}...`);
 
-    const response = await fetch(`${baseUrl}/embeddings`, {
+    const response = await fetch(`${OLLAMA_HOST}/api/embed`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: EMBEDDING_MODEL,
-        input: batch,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model: EMBEDDING_MODEL, input: batch }),
     });
 
     if (!response.ok) {
       const errText = await response.text();
-      throw new Error(`Embedding API error (${response.status}): ${errText}`);
+      throw new Error(`Ollama embed error (${response.status}): ${errText}`);
     }
 
-    const data = await response.json() as { data: Array<{ embedding: number[] }> };
-    for (const item of data.data) {
-      allEmbeddings.push(item.embedding);
+    const data = await response.json() as { embeddings: number[][] };
+    if (!Array.isArray(data.embeddings) || data.embeddings.length !== batch.length) {
+      throw new Error(`Ollama returned ${data.embeddings?.length} embeddings for ${batch.length} inputs`);
     }
+    for (const emb of data.embeddings) allEmbeddings.push(emb);
   }
 
   return allEmbeddings;
