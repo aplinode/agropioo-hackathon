@@ -15,7 +15,7 @@ import { resolveClass } from "@/lib/detect/plantvillage-map";
 import { getFastDictionary, requestLocale } from "@/lib/i18n/resolve";
 
 const CONFIDENCE_THRESHOLD = 0.5;
-const HF_TIMEOUT_MS = 15000;
+const HF_TIMEOUT_MS = 30000;
 
 export async function POST(request: Request) {
   const session = await requireSessionApi();
@@ -76,6 +76,13 @@ export async function POST(request: Request) {
       if (err instanceof Error && err.name === "AbortError") {
         // E10: navigated away mid-analysis — abort silently, keep nothing.
         return new Response(null, { status: 499 });
+      }
+      if (err instanceof Error && err.message === "Missing HUGGINGFACE_API_KEY") {
+        return errorResponse(
+          "server_error",
+          "Detection service is not configured. Please contact support.",
+          503,
+        );
       }
       // E7 / E16: AI service unavailable or HF rate-limited.
       return errorResponse(

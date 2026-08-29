@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import DetectUpload from "./detect-upload";
 import { getDetectBundle } from "@/lib/i18n/server";
 import { query } from "@/lib/db";
+import { requireSessionPage } from "@/lib/auth/guards";
 import type { FarmOption, ScanHistoryItem } from "./detect-types";
 
 export const metadata: Metadata = {
@@ -11,11 +12,12 @@ export const metadata: Metadata = {
 const LIMIT = 20;
 
 export default async function DetectPage() {
+  const session = await requireSessionPage();
   const [bundle, rawFarms, rawScans] = await Promise.all([
     getDetectBundle(),
     query<{ id: string; name: string; crops: unknown }>(
       `SELECT id, name, crops FROM farms WHERE account_id = $1 AND archived_at IS NULL ORDER BY created_at DESC`,
-      [""],
+      [session.accountId],
     ),
     query<{
       id: string;
@@ -41,7 +43,7 @@ export default async function DetectPage() {
        WHERE ds.account_id = $1
        ORDER BY ds.created_at DESC
        LIMIT $2`,
-      ["", LIMIT],
+      [session.accountId, LIMIT],
     ),
   ]);
 
