@@ -10,7 +10,7 @@ import { errorResponse, readJsonBody, clientIp } from "@/lib/http";
 import { hitLimiter, HOUR_MS } from "@/lib/auth/rate-limit";
 import { chatSchema } from "@/lib/validation/advisor";
 import { createTriageAgent } from "@/lib/advisor/agents/triage";
-import { getCurrentSeason, getCropCalendar, getSeasonalRisks } from "@/lib/advisor/context";
+import { getCurrentSeason } from "@/lib/advisor/context";
 import type { FarmerContext, FarmSummary } from "@/lib/advisor/context";
 import { run } from "@openai/agents";
 import { toSSEStream, sseHeaders } from "@/lib/advisor/streaming";
