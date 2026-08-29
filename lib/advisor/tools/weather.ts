@@ -1,42 +1,57 @@
 import { tool } from "@openai/agents";
 import { z } from "zod";
-import { demoWeatherByLocation } from "@/app/(farmer)/(dashboard)/weather/demo-data";
-import type { WeatherLocationId } from "@/app/(farmer)/(dashboard)/weather/demo-data";
-
-const LOCATION_MAP: Record<string, WeatherLocationId> = {
-  multan: "multan",
-  sahiwal: "sahiwal",
-  faisalabad: "faisalabad",
-};
+import { fetchCurrentWeather } from "@/lib/farms/weather";
 
 export const getWeather = tool({
   name: "get_weather",
   description:
-    "Get the current weather forecast for a location in Pakistan. Returns current conditions, hourly forecast, and 5-day daily forecast. Use this when the farmer asks about weather, rain, temperature, or spray windows.",
+    "Get the current weather for any location in Pakistan using live data. Returns current temperature, humidity, and conditions with farming interpretations. Use the farmer's farm coordinates (lat/lng) or district name.",
   parameters: z.object({
-    location: z.string().describe("City or district name (e.g. Multan, Sahiwal, Faisalabad)"),
-    days: z.number().min(1).max(5).optional().describe("Number of forecast days to include (1-5, default 3)"),
+    lat: z.number().describe("Latitude of the location (from farm data or farmer's district)"),
+    lng: z.number().describe("Longitude of the location (from farm data or farmer's district)"),
+    locationName: z.string().optional().describe("Human-readable location name for display (e.g. 'Multan')"),
   }),
-  async execute({ location, days = 3 }) {
-    const locKey = location.toLowerCase().trim() as string;
-    const mappedKey = LOCATION_MAP[locKey] ?? "multan";
-    const weather = demoWeatherByLocation[mappedKey];
+  async execute({ lat, lng, locationName }) {
+    const snapshot = await fetchCurrentWeather(lat, lng);
+    const label = locationName ?? `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
 
-    if (!weather) {
-      return `Weather data not available for "${location}". Currently available for: Multan, Sahiwal, Faisalabad.`;
+    if (!snapshot.condition && snapshot.temp_c === null) {
+      return `Weather data is currently unavailable for ${label}. The weather service may be temporarily down.`;
     }
 
-    const dailyForecast = weather.daily.slice(0, days);
+    const lines = [`Current weather for ${label}:`];
 
-    return `Weather for ${weather.label}:
-Current: ${weather.condition}, ${weather.temperatureC}°C (High: ${weather.highC}°C, Low: ${weather.lowC}°C)
-Rain chance: ${weather.rainChance}% — ${weather.rainNote}
-Spray window: ${weather.sprayWindow}
+    if (snapshot.temp_c !== null) {
+      lines.push(`Temperature: ${snapshot.temp_c}°C`);
+    }
+    if (snapshot.condition) {
+      lines.push(`Conditions: ${snapshot.condition}`);
+    }
+    if (snapshot.humidity !== null) {
+      lines.push(`Humidity: ${snapshot.humidity}%`);
+    }
 
-Hourly forecast:
-${weather.hourly.map(h => `  ${h.time}: ${h.tempC}°C, ${h.rainPct}% rain chance`).join("\n")}
+    if (snapshot.temp_c !== null && snapshot.humidity !== null) {
+      const tempC = snapshot.temp_c;
+      const humid = snapshot.humidity;
+      if (tempC > 30 && humid > 70) {
+        lines.push("⚠ High temperature + high humidity = elevated fungal disease risk (blight, rust). Scout crops closely.");
+      }
+      if (tempC > 38) {
+        lines.push("⚠ Heat stress alert: ensure adequate irrigation, especially for wheat at grain filling and cotton at flowering.");
+      }
+      if (tempC < 5) {
+        lines.push("⚠ Frost risk: protect young crops and vegetables. Irrigate to raise soil temperature.");
+      }
+      if (humid > 80 && tempC > 20 && tempC < 35) {
+        lines.push("High humidity favors whitefly, aphids, and fungal diseases. Monitor pest levels.");
+      }
+    }
 
-${days}-day forecast:
-${dailyForecast.map(d => `  ${d.day}: ${d.condition}, ${d.loC}–${d.hiC}°C, ${d.rainPct}% rain`).join("\n")}`;
+    if (snapshot.condition?.toLowerCase().includes("rain") || snapshot.condition?.toLowerCase().includes("drizzle")) {
+      lines.push("Rain detected or expected — delay any planned sprays. If rain is light, it may benefit soil moisture.");
+    }
+
+    return lines.join("\n");
   },
 });

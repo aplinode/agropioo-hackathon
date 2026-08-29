@@ -88,6 +88,10 @@ const ctx: FarmerContext = {
   language: "en",
   farms: [],
   currentSeason: "Kharif",
+  seasonPhase: "mid",
+  currentDate: "29 August 2026",
+  currentMonth: 7,
+  district: "Multan",
 };
 
 describe("advisor agent model configuration", () => {

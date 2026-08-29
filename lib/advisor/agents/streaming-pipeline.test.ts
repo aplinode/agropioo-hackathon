@@ -61,7 +61,7 @@ afterAll(async () => {
 
 describe("streaming + persistence pipeline", () => {
   it("finalOutput is non-empty after awaiting completed", async () => {
-    const agent = createTriageAgent({ accountId: "a", farmerName: "T", language: "en", farms: [], currentSeason: "Kharif" });
+    const agent = createTriageAgent({ accountId: "a", farmerName: "T", language: "en", farms: [], currentSeason: "Kharif", seasonPhase: "mid", currentDate: "29 August 2026", currentMonth: 7, district: "Multan" });
     const result = await run(agent, "hello", { stream: true });
     const stream = toSSEStream(result, "conv-1");
 
@@ -84,7 +84,7 @@ describe("streaming + persistence pipeline", () => {
   });
 
   it("onFinished receives the full output exactly once on success", async () => {
-    const agent = createTriageAgent({ accountId: "a", farmerName: "T", language: "en", farms: [], currentSeason: "Kharif" });
+    const agent = createTriageAgent({ accountId: "a", farmerName: "T", language: "en", farms: [], currentSeason: "Kharif", seasonPhase: "mid", currentDate: "29 August 2026", currentMonth: 7, district: "Multan" });
     const result = await run(agent, "hello", { stream: true });
     let calls = 0;
     let persisted = "";
@@ -105,7 +105,7 @@ describe("streaming + persistence pipeline", () => {
   });
 
   it("onFinished receives partial text when the consumer disconnects mid-stream", async () => {
-    const agent = createTriageAgent({ accountId: "a", farmerName: "T", language: "en", farms: [], currentSeason: "Kharif" });
+    const agent = createTriageAgent({ accountId: "a", farmerName: "T", language: "en", farms: [], currentSeason: "Kharif", seasonPhase: "mid", currentDate: "29 August 2026", currentMonth: 7, district: "Multan" });
     const result = await run(agent, "slow hello", { stream: true });
     let calls = 0;
     let persisted = "";

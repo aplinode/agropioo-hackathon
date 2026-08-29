@@ -1,31 +1,50 @@
 import type { RunStreamEvent } from "@openai/agents";
+import OpenAI from "openai";
+import { query } from "@/lib/db";
 
-/* Structural subset of StreamedRunResult that this transform consumes —
-   avoids the SDK's invariant context generics while staying fully typed. */
 type StreamResult = {
   [Symbol.asyncIterator](): AsyncIterator<RunStreamEvent>;
   readonly completed: Promise<void>;
   readonly finalOutput: unknown;
 };
 
-/**
- * Transforms an OpenAI Agents SDK StreamedRunResult into a Server-Sent Events
- * ReadableStream suitable for Next.js Route Handlers.
- *
- * Events emitted:
- *   data: {"type":"conversation","id":"..."}  — conversation this exchange belongs to (first event)
- *   data: {"type":"text","delta":"..."}       — text chunk
- *   data: {"type":"done","output":"..."}      — full final output
- *   data: {"type":"error","message":"..."}    — error during generation
- *
- * onFinished receives the best-available advisor output exactly once — the
- * final output on success, or whatever streamed before an error/client
- * disconnect — so persistence never writes an empty row over partial text.
- */
+async function generateAndSaveSummary(
+  conversationId: string,
+  farmerMessage: string,
+  advisorOutput: string,
+): Promise<void> {
+  try {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) return;
+
+    const client = new OpenAI({ apiKey });
+    const response = await client.chat.completions.create({
+      model: process.env.ADVISOR_MODEL ?? "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Summarize this farmer-advisor exchange in 1-2 sentences. Focus on the farmer's question and the key advice given." },
+        { role: "user", content: `Farmer: ${farmerMessage}\n\nAdvisor: ${advisorOutput.slice(0, 500)}` },
+      ],
+      max_tokens: 100,
+      temperature: 0.3,
+    });
+
+    const summary = response.choices[0]?.message?.content?.trim();
+    if (summary) {
+      await query(
+        `UPDATE advisor_conversations SET summary = $1, summary_updated_at = now() WHERE id = $2`,
+        [summary, conversationId],
+      );
+    }
+  } catch {
+    // Summary generation is non-fatal — conversation still works without it
+  }
+}
+
 export function toSSEStream(
   result: StreamResult,
   conversationId: string,
   onFinished?: (output: string) => void | Promise<void>,
+  farmerMessage?: string,
 ): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder();
   let accumulated = "";
@@ -36,6 +55,9 @@ export function toSSEStream(
     finished = true;
     try {
       await onFinished?.(output);
+      if (farmerMessage && output) {
+        await generateAndSaveSummary(conversationId, farmerMessage, output);
+      }
     } catch {
       // Persistence failure is non-fatal: the farmer still sees the stream.
     }
@@ -73,7 +95,6 @@ export function toSSEStream(
         });
         controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
       } catch (err) {
-        // Client disconnected or the run failed — keep whatever streamed.
         await finish(accumulated);
         const message =
           err instanceof Error ? err.message : "Unexpected error during generation";
@@ -84,7 +105,6 @@ export function toSSEStream(
       }
     },
     async cancel() {
-      // Consumer went away (navigation, abort) — persist partial text.
       await finish(accumulated);
     },
   });
