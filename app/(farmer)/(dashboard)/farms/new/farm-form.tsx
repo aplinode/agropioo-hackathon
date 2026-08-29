@@ -106,7 +106,7 @@ function CropSearchSelect({
   }, []);
 
   return (
-    <div ref={ref} className="relative z-[9999]">
+    <div ref={ref} className="relative">
       <label className="block text-sm font-semibold text-agro-ink mb-1">
         Crops
       </label>
