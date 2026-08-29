@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { locale } from "next/root-params";
 
 import { isLocale, LOCALE_REGISTRY } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/server";
@@ -8,8 +7,12 @@ import { getDictionary } from "@/lib/i18n/server";
  * Localized 404 for unmatched paths under a valid locale prefix. Renders
  * inside app/[locale]/layout.tsx, so lang/dir/fonts are already correct.
  */
-export default async function LocaleNotFound() {
-  const raw = await locale();
+export default async function LocaleNotFound({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: raw } = await params;
   const current = isLocale(raw) ? raw : "en";
   const { t } = await getDictionary(current);
   const dir = LOCALE_REGISTRY[current].dir;

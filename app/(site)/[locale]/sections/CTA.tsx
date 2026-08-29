@@ -1,8 +1,9 @@
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
+import type { Locale } from "@/lib/i18n/config";
 import CtaForm, { type CtaFormStrings } from "./CtaForm";
 
-export default async function CTA() {
-  const { t } = await getCurrentDictionary();
+export default async function CTA({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
 
   const strings: CtaFormStrings = {
     emailLabel: t("home.cta.emailLabel").text,

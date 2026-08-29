@@ -2,18 +2,19 @@ import type { Metadata } from "next";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { getCurrentDictionary } from "@/lib/i18n/server";
+import type { Locale } from "@/lib/i18n/config";
 import LoginForm, { type AuthErrorCopy, type LoginCopy } from "./login-form";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await getCurrentDictionary();
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { t } = await getCurrentDictionary((await params).locale);
   return {
     title: t("li.meta.title").text,
     description: t("li.meta.description").text,
   };
 }
 
-export default async function LoginPage() {
-  const { t } = await getCurrentDictionary();
+export default async function LoginPage({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { t } = await getCurrentDictionary((await params).locale);
   const switcherLabel = t("common.languageSwitcherLabel").text;
 
   const errors: AuthErrorCopy = {

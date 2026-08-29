@@ -1,5 +1,6 @@
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
 import { localized } from "@/lib/i18n/localized";
+import type { Locale } from "@/lib/i18n/config";
 
 const audienceIcons = [
   <svg key="a1" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
@@ -13,8 +14,8 @@ const audienceIcons = [
   </svg>,
 ];
 
-export default async function WhoFor() {
-  const { locale, t } = await getCurrentDictionary();
+export default async function WhoFor({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
   const audiences = ([
     { titleKey: "wy.who.a1Title", descKey: "wy.who.a1Desc", icon: audienceIcons[0] },

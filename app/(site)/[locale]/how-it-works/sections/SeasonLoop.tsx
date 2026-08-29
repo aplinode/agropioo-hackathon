@@ -1,5 +1,6 @@
 import { localized } from "@/lib/i18n/localized";
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
+import type { Locale } from "@/lib/i18n/config";
 
 const stepPos = [
   { n: "1", x: 220, y: 80, lx: 220, ly: 40, anchor: "middle" as const },
@@ -9,8 +10,8 @@ const stepPos = [
   { n: "5", x: 96, y: 170, lx: 44, ly: 175, anchor: "end" as const },
 ];
 
-export default async function SeasonLoop() {
-  const { locale, t } = await getCurrentDictionary();
+export default async function SeasonLoop({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
 
   // Latin-only typographic tracking; letter-spacing breaks Arabic-script joining.

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import logo from "@/references/Agropioo-logo-footer.png";
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
+import type { Locale } from "@/lib/i18n/config";
 
 function FacebookIcon() {
   return (
@@ -55,8 +56,8 @@ const socials = [
   { label: "YouTube", href: "#", Icon: YoutubeIcon },
 ];
 
-export default async function Footer({ hrefPrefix = "" }: { hrefPrefix?: string }) {
-  const { t } = await getCurrentDictionary();
+export default async function Footer({ hrefPrefix = "", locale }: { hrefPrefix?: string; locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const sectionHref = (anchor: string) => `${hrefPrefix}${anchor}`;
 
   const pageLinks = [

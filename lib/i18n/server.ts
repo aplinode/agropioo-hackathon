@@ -3,7 +3,6 @@ import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { connection } from "next/server";
-import { locale as rootLocale } from "next/root-params";
 
 import { CATALOG, ENGLISH_TABLE, type CatalogKey } from "@/catalog";
 import { APP_LOCALE_COOKIE, isLocale } from "./config";
@@ -96,9 +95,14 @@ function fallbackTableFor(localeCode: Locale): StringTable {
 /**
  * Dictionary for whichever locale the URL carries — the standard entry point
  * for pages under app/[locale]. Unprefixed rewrites resolve to "en".
+ * Accepts an explicit locale override so callers can pass `params.locale`
+ * instead of relying on `next/root-params` (which is unavailable in this
+ * Next.js version).
  */
-export async function getCurrentDictionary(): Promise<Dictionary> {
-  const raw = await rootLocale();
+export async function getCurrentDictionary(
+  locale?: Locale,
+): Promise<Dictionary> {
+  const raw = locale ?? (await getAppLocale());
   return getDictionary(isLocale(raw) ? raw : "en");
 }
 
