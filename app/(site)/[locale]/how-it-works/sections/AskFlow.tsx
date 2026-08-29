@@ -1,8 +1,9 @@
 import { localized } from "@/lib/i18n/localized";
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
+import type { Locale } from "@/lib/i18n/config";
 
-export default async function AskFlow() {
-  const { locale, t } = await getCurrentDictionary();
+export default async function AskFlow({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
 
   const chips = [

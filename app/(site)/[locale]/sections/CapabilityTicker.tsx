@@ -1,5 +1,6 @@
 import { localized } from "@/lib/i18n/localized";
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
+import type { Locale } from "@/lib/i18n/config";
 
 function TickerContent({ items }: { items: React.ReactNode[] }) {
   return (
@@ -19,8 +20,8 @@ function TickerContent({ items }: { items: React.ReactNode[] }) {
   );
 }
 
-export default async function CapabilityTicker() {
-  const { locale, t } = await getCurrentDictionary();
+export default async function CapabilityTicker({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
 
   const capabilities = [

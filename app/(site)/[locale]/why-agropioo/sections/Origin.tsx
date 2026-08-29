@@ -1,5 +1,6 @@
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
 import { localized } from "@/lib/i18n/localized";
+import type { Locale } from "@/lib/i18n/config";
 
 const gapIcons = [
   <svg key="g1" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
@@ -13,8 +14,8 @@ const gapIcons = [
   </svg>,
 ];
 
-export default async function Origin() {
-  const { locale, t } = await getCurrentDictionary();
+export default async function Origin({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
   const gaps = ([
     { titleKey: "wy.origin.g1Title", descKey: "wy.origin.g1Desc", icon: gapIcons[0] },
