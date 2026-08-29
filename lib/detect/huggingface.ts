@@ -22,22 +22,37 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function isRetryableNetworkError(err: unknown): boolean {
-  if (err instanceof TypeError && err.message === "fetch failed") return true;
-  if (err instanceof Error) {
-    const msg = err.message.toLowerCase();
-    if (
-      msg.includes("enotfound") ||
-      msg.includes("econnrefused") ||
-      msg.includes("etimedout") ||
-      msg.includes("enotempty") ||
-      msg.includes("socket hang up") ||
-      msg.includes("network error")
-    ) {
-      return true;
+async function resolveHost(hostname: string): Promise<string> {
+  const mod = await import("node:dns/promises");
+  const ns = ["8.8.8.8", "1.1.1.1"];
+  for (const server of ns) {
+    try {
+      const { setServers, resolve4 } = mod as typeof import("node:dns/promises");
+      setServers([server]);
+      const addresses = await resolve4(hostname);
+      if (addresses && addresses.length > 0) return addresses[0];
+    } catch {
+      // try next nameserver
     }
   }
-  return false;
+  return hostname;
+}
+
+async function fetchWithResolvedDns(url: string, init: RequestInit = {}): Promise<Response> {
+  const urlObj = new URL(url);
+  const originalHost = urlObj.hostname;
+  try {
+    const ip = await resolveHost(originalHost);
+    if (ip !== originalHost) {
+      urlObj.hostname = ip;
+      const headers = new Headers(init.headers);
+      headers.set("Host", originalHost);
+      return fetch(urlObj.toString(), { ...init, headers });
+    }
+  } catch {
+    // fall back to normal fetch
+  }
+  return fetch(url, init);
 }
 
 export async function callHuggingFace(
@@ -55,7 +70,7 @@ export async function callHuggingFace(
     if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
 
     try {
-      const res = await fetch(HF_ENDPOINT, {
+      const res = await fetchWithResolvedDns(HF_ENDPOINT, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${apiKey}`,
@@ -107,18 +122,15 @@ export async function callHuggingFace(
       if (err instanceof DOMException && err.name === "AbortError") {
         throw err;
       }
-      if (isRetryableNetworkError(err)) {
-        lastError = err instanceof Error ? err : new Error("Unknown network error");
-        if (attempt < MAX_RETRIES) {
-          const wait = RETRY_DELAY_MS * Math.pow(2, attempt);
-          console.error(`[HF] Network error (attempt ${attempt + 1}/${MAX_RETRIES}):`, err);
-          console.error(`[HF] Retrying in ${wait}ms...`);
-          await delay(wait);
-          continue;
-        }
-        throw new Error(`Network error after ${MAX_RETRIES + 1} attempts: ${lastError.message}`);
+      lastError = err instanceof Error ? err : new Error("Unknown network error");
+      if (attempt < MAX_RETRIES) {
+        const wait = RETRY_DELAY_MS * Math.pow(2, attempt);
+        console.error(`[HF] Network error (attempt ${attempt + 1}/${MAX_RETRIES}):`, err);
+        console.error(`[HF] Retrying in ${wait}ms...`);
+        await delay(wait);
+        continue;
       }
-      throw err;
+      throw new Error(`Network error after ${MAX_RETRIES + 1} attempts: ${lastError.message}`);
     }
   }
 
