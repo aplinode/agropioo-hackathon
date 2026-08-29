@@ -349,7 +349,7 @@ function LocationSearch({
   };
 
   return (
-    <div ref={ref} className="relative z-[9999]">
+    <div ref={ref} className="relative">
       <label htmlFor="farm-location" className="block text-sm font-semibold text-agro-ink">
         Location / Village
       </label>
@@ -360,9 +360,6 @@ function LocationSearch({
           onChange={(e) => {
             setQuery(e.target.value);
             onChange(e.target.value);
-          }}
-          onFocus={() => {
-            setOpen(true);
           }}
           placeholder={`Type village or area in ${district || "your district"}...`}
           className={`focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 pr-10 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
@@ -558,7 +555,7 @@ function DistrictCitySearch({
   };
 
   return (
-    <div ref={ref} className="relative z-[9999]">
+    <div ref={ref} className="relative z-[10000]">
       <label className="block text-sm font-semibold text-agro-ink">
         District / City
       </label>
