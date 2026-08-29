@@ -42,4 +42,17 @@ describe("hitLimiter", () => {
     expect(hitLimiter("resend:pass", "jti-1", 1, 60_000, t0)).toBe(true);
     expect(hitLimiter("code-check:pass", "jti-1", 1, 60_000, t0)).toBe(false);
   });
+
+  it("limits detect requests to 10 per hour per IP", () => {
+    const t0 = 5_000_000;
+    const { limit, windowMs } = RATE_RULES.detectIp;
+    for (let i = 0; i < limit; i += 1) {
+      expect(
+        hitLimiter("detect:ip", "10.0.0.1", limit, windowMs, t0),
+      ).toBe(true);
+    }
+    expect(
+      hitLimiter("detect:ip", "10.0.0.1", limit, windowMs, t0 + 1000),
+    ).toBe(false);
+  });
 });
