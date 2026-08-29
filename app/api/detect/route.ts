@@ -18,6 +18,8 @@ const CONFIDENCE_THRESHOLD = 0.5;
 const HF_TIMEOUT_MS = 30000;
 
 export async function POST(request: Request) {
+  console.error("[DETECT] POST /api/detect called");
+  console.error("[DETECT] HF API key exists:", !!process.env.HUGGINGFACE_API_KEY);
   const session = await requireSessionApi();
   if (!session) {
     return errorResponse("unauthorized", "Sign in to use the crop doctor.", 401);
@@ -45,9 +47,16 @@ export async function POST(request: Request) {
       return errorResponse("validation_error", "No image provided.", 422);
     }
 
+    console.error("[DETECT] Uploaded file:", {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+    });
+
     // FR-1.3: only accept real image files.
     const mime = file.type || extensionToMime(file.name);
     if (!isImageMime(mime)) {
+      console.error("[DETECT] Invalid MIME type:", mime);
       return errorResponse("validation_error", "Please upload an image file.", 422);
     }
 
@@ -71,12 +80,15 @@ export async function POST(request: Request) {
 
     let predictions: { label: string; score: number }[];
     try {
+      console.error("[DETECT] Calling Hugging Face API...");
       predictions = await callHuggingFace(modelBuffer, hfController.signal);
+      console.error("[DETECT] Hugging Face API success, predictions:", predictions.length);
     } catch (err) {
       if (err instanceof Error && err.name === "AbortError") {
         // E10: navigated away mid-analysis — abort silently, keep nothing.
         return new Response(null, { status: 499 });
       }
+      console.error("[DETECT] Hugging Face error:", err);
       if (err instanceof Error && err.message === "Missing HUGGINGFACE_API_KEY") {
         return errorResponse(
           "server_error",
@@ -85,9 +97,11 @@ export async function POST(request: Request) {
         );
       }
       // E7 / E16: AI service unavailable or HF rate-limited.
+      const hfMsg = err instanceof Error ? err.message : "Unknown HF error";
+      console.error("[DETECT] Hugging Face failed with:", hfMsg);
       return errorResponse(
         "server_error",
-        "Service temporarily unavailable. Please try again.",
+        `AI detection service error: ${hfMsg}`,
         503,
       );
     } finally {
@@ -127,11 +141,12 @@ export async function POST(request: Request) {
         file.name,
       );
       imageUrl = upload.secure_url;
-    } catch {
-      // E17: Cloudinary failure aborts the scan.
+    } catch (err) {
+      console.error("[DETECT] Cloudinary upload error:", err);
+      const cloudinaryMsg = err instanceof Error ? err.message : "Unknown Cloudinary error";
       return errorResponse(
         "server_error",
-        "Could not save image. Please try again.",
+        `Image storage error: ${cloudinaryMsg}`,
         503,
       );
     }
@@ -173,6 +188,7 @@ export async function POST(request: Request) {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("[DETECT] Unexpected error:", err);
     return errorResponse("server_error", message, 500);
   }
 }

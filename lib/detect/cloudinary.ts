@@ -41,11 +41,13 @@ export async function uploadScanImage(
       },
       (err, result) => {
         if (err) {
-          reject(err);
+          console.error("[CLOUDINARY] Upload error:", err);
+          reject(new Error(`Cloudinary upload failed: ${err.message}`));
           return;
         }
         const res = result as { secure_url?: string; public_id?: string };
         if (!res.secure_url) {
+          console.error("[CLOUDINARY] No secure_url in response:", result);
           reject(new Error("Cloudinary upload returned no URL"));
           return;
         }

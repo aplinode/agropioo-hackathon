@@ -1,7 +1,7 @@
 /**
  * Maps the 38 PlantVillage class labels returned by the Hugging Face model
- * `animeshakr/plant-disease-efficientnetv2s` to structured, translatable
- * disease advice (spec FR-4, FR-8.4; plan D4).
+ * `linkanjarad/mobilenet_v2_1.0_224-plant-disease-identification` to structured,
+ * translatable disease advice (spec FR-4, FR-8.4; plan D4).
  *
  * Every visible string is a catalog key resolved at runtime via
  * `getDictionary(locale)` — nothing is hardcoded in English here
@@ -34,11 +34,11 @@ const CAUTION = "app.detect.caution" as CatalogKey;
 
 /**
  * Mapping from the exact Hugging Face label string → structured advice.
- * Labels come verbatim from the model's `class_indices.json`.
+ * Labels come verbatim from the model's `config.json` id2label mapping.
  */
 const CLASS_MAP: Record<string, DiseaseAdvice> = {
   // Apple
-  "Apple___Apple_scab": {
+  "Apple Scab": {
     diseaseNameKey: "app.detect.disease.apple_scab.name",
     cropKey: "app.detect.crop.apple",
     severity: "treat_now",
@@ -51,7 +51,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.MEDIUM,
     cautionKey: CAUTION,
   },
-  "Apple___Black_rot": {
+  "Apple with Black Rot": {
     diseaseNameKey: "app.detect.disease.apple_black_rot.name",
     cropKey: "app.detect.crop.apple",
     severity: "treat_now",
@@ -64,7 +64,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.MEDIUM,
     cautionKey: CAUTION,
   },
-  "Apple___Cedar_apple_rust": {
+  "Cedar Apple Rust": {
     diseaseNameKey: "app.detect.disease.apple_cedar_rust.name",
     cropKey: "app.detect.crop.apple",
     severity: "treat_now",
@@ -77,9 +77,18 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.MEDIUM,
     cautionKey: CAUTION,
   },
+  "Healthy Apple": {
+    diseaseNameKey: "app.detect.healthy.name",
+    cropKey: "app.detect.crop.apple",
+    severity: "clear",
+    causesKey: "app.detect.healthy.causes",
+    stepsKeys: ["app.detect.healthy.steps.0"],
+    rescanKey: RESCAN.SOON,
+    cautionKey: CAUTION,
+  },
 
   // Blueberry
-  "Blueberry___healthy": {
+  "Healthy Blueberry Plant": {
     diseaseNameKey: "app.detect.healthy.name",
     cropKey: "app.detect.crop.blueberry",
     severity: "clear",
@@ -90,7 +99,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
   },
 
   // Cherry
-  "Cherry___Powdery_mildew": {
+  "Cherry with Powdery Mildew": {
     diseaseNameKey: "app.detect.disease.cherry_powdery_mildew.name",
     cropKey: "app.detect.crop.cherry",
     severity: "treat_now",
@@ -103,7 +112,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Cherry___healthy": {
+  "Healthy Cherry Plant": {
     diseaseNameKey: "app.detect.healthy.name",
     cropKey: "app.detect.crop.cherry",
     severity: "clear",
@@ -113,8 +122,8 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     cautionKey: CAUTION,
   },
 
-  // Corn
-  "Corn___Cercospora_leaf_spot Gray_leaf_spot": {
+  // Corn (Maize)
+  "Corn (Maize) with Cercospora and Gray Leaf Spot": {
     diseaseNameKey: "app.detect.disease.corn_gray_leaf_spot.name",
     cropKey: "app.detect.crop.corn",
     severity: "treat_now",
@@ -127,7 +136,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.MEDIUM,
     cautionKey: CAUTION,
   },
-  "Corn___Common_rust": {
+  "Corn (Maize) with Common Rust": {
     diseaseNameKey: "app.detect.disease.corn_common_rust.name",
     cropKey: "app.detect.crop.corn",
     severity: "watch",
@@ -140,7 +149,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Corn___Northern_Leaf_Blight": {
+  "Corn (Maize) with Northern Leaf Blight": {
     diseaseNameKey: "app.detect.disease.corn_northern_leaf_blight.name",
     cropKey: "app.detect.crop.corn",
     severity: "treat_now",
@@ -153,7 +162,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.MEDIUM,
     cautionKey: CAUTION,
   },
-  "Corn___healthy": {
+  "Healthy Corn (Maize) Plant": {
     diseaseNameKey: "app.detect.healthy.name",
     cropKey: "app.detect.crop.corn",
     severity: "clear",
@@ -164,7 +173,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
   },
 
   // Grape
-  "Grape___Black_rot": {
+  "Grape with Black Rot": {
     diseaseNameKey: "app.detect.disease.grape_black_rot.name",
     cropKey: "app.detect.crop.grape",
     severity: "treat_now",
@@ -177,7 +186,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.MEDIUM,
     cautionKey: CAUTION,
   },
-  "Grape___Esca_(Black_Measles)": {
+  "Grape with Esca (Black Measles)": {
     diseaseNameKey: "app.detect.disease.grape_esca.name",
     cropKey: "app.detect.crop.grape",
     severity: "treat_now",
@@ -190,7 +199,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.LATE,
     cautionKey: CAUTION,
   },
-  "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": {
+  "Grape with Isariopsis Leaf Spot": {
     diseaseNameKey: "app.detect.disease.grape_leaf_blight.name",
     cropKey: "app.detect.crop.grape",
     severity: "watch",
@@ -203,7 +212,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Grape___healthy": {
+  "Healthy Grape Plant": {
     diseaseNameKey: "app.detect.healthy.name",
     cropKey: "app.detect.crop.grape",
     severity: "clear",
@@ -214,7 +223,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
   },
 
   // Orange
-  "Orange___Haunglongbing_(Citrus_greening)": {
+  "Orange with Citrus Greening": {
     diseaseNameKey: "app.detect.disease.orange_huanglongbing.name",
     cropKey: "app.detect.crop.orange",
     severity: "treat_now",
@@ -229,7 +238,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
   },
 
   // Peach
-  "Peach___Bacterial_spot": {
+  "Peach with Bacterial Spot": {
     diseaseNameKey: "app.detect.disease.peach_bacterial_spot.name",
     cropKey: "app.detect.crop.peach",
     severity: "treat_now",
@@ -242,7 +251,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Peach___healthy": {
+  "Healthy Peach Plant": {
     diseaseNameKey: "app.detect.healthy.name",
     cropKey: "app.detect.crop.peach",
     severity: "clear",
@@ -252,8 +261,8 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     cautionKey: CAUTION,
   },
 
-  // Pepper
-  "Pepper,_bell___Bacterial_spot": {
+  // Bell Pepper
+  "Bell Pepper with Bacterial Spot": {
     diseaseNameKey: "app.detect.disease.pepper_bacterial_spot.name",
     cropKey: "app.detect.crop.pepper",
     severity: "treat_now",
@@ -266,7 +275,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Pepper,_bell___healthy": {
+  "Healthy Bell Pepper Plant": {
     diseaseNameKey: "app.detect.healthy.name",
     cropKey: "app.detect.crop.pepper",
     severity: "clear",
@@ -277,7 +286,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
   },
 
   // Potato
-  "Potato___Early_blight": {
+  "Potato with Early Blight": {
     diseaseNameKey: "app.detect.disease.potato_early_blight.name",
     cropKey: "app.detect.crop.potato",
     severity: "watch",
@@ -290,7 +299,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Potato___Late_blight": {
+  "Potato with Late Blight": {
     diseaseNameKey: "app.detect.disease.potato_late_blight.name",
     cropKey: "app.detect.crop.potato",
     severity: "treat_now",
@@ -303,7 +312,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Potato___healthy": {
+  "Healthy Potato Plant": {
     diseaseNameKey: "app.detect.healthy.name",
     cropKey: "app.detect.crop.potato",
     severity: "clear",
@@ -314,7 +323,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
   },
 
   // Raspberry
-  "Raspberry___healthy": {
+  "Healthy Raspberry Plant": {
     diseaseNameKey: "app.detect.healthy.name",
     cropKey: "app.detect.crop.raspberry",
     severity: "clear",
@@ -325,7 +334,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
   },
 
   // Soybean
-  "Soybean___healthy": {
+  "Healthy Soybean Plant": {
     diseaseNameKey: "app.detect.healthy.name",
     cropKey: "app.detect.crop.soybean",
     severity: "clear",
@@ -336,7 +345,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
   },
 
   // Squash
-  "Squash___Powdery_mildew": {
+  "Squash with Powdery Mildew": {
     diseaseNameKey: "app.detect.disease.squash_powdery_mildew.name",
     cropKey: "app.detect.crop.squash",
     severity: "treat_now",
@@ -351,7 +360,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
   },
 
   // Strawberry
-  "Strawberry___Leaf_scorch": {
+  "Strawberry with Leaf Scorch": {
     diseaseNameKey: "app.detect.disease.strawberry_leaf_scorch.name",
     cropKey: "app.detect.crop.strawberry",
     severity: "watch",
@@ -364,7 +373,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.MEDIUM,
     cautionKey: CAUTION,
   },
-  "Strawberry___healthy": {
+  "Healthy Strawberry Plant": {
     diseaseNameKey: "app.detect.healthy.name",
     cropKey: "app.detect.crop.strawberry",
     severity: "clear",
@@ -375,7 +384,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
   },
 
   // Tomato
-  "Tomato___Bacterial_spot": {
+  "Tomato with Bacterial Spot": {
     diseaseNameKey: "app.detect.disease.tomato_bacterial_spot.name",
     cropKey: "app.detect.crop.tomato",
     severity: "treat_now",
@@ -388,7 +397,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Tomato___Early_blight": {
+  "Tomato with Early Blight": {
     diseaseNameKey: "app.detect.disease.tomato_early_blight.name",
     cropKey: "app.detect.crop.tomato",
     severity: "watch",
@@ -401,7 +410,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Tomato___Late_blight": {
+  "Tomato with Late Blight": {
     diseaseNameKey: "app.detect.disease.tomato_late_blight.name",
     cropKey: "app.detect.crop.tomato",
     severity: "treat_now",
@@ -414,7 +423,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Tomato___Leaf_Mold": {
+  "Tomato with Leaf Mold": {
     diseaseNameKey: "app.detect.disease.tomato_leaf_mold.name",
     cropKey: "app.detect.crop.tomato",
     severity: "watch",
@@ -427,7 +436,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Tomato___Septoria_leaf_spot": {
+  "Tomato with Septoria Leaf Spot": {
     diseaseNameKey: "app.detect.disease.tomato_septoria.name",
     cropKey: "app.detect.crop.tomato",
     severity: "watch",
@@ -440,7 +449,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Tomato___Spider_mites Two-spotted_spider_mite": {
+  "Tomato with Spider Mites or Two-spotted Spider Mite": {
     diseaseNameKey: "app.detect.disease.tomato_spider_mites.name",
     cropKey: "app.detect.crop.tomato",
     severity: "watch",
@@ -453,7 +462,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Tomato___Target_Spot": {
+  "Tomato with Target Spot": {
     diseaseNameKey: "app.detect.disease.tomato_target_spot.name",
     cropKey: "app.detect.crop.tomato",
     severity: "watch",
@@ -466,7 +475,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.SOON,
     cautionKey: CAUTION,
   },
-  "Tomato___Tomato_Yellow_Leaf_Curl_Virus": {
+  "Tomato Yellow Leaf Curl Virus": {
     diseaseNameKey: "app.detect.disease.tomato_ylcv.name",
     cropKey: "app.detect.crop.tomato",
     severity: "treat_now",
@@ -479,7 +488,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.LATE,
     cautionKey: CAUTION,
   },
-  "Tomato___Tomato_mosaic_virus": {
+  "Tomato Mosaic Virus": {
     diseaseNameKey: "app.detect.disease.tomato_mosaic_virus.name",
     cropKey: "app.detect.crop.tomato",
     severity: "treat_now",
@@ -492,7 +501,7 @@ const CLASS_MAP: Record<string, DiseaseAdvice> = {
     rescanKey: RESCAN.LATE,
     cautionKey: CAUTION,
   },
-  "Tomato___healthy": {
+  "Healthy Tomato Plant": {
     diseaseNameKey: "app.detect.healthy.name",
     cropKey: "app.detect.crop.tomato",
     severity: "clear",
