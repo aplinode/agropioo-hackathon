@@ -140,7 +140,7 @@ export default function DetectUpload({
         if (res.status === 415 || res.status === 422) {
           showError("image", bundle.invalidFile);
         } else if (res.status === 503) {
-          showError("service", bundle.serviceUnavailable);
+          showError("service", msg);
         } else {
           showError("service", msg);
         }
@@ -190,6 +190,7 @@ export default function DetectUpload({
   }
 
   async function handleFile(file: File) {
+    console.log("[DETECT-UPLOAD] handleFile called:", file.name, file.type, file.size);
     const mime = file.type || (file.name.split(".").pop() ? `image/${file.name.split(".").pop()}` : "");
     if (!mime.startsWith("image/")) {
       showError("image", bundle.invalidFile);
@@ -197,12 +198,15 @@ export default function DetectUpload({
     }
 
     try {
+      console.log("[DETECT-UPLOAD] Compressing image...");
       const { blob, previewUrl } = await compressImageClient(file);
+      console.log("[DETECT-UPLOAD] Compressed, blob size:", blob.size);
       if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
       objectUrlRef.current = previewUrl;
       setPreviewUrl(previewUrl);
       await runAnalysis(blob, file.name);
-    } catch {
+    } catch (err) {
+      console.error("[DETECT-UPLOAD] Compression error:", err);
       showError("image", bundle.invalidFile);
     }
   }
@@ -298,7 +302,7 @@ export default function DetectUpload({
   );
 
   const diagnosisActions = displayedScan
-    ? buildActionBar(displayedScan.saveStatus === "saved" || saveState === "saved")
+    ? buildActionBar(displayedScan.saveStatus !== "saved" && saveState !== "saving")
     : null;
 
   /* ── No-farms modal (FR-2.3, E3/E8) ────────────────── */
