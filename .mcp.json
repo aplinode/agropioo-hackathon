@@ -4,6 +4,10 @@
       "url": "https://mcp.supabase.com/mcp",
       "type": "http",
       "disabled": true
+    },
+    "neon": {
+      "url": "https://mcp.neon.tech/mcp",
+      "type": "http"
     }
   }
 }

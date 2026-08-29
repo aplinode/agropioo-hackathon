@@ -17,5 +17,17 @@
     "websearch": "allow",
     "skill": "allow"
   },
-  "snapshot": false
+  "snapshot": false,
+  "mcp": {
+    "neon": {
+      "type": "remote",
+      "url": "https://mcp.neon.tech/mcp",
+      "enabled": true
+    },
+    "supabase": {
+      "type": "remote",
+      "url": "https://mcp.supabase.com/mcp",
+      "enabled": true
+    }
+  }
 }

@@ -3,6 +3,10 @@
     "supabase": {
       "type": "http",
       "url": "https://mcp.supabase.com/mcp"
+    },
+    "neon": {
+      "url": "https://mcp.neon.tech/mcp",
+      "type": "sse"
     }
   }
 }
