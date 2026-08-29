@@ -78,7 +78,7 @@ export default async function FarmerAppLayout({ children }: LayoutProps<"/">) {
     : `${playfair.variable} ${dmSans.variable} ${geistMono.variable}`;
 
   return (
-    <html lang={entry.htmlLang} dir={entry.dir} className={`${fontVariables} h-full antialiased`}>
+    <html lang={entry.htmlLang} dir={entry.dir} data-scroll-behavior="smooth" className={`${fontVariables} h-full antialiased`}>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );

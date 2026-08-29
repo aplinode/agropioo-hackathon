@@ -94,6 +94,7 @@ export default function SiteHeader({
               alt="Agropioo"
               className="h-12 w-auto md:h-14"
               priority
+              loading="eager"
             />
           </Link>
 

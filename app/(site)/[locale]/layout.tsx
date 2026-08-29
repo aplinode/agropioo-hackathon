@@ -77,7 +77,7 @@ export default async function LocaleLayout({
     : `${playfair.variable} ${dmSans.variable} ${geistMono.variable}`;
 
   return (
-    <html lang={locale.htmlLang} dir={locale.dir} className={`${fontVariables} h-full antialiased`}>
+    <html lang={locale.htmlLang} dir={locale.dir} data-scroll-behavior="smooth" className={`${fontVariables} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         {children}
         {!isLocalized && <SuggestionChip />}

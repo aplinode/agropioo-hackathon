@@ -10,7 +10,10 @@ function getPool(): Pool {
     throw new Error('Missing DATABASE_URL environment variable.')
   }
 
-  pool = new Pool({ connectionString })
+  pool = new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: true },
+  })
   return pool
 }
 
