@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-leaflet";
-import L from "leaflet";
 import { createFarmSchema, type CreateFarmInput } from "@/lib/validation/farms";
 import { PAKISTAN_DISTRICTS } from "@/lib/farms/districts";
 import { CROPS, type Crop } from "@/lib/farms/constants";
@@ -18,62 +17,14 @@ import {
 import Link from "next/link";
 import type { FarmsBundle } from "../farms-bundle";
 
-import "leaflet/dist/leaflet.css";
-
-delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+const FarmMap = dynamic(() => import("./farm-map").then((m) => m.FarmMap), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-[320px] items-center justify-center rounded-2xl border border-agro-sprout bg-agro-mint/30">
+      <p className="text-sm text-agro-slate">Loading map...</p>
+    </div>
+  ),
 });
-
-function MapPicker({ onPick }: { onPick: (lat: number, lng: number) => void }) {
-  useMapEvents({
-    click(e) {
-      onPick(e.latlng.lat, e.latlng.lng);
-    },
-  });
-  return null;
-}
-
-function MapRecenter({ center }: { center: [number, number] }) {
-  const map = useMap();
-  useEffect(() => {
-    map.setView(center, Math.max(map.getZoom(), 10));
-  }, [center, map]);
-  return null;
-}
-
-function DraggableMarker({
-  position,
-  onDragEnd,
-}: {
-  position: [number, number];
-  onDragEnd: (lat: number, lng: number) => void;
-}) {
-  const markerRef = useRef<L.Marker>(null);
-  const eventHandlers = useMemo(
-    () => ({
-      dragend() {
-        const marker = markerRef.current;
-        if (marker != null) {
-          const latLng = marker.getLatLng();
-          onDragEnd(latLng.lat, latLng.lng);
-        }
-      },
-    }),
-    [onDragEnd]
-  );
-
-  return (
-    <Marker
-      draggable={true}
-      eventHandlers={eventHandlers}
-      position={position}
-      ref={markerRef}
-    />
-  );
-}
 
 function CropSearchSelect({
   selected,
@@ -200,6 +151,23 @@ const DISTRICT_SUGGESTIONS: Record<string, string[]> = {
   Islamabad: ["F-6", "F-7", "G-11", "Tarlai", "Bhara Kahu", "Chak Shahzad", "Rawat"],
 };
 
+const MAJOR_CITIES = [
+  "Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Peshawar", "Quetta",
+  "Hyderabad", "Sukkur", "Larkana", "Gujranwala", "Sialkot", "Bahawalpur", "Sargodha", "Dera Ghazi Khan"
+];
+
+function getCityDisplayName(item: { address?: Record<string, string>; display_name: string }): string {
+  const addr = item.address || {};
+  return (
+    addr.city_district ||
+    addr.city ||
+    addr.town ||
+    addr.county ||
+    addr.village ||
+    item.display_name.split(",")[0]
+  );
+}
+
 function LocationSearch({
   value,
   district,
@@ -239,6 +207,22 @@ function LocationSearch({
 
   const suggestions = DISTRICT_SUGGESTIONS[district] || [];
 
+  const isWithinDistrict = (addr: Record<string, string>, district: string): boolean => {
+    if (!district) return true;
+    const lower = district.toLowerCase();
+    const candidates = [
+      addr.city_district,
+      addr.state_district,
+      addr.county,
+      addr.city,
+      addr.town,
+      addr.village,
+      addr.suburb,
+      addr.neighbourhood,
+    ].filter(Boolean);
+    return candidates.some((c) => c!.toLowerCase() === lower);
+  };
+
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (query.length < 2) {
@@ -246,6 +230,7 @@ function LocationSearch({
       setResults([]);
       return;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     debounceRef.current = window.setTimeout(async () => {
       try {
@@ -253,25 +238,31 @@ function LocationSearch({
         const res = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=pk&limit=6&addressdetails=1`
         );
-        let data = (await res.json()) as Array<{
+        let data = await res.json() as Array<{
           display_name: string;
           lat: string;
           lon: string;
+          address?: Record<string, string>;
         }>;
 
-        if (data.length === 0) {
+        if (data.length === 0 && district) {
           const fallbackRes = await fetch(
             `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ", Pakistan")}&countrycodes=pk&limit=6&addressdetails=1`
           );
-          data = (await fallbackRes.json()) as Array<{
+          data = await fallbackRes.json() as Array<{
             display_name: string;
             lat: string;
             lon: string;
+            address?: Record<string, string>;
           }>;
         }
 
-        setResults(data);
-        setOpen(data.length > 0);
+        const filtered = district
+          ? data.filter((item) => isWithinDistrict(item.address || {}, district))
+          : data;
+
+        setResults(filtered);
+        setOpen(filtered.length > 0);
       } catch {
         setResults([]);
       } finally {
@@ -545,13 +536,31 @@ function DistrictCitySearch({
     address?: Record<string, string>;
   }) => {
     const district = extractDistrict(item.address || {}, item.display_name);
-    const placeName = item.display_name.split(",")[0];
+    const placeName = getCityDisplayName(item);
     onChange(district);
     if (onPlaceSelect) onPlaceSelect(placeName);
     onLocationPick(parseFloat(item.lat), parseFloat(item.lon));
     if (onDisplayName) onDisplayName(item.display_name);
     setOpen(false);
     setQuery(district);
+  };
+
+  const handleMajorCitySelect = async (city: string) => {
+    onChange(city);
+    setQuery(city);
+    setOpen(false);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(city + ", Pakistan")}&countrycodes=pk&limit=1&addressdetails=1`
+      );
+      const data = await res.json();
+      if (data && data[0]) {
+        onLocationPick(parseFloat(data[0].lat), parseFloat(data[0].lon));
+        if (onDisplayName) onDisplayName(data[0].display_name);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -599,6 +608,25 @@ function DistrictCitySearch({
           </div>
         )}
       </div>
+      {query.length < 2 && (
+        <div className="mt-2">
+          <p className="px-1 py-1 text-xs font-semibold uppercase tracking-wider text-agro-slate">
+            Major Cities
+          </p>
+          <div className="mt-1 flex flex-wrap gap-1.5">
+            {MAJOR_CITIES.map((city) => (
+              <button
+                key={city}
+                type="button"
+                className="rounded-lg border border-agro-sprout bg-agro-mint/50 px-3 py-1.5 text-xs font-medium text-agro-canopy transition-colors hover:bg-agro-canopy hover:text-white"
+                onClick={() => handleMajorCitySelect(city)}
+              >
+                {city}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       {open && results.length > 0 && (
         <div className="absolute left-0 right-0 z-[9999] mt-1 max-h-60 overflow-auto rounded-xl border border-agro-sprout bg-white shadow-xl">
           {results.map((item, idx) => (
@@ -612,7 +640,7 @@ function DistrictCitySearch({
                 size={16}
                 className="mt-0.5 mr-2 shrink-0 text-agro-canopy"
               />
-              <span className="line-clamp-2">{item.display_name}</span>
+              <span className="line-clamp-2">{getCityDisplayName(item)}</span>
             </button>
           ))}
         </div>
@@ -871,28 +899,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
         error={errors.crops?.message || serverErrors.crops}
       />
 
-      <div>
-        <label className="block text-sm font-semibold text-agro-ink mb-1">
-          Farm Location (Google Maps Pin)
-        </label>
-        <div className="relative h-[320px] w-full overflow-hidden rounded-2xl border border-agro-sprout shadow-sm">
-          <MapContainer
-            center={[marker.lat, marker.lng]}
-            zoom={8}
-            style={{ height: "100%", width: "100%" }}
-          >
-            <TileLayer
-              attribution='&copy; Google Maps'
-              url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-            />
-            <MapRecenter center={[marker.lat, marker.lng]} />
-            <MapPicker onPick={handlePickLocation} />
-            <DraggableMarker
-              position={[marker.lat, marker.lng]}
-              onDragEnd={handlePickLocation}
-            />
-          </MapContainer>
-        </div>
+      <FarmMap marker={marker} onPickLocation={handlePickLocation} />
 
         {isGeocoding ? (
           <p className="mt-2 flex items-center gap-1.5 text-xs text-agro-slate animate-pulse">
@@ -906,12 +913,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
               <strong>Selected Location:</strong> {selectedLocationName}
             </span>
           </div>
-        ) : (
-          <p className="mt-2 flex items-center gap-1.5 text-xs text-agro-slate">
-            <MapPinIcon size={14} /> Click or drag pin on map to set exact farm position
-          </p>
-        )}
-      </div>
+        ) : null}
 
       <button
         type="submit"
