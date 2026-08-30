@@ -129,9 +129,39 @@ users (1) ──< farms (1) ──< weather_advisories
 
 All FKs use `on delete cascade` so removing a farm removes its advisories and alerts.
 
+## Translation Storage
+
+Advisory and alert UI strings are not stored in the `weather_advisories` or `weather_alerts` tables. Instead, they are stored as translation keys (`advice_key`, `recommendation_key`) that reference the project's `translations` table.
+
+**Pattern**:
+- `weather_advisories.advice_key` → e.g. `app.weather.advisory.recommendation.irrigation`
+- `weather_alerts.recommendation_key` → e.g. `app.weather.alerts.heavyRain`
+
+The `translations` table schema (from `db/migrations/0001_translations.sql`):
+```sql
+create table if not exists public.translations (
+  key        text,
+  locale     text check (locale in ('en','ur','pa','ps','sd','skr','bal','hno')),
+  value      text,
+  status     text not null default 'translated' check (status in ('translated','missing')),
+  updated_at timestamptz not null default now(),
+  primary key (key, locale)
+);
+```
+
+**Key namespacing convention**: All weather advisory keys use the `app.weather.*` namespace (e.g. `app.weather.pageTitle`, `app.weather.advisory.genericAdvice`, `app.weather.alerts.frost`). This avoids a `feature` column entirely; features are distinguished purely by key prefix.
+
+**Sync workflow**:
+1. Author keys in `catalog/en.ts`.
+2. Draft translations in the other 7 locale catalog files.
+3. Run `npm run sync:translations` to upsert the full matrix into the DB.
+4. Server-side `getWeatherBundle()` resolves strings per request, falling back to the build-time catalog if the DB is unreachable.
+
+**Coverage requirement**: Every visible string in the weather advisory UI must have a translation entry for all 8 locales before the feature is considered complete.
+
 ## Migration Plan
 
-New migration file: `scripts/migrations/0008_weather_advisory.sql`
+New migration file: `db/migrations/0008_weather_advisory.sql`
 
 1. Add columns to `farms`: `primary_crop`, `sowing_date`, `soil_type`, `irrigation_method`.
 2. Create `weather_advisories` table with indexes and uniqueness constraint.

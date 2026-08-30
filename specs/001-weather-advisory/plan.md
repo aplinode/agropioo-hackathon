@@ -53,38 +53,55 @@ specs/001-weather-advisory/
 
 ```text
 app/
-├── (auth)/              # Existing auth routes
-├── dashboard/           # Existing dashboard
-├── farms/               # Existing farms module
-├── advisor/             # New: weather advisory page + API routes
-│   ├── page.tsx
-│   ├── history/
-│   │   └── page.tsx
-│   └── api/
-│       ├── forecast/route.ts
-│       ├── alerts/route.ts
-│       └── register/route.ts
+├── (farmer)/(dashboard)/      # Authenticated farmer route group
+│   ├── weather/               # New: weather advisory page + history
+│   │   ├── page.tsx           # Main advisory + 7-day forecast view
+│   │   ├── history/
+│   │   │   └── page.tsx       # Advisory history list + detail
+│   │   └── demo-data.ts       # Demo forecast data per location
+│   └── advisor/               # Existing: AI chat advisor (reuse patterns)
+├── api/
+│   └── weather/               # New: weather advisory API routes
+│       ├── forecast/route.ts  # Fetch/generate daily advisory
+│       ├── alerts/route.ts    # Scan and enqueue critical alerts
+│       └── history/route.ts   # Fetch advisory history for a farm
 components/
-├── advisor/             # Feature-specific UI
+├── weather/                   # Feature-specific UI components
 │   ├── AdvisoryCard.tsx
 │   ├── AlertBanner.tsx
 │   ├── FarmSelector.tsx
 │   ├── ForecastList.tsx
 │   └── HistoryList.tsx
-├── icons.tsx            # Shared SVG icons (existing)
+├── icons.tsx                  # Shared SVG icons (existing)
 lib/
-├── db.ts                # Shared Neon client (existing)
+├── db.ts                      # Shared Neon client (existing)
 ├── weather/
-│   ├── openweather.ts   # OpenWeatherMap client wrapper
-│   ├── advisory.ts      # Advisory generation rules
-│   └── alerts.ts        # Alert rule engine
-scripts/
-└── migrations/
-    └── 001_weather_advisory.sql
+│   ├── openweather.ts         # OpenWeatherMap client wrapper
+│   ├── advisory.ts            # Advisory generation rules
+│   └── alerts.ts              # Alert rule engine
+lib/i18n/
+├── server.ts                  # Add getWeatherBundle() here
+catalog/
+├── en.ts                      # Add weather advisory translation keys
+├── ur.ts, pa.ts, ps.ts, ...   # Draft translations for all 7 other locales
+db/migrations/
+└── 0008_weather_advisory.sql  # farms extensions + weather_advisories + weather_alerts
 ```
 
-**Structure Decision**: Extend the existing full-stack Next.js app with a new `app/advisor/` route segment and `components/advisor/` feature directory. Database migrations live in `scripts/migrations/` and are applied in order. All data access flows through `lib/db.ts`.
+**Structure Decision**: Extend the existing farmer route group with `app/(farmer)/(dashboard)/weather/` for the advisory UI and `app/api/weather/` for API routes. Feature components live in `components/weather/`. Translation keys are added to `catalog/*.ts` and synced to the `translations` table via `npm run sync:translations`. All data access flows through `lib/db.ts`. Migrations live in `db/migrations/` and are applied in order.
 
-## Complexity Tracking
+### Translation Architecture
+
+Every visible string in the weather advisory feature follows the existing catalog → DB sync pattern:
+
+1. **Authoring**: Add namespaced keys to `catalog/en.ts` under the `app.weather.*` namespace.
+2. **Drafting**: Add partial translations to the other 7 locale catalog files (`catalog/ur.ts`, `catalog/pa.ts`, etc.).
+3. **Sync**: Run `npm run sync:translations` to upsert the full key × locale matrix into the Neon `translations` table.
+4. **Runtime**: Server-side `getWeatherBundle()` in `lib/i18n/server.ts` loads the dictionary and returns a flat props bundle to client components.
+5. **Fallback**: If the DB is unreachable, the build-time catalog draft is used; English is always present as the source of truth.
+
+**Key namespacing convention**: `app.weather.pageTitle`, `app.weather.advisory.title`, `app.weather.alerts.heavyRain`, etc. — mirroring the existing `app.advisor.*` and `app.detect.*` patterns.
+
+### Complexity Tracking
 
 > No constitution violations detected; table not required.

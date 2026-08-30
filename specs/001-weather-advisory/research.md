@@ -56,3 +56,18 @@
 - OpenWeatherMap API key rotation and quota monitoring need operational runbook (out of scope for demo).
 - Crop growth stage durations are simplified averages; local variety specifics are deferred to future enhancement.
 - SMS delivery is out of scope per spec; email deliverability depends on SMTP provider warm-up.
+
+## Translation Strategy
+
+**Decision**: Use the existing catalog → DB sync pattern with `app.weather.*` namespaced keys.
+
+**Rationale**: The project already has a mature translation infrastructure (`catalog/*.ts`, `scripts/sync-translations.mts`, `translations` table, `lib/i18n/server.ts`). Reusing it avoids new dependencies, ensures founder-editable strings without redeploy, and satisfies the constitution's DB-backed translation requirement.
+
+**Implementation**:
+1. Add all weather advisory UI keys to `catalog/en.ts` under `app.weather.*`.
+2. Draft translations in the 7 non-English catalog files.
+3. Run `npm run sync:translations` to populate the `translations` table.
+4. Create `getWeatherBundle()` in `lib/i18n/server.ts` following the `getAdvisorBundle()` / `getDetectBundle()` pattern.
+5. Client components receive strings as flat props; no hardcoded copy.
+
+**Coverage gate**: All 8 locales must have translated values for every `app.weather.*` key before merge.
