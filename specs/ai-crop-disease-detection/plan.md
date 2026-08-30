@@ -20,6 +20,10 @@
 | D9 | **Client compresses to 1024px; server resizes to 384×384** (FR-1.4, FR-8.3) | Client: Canvas API, 80% JPEG. Server: `sharp` to 384×384 before HF call. |
 | D10 | **`detect_scans` table scope** (FR-6) | Every scan saved regardless of farm link. `farm_id` is NULL until "Save to farm" is tapped. |
 | D11 | **LLM advice generation via advisor infrastructure** (FR-4.5, FR-4.6, FR-8.4) | After HF classification, detected disease label is sent to the same Groq/OpenAI-compatible LLM used by the advisor feature (`lib/advisor/tools/knowledge-base.ts`). LLM generates causes, treatment steps, rescan timing, and caution in the farmer's locale. Static catalog (`plantvillage-map.ts`) remains as fallback if LLM fails. Zero new dependencies. |
+| D12 | **Detect chat sessions use separate tables** (FR-10) | `detect_chats` + `detect_messages` tables mirror the advisor `conversations`/`messages` pattern. Keeps disease chat history scoped and independent from advisor. |
+| D13 | **Detect chat UI replaces diagnosis card** (FR-10.1) | After `/api/detect` returns a diagnosis, the same page transitions to a ChatGPT-like chat view. The diagnosis result is used to auto-generate the first farmer prompt. |
+| D14 | **Detect chat LLM reuses OpenAI client** (FR-10.10) | New `lib/detect/chat.ts` uses the same `getOpenAI()` client as the advisor. No new dependencies. Streaming via SSE with the same `toSSEStream` utility. |
+| D15 | **Auto-prompt generated from diagnosis** (FR-10.4) | Prompt templates select based on disease and crop. Example: "Why do my {crop} leaves have {symptom}?" The farmer can edit before sending. |
 
 ---
 
@@ -51,30 +55,33 @@ CLOUDINARY_API_SECRET=
 
 ### Task 1: Database Migration
 
-**File:** `db/migrations/0005_detect_scans.sql`
+**File:** `db/migrations/0007_detect_chats.sql`
 
 ```sql
-CREATE TABLE IF NOT EXISTS public.detect_scans (
-  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  account_id    uuid NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-  farm_id       uuid REFERENCES public.farms(id) ON DELETE SET NULL,
-  image_url     text NOT NULL,
-  disease_name  text NOT NULL,
-  confidence    numeric(5,2) NOT NULL,
-  severity      text NOT NULL CHECK (severity IN ('watch','treat_now','clear')),
-  crop          text NOT NULL,
-  causes        text NOT NULL,
-  treatment_steps jsonb NOT NULL DEFAULT '[]'::jsonb,
-  rescan_timing  text NOT NULL,
-  caution       text NOT NULL,
-  created_at    timestamptz NOT NULL DEFAULT now()
+CREATE TABLE IF NOT EXISTS public.detect_chats (
+  id            uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_id    uuid        NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  scan_id       uuid        REFERENCES public.detect_scans(id) ON DELETE SET NULL,
+  title         text        NOT NULL DEFAULT 'New detection chat',
+  created_at    timestamptz NOT NULL DEFAULT now(),
+  updated_at    timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS detect_scans_account_idx
-  ON public.detect_scans (account_id, created_at DESC);
+CREATE TABLE IF NOT EXISTS public.detect_messages (
+  id              uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  chat_id         uuid        NOT NULL REFERENCES public.detect_chats(id) ON DELETE CASCADE,
+  role            text        NOT NULL CHECK (role IN ('farmer', 'detect')),
+  content         text        NOT NULL,
+  created_at      timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS detect_chats_account_idx
+  ON public.detect_chats (account_id, updated_at DESC);
+CREATE INDEX IF NOT EXISTS detect_messages_chat_idx
+  ON public.detect_messages (chat_id, created_at);
 ```
 
-Apply via `supabase_apply_migration` or `npm run db:push` (if the project has a push script; otherwise use the MCP tool).
+Apply via Supabase MCP or `npm run db:push`.
 
 ---
 

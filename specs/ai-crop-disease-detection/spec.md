@@ -107,6 +107,18 @@ Give every farmer a fast, reliable way to identify crop diseases from a photo â€
 - **FR-9.3:** The bottom tab bar is visible on mobile with `/detect` active.
 - **FR-9.4:** The desktop sidebar is visible on desktop with `/detect` active.
 
+### FR-10: Detect Chat UI
+- **FR-10.1:** After image analysis completes, a chat UI opens on the same page (same route, no navigation).
+- **FR-10.2:** The uploaded image appears as a small thumbnail in the chat header area. The thumbnail is clickable.
+- **FR-10.3:** Clicking the thumbnail opens a popup/lightbox showing the full-size image. The popup has a close button that returns to the thumbnail view.
+- **FR-10.4:** An auto-generated prompt is filled in the chat input based on the diagnosis result. Example: "Why do my {crop} leaves have {symptom}?" or "I have {disease} on my {crop}. What should I do?"
+- **FR-10.5:** The farmer can edit the auto-generated prompt before sending, or send it as-is.
+- **FR-10.6:** AI responses are streamed into the chat in real time, matching the ChatGPT message-bubble pattern.
+- **FR-10.7:** Each detection session creates a persistent chat conversation. Chat history is listed as sessions on the right sidebar (desktop) or bottom sheet (mobile).
+- **FR-10.8:** Clicking a past session in the history list loads that session's full chat on the same page.
+- **FR-10.9:** A "New scan" button resets the flow back to the upload area, clearing the current chat but preserving past sessions.
+- **FR-10.10:** Chat responses come from the same LLM infrastructure used by the advisor feature, scoped to the detected disease, crop, and severity context.
+
 ---
 
 ## 4. Edge Cases & Rules

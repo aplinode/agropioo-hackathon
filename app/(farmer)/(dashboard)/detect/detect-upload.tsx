@@ -15,11 +15,12 @@ import {
 import FarmSelector from "./farm-selector";
 import ScanHistory from "./scan-history";
 import DiagnosisCard from "./diagnosis-card";
+import DetectChat from "./detect-chat";
 import type { DetectBundle } from "./detect-bundle";
 import type { DiagnosisResult, FarmOption, ScanHistoryItem } from "./detect-types";
 import { toDiagnosis } from "./detect-types";
 
-type Stage = "idle" | "analyzing" | "result" | "error";
+type Stage = "idle" | "analyzing" | "result" | "error" | "chat";
 
 interface DetectUploadProps {
   bundle: DetectBundle;
@@ -29,24 +30,6 @@ interface DetectUploadProps {
 }
 
 const SAMPLE_LEAF_URL = "/assets/sample-leaf.jpg";
-
-function composeAdvisorDraft(d: DiagnosisResult, bundle: DetectBundle): string {
-  const severityWord =
-    d.severity === "treat_now"
-      ? bundle.severity.treatNow
-      : d.severity === "watch"
-        ? bundle.severity.watch
-        : bundle.severity.clear;
-  return formatMessage(
-    "I just scanned my {crop} leaf. The AI detected {disease} with {pct}% confidence. Severity: {sev}. What should I do?",
-    {
-      crop: d.crop,
-      disease: d.diseaseName,
-      pct: d.confidence,
-      sev: severityWord,
-    },
-  );
-}
 
 export default function DetectUpload({
   bundle,
@@ -67,6 +50,12 @@ export default function DetectUpload({
   const [analyzingErrorKind, setAnalyzingErrorKind] = useState<
     "service" | "nod" | "image"
   >("service");
+
+  const [chatId, setChatId] = useState<string | null>(null);
+  const [chatMessages, setChatMessages] = useState<
+    { id: string; role: "farmer" | "detect"; content: string }[]
+  >([]);
+
   const objectUrlRef = useRef<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const mountedRef = useRef(false);
@@ -92,12 +81,48 @@ export default function DetectUpload({
     setViewingScan(null);
     setStage("idle");
     setAnalyzingError(null);
+    setChatId(null);
+    setChatMessages([]);
   }
 
   function showError(kind: "service" | "nod" | "image", message: string) {
     setAnalyzingErrorKind(kind);
     setAnalyzingError(message);
     setStage("error");
+  }
+
+  async function createChatSession(scanId: string | null): Promise<string> {
+    const res = await fetch("/api/detect/chats", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scanId }),
+      credentials: "same-origin",
+    });
+    if (!res.ok) throw new Error("Failed to create chat");
+    const data = await res.json();
+    return data.chatId as string;
+  }
+
+  async function loadChatMessages(cId: string) {
+    const res = await fetch(`/api/detect/messages/${cId}`, {
+      credentials: "same-origin",
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    setChatMessages(data.messages ?? []);
+  }
+
+  async function enterChatMode(scan: DiagnosisResult | ScanHistoryItem) {
+    const diagnosis: DiagnosisResult = "saveStatus" in scan && "saveStatus" in scan && scan.saveStatus !== undefined
+      ? toDiagnosis(scan as ScanHistoryItem)
+      : scan as DiagnosisResult;
+    const cId = diagnosis.scanId
+      ? await createChatSession(diagnosis.scanId)
+      : await createChatSession(null);
+    setChatId(cId);
+    setResult(diagnosis);
+    await loadChatMessages(cId);
+    setStage("chat");
   }
 
   async function runAnalysis(blob: Blob, name: string) {
@@ -127,7 +152,6 @@ export default function DetectUpload({
         return;
       }
       if (res.status === 499) {
-        /* navigated away mid-flight (E10) — silently drop */
         return;
       }
       if (!res.ok) {
@@ -179,10 +203,11 @@ export default function DetectUpload({
         imageUrl: data.imageUrl ?? previewUrl ?? "",
         saveStatus: "not_saved",
       };
+
       setResult(diagnosis);
-      setStage("result");
+      await enterChatMode(diagnosis);
     } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") return; // E10
+      if (err instanceof DOMException && err.name === "AbortError") return;
       showError("service", bundle.serviceUnavailable);
     } finally {
       abortRef.current = null;
@@ -190,7 +215,6 @@ export default function DetectUpload({
   }
 
   async function handleFile(file: File) {
-    console.log("[DETECT-UPLOAD] handleFile called:", file.name, file.type, file.size);
     const mime = file.type || (file.name.split(".").pop() ? `image/${file.name.split(".").pop()}` : "");
     if (!mime.startsWith("image/")) {
       showError("image", bundle.invalidFile);
@@ -198,15 +222,12 @@ export default function DetectUpload({
     }
 
     try {
-      console.log("[DETECT-UPLOAD] Compressing image...");
       const { blob, previewUrl } = await compressImageClient(file);
-      console.log("[DETECT-UPLOAD] Compressed, blob size:", blob.size);
       if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
       objectUrlRef.current = previewUrl;
       setPreviewUrl(previewUrl);
       await runAnalysis(blob, file.name);
-    } catch (err) {
-      console.error("[DETECT-UPLOAD] Compression error:", err);
+    } catch {
       showError("image", bundle.invalidFile);
     }
   }
@@ -256,7 +277,6 @@ export default function DetectUpload({
       if (res.ok) {
         setSaveState("saved");
         setSavedFarmName(farm.name);
-        // refresh history from server so the saved status reflects
       } else {
         setSaveState("idle");
       }
@@ -283,13 +303,14 @@ export default function DetectUpload({
             : bundle.saveToFarm}
         </button>
       )}
-      <Link
-        href={`/advisor?draft=${encodeURI(composeAdvisorDraft(displayedScan as DiagnosisResult, bundle))}`}
+      <button
+        type="button"
+        onClick={() => displayedScan && enterChatMode(displayedScan)}
         className="inline-flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint"
       >
         {bundle.discussAdvisor}
         <ArrowRightIcon size={16} />
-      </Link>
+      </button>
       <button
         type="button"
         onClick={resetToIdle}
@@ -341,7 +362,7 @@ export default function DetectUpload({
           <button
             type="button"
             onClick={() => setNoFarmsModalOpen(false)}
-            className="inline-flex min-h-12 flex-1 cursor-pointer items-center justify-center rounded-lg border border-agro-sprout bg-white px-5 text-sm font-semibold text-agro-forest hover:bg-agro-mint"
+            className="inline-flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-sprout bg-white px-5 text-sm font-semibold text-agro-forest hover:bg-agro-mint"
           >
             {bundle.dismiss}
           </button>
@@ -469,6 +490,17 @@ export default function DetectUpload({
         />
       )}
 
+      {stage === "chat" && result && chatId && (
+        <DetectChat
+          key={chatId}
+          bundle={bundle}
+          chatId={chatId}
+          initialMessages={chatMessages}
+          diagnosis={result}
+          onNewScan={resetToIdle}
+        />
+      )}
+
       {stage === "error" && (
         <div className="mt-5 flex flex-1 flex-col items-center justify-center gap-4 rounded-3xl border border-agro-sprout bg-white p-8 text-center">
           <span
@@ -505,7 +537,7 @@ export default function DetectUpload({
 
       {NoFarmsModal}
 
-      {initialScans.length > 0 && (
+      {stage !== "chat" && initialScans.length > 0 && (
         <section aria-labelledby="history-heading" className="mt-8">
           <h2
             id="history-heading"
@@ -517,7 +549,7 @@ export default function DetectUpload({
             initialScans={initialScans}
             nextCursor={nextCursor}
             bundle={bundle}
-            onScanSelect={setViewingScan}
+            onScanSelect={(scan) => enterChatMode(scan)}
           />
         </section>
       )}
