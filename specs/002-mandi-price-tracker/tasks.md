@@ -115,11 +115,11 @@
 
 ### Implementation for User Story 5
 
-- [ ] T023 [P] [US5] Implement Zod validation schemas for alert creation and updates in `app/api/prices/alerts/route.ts`
-- [ ] T024 [US5] Implement `GET`, `POST`, `PUT`, `DELETE` Route Handlers for farmer price alerts in `app/api/prices/alerts/route.ts`
-- [ ] T025 [P] [US5] Create target price alert setup and edit modal `components/prices/price-alert-modal.tsx` supporting in-place editing and active/paused toggles
-- [ ] T026 [US5] Implement sell-only alert evaluation and `nodemailer` (SMTP) email dispatcher with deep-link button in `lib/prices/alerts.ts`
-- [ ] T027 [US5] Implement daily price ingestion and alert evaluation Route Handler `POST /api/prices/ingest` in `app/api/prices/ingest/route.ts`
+- [X] T023 [P] [US5] Implement Zod validation schemas for alert creation and updates in `app/api/prices/alerts/route.ts`
+- [X] T024 [US5] Implement `GET`, `POST`, `PUT`, `DELETE` Route Handlers for farmer price alerts in `app/api/prices/alerts/route.ts`
+- [X] T025 [P] [US5] Create target price alert setup and edit modal `components/prices/price-alert-modal.tsx` supporting in-place editing and active/paused toggles
+- [X] T026 [US5] Implement sell-only alert evaluation and `nodemailer` (SMTP) email dispatcher with deep-link button in `lib/prices/alerts.ts`
+- [X] T027 [US5] Implement daily price ingestion and alert evaluation Route Handler `POST /api/prices/ingest` in `app/api/prices/ingest/route.ts`
 
 **Checkpoint**: User Story 5 complete - target price alerts and notifications functional
 

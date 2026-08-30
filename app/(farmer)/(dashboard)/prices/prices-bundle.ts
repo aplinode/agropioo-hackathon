@@ -28,6 +28,12 @@ export interface PricesBundle {
   range12M: string;
   setAlert: string;
   editAlert: string;
+  saveAlert: string;
+  cancel: string;
+  alertCrop: string;
+  alertMandi: string;
+  alertMandiOptional: string;
+  alertStatus: string;
   targetPrice: string;
   alertActive: string;
   alertPaused: string;

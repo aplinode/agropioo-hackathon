@@ -10,13 +10,15 @@ export const metadata: Metadata = {
 };
 
 type CropOption = { id: string; name_en: string };
+type MandiOption = { id: string; name_en: string };
 
 export default async function PricesPage() {
   await requireSessionPage();
 
-  const [bundle, crops, initialRes] = await Promise.all([
+  const [bundle, crops, mandis, initialRes] = await Promise.all([
     getPricesBundle(),
     query<CropOption>(`select id, name_en from crops order by name_en`),
+    query<MandiOption>(`select id, name_en from mandis order by name_en`),
     getPricesApi(new Request("http://localhost/api/prices")),
   ]);
 
@@ -25,7 +27,7 @@ export default async function PricesPage() {
   return (
     <div className="pt-1">
       <div className="mt-6">
-        <PricesClient bundle={bundle} crops={crops ?? []} initial={initial} />
+        <PricesClient bundle={bundle} crops={crops ?? []} mandis={mandis ?? []} initial={initial} />
       </div>
     </div>
   );
