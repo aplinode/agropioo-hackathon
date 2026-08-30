@@ -2,6 +2,7 @@
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning  
 **Created**: 2026-08-30  
+**Last Updated**: 2026-08-30  
 **Feature**: [spec.md](./spec.md)
 
 ## Content Quality
@@ -32,4 +33,7 @@
 ## Notes
 
 - All checklist items pass validation.
-- Spec is ready for `/speckit.plan`.
+- Spec updated to include translation architecture (FR-007, FR-012, SC-006).
+- Edge cases converted from questions to concrete requirements.
+- Contracts aligned to `/api/weather/*` paths and `app.weather.*` key namespace.
+- Spec is ready for `/speckit.plan` or implementation.

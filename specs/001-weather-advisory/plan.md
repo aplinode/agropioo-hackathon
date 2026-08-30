@@ -1,6 +1,6 @@
 # Implementation Plan: Smart Weather Advisory
 
-**Branch**: `002-weather-advisory` | **Date**: 2026-08-30 | **Spec**: [spec.md](spec.md)
+**Branch**: `001-weather-advisory` | **Date**: 2026-08-30 | **Spec**: [spec.md](spec.md)
 **Input**: Feature specification from `/specs/001-weather-advisory/spec.md`
 
 ## Summary
@@ -15,9 +15,20 @@ Build a weather advisory feature within the existing Agropioo Next.js app that t
 **Testing**: Zod schemas + route-handler tests (manual UI verification per constitution)  
 **Target Platform**: Web application (outdoor-mobile first, light mode)  
 **Project Type**: Full-stack web application  
-**Performance Goals**: Daily advisory rendered within 30 seconds; critical alerts detected and queued within 15 minutes  
+**Performance Goals**: Daily advisory rendered within 30 seconds on-demand; critical alerts detected and queued within 15 minutes  
 **Constraints**: TypeScript strict mode; no `any`, `!`, `@ts-ignore`; Route Handlers only for API; shared `lib/db.ts`; no new libraries without approval; UI strings must have translations for all 8 locales  
 **Scale/Scope**: Hackathon demo; single-tenant per farmer; 7-day forecast horizon; advisory history retained indefinitely per farm
+
+## Clarifications Applied
+
+The following decisions from `/speckit.clarify` are reflected in this plan:
+
+- Advisory generation is on-demand when the farmer opens the app or views the forecast page. No scheduled advisory cron job is required.
+- Default farm selection shows the most recently active/registered farm; the farmer can switch to other farms.
+- Alert deduplication: one alert per condition type per farm per 6-hour window.
+- Growth stage is computed dynamically at advisory generation time based on current date vs sowing date and crop duration.
+- Email alerts are sent for both warning and critical severities; in-app notifications show both.
+- Translation keys are namespaced under `app.weather.*`; client components receive strings via `getWeatherBundle()` server-side props.
 
 ## Constitution Check
 

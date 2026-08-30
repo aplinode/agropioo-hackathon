@@ -73,10 +73,10 @@ Farmer reviews past advisories to see what was recommended on previous days and 
 
 - When weather data is not available for the farmer's location, the system shows the last cached advisory with a visible "weather data unavailable" banner and does not generate new advice until data resumes.
 - When the farmer's crop type is not found in the advisory knowledge base, the system shows generic weather-based advice without crop-specific recommendations.
-- What happens when the farmer has not registered any farm details?
-- How does the system handle extreme weather conditions beyond typical ranges?
-- What happens when multiple farms are registered with different crops and sowing dates?
-- What happens when the farmer's location has no reliable forecast coverage?
+- When the farmer has not registered any farm details, they are prompted to register a farm before seeing advisories.
+- When extreme weather conditions exceed defined thresholds (temperature > 40°C, < 2°C, precipitation > 10mm in 3h), the alert engine classifies them as critical and sends alerts per FR-005.
+- When multiple farms are registered with different crops and sowing dates, the farmer can switch between farms and receives separate advisories per farm per FR-010.
+- When the farmer's location has no reliable forecast coverage, the system displays the last cached advisory with a visible data-unavailable banner and suppresses new advice generation until coverage resumes.
 
 ---
 
@@ -129,6 +129,11 @@ Farmer reviews past advisories to see what was recommended on previous days and 
 - Q: What should the system do when the farmer's crop type is not found in the advisory knowledge base? → A: Show generic weather advice without crop-specific recommendations
 - Q: How are weather advisory UI strings translated and delivered to the client? → A: Strings are authored in `catalog/en.ts` under `app.weather.*`, drafted in the other 7 locale catalogs, synced to the `translations` table via `npm run sync:translations`, and resolved server-side through `getWeatherBundle()`; no hardcoded client-side copy.
 - Q: What is the translation key namespace for weather advisory strings? → A: `app.weather.*` (e.g. `app.weather.pageTitle`, `app.weather.advisory.recommendation.irrigation`, `app.weather.alerts.heavyRain`).
+- Q: Should daily advisories be generated on-demand when the farmer opens the app, or pre-generated on a schedule? → A: On-demand generation when the farmer opens the app or views the forecast page. No scheduled daily advisory job is required. This satisfies SC-001's 30-second target and keeps the MVP architecture simple.
+- Q: When a farmer has multiple farms, which farm is shown by default and can they switch? → A: Show the most recently active/registered farm by default. The farmer must be able to switch to other registered farms to view their advisories.
+- Q: How often can the same alert condition re-trigger for a farm? → A: One alert per condition type per farm per 6-hour window. The alert engine deduplicates within this window to prevent spam while still catching recurring or persistent risks.
+- Q: Where should growth stage be computed — dynamically at advisory time or stored at registration? → A: Compute dynamically each time an advisory is generated, based on the current date relative to the sowing date and crop duration. This avoids stale stage data.
+- Q: Should email alerts be sent for both warning and critical severities, or only critical? → A: Email for both warning and critical alerts. In-app notifications show both severities.
 
 ## Assumptions
 
