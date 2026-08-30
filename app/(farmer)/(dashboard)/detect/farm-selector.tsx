@@ -51,10 +51,10 @@ export default function FarmSelector({
             const farm = farms.find((f) => f.id === e.target.value) ?? null;
             onSelect(farm);
           }}
-          className="h-11 w-64 appearance-none rounded-xl border border-agro-sprout bg-white pl-4 pr-10 text-sm font-sans text-agro-ink outline-none transition-colors focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+          className="h-11 w-64 truncate appearance-none rounded-xl border border-agro-sprout bg-white pl-4 pr-10 text-sm font-sans text-agro-ink outline-none transition-colors focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
         >
           {farms.map((farm) => (
-            <option key={farm.id} value={farm.id}>
+            <option key={farm.id} value={farm.id} className="truncate">
               {farm.name} — {farm.crops || "—"}
             </option>
           ))}
