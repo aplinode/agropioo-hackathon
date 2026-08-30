@@ -1,6 +1,6 @@
 # Route Handler Contracts: Smart Weather Advisory
 
-**Feature**: 002-weather-advisory  
+**Feature**: 001-weather-advisory  
 **Date**: 2026-08-30  
 **Status**: Complete
 
@@ -9,7 +9,7 @@ All request/response bodies are JSON. Errors follow the uniform shape: `{ error:
 
 ---
 
-## POST `/api/advisor/register`
+## POST `/api/weather/register`
 
 Register or update a farm's weather advisory profile (primary crop, sowing date, soil, irrigation).
 
@@ -40,7 +40,7 @@ Register or update a farm's weather advisory profile (primary crop, sowing date,
 
 ---
 
-## GET `/api/advisor/forecast`
+## GET `/api/weather/forecast`
 
 Return a 7-day forecast with daily advice for a specific farm.
 
@@ -58,8 +58,7 @@ Return a 7-day forecast with daily advice for a specific farm.
         "date": "2026-08-31",
         "weather": { "temp_max": 34, "temp_min": 22, "precip_mm": 0, "humidity": 45, "description": "sunny" },
         "growth_stage": "flowering",
-        "advice_key": "advisor.water_today",
-        "advice_text": "Irrigate in the evening",
+        "advice_key": "app.weather.advisory.recommendation.irrigation",
         "severity": "info"
       }
     ]
@@ -73,7 +72,7 @@ Return a 7-day forecast with daily advice for a specific farm.
 
 ---
 
-## GET `/api/advisor/alerts`
+## GET `/api/weather/alerts`
 
 Return active (unread, unsent) critical alerts for the authenticated farmer.
 
@@ -89,8 +88,7 @@ Return active (unread, unsent) critical alerts for the authenticated farmer.
         "farm_id": "uuid",
         "farm_name": "North Field",
         "alert_type": "heavy_rain",
-        "recommendation_key": "advisor.alert.delay_irrigation",
-        "recommendation_text": "Delay irrigation for 24 hours",
+        "recommendation_key": "app.weather.alerts.heavyRain",
         "severity": "warning",
         "created_at": "2026-08-30T10:00:00Z",
         "read": false
@@ -103,7 +101,7 @@ Return active (unread, unsent) critical alerts for the authenticated farmer.
 
 ---
 
-## POST `/api/advisor/alerts/[id]/read`
+## POST `/api/weather/alerts/[id]/read`
 
 Mark an alert as read.
 
@@ -115,7 +113,7 @@ Mark an alert as read.
 
 ---
 
-## GET `/api/advisor/history`
+## GET `/api/weather/history`
 
 Return paginated advisory history for a farm.
 
@@ -138,7 +136,7 @@ Return paginated advisory history for a farm.
 
 ---
 
-## POST `/api/advisor/history/[id]/acknowledge`
+## POST `/api/weather/history/[id]/acknowledge`
 
 Mark an advisory as acknowledged or acted upon.
 
@@ -160,7 +158,7 @@ or
 
 ---
 
-## POST `/api/advisor/alerts/trigger` (internal/cron)
+## POST `/api/weather/alerts/trigger` (internal/cron)
 
 Internal endpoint to scan forecasts and enqueue alerts. Protected by cron secret, not user session.
 
