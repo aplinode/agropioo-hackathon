@@ -29,6 +29,16 @@
 - [ ] Feature meets measurable outcomes defined in Success Criteria
 - [ ] No implementation details leak into specification
 
+## Clarifications
+
+### Session 2026-08-30
+
+- Q: Should price alerts be delivered via in-app notifications only, SMS + in-app, or in-app with optional SMS opt-in? → A: In-app only
+- Q: When a farmer first opens the price tracker, should the system automatically show prices for markets near their registered farm location, or require them to manually select a district/market first? → A: Auto-load from farm location
+- Q: Should the recommendation stay farmer-focused with sell/hold only, include buy/sell/hold for all users, or keep sell/hold with an optional trader mode? → A: Sell/hold only
+- Q: What threshold should determine when price predictions are shown? → A: Any data with confidence warning
+- Q: Should launch focus on Punjab districts only, include one district from each province, or start with whatever district the farmer is in and expand from there? → A: Every district of Pakistan
+
 ## Validation Results
 
 | Check | Result | Notes |
@@ -49,8 +59,9 @@
 | User scenarios cover primary flows | Pass | P1–P3 stories cover viewing, comparing, predicting, alerting, and history |
 | Feature meets measurable outcomes | Pass | 10 measurable success criteria defined |
 | No implementation details leak | Pass | No APIs, models, or frameworks mentioned in requirements |
+| Clarifications integrated | Pass | 5 questions asked and answered; spec updated accordingly |
 
 ## Notes
 
 - Item "Scope is clearly bounded" passes because the spec includes user stories, functional requirements, and edge cases that collectively define boundaries. An explicit "Out of Scope" section was not included because the spec template does not contain that section; scope is instead bounded by the prioritized user stories and edge cases.
-- All validation items pass. The spec is ready for `/speckit.clarify` or `/speckit.plan`.
+- All validation items pass. The spec is ready for `/speckit.plan`.
