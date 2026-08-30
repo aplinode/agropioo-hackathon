@@ -71,8 +71,8 @@ Farmer reviews past advisories to see what was recommended on previous days and 
 
 ### Edge Cases
 
-- What happens when weather data is not available for the farmer's location?
-- How does the system handle crop types not in its knowledge base?
+- When weather data is not available for the farmer's location, the system shows the last cached advisory with a visible "weather data unavailable" banner and does not generate new advice until data resumes.
+- When the farmer's crop type is not found in the advisory knowledge base, the system shows generic weather-based advice without crop-specific recommendations.
 - What happens when the farmer has not registered any farm details?
 - How does the system handle extreme weather conditions beyond typical ranges?
 - What happens when multiple farms are registered with different crops and sowing dates?
@@ -84,11 +84,11 @@ Farmer reviews past advisories to see what was recommended on previous days and 
 
 ### Functional Requirements
 
-- **FR-001**: System must accept and store the farmer's crop type, sowing date, and farm location.
+- **FR-001**: System must accept and store the farmer's crop type, sowing date, farm location, farm name, area size, soil type, and irrigation method.
 - **FR-002**: System must determine the current growth stage of the farmer's crop based on the sowing date.
 - **FR-003**: System must fetch a multi-day weather forecast for the farmer's farm location.
-- **FR-004**: System must generate personalized farming advice for each day by combining weather conditions, crop type, and crop growth stage.
-- **FR-005**: System must send alerts when weather conditions pose a significant risk to the farmer's crop.
+- **FR-004**: System must generate personalized farming advice for each day by combining weather conditions, crop type, and crop growth stage. If the crop type is not in the knowledge base, the system falls back to generic weather-based advice without crop-specific recommendations.
+- **FR-005**: System must send alerts via email and in-app notification when weather conditions pose a significant risk to the farmer's crop.
 - **FR-006**: System must display advisory history for the farmer to review past recommendations.
 - **FR-007**: System must present all advice in the farmer's selected language.
 - **FR-008**: System must recommend irrigation timing based on expected rainfall.
@@ -98,7 +98,7 @@ Farmer reviews past advisories to see what was recommended on previous days and 
 
 ### Key Entities
 
-- **Farm Registration**: Represents a farmer's field with crop type, sowing date, and location. One farmer may have multiple registrations.
+- **Farm Registration**: Represents a farmer's field with crop type, sowing date, location, farm name, area size, soil type, and irrigation method. One farmer may have multiple registrations.
 - **Weather Advisory**: Represents a daily recommendation tied to a specific farm, date, weather conditions, crop growth stage, and advice text. Includes a severity level.
 - **Weather Alert**: Represents a time-sensitive notification triggered by forecasted conditions that pose a risk to the farmer's crop.
 
@@ -116,8 +116,19 @@ Farmer reviews past advisories to see what was recommended on previous days and 
 
 ---
 
+## Clarifications
+
+### Session 2026-08-30
+
+- Q: Which weather data provider/integration should the system use? → A: OpenWeatherMap API
+- Q: How should critical weather alerts be delivered to the farmer? → A: Email and in-app notification
+- Q: What specific attributes must the Farm Registration entity store, and what validation constraints apply? → A: Option B — crop type, sowing date, location, farmer ID, farm name, area size, soil type, irrigation method
+- Q: What should happen when the weather provider is unavailable or returns incomplete data for the farmer's location? → A: Show last cached advisory with "data unavailable" banner; no new advice generated until weather data returns
+- Q: What should the system do when the farmer's crop type is not found in the advisory knowledge base? → A: Show generic weather advice without crop-specific recommendations
+
 ## Assumptions
 
+- Weather forecast data is sourced from OpenWeatherMap API with reasonable accuracy for at least 3 days ahead.
 - Weather forecast data is available for the farmer's location with reasonable accuracy for at least 3 days ahead.
 - Farmer's crop type and sowing date are the minimum inputs needed to generate useful advice.
 - The farmer has access to a smartphone or computer with internet connectivity to receive advisories and alerts.
