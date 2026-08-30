@@ -28,7 +28,7 @@ interface AppSidebarProps {
 
 export default function AppSidebar({ bundle }: AppSidebarProps) {
   const pathname = usePathname();
-  const { nav, signOut, aria, productOf, builtForPakistan } = bundle;
+  const { nav, signOut, aria, productOf, builtForPakistan, alertsUnread } = bundle;
 
   const destinations = [
     { href: "/dashboard", label: nav.dashboard, Icon: HomeIcon },
@@ -80,6 +80,12 @@ export default function AppSidebar({ bundle }: AppSidebarProps) {
                       className={`h-5 w-5 shrink-0 ${active ? "text-agro-sprout" : "text-white/45"}`}
                     />
                     {label}
+                    {href === "/weather" && alertsUnread > 0 && (
+                      <span
+                        className="ms-1 inline-flex h-2 w-2 rounded-full bg-agro-sprout"
+                        aria-label={`${alertsUnread} unread alerts`}
+                      />
+                    )}
                   </Link>
                 </li>
               );

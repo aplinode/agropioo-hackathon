@@ -23,4 +23,6 @@ export type ShellBundle = {
   };
   productOf: string;
   builtForPakistan: string;
+  /** Unread weather-alert count (weather_alerts.read_at IS NULL) for the badge. */
+  alertsUnread: number;
 };
