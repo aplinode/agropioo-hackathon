@@ -26,13 +26,9 @@ type UserRow = {
 
 export async function POST(request: Request): Promise<Response> {
   try {
-    const raw = await readJsonBody(request);
-    console.error("[signup] raw body", JSON.stringify(raw));
-    const parsed = signupSchema.safeParse(raw);
+    const parsed = signupSchema.safeParse(await readJsonBody(request));
     if (!parsed.success) {
-      const issues = parsed.error.issues.map(i => ({ path: i.path, message: i.message }));
-      console.error("[signup] validation failed", JSON.stringify(issues));
-      return jsonResponse({ error: { code: "validation_error", message: COPY.VALIDATION_FALLBACK, issues } }, 400);
+      return errorResponse("validation_error", COPY.VALIDATION_FALLBACK, 400);
     }
     const { name, email, phone, password } = parsed.data;
 
