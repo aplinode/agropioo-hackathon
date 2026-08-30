@@ -202,6 +202,22 @@ export default function DetectChat({
         aria-live="polite"
         className="flex-1 overflow-y-auto px-4 py-4"
       >
+        {showImageBubble && (
+          <div className="mb-3 flex justify-start">
+            <button
+              type="button"
+              onClick={() => setPreviewOpen(true)}
+              className="rounded-2xl rounded-es-md border border-agro-sprout bg-white p-1 transition-colors hover:border-agro-canopy"
+              aria-label={bundle.chat.imagePreview}
+            >
+              <img
+                src={diagnosis.imageUrl}
+                alt="Scanned leaf"
+                className="h-40 w-auto max-w-[200px] rounded-xl object-cover"
+              />
+            </button>
+          </div>
+        )}
         {messages.length === 0 && !thinking ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <p className="max-w-sm text-sm leading-relaxed text-agro-slate">
@@ -210,22 +226,6 @@ export default function DetectChat({
           </div>
         ) : (
           <div className="space-y-3">
-            {showImageBubble && (
-              <div className="flex justify-start">
-                <button
-                  type="button"
-                  onClick={() => setPreviewOpen(true)}
-                  className="rounded-2xl rounded-es-md border border-agro-sprout bg-white p-1 transition-colors hover:border-agro-canopy"
-                  aria-label={bundle.chat.imagePreview}
-                >
-                  <img
-                    src={diagnosis.imageUrl}
-                    alt="Scanned leaf"
-                    className="h-40 w-auto max-w-[200px] rounded-xl object-cover"
-                  />
-                </button>
-              </div>
-            )}
             {messages.map((message) => (
               <div
                 key={message.id}

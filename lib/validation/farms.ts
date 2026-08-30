@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CROPS } from '@/lib/farms/constants';
+import { CROPS, IRRIGATION_METHODS, SOIL_TYPES } from '@/lib/farms/constants';
 import { RECORD_TYPES } from '@/lib/farms/constants';
 import { SEASONS } from '@/lib/farms/constants';
 import { WEATHER_CONDITIONS } from '@/lib/farms/constants';
@@ -26,6 +26,14 @@ export const createFarmSchema = z.object({
   acres: z.coerce.number().positive('Acres must be greater than 0').max(99999),
   lat: z.coerce.number().min(-90).max(90),
   lng: z.coerce.number().min(-180).max(180),
+  primary_crop: cropEnum.optional(),
+  sowing_date: z
+    .string()
+    .refine((v) => v === '' || !Number.isNaN(Date.parse(v)), 'Invalid date')
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : null)),
+  soil_type: z.enum(SOIL_TYPES).optional(),
+  irrigation_method: z.enum(IRRIGATION_METHODS).optional(),
 });
 
 export const updateFarmSchema = z.object({
@@ -36,6 +44,14 @@ export const updateFarmSchema = z.object({
   acres: z.coerce.number().positive('Acres must be greater than 0').max(99999).optional(),
   lat: z.coerce.number().min(-90).max(90).optional(),
   lng: z.coerce.number().min(-180).max(180).optional(),
+  primary_crop: cropEnum.optional(),
+  sowing_date: z
+    .string()
+    .refine((v) => v === '' || !Number.isNaN(Date.parse(v)), 'Invalid date')
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : null)),
+  soil_type: z.enum(SOIL_TYPES).optional(),
+  irrigation_method: z.enum(IRRIGATION_METHODS).optional(),
   growth_stages: z.any().optional(),
 });
 

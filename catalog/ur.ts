@@ -855,6 +855,11 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.farms.new.placeholders.acres": "مثلاً ۱۲.۵",
   "app.farms.new.fields.location": "مقام / گاوں",
   "app.farms.new.placeholders.location": "گاؤں یا شہر کا نام لکھیں",
+  "app.farms.new.fields.primaryCrop": "اہم فصل",
+  "app.farms.new.fields.sowingDate": "بوائی کی تاریخ",
+  "app.farms.new.fields.soilType": "مٹی کی قسم",
+  "app.farms.new.fields.irrigationMethod": "آبپاشی کا طریقہ",
+  "app.farms.new.placeholders.soilType": "مٹی، لوم، ریتیلی، یا گاد",
   "app.farms.new.buttons.saving": "محفوظ ہو رہا ہے…",
   "app.farms.new.buttons.save": "کھیت محفوظ کریں",
   "app.farms.new.demoNotice": "ڈیمو — محفوظ کرنا ابھی ڈیٹابیس سے نہیں جڑا",
@@ -1072,6 +1077,9 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.weather.stages.maturation": "پختگی",
   "app.weather.stages.harvestReady": "کٹائی تیار",
   "app.weather.stages.generic": "عام",
+  "app.weather.source.live": "براہ راست پیشن گوئی · OpenWeather",
+  "app.weather.source.cached": "آخری محفوظ پیشن گوئی",
+  "app.weather.source.demo": "نمونہ پیشن گوئی — لائیو ڈیٹا کے لیے API کلید شامل کریں",
   "app.weather.advisory.recommendation.irrigation": "آج آبپاشی نہ کریں — بارش متوقع ہے۔ پانی بچائیں اور پانی سے بھر دینے سے بچیں۔",
   "app.weather.advisory.recommendation.irrigateNow": "ٹھنڈے گھنٹوں میں (صبح 9 بجے سے پہلے) آبپاشی کریں — گرمی بڑھ رہی ہے اور مٹی خشک ہو رہی ہے۔",
   "app.weather.advisory.recommendation.fertilize": "مستحکٹ موسم سے پہلے کھاد لگانے کا اچھا وقت۔",
@@ -1084,7 +1092,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.weather.buttons.register": "فارم رجسٹر کریں",
   "app.weather.buttons.refresh": "تازہ کریں",
   "app.weather.errors.generic": "کچھ غلط ہو گیا۔ براہ کرم دوبارہ کوشش کریں۔",
-  "app.weather.errors.noFarm": "اپنا مشورہ دیکھنے کے لیے ایک فارم منتخب کریں۔"
+  "app.weather.errors.noFarm": "اپنا مشورہ دیکھنے کے لیے ایک فارم منتخب کریں۔",
 
   /* ── Mandi Price Tracker ─────────────────────────────── */
   "app.prices.eyebrow": "منڈی کی قیمتیں",

@@ -65,12 +65,14 @@ export async function POST(request: Request) {
 
     const input = parsed.data as CreateFarmInput;
     const growthStages = defaultStagesForCrops(input.crops);
+    const primaryCrop = input.primary_crop ?? input.crops[0];
 
     const data = await queryOne(
       `INSERT INTO farms (
-         account_id, name, location, district, lat, lng, crops, acres, growth_stages
-       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-       RETURNING *`,
+          account_id, name, location, district, lat, lng, crops, acres, growth_stages,
+          primary_crop, sowing_date, soil_type, irrigation_method
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        RETURNING *`,
       [
         session.accountId,
         input.name,
@@ -81,6 +83,10 @@ export async function POST(request: Request) {
         JSON.stringify(input.crops),
         input.acres,
         JSON.stringify(growthStages),
+        primaryCrop,
+        input.sowing_date ?? null,
+        input.soil_type ?? null,
+        input.irrigation_method ?? null,
       ]
     );
 

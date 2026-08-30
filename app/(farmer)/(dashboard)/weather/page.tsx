@@ -132,8 +132,10 @@ export default async function WeatherPage({
 
   let todayAdvice: { growth_stage: GrowthStage; advice_text: string; severity: Severity } | null = null;
   let forecastDays: Parameters<typeof ForecastList>[0]["days"] = [];
+  let dataSourceLabel = bundle.source.demo;
 
   if (forecast) {
+    dataSourceLabel = bundle.source.live;
     const advisoryDays = buildAdvisoryDays(selected.primary_crop, selected.sowing_date, forecast);
     forecastDays = advisoryDays.map((d) => ({
       date: d.date,
@@ -181,6 +183,7 @@ export default async function WeatherPage({
       [selected.id, today],
     );
     if (cached) {
+      dataSourceLabel = bundle.source.cached;
       todayAdvice = {
         growth_stage: (cached.growth_stage as GrowthStage) ?? "generic",
         advice_text: cached.advice_text,
@@ -255,6 +258,11 @@ export default async function WeatherPage({
         viewAllLabel={bundle.alerts.viewAll}
         viewAllHref="/notifications"
       />
+
+      <p className="mt-4 flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-agro-slate">
+        <span className="inline-flex h-2 w-2 rounded-full bg-agro-canopy" aria-hidden="true" />
+        {dataSourceLabel}
+      </p>
 
       {forecastDays.length > 0 && (
         <ForecastList

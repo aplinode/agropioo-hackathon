@@ -317,6 +317,10 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
         crop: t("app.farms.new.fields.crop").text,
         acres: t("app.farms.new.fields.acres").text,
         location: t("app.farms.new.fields.location").text,
+        primaryCrop: t("app.farms.new.fields.primaryCrop").text,
+        sowingDate: t("app.farms.new.fields.sowingDate").text,
+        soilType: t("app.farms.new.fields.soilType").text,
+        irrigationMethod: t("app.farms.new.fields.irrigationMethod").text,
       },
       placeholders: {
         name: t("app.farms.new.placeholders.name").text,
@@ -324,6 +328,7 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
         crop: t("app.farms.new.placeholders.crop").text,
         acres: t("app.farms.new.placeholders.acres").text,
         location: t("app.farms.new.placeholders.location").text,
+        soilType: t("app.farms.new.placeholders.soilType").text,
       },
       buttons: {
         saving: t("app.farms.new.buttons.saving").text,
@@ -588,6 +593,11 @@ export async function getWeatherBundle(): Promise<WeatherBundle> {
       dismiss: t("app.weather.alerts.dismiss").text,
       noAlerts: t("app.weather.alerts.noAlerts").text,
       viewAll: t("app.weather.alerts.viewAll").text,
+    },
+    source: {
+      live: t("app.weather.source.live").text,
+      cached: t("app.weather.source.cached").text,
+      demo: t("app.weather.source.demo").text,
     },
     stages: {
       seedling: t("app.weather.stages.seedling").text,

@@ -855,6 +855,11 @@ export const pa: Partial<Record<CatalogKey, string>> = {
   "app.farms.new.placeholders.acres": "مثلاً ۱۲.۵",
   "app.farms.new.fields.location": "مقام / گاں",
   "app.farms.new.placeholders.location": "گاں یا شہر دا ناں لکھو",
+  "app.farms.new.fields.primaryCrop": "مکھ فصل",
+  "app.farms.new.fields.sowingDate": "بوائی دی تاریخ",
+  "app.farms.new.fields.soilType": "مٹی دی قسم",
+  "app.farms.new.fields.irrigationMethod": "آبپاشی دا طریقہ",
+  "app.farms.new.placeholders.soilType": "مٹی، لوم، ریتلی، یا گاد",
   "app.farms.new.buttons.saving": "محفوظ ہو رہا اے…",
   "app.farms.new.buttons.save": "کھیت محفوظ کرو",
   "app.farms.new.demoNotice": "ڈیمو — محفوظ کرنا ہُن ڈیٹابیس نال نہیں جُڑیا",
@@ -1009,6 +1014,9 @@ export const pa: Partial<Record<CatalogKey, string>> = {
   "app.weather.stages.maturation": "پختگی",
   "app.weather.stages.harvestReady": "کٹائی تیار",
   "app.weather.stages.generic": "عام",
+  "app.weather.source.live": "براہ راست پیشن گوئی · OpenWeather",
+  "app.weather.source.cached": "آخری محفوظ پیشن گوئی",
+  "app.weather.source.demo": "نمونہ پیشن گوئی — لائیو ڈیٹا لئی API کلید شامل کرو",
   "app.weather.advisory.recommendation.irrigation": "آج آبپاشی نہ کرو — بارش متوقع اے۔ پانی بچاؤ تے پانی سے بھر دینے توں بچو۔",
   "app.weather.advisory.recommendation.irrigateNow": "ٹھنڈے گھنٹاں وچ (سویرے 9 وجے توں پہلاں) آبپاشی کرو — گرمی بڑھ رہی اے تے مٹی خشک ہو رہی اے۔",
   "app.weather.advisory.recommendation.fertilize": "مستحکٹ موسم توں پہلاں کھاد لگانے دا اچھا وقت۔",
@@ -1021,7 +1029,7 @@ export const pa: Partial<Record<CatalogKey, string>> = {
   "app.weather.buttons.register": "فارم رجسٹر کرو",
   "app.weather.buttons.refresh": "تازہ کرو",
   "app.weather.errors.generic": "کچھ غلط ہو گیا۔ براہ کرم دوبارہ کوشش کرو۔",
-  "app.weather.errors.noFarm": "اپنی صلاح ویکھن لئی ایک فارم منتخب کرو۔"
+  "app.weather.errors.noFarm": "اپنی صلاح ویکھن لئی ایک فارم منتخب کرو۔",
 
   /* ── Mandi Price Tracker ─────────────────────────────── */
   "app.prices.eyebrow": "Mandi prices",

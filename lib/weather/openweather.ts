@@ -1,10 +1,16 @@
 import "server-only";
 
 /* OpenWeatherMap client wrapper (plan K5 / research §1).
-   - 5-day / 3-hour forecast endpoint aggregated into daily points (padded to 7 days).
-   - In-memory cache with TTL so on-demand advisory loads stay within SC-001's 30s target.
-   - Retry once on transient failure; returns null on any hard failure so callers can
-     degrade to the last cached advisory per the spec's edge-case rules. */
+   - Uses the FREE "5 day / 3 hour forecast" endpoint:
+       https://api.openweathermap.org/data/2.5/forecast?lat=&lon=&units=metric
+     which is part of OpenWeather's Free Weather API access (no card, 60 calls/min).
+   - We deliberately do NOT use One Call 2.5 (deprecated Jun 2024) or One Call 3.0/4.0
+     (separate paid "One Call by Call" subscription). Coordinates (lat/lon) are used,
+     never the deprecated city-name / zip / built-in geocoder paths.
+   - Response aggregated into daily points (padded to 7 days) with a 30-min cache so
+     on-demand advisory loads stay within SC-001's 30s target.
+   - Retry once on transient failure; returns null on any hard failure (incl. a missing
+     or not-yet-activated key) so callers degrade to the last cached advisory. */
 
 export type ForecastDay = {
   date: string; // YYYY-MM-DD (local calendar day of the forecast step)
@@ -38,6 +44,9 @@ const HORIZON_DAYS = 7;
 type CacheEntry = { at: number; result: ForecastResult };
 
 const cache = new Map<string, CacheEntry>();
+
+// Emit the "key missing" notice once per process instead of on every request.
+let warnedMissingKey = false;
 
 function cacheKey(lat: number, lng: number): string {
   return `${lat.toFixed(3)},${lng.toFixed(3)}`;
@@ -106,7 +115,16 @@ function padToHorizon(days: ForecastDay[]): ForecastDay[] {
 
 async function fetchForecast(lat: number, lng: number): Promise<ForecastResult | null> {
   const apiKey = process.env.OPENWEATHER_API_KEY;
-  if (!apiKey) return null;
+  if (!apiKey) {
+    if (!warnedMissingKey) {
+      warnedMissingKey = true;
+      console.warn(
+        "[weather] OPENWEATHER_API_KEY is not set — weather advisory will fall back to the " +
+          "last saved row or sample data. Add a free key from openweathermap.org to .env.",
+      );
+    }
+    return null;
+  }
 
   const url = `${FORECAST_URL}?lat=${encodeURIComponent(String(lat))}&lon=${encodeURIComponent(
     String(lng),

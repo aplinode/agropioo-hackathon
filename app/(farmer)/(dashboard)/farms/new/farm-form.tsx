@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFarmSchema, type CreateFarmInput } from "@/lib/validation/farms";
 import { PAKISTAN_DISTRICTS } from "@/lib/farms/districts";
-import { CROPS, type Crop } from "@/lib/farms/constants";
+import { CROPS, IRRIGATION_METHODS, SOIL_TYPES, type Crop, type IrrigationMethod, type SoilType } from "@/lib/farms/constants";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -689,6 +689,10 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
 
   const selectedDistrict = watch("district");
   const selectedCrops = watch("crops") || [];
+  const [primaryCrop, setPrimaryCrop] = useState<string>(selectedCrops[0] ?? CROPS[0]);
+  const [sowing, setSowing] = useState("");
+  const [soil, setSoil] = useState<SoilType | "">("");
+  const [irrigation, setIrrigation] = useState<IrrigationMethod>("drip");
 
   const handlePickLocation = async (lat: number, lng: number) => {
     setMarker({ lat, lng });
@@ -753,7 +757,13 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
       const res = await fetch("/api/farms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          primary_crop: primaryCrop,
+          sowing_date: sowing || null,
+          soil_type: soil || null,
+          irrigation_method: irrigation,
+        }),
       });
       if (!res.ok) {
         const body = await res.json();
@@ -898,6 +908,90 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
         }}
         error={errors.crops?.message || serverErrors.crops}
       />
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label
+            htmlFor="farm-primary-crop"
+            className="block text-sm font-semibold text-agro-ink"
+          >
+            {bundle.new.fields.primaryCrop}
+          </label>
+          <select
+            id="farm-primary-crop"
+            value={primaryCrop}
+            onChange={(e) => setPrimaryCrop(e.target.value)}
+            className="mt-2 w-full rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm capitalize text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+          >
+            {(selectedCrops.length ? selectedCrops : CROPS).map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label
+            htmlFor="farm-soil"
+            className="block text-sm font-semibold text-agro-ink"
+          >
+            {bundle.new.fields.soilType}
+          </label>
+          <select
+            id="farm-soil"
+            value={soil}
+            onChange={(e) => setSoil(e.target.value as SoilType)}
+            className="mt-2 w-full rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm capitalize text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+          >
+            <option value="">—</option>
+            {SOIL_TYPES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label
+            htmlFor="farm-sowing"
+            className="block text-sm font-semibold text-agro-ink"
+          >
+            {bundle.new.fields.sowingDate}
+          </label>
+          <input
+            id="farm-sowing"
+            type="date"
+            value={sowing}
+            onChange={(e) => setSowing(e.target.value)}
+            className="mt-2 w-full rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="farm-irrigation"
+            className="block text-sm font-semibold text-agro-ink"
+          >
+            {bundle.new.fields.irrigationMethod}
+          </label>
+          <select
+            id="farm-irrigation"
+            value={irrigation}
+            onChange={(e) => setIrrigation(e.target.value as IrrigationMethod)}
+            className="mt-2 w-full rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm capitalize text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+          >
+            {IRRIGATION_METHODS.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
       <FarmMap marker={marker} onPickLocation={handlePickLocation} />
 
