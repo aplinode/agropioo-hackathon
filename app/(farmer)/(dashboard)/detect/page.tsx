@@ -85,16 +85,12 @@ export default async function DetectPage() {
 
   return (
     <div className="pt-1">
-      <div className="mt-6 grid gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3">
-          <DetectUpload
-            bundle={bundle}
-            farms={farms}
-            initialScans={initialScans}
-            nextCursor={nextCursor}
-          />
-        </div>
-      </div>
+      <DetectUpload
+        bundle={bundle}
+        farms={farms}
+        initialScans={initialScans}
+        nextCursor={nextCursor}
+      />
     </div>
   );
 }

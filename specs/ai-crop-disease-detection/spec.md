@@ -108,16 +108,17 @@ Give every farmer a fast, reliable way to identify crop diseases from a photo â€
 - **FR-9.4:** The desktop sidebar is visible on desktop with `/detect` active.
 
 ### FR-10: Detect Chat UI
-- **FR-10.1:** After image analysis completes, a chat UI opens on the same page (same route, no navigation).
-- **FR-10.2:** The uploaded image appears as a small thumbnail in the chat header area. The thumbnail is clickable.
-- **FR-10.3:** Clicking the thumbnail opens a popup/lightbox showing the full-size image. The popup has a close button that returns to the thumbnail view.
-- **FR-10.4:** An auto-generated prompt is filled in the chat input based on the diagnosis result. Example: "Why do my {crop} leaves have {symptom}?" or "I have {disease} on my {crop}. What should I do?"
+- **FR-10.1:** After image analysis completes, a chat UI opens on the same page (same route, no navigation). The chat container uses a wider layout than the upload flow, spanning nearly the full available width with small side margins.
+- **FR-10.2:** The uploaded image appears as a message in the chat area (below the prompt bar, above the first AI response), matching the ChatGPT pattern where the image sits just above the composer.
+- **FR-10.3:** Clicking the image in chat opens a popup/lightbox showing the full-size image. The popup has a close button that returns to the chat.
+- **FR-10.4:** An auto-generated prompt is filled in the chat input based on the diagnosis result. Example: "Why do my {crop} leaves have {symptom}?" or "I have {disease} on my {crop}. What should I do?" The farmer can edit the prompt before sending.
 - **FR-10.5:** The farmer can edit the auto-generated prompt before sending, or send it as-is.
 - **FR-10.6:** AI responses are streamed into the chat in real time, matching the ChatGPT message-bubble pattern.
 - **FR-10.7:** Each detection session creates a persistent chat conversation. Chat history is listed as sessions on the right sidebar (desktop) or bottom sheet (mobile).
 - **FR-10.8:** Clicking a past session in the history list loads that session's full chat on the same page.
 - **FR-10.9:** A "New scan" button resets the flow back to the upload area, clearing the current chat but preserving past sessions.
 - **FR-10.10:** Chat responses come from the same LLM infrastructure used by the advisor feature, scoped to the detected disease, crop, and severity context.
+- **FR-10.11:** The chat composer uses a textarea (not a single-line input) so the farmer can write multi-line messages. The textarea grows automatically as content is typed, up to a maximum height of approximately 6 lines, after which a vertical scrollbar appears. Shift+Enter inserts a line break; Enter alone submits the message.
 
 ---
 
@@ -180,7 +181,11 @@ Give every farmer a fast, reliable way to identify crop diseases from a photo â€
 | AC-12 | "Save to farm" saves the result to the selected farm | Manual: select a farm, scan a leaf, tap "Save to farm", verify scan appears in farm records |
 | AC-13 | "Discuss with advisor" opens advisor with scan context pre-filled | Manual: tap "Discuss with advisor", verify `/advisor` opens with scan result pre-filled in the chat input |
 | AC-14 | Farmer can edit the pre-filled advisor message before sending | Manual: tap "Discuss with advisor", modify the pre-filled text, verify modified text is sent |
-| AC-15 | "Scan another leaf" resets the flow without losing farm selection | Manual: tap "Scan another leaf", verify upload area resets but farm selector stays |
+| AC-15 | Chat container is wider than the upload flow | Manual: complete a scan, verify chat area spans wider than the upload area with small side margins |
+| AC-16 | Uploaded image appears in chat messages area below the prompt bar | Manual: complete a scan, verify the uploaded image appears as a message in the chat above the composer, not in the header |
+| AC-17 | Auto-generated prompt is pre-filled in chat input | Manual: complete a scan, verify chat input contains a contextual message about the detected disease and crop |
+| AC-18 | Prompt bar auto-expands with content | Manual: type multiple lines in chat input, verify the composer grows up to ~6 lines then scrolls; Shift+Enter inserts line breaks |
+| AC-19 | "Scan another leaf" resets the flow without losing farm selection | Manual: tap "Scan another leaf", verify upload area resets but farm selector stays |
 | AC-16 | Past scans list shows all previous scans newest-first | Manual: perform 3 scans, verify history shows them in reverse chronological order |
 | AC-17 | Tapping a past scan opens its full result | Manual: tap a history item, verify full result card appears |
 | AC-18 | Scan history persists across page reloads | Manual: perform a scan, reload `/detect`, verify scan is still in history |
