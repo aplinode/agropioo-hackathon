@@ -133,9 +133,9 @@
 
 ### Implementation for User Story 6
 
-- [ ] T028 [P] [US6] Implement `GET /api/prices/history` Route Handler accepting date range parameters (`1M`, `3M`, `6M`, `12M`) in `app/api/prices/history/route.ts`
-- [ ] T029 [P] [US6] Create interactive price history chart component `components/prices/price-history-chart.tsx` with date range selector toggles
-- [ ] T030 [US6] Integrate price history chart into `app/(farmer)/prices/page.tsx`
+- [X] T028 [P] [US6] Implement `GET /api/prices/history` Route Handler accepting date range parameters (`1M`, `3M`, `6M`, `12M`) in `app/api/prices/history/route.ts`
+- [X] T029 [P] [US6] Create interactive price history chart component `components/prices/price-history-chart.tsx` with date range selector toggles
+- [X] T030 [US6] Integrate price history chart into `app/(farmer)/prices/page.tsx`
 
 **Checkpoint**: User Story 6 complete - price history charts functional
 
