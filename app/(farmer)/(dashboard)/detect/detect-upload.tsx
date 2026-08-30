@@ -29,8 +29,6 @@ interface DetectUploadProps {
   nextCursor: string | null;
 }
 
-const SAMPLE_LEAF_URL = "/assets/sample-leaf.jpg";
-
 export default function DetectUpload({
   bundle,
   farms,
@@ -47,9 +45,6 @@ export default function DetectUpload({
   const [saveState, setSaveState] = useState<"idle" | "saved" | "saving">("idle");
   const [savedFarmName, setSavedFarmName] = useState("");
   const [analyzingError, setAnalyzingError] = useState<string | null>(null);
-  const [analyzingErrorKind, setAnalyzingErrorKind] = useState<
-    "service" | "nod" | "image"
-  >("service");
 
   const [chatId, setChatId] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<
@@ -85,8 +80,7 @@ export default function DetectUpload({
     setChatMessages([]);
   }
 
-  function showError(kind: "service" | "nod" | "image", message: string) {
-    setAnalyzingErrorKind(kind);
+  function showError(_kind: "service" | "nod" | "image", message: string) {
     setAnalyzingError(message);
     setStage("error");
   }
@@ -229,18 +223,6 @@ export default function DetectUpload({
       await runAnalysis(blob, file.name);
     } catch {
       showError("image", bundle.invalidFile);
-    }
-  }
-
-  async function handleSample() {
-    try {
-      const res = await fetch(SAMPLE_LEAF_URL);
-      if (!res.ok) throw new Error("sample not found");
-      const blob = await res.blob();
-      const file = new File([blob], "sample-leaf.jpg", { type: "image/jpeg" });
-      await handleFile(file);
-    } catch {
-      showError("service", bundle.serviceUnavailable);
     }
   }
 
@@ -419,14 +401,6 @@ export default function DetectUpload({
               {bundle.dragDropPrompt}
             </span>
           </label>
-
-          <button
-            type="button"
-            onClick={handleSample}
-            className="mt-3 inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-agro-canopy/30 bg-white px-4 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint sm:w-auto sm:self-start sm:px-6"
-          >
-            {bundle.sampleScan}
-          </button>
         </div>
       )}
 
@@ -520,17 +494,6 @@ export default function DetectUpload({
             >
               {bundle.retry}
             </button>
-            {analyzingErrorKind !== "nod" && analyzingErrorKind !== "image" && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (previewUrl) handleSample();
-                }}
-                className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest hover:border-agro-canopy hover:bg-agro-mint"
-              >
-                {bundle.sampleScan}
-              </button>
-            )}
           </div>
         </div>
       )}

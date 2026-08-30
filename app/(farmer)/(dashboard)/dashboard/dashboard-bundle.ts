@@ -1,5 +1,5 @@
 /**
- * Typed translation bundle for the dashboard UI chrome and demo data.
+ * Typed translation bundle for the dashboard UI chrome.
  * Built server-side and passed as props to the client DashboardView.
  */
 
@@ -40,41 +40,6 @@ export type DashboardBundle = {
   checklistProgress: string;
   dismissChecklist: string;
   setupProgress: string;
-  demoFooter: string;
   languageLabel: string;
   signOut: string;
-  demo: {
-    todayLabel: string;
-    location: string;
-    advisoryCrop: string;
-    advisoryStage: string;
-    advisoryAction: string;
-    advisoryWhy: string;
-    seasonAction: string;
-    seasonWhy: string;
-    weatherLocation: string;
-    weatherCondition: string;
-    rainNote: string;
-    alertWhitefly: string;
-    alertRain: string;
-    alertPrice: string;
-    farm1Name: string;
-    farm1Location: string;
-    farm1Crops: string;
-    farm1Stage: string;
-    farm2Name: string;
-    farm2Location: string;
-    farm2Crops: string;
-    farm2Stage: string;
-    farm3Name: string;
-    farm3Location: string;
-    farm3Crops: string;
-    farm3Stage: string;
-    checklistAdvisor: string;
-    checklistDetect: string;
-    actionAdvisor: string;
-    actionScan: string;
-    actionPrices: string;
-    actionRecord: string;
-  };
 };

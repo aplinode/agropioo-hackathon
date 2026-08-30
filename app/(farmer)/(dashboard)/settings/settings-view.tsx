@@ -173,9 +173,6 @@ export default function SettingsView() {
             </li>
           ))}
         </ul>
-        <p className="mt-2 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
-          Demo build · choices last for this visit only
-        </p>
       </section>
 
       {/* Sign out */}
@@ -186,10 +183,6 @@ export default function SettingsView() {
         <LogOutIcon size={18} className="shrink-0" />
         Sign out
       </Link>
-
-      <p className="pb-2 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
-        Agropioo demo · v0.1 · a product of Aplinode
-      </p>
     </div>
   );
 }
