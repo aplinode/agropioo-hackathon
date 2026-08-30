@@ -231,6 +231,7 @@ async function main() {
   console.log("\n=== Seeding complete ===");
   console.log(`  ${articles.length} documents`);
   console.log(`  ${allChunks.length} chunks with embeddings`);
+  process.exit(0);
 }
 
 main().catch(err => {

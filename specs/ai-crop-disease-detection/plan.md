@@ -16,9 +16,10 @@
 | D5 | **HF Inference API via raw `fetch`** (FR-8.1–8.3) | No HF SDK needed. `POST https://api-inference.huggingface.co/models/animeshakr/plant-disease-efficientnetv2s` with image binary + bearer token. Server-side only. |
 | D6 | **Advisor pre-fill via `/advisor?draft=<msg>`** (FR-5.2) | Advisor page reads `searchParams`, passes `initialDraft` to client. Farmer can edit before sending. |
 | D7 | **"Save to farm" inserts into `records`** (FR-5.1) | Reuses existing `records` table with `type='disease'`. Keeps farm record history consistent. |
-| D8 | **Diagnosis text uses i18n catalog keys** (FR-4.9, constitution) | Mapping file stores keys, not hardcoded English. All keys added to `catalog/en.ts`; sync script populates DB for all 8 locales. Urdu translations added to `catalog/ur.ts`. |
+| D8 | **Diagnosis text uses i18n catalog keys as fallback** (FR-4.9, constitution) | Primary advice comes from LLM (D11). Static mapping file stores keys for fallback only — used when LLM fails or is unavailable. All keys added to `catalog/en.ts`; sync script populates DB for all 8 locales. Urdu translations added to `catalog/ur.ts`. |
 | D9 | **Client compresses to 1024px; server resizes to 384×384** (FR-1.4, FR-8.3) | Client: Canvas API, 80% JPEG. Server: `sharp` to 384×384 before HF call. |
 | D10 | **`detect_scans` table scope** (FR-6) | Every scan saved regardless of farm link. `farm_id` is NULL until "Save to farm" is tapped. |
+| D11 | **LLM advice generation via advisor infrastructure** (FR-4.5, FR-4.6, FR-8.4) | After HF classification, detected disease label is sent to the same Groq/OpenAI-compatible LLM used by the advisor feature (`lib/advisor/tools/knowledge-base.ts`). LLM generates causes, treatment steps, rescan timing, and caution in the farmer's locale. Static catalog (`plantvillage-map.ts`) remains as fallback if LLM fails. Zero new dependencies. |
 
 ---
 
@@ -308,11 +309,13 @@ Flow:
 6. Resize to 384×384 via sharp (FR-8.3)
 7. Call HF Inference API (FR-8.1–8.2)
 8. If low confidence (< 0.5) → return no_diagnosis shape (FR-3.4, FR-8.5)
-9. Map class label → DiseaseAdvice via plantvillage-map
-10. Resolve advice text via getDictionary(locale) (FR-4.9)
-11. Upload compressed image to Cloudinary (FR-6.8)
-12. INSERT INTO detect_scans with Cloudinary URL
-13. Return structured diagnosis
+9. Map class label → DiseaseAdvice via plantvillage-map (for severity + crop fallback)
+10. Call LLM advice generator (D11) with disease label, crop, severity, locale, confidence
+11. If LLM succeeds → use dynamic causes, steps, rescanTiming, caution
+12. If LLM fails → fall back to static catalog keys resolved via getDictionary(locale)
+13. Upload compressed image to Cloudinary (FR-6.8)
+14. INSERT INTO detect_scans with Cloudinary URL
+15. Return structured diagnosis
 ```
 
 Response shape:
@@ -335,6 +338,38 @@ Response shape:
 Error shape: `{ error: { code, message } }` with codes `validation_error`, `rate_limited`, `server_error`.
 
 Abort support: accept `signal` from request, abort HF call if navigated away (FR-S22, E10).
+
+---
+
+### Task 9a: LLM Advice Generator Module
+
+**File:** `lib/detect/llm-advice.ts` (new)
+
+Reuses the existing `getOpenAI()` client from `lib/advisor/tools/knowledge-base.ts`. No new dependencies.
+
+```ts
+export interface LlmAdvice {
+  causes: string;
+  steps: string[];
+  rescanTiming: string;
+  caution: string;
+}
+
+export async function generateAdvice(params: {
+  diseaseLabel: string;
+  crop: string;
+  severity: string;
+  locale: string;
+  confidence: number;
+}): Promise<LlmAdvice>
+```
+
+- Calls `OPENAI_BASE_URL` / `ADVISOR_MODEL` env vars (same as advisor)
+- System prompt instructs LLM to respond in `params.locale`
+- User prompt includes disease label, crop, severity, confidence
+- Requests JSON output with `response_format: { type: "json_object" }`
+- Parses and validates JSON; throws on invalid format
+- Route handler catches errors and falls back to static catalog
 
 ---
 
@@ -480,6 +515,9 @@ Add the 4 new env vars listed in the Dependencies section above.
 2. **Cloudinary dependency approval**: If denied, fallback is server-side base64 in DB (increases DB size, violates FR-6.8). Flag early.
 3. **Sharp native module**: May fail to build on some Windows environments. Mitigation: test `npm install sharp` locally first; if it fails, use `jimp` (pure JS) instead.
 4. **38-class translation volume**: ~228 keys per locale. Use sync script; start with English + Urdu, leave others as `missing`.
+5. **LLM API latency adds 1-3s**: Total analysis time increases. Mitigation: LLM call runs in parallel with Cloudinary upload where possible; static fallback ensures result still appears if LLM times out.
+6. **LLM may return non-JSON**: Mitigated by try/catch in `generateAdvice()` with static catalog fallback (FR-3.5 graceful degradation).
+7. **LLM language adherence**: Prompt instructs LLM to respond in farmer's locale, but may occasionally mix English. Mitigation: system prompt is explicit; fallback to static English catalog if LLM output is unusable.
 
 ---
 

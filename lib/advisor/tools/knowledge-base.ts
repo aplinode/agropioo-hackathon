@@ -2,6 +2,18 @@ import { tool } from "@openai/agents";
 import { z } from "zod";
 import { query as dbQuery } from "@/lib/db";
 
+let openaiClient: OpenAI | null = null;
+
+export function getOpenAI(): OpenAI {
+  if (!openaiClient) {
+    openaiClient = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+      baseURL: process.env.OPENAI_BASE_URL,
+    });
+  }
+  return openaiClient;
+}
+
 // Query embeddings are generated locally via Ollama so they match the vectors
 // stored by scripts/seed-knowledge.ts (same model + dimension as the table).
 const OLLAMA_HOST = process.env.OLLAMA_HOST ?? "http://localhost:11434";
