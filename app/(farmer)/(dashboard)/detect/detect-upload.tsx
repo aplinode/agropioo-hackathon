@@ -450,7 +450,7 @@ export default function DetectUpload({
               <span className="relative inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout transition-all duration-200 group-hover:bg-agro-canopy group-hover:text-white">
                 <CameraIcon size={28} />
               </span>
-              <span className="relative my-2 text-xs text-agro-slate opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+              <span className="relative my-1 text-xs text-agro-slate">
                 {bundle.dragDropPrompt}
               </span>
               <span className="relative max-w-xs font-display text-xl font-bold leading-snug text-agro-forest">
