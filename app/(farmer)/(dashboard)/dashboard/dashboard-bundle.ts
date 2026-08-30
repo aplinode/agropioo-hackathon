@@ -42,4 +42,8 @@ export type DashboardBundle = {
   setupProgress: string;
   languageLabel: string;
   signOut: string;
+  pricesWidgetTitle: string;
+  pricesWidgetView: string;
+  pricesWidgetPerMaund: string;
+  pricesWidgetNoTracked: string;
 };

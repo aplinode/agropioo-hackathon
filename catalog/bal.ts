@@ -1009,4 +1009,14 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "app.prices.retry": "Try again",
   "app.prices.noPricesForCrop": "No prices found for this crop nearby.",
   "app.prices.comingSoon": "Coming soon",
+
+  "app.prices.globalSearchPlaceholder": "Search any crop or mandi across Pakistan...",
+  "app.prices.globalSearchCrops": "Crops",
+  "app.prices.globalSearchMandis": "Mandis",
+  "app.prices.globalSearchNoResults": "No matching crops or mandis",
+  "app.prices.globalSearchViewPrices": "View prices",
+  "app.dashboard.pricesWidgetTitle": "Mandi prices",
+  "app.dashboard.pricesWidgetView": "View prices",
+  "app.dashboard.pricesWidgetPerMaund": "/ Maund",
+  "app.dashboard.pricesWidgetNoTracked": "Track crops to see prices here.",
 };

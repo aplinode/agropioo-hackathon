@@ -197,6 +197,10 @@ export async function getDashboardBundle(): Promise<DashboardBundle> {
     setupProgress: t("app.dashboard.aria.setupProgress").text,
     languageLabel: t("app.dashboard.languageLabel").text,
     signOut: t("app.shell.signOut").text,
+    pricesWidgetTitle: t("app.dashboard.pricesWidgetTitle").text,
+    pricesWidgetView: t("app.dashboard.pricesWidgetView").text,
+    pricesWidgetPerMaund: t("app.dashboard.pricesWidgetPerMaund").text,
+    pricesWidgetNoTracked: t("app.dashboard.pricesWidgetNoTracked").text,
   };
 }
 
@@ -472,6 +476,11 @@ export async function getPricesBundle(): Promise<PricesBundle> {
     description: t("app.prices.description").text,
     selectCrop: t("app.prices.selectCrop").text,
     searchPlaceholder: t("app.prices.searchPlaceholder").text,
+    globalSearchPlaceholder: t("app.prices.globalSearchPlaceholder").text,
+    globalSearchCrops: t("app.prices.globalSearchCrops").text,
+    globalSearchMandis: t("app.prices.globalSearchMandis").text,
+    globalSearchNoResults: t("app.prices.globalSearchNoResults").text,
+    globalSearchViewPrices: t("app.prices.globalSearchViewPrices").text,
     noData: t("app.prices.noData").text,
     updatedToday: t("app.prices.updatedToday").text,
     updatedDaysAgo: t("app.prices.updatedDaysAgo").text,
