@@ -78,7 +78,7 @@
 
 **APIs / Tech Stack:**
 - **OpenWeatherMap API** or **Visual Crossing Weather API**
-- **India Meteorological Department (IMD) API** (for India-specific data)
+- **Pakistan Meteorological Department (IMD) API** (for Pakistan-specific data)
 - Firebase Cloud Messaging (push notifications)
 - Cron jobs for daily advisory generation
 
@@ -100,7 +100,7 @@
 - SMS/app alerts when price crosses farmer's target threshold
 
 **APIs / Tech Stack:**
-- **Agmarknet API** (Indian government mandi prices)
+- **Agmarknet API** (Pakistani government mandi prices)
 - **Data.gov.in** open data portal
 - LSTM / Prophet / XGBoost (price prediction models)
 - Chart.js or Recharts (price visualization)
@@ -122,7 +122,7 @@
 
 **How It Works (No Hardware):**
 - Farmer taps mic and speaks in their language
-- Speech-to-text converts voice to text (supports multiple Indian languages)
+- Speech-to-text converts voice to text (supports multiple Pakistani languages)
 - NLP model understands the query intent (crop disease, weather, price, scheme, etc.)
 - Response generated from knowledge base + real-time data
 - Text-to-speech reads the response aloud in the same language
@@ -134,7 +134,7 @@
 - Custom RAG (Retrieval-Augmented Generation) with farming knowledge base
 - LangChain for prompt orchestration
 
-**Impact Metric:** Makes Agropioo accessible to 90%+ of Indian farmers who prefer regional languages.
+**Impact Metric:** Makes Agropioo accessible to 90%+ of Pakistani farmers who prefer regional languages.
 
 ---
 
@@ -152,11 +152,11 @@
 - Includes crop rotation suggestions for long-term soil health
 
 **APIs / Tech Stack:**
-- **Soil Health Card API** (Government of India)
+- **Soil Health Card API** (Government of Pakistan)
 - Weather APIs (same as Feature #3)
 - Market price data (same as Feature #4)
 - Scikit-learn / XGBoost (recommendation model)
-- Crop dataset from ICAR (Indian Council of Agricultural Research)
+- Crop dataset from ICAR (Pakistani Council of Agricultural Research)
 
 **Impact Metric:** Can increase farmer income by 20-40% through better crop selection.
 
@@ -231,7 +231,7 @@
 - Scikit-learn / XGBoost (prediction model)
 - Firebase Cloud Messaging (alert delivery)
 
-**Impact Metric:** Early warning can prevent ₹15,000-₹50,000 per acre in pest damage.
+**Impact Metric:** Early warning can prevent PKR15,000-PKR50,000 per acre in pest damage.
 
 ---
 
@@ -252,7 +252,7 @@
 **APIs / Tech Stack:**
 - **Twilio API** or **Exotel API** (telephony, IVR)
 - **Whisper AI** or **Azure Speech Services** (speech-to-text)
-- **ElevenLabs** or **Google Cloud TTS** (text-to-speech, Indian language support)
+- **ElevenLabs** or **Google Cloud TTS** (text-to-speech, Pakistani language support)
 - Same NLP backend as Feature #5
 
 **Impact Metric:** Reaches the 500M+ rural population who lack smartphone access.
@@ -279,7 +279,7 @@
 - Satellite NDVI data (from Feature #2) for validation
 - Optional: Polygon/Alchemy for blockchain certificates
 
-**Impact Metric:** A 5-acre farmer could earn ₹8,000-₹20,000/year from carbon credits — a completely new income stream.
+**Impact Metric:** A 5-acre farmer could earn PKR8,000-PKR20,000/year from carbon credits — a completely new income stream.
 
 ---
 
@@ -303,7 +303,7 @@
 - **Twilio API** (SMS alerts when offline)
 - Background sync API for data upload
 
-**Impact Metric:** Increases app usability from ~40% to ~95% in rural India where 4G coverage is spotty.
+**Impact Metric:** Increases app usability from ~40% to ~95% in rural Pakistan where 4G coverage is spotty.
 
 ---
 
@@ -342,8 +342,8 @@
 > 2. He uploads a diseased leaf photo → AI detects "Yellow Rust" in 2 seconds → shows treatment
 > 3. He checks mandi prices → AI predicts prices will rise 12% next week → "Hold your stock"
 > 4. He asks the voice bot in Punjabi → "My crop has white spots, what should I do?" → gets instant answer
-> 5. He discovers he's eligible for PM-KISAN ₹6,000/year subsidy → applies in one click
-> 6. Demo ends with impact: "Agropioo can serve 14 crore Indian farmers and save them ₹X per season"
+> 5. He discovers he's eligible for PM-KISAN PKR6,000/year subsidy → applies in one click
+> 6. Demo ends with impact: "Agropioo can serve 14 crore Pakistani farmers and save them PKRX per season"
 
 ---
 
