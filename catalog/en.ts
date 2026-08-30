@@ -991,6 +991,19 @@ export const en = {
   "app.detect.severity.treatNow": "Treat Now",
   "app.detect.severity.clear": "Clear",
 
+  "app.detect.chat.newScan": "New scan",
+  "app.detect.chat.placeholder": "Ask about this detection...",
+  "app.detect.chat.send": "Send",
+  "app.detect.chat.thinking": "Thinking...",
+  "app.detect.chat.imagePreview": "View full image",
+  "app.detect.chat.closePreview": "Close preview",
+  "app.detect.chat.emptyState": "Ask a follow-up question about this detection.",
+  "app.detect.chat.sessionsTitle": "Detection chats",
+  "app.detect.chat.noSessions": "No detection chats yet.",
+  "app.detect.chat.deleteSession": "Delete session",
+  "app.detect.chat.deleteConfirm": "Are you sure you want to delete this chat?",
+  "app.detect.chat.cancel": "Cancel",
+
   /* ── Detect shared crops ─────────────────────────────── */
   "app.detect.crop.apple": "Apple",
   "app.detect.crop.blueberry": "Blueberry",

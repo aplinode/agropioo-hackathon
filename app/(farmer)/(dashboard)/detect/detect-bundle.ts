@@ -42,4 +42,18 @@ export type DetectBundle = {
     treatNow: string;
     clear: string;
   };
+  chat: {
+    newScan: string;
+    placeholder: string;
+    send: string;
+    thinking: string;
+    imagePreview: string;
+    closePreview: string;
+    emptyState: string;
+    sessionsTitle: string;
+    noSessions: string;
+    deleteSession: string;
+    deleteConfirm: string;
+    cancel: string;
+  };
 };

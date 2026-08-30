@@ -1,0 +1,136 @@
+# Smart Weather Advisory
+
+**Feature Branch**: `001-weather-advisory`  
+**Created**: 2026-08-30  
+**Status**: Draft  
+**Input**: User description: "Smart Weather Advisory"
+
+---
+
+## User Scenarios & Testing *(mandatory)*
+
+### User Story 1 - Register farm and receive daily advice (Priority: P1)
+
+Farmer registers their crop type, sowing date, and farm location. Each morning they open the app and see a personalized advisory telling them what farming action to take today based on the weather forecast and their crop's current growth stage.
+
+**Why this priority**: This is the core value of the feature — turning weather data into farming decisions. Without it, the feature has no purpose.
+
+**Independent Test**: A farmer registers one farm, logs in the next day, and sees a personalized advisory for their crop and location. The advisory tells them what to do today.
+
+**Acceptance Scenarios**:
+
+1. **Given** the farmer has registered a crop, sowing date, and location, **When** they open the app, **Then** they see a daily advisory with a specific farming recommendation.
+2. **Given** the farmer has not registered any farm details, **When** they open the app, **Then** they are prompted to register a farm before seeing advisories.
+
+---
+
+### User Story 2 - Receive critical weather alerts (Priority: P2)
+
+Farmer receives an alert when weather conditions threaten their crop — such as heavy rain expected within hours, frost risk, extreme heat, or high humidity that favors disease.
+
+**Why this priority**: Time-sensitive alerts prevent crop damage. This differentiates the feature from a generic weather app.
+
+**Independent Test**: A farmer receives an alert for their registered crop when a critical weather event is forecast within the next few hours.
+
+**Acceptance Scenarios**:
+
+1. **Given** heavy rain is forecast for the farmer's location within 3 hours, **When** the condition is detected, **Then** the farmer receives an alert advising them to delay irrigation.
+2. **Given** high humidity and warm temperatures are forecast, **When** the condition favors crop disease, **Then** the farmer receives an alert recommending preventive fungicide application.
+
+---
+
+### User Story 3 - View 7-day forecast with daily advice (Priority: P3)
+
+Farmer views a 7-day forecast where each day shows the weather prediction alongside a farming-specific recommendation for their crop and growth stage.
+
+**Why this priority**: Helps farmers plan ahead for the week rather than reacting only to today's conditions.
+
+**Independent Test**: A farmer navigates to the weather advisory page and sees a 7-day forecast with one actionable recommendation per day.
+
+**Acceptance Scenarios**:
+
+1. **Given** the farmer has registered farm details, **When** they view the 7-day forecast, **Then** each day shows a weather summary and a specific farming recommendation.
+2. **Given** the farmer has multiple farms registered, **When** they select a different farm, **Then** the forecast and recommendations update to match that farm's crop and location.
+
+---
+
+### User Story 4 - Review advisory history (Priority: P4)
+
+Farmer reviews past advisories to see what was recommended on previous days and track whether they acted on the advice.
+
+**Why this priority**: Builds trust in the system and helps farmers learn patterns over time.
+
+**Independent Test**: A farmer views a list of past advisories, taps one, and sees the full recommendation and weather conditions for that day.
+
+**Acceptance Scenarios**:
+
+1. **Given** the farmer has received advisories for the past week, **When** they view advisory history, **Then** they see a list of past advisories sorted by date.
+2. **Given** the farmer taps a past advisory, **When** the detail view opens, **Then** they see the full weather conditions and the recommendation that was given.
+
+---
+
+### Edge Cases
+
+- What happens when weather data is not available for the farmer's location?
+- How does the system handle crop types not in its knowledge base?
+- What happens when the farmer has not registered any farm details?
+- How does the system handle extreme weather conditions beyond typical ranges?
+- What happens when multiple farms are registered with different crops and sowing dates?
+- What happens when the farmer's location has no reliable forecast coverage?
+
+---
+
+## Requirements *(mandatory)*
+
+### Functional Requirements
+
+- **FR-001**: System must accept and store the farmer's crop type, sowing date, and farm location.
+- **FR-002**: System must determine the current growth stage of the farmer's crop based on the sowing date.
+- **FR-003**: System must fetch a multi-day weather forecast for the farmer's farm location.
+- **FR-004**: System must generate personalized farming advice for each day by combining weather conditions, crop type, and crop growth stage.
+- **FR-005**: System must send alerts when weather conditions pose a significant risk to the farmer's crop.
+- **FR-006**: System must display advisory history for the farmer to review past recommendations.
+- **FR-007**: System must present all advice in the farmer's selected language.
+- **FR-008**: System must recommend irrigation timing based on expected rainfall.
+- **FR-009**: System must recommend disease prevention measures when humidity and temperature conditions favor crop diseases.
+- **FR-010**: System must support multiple farm registrations and deliver separate advisories per farm.
+- **FR-011**: System must allow the farmer to mark an advisory as acknowledged or acted upon.
+
+### Key Entities
+
+- **Farm Registration**: Represents a farmer's field with crop type, sowing date, and location. One farmer may have multiple registrations.
+- **Weather Advisory**: Represents a daily recommendation tied to a specific farm, date, weather conditions, crop growth stage, and advice text. Includes a severity level.
+- **Weather Alert**: Represents a time-sensitive notification triggered by forecasted conditions that pose a risk to the farmer's crop.
+
+---
+
+## Success Criteria *(mandatory)*
+
+### Measurable Outcomes
+
+- **SC-001**: Farmer receives a personalized daily advisory within 30 seconds of opening the app.
+- **SC-002**: Advisory is relevant to the farmer's registered crop and its current growth stage.
+- **SC-003**: Farmer receives critical weather alerts within 15 minutes of the condition being detected.
+- **SC-004**: Farmer can act on advisory recommendations using only information provided in the advisory — no external lookup required.
+- **SC-005**: Advisory helps the farmer avoid unnecessary irrigation before expected rainfall.
+
+---
+
+## Assumptions
+
+- Weather forecast data is available for the farmer's location with reasonable accuracy for at least 3 days ahead.
+- Farmer's crop type and sowing date are the minimum inputs needed to generate useful advice.
+- The farmer has access to a smartphone or computer with internet connectivity to receive advisories and alerts.
+- Advisory language follows the project's language priority policy (English first, then Urdu, Punjabi, and other local languages).
+
+---
+
+## Out of Scope
+
+- Voice input or voice output for advisory interaction
+- Offline advisory generation (requires online weather data)
+- Direct integration with irrigation hardware or automated farm equipment
+- Social sharing of advisories
+- Push notifications beyond critical weather alerts
+- Advisory for crops not registered by the farmer
+- Historical weather data analysis beyond advisory history

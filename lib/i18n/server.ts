@@ -477,6 +477,20 @@ export async function getDetectBundle(): Promise<DetectBundle> {
       treatNow: t("app.detect.severity.treatNow").text,
       clear: t("app.detect.severity.clear").text,
     },
+    chat: {
+      newScan: t("app.detect.chat.newScan").text,
+      placeholder: t("app.detect.chat.placeholder").text,
+      send: t("app.detect.chat.send").text,
+      thinking: t("app.detect.chat.thinking").text,
+      imagePreview: t("app.detect.chat.imagePreview").text,
+      closePreview: t("app.detect.chat.closePreview").text,
+      emptyState: t("app.detect.chat.emptyState").text,
+      sessionsTitle: t("app.detect.chat.sessionsTitle").text,
+      noSessions: t("app.detect.chat.noSessions").text,
+      deleteSession: t("app.detect.chat.deleteSession").text,
+      deleteConfirm: t("app.detect.chat.deleteConfirm").text,
+      cancel: t("app.detect.chat.cancel").text,
+    },
   };
 }
 
