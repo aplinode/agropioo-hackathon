@@ -1,19 +1,11 @@
 import { tool } from "@openai/agents";
 import { z } from "zod";
 import { query as dbQuery } from "@/lib/db";
-import OpenAI from "openai";
 
-let openaiClient: OpenAI | null = null;
-
-function getOpenAI(): OpenAI {
-  if (!openaiClient) {
-    openaiClient = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      baseURL: process.env.OPENAI_BASE_URL,
-    });
-  }
-  return openaiClient;
-}
+// Query embeddings are generated locally via Ollama so they match the vectors
+// stored by scripts/seed-knowledge.ts (same model + dimension as the table).
+const OLLAMA_HOST = process.env.OLLAMA_HOST ?? "http://localhost:11434";
+const EMBEDDING_MODEL = process.env.OLLAMA_EMBED_MODEL ?? "nomic-embed-text";
 
 export const searchKnowledgeBase = tool({
   name: "search_knowledge_base",
@@ -25,18 +17,18 @@ export const searchKnowledgeBase = tool({
     category: z.enum(["disease", "agronomy", "fertilizer", "scheme", "general"]).optional().describe("Filter by category"),
   }),
   async execute({ query, cropType, category }) {
-    const openai = getOpenAI();
-    const embeddingModel = process.env.ADVISOR_EMBEDDING_MODEL ?? "text-embedding-3-small";
-
     let queryEmbedding: number[];
     try {
-      const embedResponse = await openai.embeddings.create({
-        model: embeddingModel,
-        input: query,
+      const embedRes = await fetch(`${OLLAMA_HOST}/api/embed`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model: EMBEDDING_MODEL, input: [query] }),
       });
-      queryEmbedding = embedResponse.data[0].embedding;
+      if (!embedRes.ok) throw new Error(`ollama embed ${embedRes.status}`);
+      const json = (await embedRes.json()) as { embeddings: number[][] };
+      queryEmbedding = json.embeddings[0];
     } catch {
-      return "Knowledge base search is unavailable (embedding model not supported by current provider). Answer from your general farming knowledge and suggest the farmer consult a local extension officer for specific advice.";
+      return "Knowledge base search is unavailable (local embedding model not reachable). Answer from your general farming knowledge and suggest the farmer consult a local extension officer for specific advice.";
     }
 
     // Search via Postgres function

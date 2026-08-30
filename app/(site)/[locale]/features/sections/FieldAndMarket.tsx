@@ -1,5 +1,6 @@
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
 import { localized } from "@/lib/i18n/localized";
+import type { Locale } from "@/lib/i18n/config";
 
 const ndviCells = [
   0.86, 0.78, 0.64, 0.82, 0.9, 0.71,
@@ -14,8 +15,8 @@ function ndviColor(v: number) {
   return "var(--color-agro-clay)";
 }
 
-export default async function FieldAndMarket() {
-  const { locale, t } = await getCurrentDictionary();
+export default async function FieldAndMarket({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
 
   const ledger = [

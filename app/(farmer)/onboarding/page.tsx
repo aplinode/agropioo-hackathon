@@ -27,8 +27,8 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-dvh flex items-center justify-center bg-agro-forest text-white p-8">
-      <div className="bg-white/10 rounded-3xl p-12 max-w-md w-full text-center">
+    <div className="min-h-dvh flex items-center justify-center bg-agro-forest text-white p-4 sm:p-8">
+      <div className="bg-white/10 rounded-3xl p-6 max-w-md w-full text-center sm:p-10 lg:p-12">
         <h2 className="display-heading font-display text-3xl font-bold text-agro-forest mb-6">
           Welcome to Agropioo
         </h2>
@@ -41,7 +41,7 @@ export default function OnboardingPage() {
             <button
               key={lang.code}
               onClick={() => setSelectedLanguage(lang)}
-              className={`w-full rounded-lg border border-white/20 hover:border-agro-canopy hover:text-agro-forest text-left text-sm font-medium transition-colors py-3`}
+              className={`w-full rounded-lg border border-white/20 hover:border-agro-canopy hover:text-agro-forest text-start text-sm font-medium transition-colors py-3`}
             >
               <span className="font-medium">{lang.name}</span>
             </button>

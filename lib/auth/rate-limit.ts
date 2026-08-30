@@ -22,6 +22,7 @@ export const RATE_RULES = {
   resendPass: { limit: 5, windowMs: HOUR_MS },
   codeCheckIp: { limit: 20, windowMs: HOUR_MS },
   codeCheckPass: { limit: 30, windowMs: HOUR_MS },
+  detectIp: { limit: 10, windowMs: HOUR_MS },
 } as const;
 
 /**

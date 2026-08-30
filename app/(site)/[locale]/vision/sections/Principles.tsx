@@ -1,5 +1,6 @@
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
 import { localized } from "@/lib/i18n/localized";
+import type { Locale } from "@/lib/i18n/config";
 
 function CommitmentIcon({ variant }: { variant: number }) {
   if (variant === 1) {
@@ -44,8 +45,8 @@ function CommitmentIcon({ variant }: { variant: number }) {
   );
 }
 
-export default async function Principles() {
-  const { locale, t } = await getCurrentDictionary();
+export default async function Principles({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
 
   const commitments = ([

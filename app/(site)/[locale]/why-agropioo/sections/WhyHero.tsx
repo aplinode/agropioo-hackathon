@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
 import { localized } from "@/lib/i18n/localized";
+import type { Locale } from "@/lib/i18n/config";
 
 const furrowCurves = [
   { d: "M-20 268C110 208 250 330 560 244", width: 2, opacity: 0.9 },
@@ -10,8 +11,8 @@ const furrowCurves = [
   { d: "M-20 428C150 384 330 482 560 412", width: 1, opacity: 0.18 },
 ];
 
-export default async function WhyHero() {
-  const { locale, t } = await getCurrentDictionary();
+export default async function WhyHero({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
 
   return (
@@ -47,13 +48,13 @@ export default async function WhyHero() {
           >
             <a
               href="#get-started"
-              className="inline-flex h-12 w-44 cursor-pointer items-center justify-center rounded-lg bg-agro-canopy px-6 text-sm font-semibold whitespace-nowrap text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 sm:w-auto"
+              className="inline-flex min-h-12 w-44 cursor-pointer items-center justify-center rounded-lg bg-agro-canopy px-6 text-center text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 sm:w-auto"
             >
               {L("wy.hero.ctaPrimary")}
             </a>
             <Link
               href="/#features"
-              className="inline-flex h-12 w-44 cursor-pointer items-center justify-center rounded-lg border border-agro-sprout bg-white px-6 text-sm font-semibold whitespace-nowrap text-agro-forest shadow-sm transition-all duration-200 hover:border-agro-canopy hover:bg-agro-mint sm:w-auto"
+              className="inline-flex min-h-12 w-44 cursor-pointer items-center justify-center rounded-lg border border-agro-sprout bg-white px-6 text-center text-sm font-semibold text-agro-forest shadow-sm transition-all duration-200 hover:border-agro-canopy hover:bg-agro-mint sm:w-auto"
             >
               {L("wy.hero.ctaSecondary")}
             </Link>

@@ -7,6 +7,7 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "nav.howItWorks": "هيءُ ڪيئن ڪم ڪري ٿو",
   "nav.vision": "اسان جو درشھ",
   "nav.signIn": "داخل ٿيءُ",
+  "nav.signUp": "سائن اپ ڪريو",
   "nav.getEarlyAccess": "شروعاتي رسائي حاصل ڪريو",
   "nav.openMenu": "مينيو کوليو",
   "nav.closeMenu": "مينيو بند ڪريو",

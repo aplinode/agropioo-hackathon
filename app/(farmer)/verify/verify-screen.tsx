@@ -144,7 +144,7 @@ export default function VerifyScreen({ context, maskedEmail }: VerifyScreenProps
           href="/login"
           className="mb-8 inline-flex h-11 w-fit items-center gap-2 rounded-md px-1 text-sm font-medium text-agro-canopy underline-offset-4 hover:underline"
         >
-          <span aria-hidden="true">←</span> Back to sign in
+          <span aria-hidden="true" data-flip-rtl>←</span> Back to sign in
         </Link>
       )}
 

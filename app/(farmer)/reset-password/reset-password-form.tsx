@@ -122,7 +122,7 @@ export default function ResetPasswordForm() {
           href="/login"
           className="mb-8 inline-flex h-11 w-fit items-center gap-2 rounded-md px-1 text-sm font-medium text-agro-canopy underline-offset-4 hover:underline"
         >
-          <span aria-hidden="true">←</span> Back to sign in
+          <span aria-hidden="true" data-flip-rtl>←</span> Back to sign in
         </Link>
       )}
 
@@ -182,6 +182,7 @@ export default function ResetPasswordForm() {
                     id="new-password"
                     type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
+                    dir="ltr"
                     placeholder="At least 8 characters"
                     aria-invalid={Boolean(errors.password)}
                     aria-describedby={errors.password ? "new-password-error" : undefined}
@@ -214,6 +215,7 @@ export default function ResetPasswordForm() {
                     id="confirm-password"
                     type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
+                    dir="ltr"
                     placeholder="Repeat your new password"
                     aria-invalid={Boolean(errors.confirmPassword)}
                     aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}

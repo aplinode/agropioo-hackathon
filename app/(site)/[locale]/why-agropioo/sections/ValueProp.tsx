@@ -1,5 +1,6 @@
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
 import { localized } from "@/lib/i18n/localized";
+import type { Locale } from "@/lib/i18n/config";
 
 const pillarIcons = [
   <svg key="p1" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
@@ -13,8 +14,8 @@ const pillarIcons = [
   </svg>,
 ];
 
-export default async function ValueProp() {
-  const { locale, t } = await getCurrentDictionary();
+export default async function ValueProp({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
   const pillars = ([
     { headingKey: "wy.value.p1Heading", descKey: "wy.value.p1Desc", icon: pillarIcons[0] },

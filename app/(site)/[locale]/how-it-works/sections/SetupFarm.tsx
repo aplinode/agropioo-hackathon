@@ -1,5 +1,6 @@
 import { localized } from "@/lib/i18n/localized";
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
+import type { Locale } from "@/lib/i18n/config";
 
 const rowIcons = {
   district: "M15 10.5a3 3 0 11-6 0 3 3 0 016 0zM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z",
@@ -8,8 +9,8 @@ const rowIcons = {
   land: "M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A1.5 1.5 0 0021.75 19.5V4.5A1.5 1.5 0 0020.25 3H3.75A1.5 1.5 0 002.25 4.5v15A1.5 1.5 0 003.75 21z",
 } as const;
 
-export default async function SetupFarm() {
-  const { locale, t } = await getCurrentDictionary();
+export default async function SetupFarm({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
 
   const profileRows = [

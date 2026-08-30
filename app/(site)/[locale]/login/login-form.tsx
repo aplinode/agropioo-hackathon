@@ -197,7 +197,7 @@ export default function LoginForm({ copy }: { copy: LoginCopy }) {
             href={prefix ? prefix : "/"}
             className="mb-10 inline-flex w-fit items-center gap-2 text-sm font-medium text-agro-canopy underline-offset-4 hover:underline"
           >
-            <span aria-hidden="true">←</span> {copy.backHome}
+            <span aria-hidden="true" data-flip-rtl>←</span> {copy.backHome}
           </Link>
 
           <p className="eyebrow text-agro-canopy">{copy.eyebrow}</p>

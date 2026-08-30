@@ -1,5 +1,6 @@
 import { localized } from "@/lib/i18n/localized";
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
+import type { Locale } from "@/lib/i18n/config";
 
 const checkIcons = [
   "M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z",
@@ -8,8 +9,8 @@ const checkIcons = [
   "M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5",
 ] as const;
 
-export default async function GuidanceEngine() {
-  const { locale, t } = await getCurrentDictionary();
+export default async function GuidanceEngine({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
   const L = (key: Parameters<typeof t>[0]) => localized(t(key), locale);
 
   const checks = [

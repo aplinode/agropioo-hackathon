@@ -7,6 +7,7 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "nav.howItWorks": "چوں کار بیت",
   "nav.vision": "ماہی وژن",
   "nav.signIn": "داخل بیت",
+  "nav.signUp": "سائن اپ بیت",
   "nav.getEarlyAccess": "اولین رسایی بگیرت",
   "nav.openMenu": "مینیو گُش کن",
   "nav.closeMenu": "مینیو بند کن",

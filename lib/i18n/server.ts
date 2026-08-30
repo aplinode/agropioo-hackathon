@@ -3,7 +3,6 @@ import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { connection } from "next/server";
-import { locale as rootLocale } from "next/root-params";
 
 import { CATALOG, ENGLISH_TABLE, type CatalogKey } from "@/catalog";
 import { APP_LOCALE_COOKIE, isLocale } from "./config";
@@ -15,6 +14,7 @@ import { resolveAppLocale, resolveString, type ResolvedString, type StringTable 
 import type { DashboardBundle } from "@/app/(farmer)/(dashboard)/dashboard/dashboard-bundle";
 import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle";
 import type { AdvisorBundle } from "@/app/(farmer)/(dashboard)/advisor/advisor-bundle";
+import type { DetectBundle } from "@/app/(farmer)/(dashboard)/detect/detect-bundle";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -84,7 +84,7 @@ export const getDictionary = cache(async (localeCode: Locale): Promise<Dictionar
 });
 
 /** Build-time drafted copy for a locale merged over the English source of truth. */
-function fallbackTableFor(localeCode: Locale): StringTable {
+export function fallbackTableFor(localeCode: Locale): StringTable {
   const drafted = CATALOG[localeCode] ?? {};
   const table: Record<string, string> = { ...ENGLISH_TABLE };
   for (const [key, value] of Object.entries(drafted)) {
@@ -96,9 +96,14 @@ function fallbackTableFor(localeCode: Locale): StringTable {
 /**
  * Dictionary for whichever locale the URL carries — the standard entry point
  * for pages under app/[locale]. Unprefixed rewrites resolve to "en".
+ * Accepts an explicit locale override so callers can pass `params.locale`
+ * instead of relying on `next/root-params` (which is unavailable in this
+ * Next.js version).
  */
-export async function getCurrentDictionary(): Promise<Dictionary> {
-  const raw = await rootLocale();
+export async function getCurrentDictionary(
+  locale?: Locale,
+): Promise<Dictionary> {
+  const raw = locale ?? (await getAppLocale());
   return getDictionary(isLocale(raw) ? raw : "en");
 }
 
@@ -428,6 +433,53 @@ export async function getAdvisorBundle(): Promise<AdvisorBundle> {
   };
 }
 
+/**
+ * Flat translation bundle for the detect / crop-doctor feature.
+ * Built server-side and passed as props to the client DetectUpload.
+ */
+export async function getDetectBundle(): Promise<DetectBundle> {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    eyebrow: t("app.detect.eyebrow").text,
+    title: t("app.detect.title").text,
+    description: t("app.dashboard.detectBody").text,
+    uploadPrompt: t("app.detect.uploadPrompt").text,
+    takePhoto: t("app.detect.takePhoto").text,
+    sampleScan: t("app.detect.sampleScan").text,
+    readingLeaf: t("app.detect.readingLeaf").text,
+    analyzing: t("app.detect.analyzing").text,
+    scanAnother: t("app.detect.scanAnother").text,
+    discussAdvisor: t("app.detect.discussAdvisor").text,
+    saveToFarm: t("app.detect.saveToFarm").text,
+    savedToFarm: t("app.detect.savedToFarm").text,
+    notSaved: t("app.detect.notSaved").text,
+    confidence: t("app.detect.confidence").text,
+    whatToDo: t("app.detect.whatToDo").text,
+    caution: t("app.detect.caution").text,
+    noFarmsTitle: t("app.detect.noFarmsTitle").text,
+    noFarmsBody: t("app.detect.noFarmsBody").text,
+    addFarm: t("app.detect.addFarm").text,
+    dismiss: t("app.detect.dismiss").text,
+    pastScans: t("app.detect.pastScans").text,
+    loadMore: t("app.detect.loadMore").text,
+    invalidFile: t("app.detect.invalidFile").text,
+    serviceUnavailable: t("app.detect.serviceUnavailable").text,
+    noDiagnosis: t("app.detect.noDiagnosis").text,
+    retry: t("app.detect.retry").text,
+    savedStatus: t("app.detect.savedStatus").text,
+    unsavedStatus: t("app.detect.unsavedStatus").text,
+    dragDropPrompt: t("app.detect.dragDropPrompt").text,
+    historyEmpty: t("app.detect.historyEmpty").text,
+    severity: {
+      watch: t("app.detect.severity.watch").text,
+      treatNow: t("app.detect.severity.treatNow").text,
+      clear: t("app.detect.severity.clear").text,
+    },
+  };
+}
+
 /** Flat prop bundle for the client SiteHeader (functions can't cross the RSC boundary). */
 export function siteHeaderStrings(t: Translator) {
   return {
@@ -436,6 +488,7 @@ export function siteHeaderStrings(t: Translator) {
     howItWorks: t("nav.howItWorks").text,
     vision: t("nav.vision").text,
     signIn: t("nav.signIn").text,
+    signUp: t("nav.signUp").text,
     getEarlyAccess: t("nav.getEarlyAccess").text,
     openMenu: t("nav.openMenu").text,
     closeMenu: t("nav.closeMenu").text,

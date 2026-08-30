@@ -1,7 +1,8 @@
-import { getCurrentDictionary } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n/server";
+import type { Locale } from "@/lib/i18n/config";
 
-export default async function Vision() {
-  const { t } = await getCurrentDictionary();
+export default async function Vision({ locale }: { locale: Locale }) {
+  const { t } = await getDictionary(locale);
 
   const pakistanPoints = [
     t("home.vision.pkPoint1").text,
