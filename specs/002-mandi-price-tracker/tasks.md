@@ -19,9 +19,9 @@
 
 **Purpose**: Project initialization and basic file structure
 
-- [ ] T001 Create directory structure for Mandi Price Tracker components in `components/prices/` and route handlers in `app/api/prices/`
-- [ ] T002 [P] Create statistical forecasting module placeholder in `lib/prices/forecast.ts`
-- [ ] T003 [P] Create district proximity and topology helper module in `lib/prices/proximity.ts`
+- [X] T001 Create directory structure for Mandi Price Tracker components in `components/prices/` and route handlers in `app/api/prices/`
+- [X] T002 [P] Create statistical forecasting module placeholder in `lib/prices/forecast.ts`
+- [X] T003 [P] Create district proximity and topology helper module in `lib/prices/proximity.ts`
 
 ---
 
@@ -31,10 +31,10 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Define Neon Lakebase Postgres database migration schema for `crops`, `mandis`, `mandi_prices`, `price_predictions`, `price_alerts`, and `user_crop_preferences` tables in `scripts/seed-mandi-prices.ts`
-- [ ] T005 Seed initial Pakistan crops (with 8-locale names) and major district mandis into Postgres using `scripts/seed-mandi-prices.ts`
-- [ ] T006 [P] Implement district proximity and bordering district lookup logic in `lib/prices/proximity.ts`
-- [ ] T007 Populate 8-locale translation keys for Mandi Price Tracker into Neon `translations` database table using `scripts/sync-translations.mts`
+- [X] T004 Define Neon Lakebase Postgres database migration schema for `crops`, `mandis`, `mandi_prices`, `price_predictions`, `price_alerts`, and `user_crop_preferences` tables in `scripts/seed-mandi-prices.ts`
+- [X] T005 Seed initial Pakistan crops (with 8-locale names) and major district mandis into Postgres using `scripts/seed-mandi-prices.ts`
+- [X] T006 [P] Implement district proximity and bordering district lookup logic in `lib/prices/proximity.ts`
+- [X] T007 Populate 8-locale translation keys for Mandi Price Tracker into Neon `translations` database table using `scripts/sync-translations.mts`
 
 **Checkpoint**: Database schema & foundational data ready - user story implementation can now begin
 
@@ -48,11 +48,11 @@
 
 ### Implementation for User Story 1
 
-- [ ] T008 [P] [US1] Define Zod query validation schema `getPricesQuerySchema` for current market prices in `app/api/prices/route.ts`
-- [ ] T009 [US1] Implement `GET /api/prices` Route Handler to fetch current market prices filtered by farmer district + bordering districts in `app/api/prices/route.ts`
-- [ ] T010 [P] [US1] Build price card component `components/prices/mandi-price-card.tsx` displaying prevailing modal price, min/max price per Maund, daily change % and PKR diff
-- [ ] T011 [US1] Build Mandi Price Tracker main page `app/(farmer)/prices/page.tsx` auto-loading prices from farmer location with fallback provincial hub banner
-- [ ] T012 [US1] Implement manual price entry and holiday management admin panel in `app/(farmer)/prices/admin/page.tsx`
+- [X] T008 [P] [US1] Define Zod query validation schema `getPricesQuerySchema` for current market prices in `app/api/prices/route.ts`
+- [X] T009 [US1] Implement `GET /api/prices` Route Handler to fetch current market prices filtered by farmer district + bordering districts in `app/api/prices/route.ts`
+- [X] T010 [P] [US1] Build price card component `components/prices/mandi-price-card.tsx` displaying prevailing modal price, min/max price per Maund, daily change % and PKR diff
+- [X] T011 [US1] Build Mandi Price Tracker main page `app/(farmer)/prices/page.tsx` auto-loading prices from farmer location with fallback provincial hub banner
+- [X] T012 [US1] Implement manual price entry and holiday management admin panel in `app/(farmer)/prices/admin/page.tsx`
 
 **Checkpoint**: User Story 1 (MVP) complete and independently testable at `/prices`
 
