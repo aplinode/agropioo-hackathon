@@ -1,21 +1,17 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 
-import { isLocale, LOCALE_REGISTRY } from "@/lib/i18n/config";
+import { isLocale, LOCALE_REGISTRY, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/server";
 
-/**
- * Localized 404 for unmatched paths under a valid locale prefix. Renders
- * inside app/[locale]/layout.tsx, so lang/dir/fonts are already correct.
- */
-export default async function LocaleNotFound({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale: raw } = await params;
-  const current = isLocale(raw) ? raw : "en";
-  const { t } = await getDictionary(current);
-  const dir = LOCALE_REGISTRY[current].dir;
+export const dynamic = "force-dynamic";
+
+export default async function LocaleNotFound() {
+  const cookieStore = await cookies();
+  const raw = cookieStore.get("agro_locale")?.value ?? "";
+  const locale: Locale = isLocale(raw) ? raw : "en";
+  const { t } = await getDictionary(locale);
+  const dir = LOCALE_REGISTRY[locale].dir;
 
   const title = t("notFound.title");
   const body = t("notFound.body");
