@@ -21,15 +21,17 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 ---
 
-## 2. Database Migrations & Seeding
+## 2. Database Migrations, Seeding & 8-Locale Translations
 
-Apply the Mandi Price Tracker schema migration to your Neon Lakebase Postgres database:
+Apply the Mandi Price Tracker schema migration and populate the Neon `translations` table across all 8 supported Pakistan locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`):
 
 ```bash
 # Seed initial crops, Pakistan mandis, and historical price sample data
-npm run dev
-# OR run the migration script
 node --experimental-strip-types --env-file-if-exists=.env scripts/seed-mandi-prices.ts
+
+# Sync all UI translation keys to the Neon database translations table
+npm run sync:translations
+# (Or insert/update translation rows directly via Neon MCP / Lakebase Postgres)
 ```
 
 ---

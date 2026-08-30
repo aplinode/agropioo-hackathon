@@ -42,9 +42,10 @@ All technical choices satisfy the project **Constitution** (`.specify/memory/con
 - **Fallback**: If farmer has no registered farm location in onboarding, auto-loads nearest provincial market hub (e.g. Lahore / Multan) with an informative setup prompt banner.
 - **Global Search**: Global search bar enables selecting any crop or mandi across all 150+ districts of Pakistan.
 
-### 5. Multi-Language & Offline LocalStorage Caching
+### 5. Multi-Language & Neon Database Translation Management
 
-- **Decision**: Crop names stored in database schema with columns (`name_en`, `name_ur`, `name_pa`, `name_ps`, `name_sd`, `name_skr`, `name_bal`, `name_hno`) and fetched according to active UI locale.
+- **Decision**: All UI strings, crop names, market card labels, recommendation badges, and search placeholders are managed dynamically via the Neon database `translations` table across all 8 supported locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`).
+- **Database Source of Truth**: Translated strings live in Postgres, not hardcoded static catalog files alone. Any UI change introduced by the Mandi Price Tracker feature MUST populate/sync corresponding translation rows in the Neon `translations` table using Neon MCP or `scripts/sync-translations.mts`.
 - **Offline Caching**: Client-side hook (`hooks/use-offline-prices.ts`) syncs latest price lists and 3-month history charts into `localStorage`, rendering cached data seamlessly when internet connection drops.
 
 ---
@@ -54,8 +55,8 @@ All technical choices satisfy the project **Constitution** (`.specify/memory/con
 | Topic | Resolution / Decision |
 |---|---|
 | ML Prediction Framework | Pure TS Holt-Winters / Linear Trend engine in `lib/prices/forecast.ts` with 95% confidence bands |
-| Prediction Caching | Postgres table `price_predictions` populated by scheduled nightly cron (`/api/cron/predict-prices`) |
+| Prediction Caching | Postgres table `price_predictions` populated by free GitHub Actions cron (`/api/cron/predict-prices`) |
 | Data Unit | Standardized Maund (40 kg / Pakistani Mann) for all database rows and UI displays |
 | Alerts Delivery | Dual channel: pinned green in-app notifications + `nodemailer` SMTP emails with deep links |
 | Transport Costs | Distance shown in km from farm location to each mandi; no speculative PKR transport calculation |
-| Multi-language Crop Names | Columns for 8 languages in `crops` table, served based on user language context |
+| Multi-language Localisation | All 8 Pakistan locales inserted into Neon `translations` DB table via Neon MCP / `sync-translations.mts` |

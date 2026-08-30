@@ -30,7 +30,7 @@ The Mandi Price Tracker & Predictor enables Pakistani farmers to access real-tim
 | Gate / Principle | Status | Evaluation & Compliance Notes |
 |---|---|---|
 | **I. Farmer-First** | PASS | UI copy leads with actionable outcomes ("What to do, when to do it", Sell/Hold recommendation). Plain language over tech jargon. |
-| **II. Pakistan-First** | PASS | Multi-language support across all 8 locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) with DB-driven translations in Neon `translations` table. Standardized unit in Maund (40 kg). Right-to-left layout for Urdu and Pashto. |
+| **II. Pakistan-First** | PASS | Multi-language support across all 8 locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) with DB-driven translations in Neon `translations` table. Every new/updated UI string must have keys & translations inserted into Neon `translations` table using Neon MCP or `scripts/sync-translations.mts` before merge. Standardized unit in Maund (40 kg). Right-to-left layout for Urdu and Pashto. |
 | **III. Spec-Driven Dev** | PASS | Follows strict loop. Research (`research.md`), Data Model (`data-model.md`), Contracts (`contracts/api-contracts.md`), Quickstart (`quickstart.md`), and Plan (`plan.md`) established before task generation. |
 | **IV. Stack Discipline** | PASS | Route Handlers ARE the API layer. No separate Node backend or Server Actions. Neon Postgres accessed via `lib/db.ts`. No new unauthorized packages added. |
 | **V. Security & Integrity** | PASS | Zod validates every route handler input. Password/JWT auth verified server-side. No plaintext secrets. Uniform error shape `{ error: { code, message } }`. |

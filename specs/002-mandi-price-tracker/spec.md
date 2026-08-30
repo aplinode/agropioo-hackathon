@@ -214,6 +214,7 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 - **FR-021**: System MUST provide a global search bar allowing farmers to search and select any mandi or crop across all districts of Pakistan.
 - **FR-022**: System MUST render a summary widget on the main dashboard (`/dashboard`) displaying top 3 tracked/favorite crops with 7-day price trend mini-sparklines.
 - **FR-023**: System MUST cache the last viewed price list and history charts in browser local storage to enable offline viewing when connectivity is lost.
+- **FR-024**: System MUST ensure that every new or updated user interface string (including page headers, button labels, badge texts, alert notifications, chart legend labels, and search placeholders) has corresponding translation keys and translated strings inserted into the Neon database `translations` table across all 8 supported Pakistan locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) using Neon MCP or `scripts/sync-translations.mts` before the feature is marked complete.
 
 ### Key Entities *(include if feature involves data)*
 
