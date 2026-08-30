@@ -89,7 +89,6 @@ export async function POST(request: Request): Promise<Response> {
       const delivery = await deliverCode("verify", user.email, code);
       return jsonResponse({
         redirect: "/verify",
-        ...(delivery.demoCode ? { demoCode: delivery.demoCode } : {}),
       });
     }
 
