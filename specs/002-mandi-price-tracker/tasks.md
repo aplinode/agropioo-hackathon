@@ -66,9 +66,9 @@
 
 ### Implementation for User Story 2
 
-- [ ] T013 [P] [US2] Implement side-by-side market comparison table `components/prices/market-comparison-table.tsx` with price sorting and best price badge
-- [ ] T014 [US2] Integrate distance calculation (km from farm location to mandi) in `components/prices/market-comparison-table.tsx`
-- [ ] T015 [US2] Connect crop selector to update comparison view dynamically without full page reload in `app/(farmer)/prices/page.tsx`
+- [X] T013 [P] [US2] Implement side-by-side market comparison table `components/prices/market-comparison-table.tsx` with price sorting and best price badge
+- [X] T014 [US2] Integrate distance calculation (km from farm location to mandi) in `components/prices/market-comparison-table.tsx`
+- [X] T015 [US2] Connect crop selector to update comparison view dynamically without full page reload in `app/(farmer)/prices/page.tsx`
 
 **Checkpoint**: User Story 2 complete - market price comparisons functioning independently
 

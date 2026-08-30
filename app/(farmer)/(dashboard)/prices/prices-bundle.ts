@@ -34,6 +34,12 @@ export interface PricesBundle {
   deleteAlert: string;
   fallbackBanner: string;
   comparisonTitle: string;
+  market: string;
+  modalPrice: string;
+  minPrice: string;
+  maxPrice: string;
+  change: string;
+  distance: string;
   adminTitle: string;
   adminDate: string;
   adminModalPrice: string;

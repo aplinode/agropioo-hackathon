@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import MandiPriceCard, { type MandiPrice } from "@/components/prices/mandi-price-card";
+import MarketComparisonTable from "@/components/prices/market-comparison-table";
 import { SearchIcon } from "@/components/icons";
 import type { PricesBundle } from "./prices-bundle";
 
@@ -122,10 +123,15 @@ export default function PricesClient({ bundle, crops, initial }: PricesClientPro
           {bundle.loading}
         </div>
       ) : prices.prices.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {prices.prices.map((price) => (
-            <MandiPriceCard key={`${price.mandi_id}:${price.crop_id}`} price={price} bundle={bundle} />
-          ))}
+        <div className="space-y-6">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {prices.prices.map((price) => (
+              <MandiPriceCard key={`${price.mandi_id}:${price.crop_id}`} price={price} bundle={bundle} />
+            ))}
+          </div>
+          {selectedCrop ? (
+            <MarketComparisonTable prices={prices.prices} bundle={bundle} />
+          ) : null}
         </div>
       ) : (
         <div className="rounded-2xl border border-agro-sprout bg-white p-8 text-center">
