@@ -13,6 +13,7 @@ import { resizeForModel, isImageMime, extensionToMime } from "@/lib/detect/compr
 import { uploadScanImage } from "@/lib/detect/cloudinary";
 import { resolveClass } from "@/lib/detect/plantvillage-map";
 import { getFastDictionary, requestLocale } from "@/lib/i18n/resolve";
+import { generateAdvice } from "@/lib/detect/llm-advice";
 
 const CONFIDENCE_THRESHOLD = 0.5;
 const HF_TIMEOUT_MS = 30000;
@@ -108,29 +109,50 @@ export async function POST(request: Request) {
       clearTimeout(timeout);
     }
 
-    const top = predictions[0];
-    const confidence = top?.score ?? 0;
+    const topPrediction = predictions[0];
+    const confidence = topPrediction?.score ?? 0;
+    const confidencePct = Math.round(confidence * 100);
 
     // FR-3.4 / FR-8.5: below the 0.5 threshold → no diagnosis.
-    if (!top || confidence < CONFIDENCE_THRESHOLD) {
+    if (!topPrediction || confidence < CONFIDENCE_THRESHOLD) {
       return jsonResponse({ noDiagnosis: true });
     }
 
-    const advice = resolveClass(top.label);
+    const advice = resolveClass(topPrediction.label);
     if (!advice) {
       return jsonResponse({ noDiagnosis: true });
     }
 
-    // Resolve advice text in the farmer's selected language (FR-4.9).
     const locale = await requestLocale();
     const dict = await getFastDictionary(locale);
-    const diseaseName = dict.t(advice.diseaseNameKey).text;
     const crop = dict.t(advice.cropKey).text;
-    const causes = dict.t(advice.causesKey).text;
-    const steps = advice.stepsKeys.map((k) => dict.t(k).text);
-    const rescanTiming = dict.t(advice.rescanKey).text;
-    const caution = dict.t(advice.cautionKey).text;
-    const confidencePct = Math.round(confidence * 100);
+
+    let diseaseName: string;
+    let causes: string;
+    let steps: string[];
+    let rescanTiming: string;
+    let caution: string;
+
+    try {
+      const llmAdvice = await generateAdvice({
+        diseaseLabel: topPrediction.label,
+        crop,
+        severity: advice.severity,
+        locale,
+        confidence: confidencePct,
+      });
+      diseaseName = topPrediction.label;
+      causes = llmAdvice.causes;
+      steps = llmAdvice.steps;
+      rescanTiming = llmAdvice.rescanTiming;
+      caution = llmAdvice.caution;
+    } catch {
+      diseaseName = dict.t(advice.diseaseNameKey).text;
+      causes = dict.t(advice.causesKey).text;
+      steps = advice.stepsKeys.map((k) => dict.t(k).text);
+      rescanTiming = dict.t(advice.rescanKey).text;
+      caution = dict.t(advice.cautionKey).text;
+    }
 
     // FR-6.8: persist the uploaded image to Cloudinary first.
     let imageUrl: string;
