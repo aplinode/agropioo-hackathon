@@ -1,3 +1,4 @@
+import OpenAI from "openai";
 import { tool } from "@openai/agents";
 import { z } from "zod";
 import { query as dbQuery } from "@/lib/db";
