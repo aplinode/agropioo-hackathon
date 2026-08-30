@@ -493,6 +493,8 @@ export async function getDetectBundle(): Promise<DetectBundle> {
     savedStatus: t("app.detect.savedStatus").text,
     unsavedStatus: t("app.detect.unsavedStatus").text,
     dragDropPrompt: t("app.detect.dragDropPrompt").text,
+    dragDropPromptLine1: t("app.detect.dragDropPromptLine1").text,
+    dragDropPromptLine2: t("app.detect.dragDropPromptLine2").text,
     historyEmpty: t("app.detect.historyEmpty").text,
     linkToFarm: t("app.detect.linkToFarm").text,
     severity: {

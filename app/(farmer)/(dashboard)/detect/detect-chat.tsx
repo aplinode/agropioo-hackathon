@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { DetectBundle } from "./detect-bundle";
 import type { DiagnosisResult } from "./detect-types";
 import { XIcon } from "@/components/icons";
+import MarkdownRender from "../advisor/markdown-render";
 
 type Role = "farmer" | "detect";
 
@@ -190,7 +191,7 @@ export default function DetectChat({
         <button
           type="button"
           onClick={handleNewScan}
-          className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-4 text-xs font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint"
+          className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg bg-agro-canopy px-4 text-xs font-semibold text-white transition-colors hover:bg-agro-forest"
         >
           {bundle.chat.newScan}
         </button>
@@ -238,7 +239,11 @@ export default function DetectChat({
                       : "rounded-es-md border border-agro-sprout bg-white text-agro-ink"
                   }`}
                 >
-                  <p>{message.content}</p>
+                  {message.role === "detect" ? (
+                    <MarkdownRender text={message.content} />
+                  ) : (
+                    <p>{message.content}</p>
+                  )}
                 </div>
               </div>
             ))}
@@ -249,7 +254,7 @@ export default function DetectChat({
                   dir="ltr"
                   className="max-w-[85%] rounded-2xl rounded-es-md border border-agro-sprout bg-white px-4 py-3 text-sm leading-relaxed text-agro-ink sm:max-w-[75%]"
                 >
-                  <p>{streamingText}</p>
+                  <MarkdownRender text={streamingText} />
                   <span className="ms-1 inline-block h-4 w-0.5 animate-pulse bg-agro-canopy" />
                 </div>
               </div>
@@ -277,7 +282,7 @@ export default function DetectChat({
         onSubmit={handleSubmit}
         className="sticky bottom-0 border-t border-agro-sprout bg-white/95 px-4 py-3 backdrop-blur"
       >
-        <div className="flex items-end gap-2 rounded-2xl border border-agro-sprout bg-white p-2 shadow-md transition-colors duration-200 focus-within:border-agro-canopy focus-within:ring-2 focus-within:ring-agro-canopy/20">
+        <div className="flex items-end gap-2 rounded-2xl border border-agro-sprout bg-white p-2 shadow-md transition-colors duration-200 focus-within:border-agro-canopy focus-within:ring-2 focus-within:ring-agro-canopy/20 focus-within:ring-offset-1">
           <label htmlFor="detect-chat-input" className="sr-only">
             {bundle.chat.placeholder}
           </label>

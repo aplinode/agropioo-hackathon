@@ -36,7 +36,10 @@ export type DetectBundle = {
   savedStatus: string;
   unsavedStatus: string;
   dragDropPrompt: string;
+  dragDropPromptLine1: string;
+  dragDropPromptLine2: string;
   historyEmpty: string;
+  linkToFarm: string;
   severity: {
     watch: string;
     treatNow: string;

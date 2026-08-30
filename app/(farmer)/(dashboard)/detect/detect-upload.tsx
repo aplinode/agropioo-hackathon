@@ -421,8 +421,9 @@ export default function DetectUpload({
                 }}
                 className="sr-only"
               />
-              <span className="absolute inset-0 flex items-center justify-center text-xs text-agro-slate opacity-0 group-hover:opacity-100">
-                {bundle.dragDropPrompt}
+              <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 text-xs text-agro-slate opacity-0 group-hover:opacity-100">
+                <span>{bundle.dragDropPromptLine1}</span>
+                <span>{bundle.dragDropPromptLine2}</span>
               </span>
             </label>
 
