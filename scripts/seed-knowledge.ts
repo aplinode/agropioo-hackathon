@@ -45,6 +45,29 @@ function detectCropType(filename: string): string | null {
     rice: "rice",
     sugarcane: "sugarcane",
     maize: "maize",
+    potato: "potato",
+    onion: "onion",
+    tomato: "tomato",
+    chickpea: "chickpea",
+    gram: "chickpea",
+    lentil: "lentil",
+    mungbean: "mungbean",
+    mung: "mungbean",
+    soybean: "soybean",
+    sunflower: "sunflower",
+    canola: "canola",
+    rapeseed: "canola",
+    mango: "mango",
+    citrus: "citrus",
+    kinnow: "citrus",
+    banana: "banana",
+    poultry: "poultry",
+    chicken: "poultry",
+    dairy: "dairy",
+    cattle: "dairy",
+    buffalo: "dairy",
+    livestock: "livestock",
+    goat: "goat",
   };
   return cropMap[name] ?? null;
 }
@@ -139,7 +162,7 @@ async function main() {
     const chunks = splitIntoChunks(article.content);
     console.log(`  ${article.title}: ${chunks.length} chunks`);
     chunks.forEach((chunk, i) => {
-      allChunks.push({ article, content: chunk, index: i });
+      allChunks.push({ article, content: `# ${article.title}\n\n${chunk}`, index: i });
     });
   }
   console.log(`\nTotal: ${allChunks.length} chunks to embed\n`);

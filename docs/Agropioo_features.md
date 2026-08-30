@@ -185,30 +185,6 @@
 
 ---
 
-### Feature #8: Community Forum + Expert Connect
-
-**Problem:** Farmers face unique local problems but have no platform to share knowledge or get expert advice.
-
-**Solution:** A Stack Overflow-style community where farmers post problems (with photos/videos), other farmers and verified agricultural experts answer, and the best answers are upvoted.
-
-**How It Works (No Hardware):**
-- Farmer posts a question with photo/text/voice
-- Community members and verified experts respond
-- AI auto-tags the post (crop type, issue category, region)
-- Best answers surface to top via upvote system
-- Expert-verified answers get a green checkmark badge
-- Topical threads: organic farming, drip irrigation, market tips, etc.
-
-**APIs / Tech Stack:**
-- Firebase / Supabase (real-time database, auth)
-- Cloudinary / Firebase Storage (image/video uploads)
-- Pusher / Socket.io (real-time notifications)
-- Gamification: reputation points, badges, leaderboards
-
-**Impact Metric:** Builds a self-sustaining knowledge ecosystem — scales without adding support staff.
-
----
-
 ## Tier 3: Wow Factor Features
 
 ---
