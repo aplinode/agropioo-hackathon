@@ -5,6 +5,7 @@ import Link from "next/link";
 import MandiPriceCard, { type MandiPrice } from "@/components/prices/mandi-price-card";
 import MarketComparisonTable from "@/components/prices/market-comparison-table";
 import PredictionChart from "@/components/prices/prediction-chart";
+import RecommendationBadge from "@/components/prices/recommendation-badge";
 import { SearchIcon } from "@/components/icons";
 import type { PricesBundle } from "./prices-bundle";
 import type { ForecastPoint } from "@/lib/prices/forecast";
@@ -19,7 +20,10 @@ type PricesResponse = {
 
 type PredictionResponse = {
   predictions: ForecastPoint[];
+  recommendation: "SELL" | "HOLD";
+  recommendation_reason: string;
   volatility_warning: boolean;
+  model_confidence: number;
 };
 
 interface PricesClientProps {
@@ -180,12 +184,14 @@ export default function PricesClient({ bundle, crops, initial }: PricesClientPro
             <MarketComparisonTable prices={prices.prices} bundle={bundle} />
           ) : null}
           {selectedCrop && prediction ? (
-            <div className="space-y-3">
-              {prediction.volatility_warning ? (
-                <div className="rounded-xl bg-agro-wheat/20 p-3 text-sm font-semibold text-agro-earth">
-                  {bundle.volatilityWarning}
-                </div>
-              ) : null}
+            <div className="space-y-4">
+              <RecommendationBadge
+                recommendation={prediction.recommendation}
+                reason={prediction.recommendation_reason}
+                volatilityWarning={prediction.volatility_warning}
+                modelConfidence={prediction.model_confidence}
+                bundle={bundle}
+              />
               <PredictionChart predictions={prediction.predictions} bundle={bundle} />
             </div>
           ) : null}

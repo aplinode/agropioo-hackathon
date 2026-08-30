@@ -99,9 +99,9 @@
 
 ### Implementation for User Story 4
 
-- [ ] T020 [P] [US4] Implement sell/hold recommendation decision logic and plain-language reasoning generator in `lib/prices/forecast.ts`
-- [ ] T021 [P] [US4] Create recommendation badge component `components/prices/recommendation-badge.tsx` with "High Volatility / Low Data" warning badge support
-- [ ] T022 [US4] Embed recommendation badge and reasoning card into `app/(farmer)/prices/page.tsx`
+- [X] T020 [P] [US4] Implement sell/hold recommendation decision logic and plain-language reasoning generator in `lib/prices/forecast.ts`
+- [X] T021 [P] [US4] Create recommendation badge component `components/prices/recommendation-badge.tsx` with "High Volatility / Low Data" warning badge support
+- [X] T022 [US4] Embed recommendation badge and reasoning card into `app/(farmer)/prices/page.tsx`
 
 **Checkpoint**: User Story 4 complete - sell/hold recommendations displaying independently
 
