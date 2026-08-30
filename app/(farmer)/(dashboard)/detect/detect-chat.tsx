@@ -176,7 +176,7 @@ export default function DetectChat({
     onNewScan();
   }
 
-  const showImageBubble = diagnosis.imageUrl && messages.length === 0 && !thinking;
+  const showImageBubble = diagnosis.imageUrl && !thinking;
 
   return (
     <div className="flex h-full w-full flex-col">
