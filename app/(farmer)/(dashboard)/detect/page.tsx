@@ -13,7 +13,7 @@ const LIMIT = 20;
 
 export default async function DetectPage() {
   const session = await requireSessionPage();
-  const [bundle, rawFarms, rawScans] = await Promise.all([
+  const [bundle, rawFarms, rawScans, rawChats] = await Promise.all([
     getDetectBundle(),
     query<{ id: string; name: string; crops: unknown }>(
       `SELECT id, name, crops FROM farms WHERE account_id = $1 AND archived_at IS NULL ORDER BY created_at DESC`,
@@ -44,6 +44,15 @@ export default async function DetectPage() {
        ORDER BY ds.created_at DESC
        LIMIT $2`,
       [session.accountId, LIMIT],
+    ),
+    query<{
+      id: string;
+      title: string;
+      scan_id: string | null;
+      updated_at: string;
+    }>(
+      `SELECT id, title, scan_id, updated_at FROM detect_chats WHERE account_id = $1 ORDER BY updated_at DESC`,
+      [session.accountId],
     ),
   ]);
 
@@ -83,6 +92,13 @@ export default async function DetectPage() {
     saveStatus: r.farm_id ? "saved" : "not_saved",
   }));
 
+  const initialChats: { id: string; title: string; scanId: string | null; updatedAt: string }[] = (rawChats ?? []).map((c) => ({
+    id: c.id,
+    title: c.title,
+    scanId: c.scan_id,
+    updatedAt: c.updated_at,
+  }));
+
   return (
     <div className="pt-1">
       <DetectUpload
@@ -90,6 +106,7 @@ export default async function DetectPage() {
         farms={farms}
         initialScans={initialScans}
         nextCursor={nextCursor}
+        initialChats={initialChats}
       />
     </div>
   );

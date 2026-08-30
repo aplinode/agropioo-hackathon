@@ -14,6 +14,7 @@ import {
 } from "@/components/icons";
 import FarmSelector from "./farm-selector";
 import ScanHistory from "./scan-history";
+import DetectChatHistory, { type DetectChatMeta } from "./chat-history";
 import DiagnosisCard from "./diagnosis-card";
 import DetectChat from "./detect-chat";
 import type { DetectBundle } from "./detect-bundle";
@@ -27,6 +28,7 @@ interface DetectUploadProps {
   farms: FarmOption[];
   initialScans: ScanHistoryItem[];
   nextCursor: string | null;
+  initialChats: DetectChatMeta[];
 }
 
 const SAMPLE_LEAF_URL = "/assets/sample-leaf.jpg";
@@ -36,6 +38,7 @@ export default function DetectUpload({
   farms,
   initialScans,
   nextCursor,
+  initialChats,
 }: DetectUploadProps) {
   const [stage, setStage] = useState<Stage>("idle");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -55,6 +58,8 @@ export default function DetectUpload({
   const [chatMessages, setChatMessages] = useState<
     { id: string; role: "farmer" | "detect"; content: string }[]
   >([]);
+
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
 
   const objectUrlRef = useRef<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -115,6 +120,48 @@ export default function DetectUpload({
     if (!res.ok) return;
     const data = await res.json();
     setChatMessages(data.messages ?? []);
+  }
+
+  async function loadChatFromHistory(chat: DetectChatMeta) {
+    const [chatRes, messagesRes] = await Promise.all([
+      fetch(`/api/detect/chats/${chat.id}`, { credentials: "same-origin" }),
+      fetch(`/api/detect/messages/${chat.id}`, { credentials: "same-origin" }),
+    ]);
+
+    if (!chatRes.ok || !messagesRes.ok) {
+      setAnalyzingErrorKind("service");
+      setAnalyzingError("Failed to load chat.");
+      setStage("error");
+      return;
+    }
+
+    const chatData = await chatRes.json();
+    const messagesData = await messagesRes.json();
+
+    const scan = chatData.scan;
+    if (scan) {
+      const diagnosis: DiagnosisResult = {
+        scanId: scan.id,
+        diseaseName: scan.diseaseName,
+        confidence: scan.confidence,
+        severity: scan.severity,
+        crop: scan.crop,
+        causes: scan.causes,
+        steps: scan.steps,
+        rescanTiming: scan.rescanTiming,
+        caution: scan.caution,
+        imageUrl: scan.imageUrl,
+        saveStatus: "not_saved",
+      };
+      setResult(diagnosis);
+    } else {
+      setResult(null);
+    }
+
+    setChatId(chat.id);
+    setChatMessages(messagesData.messages ?? []);
+    setActiveChatId(chat.id);
+    setStage("chat");
   }
 
   async function enterChatMode(scan: DiagnosisResult | ScanHistoryItem) {
@@ -543,17 +590,34 @@ export default function DetectUpload({
             />
           </section>
         )}
+
+        {stage !== "chat" && initialChats.length > 0 && (
+          <section aria-labelledby="chat-history-heading" className="mt-8">
+            <h2
+              id="chat-history-heading"
+              className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate"
+            >
+              {bundle.chat.sessionsTitle}
+            </h2>
+            <DetectChatHistory
+              bundle={bundle}
+              initialChats={initialChats}
+              onSelectChat={loadChatFromHistory}
+              activeChatId={activeChatId}
+            />
+          </section>
+        )}
       </div>
 
-      {stage === "chat" && result && chatId && (
+      {stage === "chat" && chatId && (
         <div className="mt-5 w-full flex-1">
           <DetectChat
             key={chatId}
             bundle={bundle}
             chatId={chatId}
             initialMessages={chatMessages}
-            initialDraft={buildAutoPrompt(result)}
-            diagnosis={result}
+            initialDraft={result ? buildAutoPrompt(result) : ""}
+            diagnosis={result ?? { scanId: null, diseaseName: "", confidence: 0, severity: "watch", crop: "", causes: "", steps: [], rescanTiming: "", caution: "", imageUrl: "", saveStatus: "not_saved" }}
             onNewScan={resetToIdle}
           />
         </div>
