@@ -51,6 +51,11 @@ export type WeatherBundle = {
     markedActed: string;
     markedSeen: string;
   };
+  source: {
+    live: string;
+    cached: string;
+    demo: string;
+  };
   alerts: {
     title: string;
     dismiss: string;

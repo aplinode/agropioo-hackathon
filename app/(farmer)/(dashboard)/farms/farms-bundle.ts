@@ -57,6 +57,10 @@ export type FarmsBundle = {
       crop: string;
       acres: string;
       location: string;
+      primaryCrop: string;
+      sowingDate: string;
+      soilType: string;
+      irrigationMethod: string;
     };
     placeholders: {
       name: string;
@@ -64,6 +68,7 @@ export type FarmsBundle = {
       crop: string;
       acres: string;
       location: string;
+      soilType: string;
     };
     buttons: {
       saving: string;

@@ -9,6 +9,12 @@ export const CROPS = [
 ] as const;
 export type Crop = (typeof CROPS)[number];
 
+export const IRRIGATION_METHODS = ['drip', 'sprinkler', 'flood', 'rainfed'] as const;
+export type IrrigationMethod = (typeof IRRIGATION_METHODS)[number];
+
+export const SOIL_TYPES = ['clay', 'loam', 'sandy', 'silt'] as const;
+export type SoilType = (typeof SOIL_TYPES)[number];
+
 export const RECORD_TYPES = ['sowing', 'planting', 'irrigation', 'fertilizer', 'pesticide', 'disease', 'harvest'] as const;
 export type RecordType = (typeof RECORD_TYPES)[number];
 
