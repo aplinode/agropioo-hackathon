@@ -1,16 +1,16 @@
 {
   "integration": "agy",
   "version": "0.8.8.dev0",
-  "installed_at": "2026-08-30T11:00:39.924408+00:00",
+  "installed_at": "2026-08-30T11:02:10.040765+00:00",
   "files": {
-    ".agents/skills/speckit-analyze/SKILL.md": "23d10a774acad3a26e5ab01041eb65a39e627aadee6e0e366d79713ad054fdf6",
-    ".agents/skills/speckit-checklist/SKILL.md": "2db3121cd5d97ca2c0902be413d39d9ec0d9323932a976330eefa208e72a483a",
-    ".agents/skills/speckit-clarify/SKILL.md": "a429d1af7bf00c65c6be2766a11c2571e9d18ede2b77ec4fd538db4d5ec242d1",
+    ".agents/skills/speckit-analyze/SKILL.md": "05205af63fdd10e35df85d1a1665d5a20e72695dd30d76587dbcc0a27bbf2051",
+    ".agents/skills/speckit-checklist/SKILL.md": "60211dd559005c546c9dbefe94255baa0a6fddf41b6b0746c2e91e93ec893011",
+    ".agents/skills/speckit-clarify/SKILL.md": "2b61f83d35162b25043e7d2f9be4d9dc9254b3de52350b648c8d7cf225ff864a",
     ".agents/skills/speckit-constitution/SKILL.md": "7310adee465ee6a439a689518e6c133ce851d808c7a6e64d66f659ad8b4bd56e",
-    ".agents/skills/speckit-implement/SKILL.md": "b39c4de2e794a96302cd36cc7b6796711aee0f3bcedba0d0c01ccf3b1036f898",
-    ".agents/skills/speckit-plan/SKILL.md": "1cd13274eb35a18d87e6f43bc69801910437ce9543286b13f87c4e3cbc33b9d8",
+    ".agents/skills/speckit-implement/SKILL.md": "5e29f604896c21d068db377c279ce5e643d818555c8c4ed1b25ad176187ae547",
+    ".agents/skills/speckit-plan/SKILL.md": "8f23b270185a63a10e1c7b9c477e867c3115a6195e67528f4b3f3f40b9a99bec",
     ".agents/skills/speckit-specify/SKILL.md": "164542c78d6415ea9e16bb063652e989e14524a9a273176273e6c9b5ffa0b942",
-    ".agents/skills/speckit-tasks/SKILL.md": "0b36b19eb61347406afea1953c1e5983f084931eaa34d1b10c6c6e67f828f29f",
-    ".agents/skills/speckit-taskstoissues/SKILL.md": "32d8ee0f0482a7b2b9e6bee4dfd6947465754f2f82c404bfc7ef64f4a3b63bdd"
+    ".agents/skills/speckit-tasks/SKILL.md": "d3fecde732546a8d2f4b11d241289a42d183420fae9c4c3f861292228a4006c2",
+    ".agents/skills/speckit-taskstoissues/SKILL.md": "93cacb7c23e4cb4e1c954ac6681389be8a3862f4eb22f9f710de8299a219aadf"
   }
 }

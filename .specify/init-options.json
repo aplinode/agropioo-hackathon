@@ -1,10 +1,9 @@
 {
-  "ai": "agy",
-  "ai_skills": true,
+  "ai": "kilocode",
   "branch_numbering": "sequential",
-  "context_file": "AGENTS.md",
+  "context_file": ".kilocode/rules/specify-rules.md",
   "here": true,
-  "integration": "agy",
-  "script": "sh",
+  "integration": "kilocode",
+  "script": "ps",
   "speckit_version": "0.8.8.dev0"
 }
