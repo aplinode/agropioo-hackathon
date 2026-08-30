@@ -196,9 +196,9 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 - **FR-003**: System MUST update displayed prices at least once per trading day via an automated daily scraper from government APIs (with admin web panel fallback for manual data entry/corrections), executing alert evaluations immediately post-ingestion and displaying a distinct "Mandi Closed / Market Holiday" status badge on Sundays and market holidays.
 - **FR-004**: System MUST allow farmers to select which crop they want to view prices for, displaying crop names strictly according to the user's active UI language setting.
 - **FR-005**: System MUST sort market prices from highest to lowest, highlighting the best available price and displaying daily price changes as both percentage and absolute PKR difference (e.g., "+3.2% (+150 PKR/Maund)").
-- **FR-006**: System MUST display historical price data defaulting to a 3-month view for each crop, with date range selector toggles (1M, 3M, 6M, 12M).
+- **FR-006**: System MUST display historical price data defaulting to a 3-month view for each crop, supporting custom date range selector toggles (1M, 3M, 6M, 12M up to 12 months).
 - **FR-007**: System MUST show price trends as a visual chart for the selected time period.
-- **FR-008**: System MUST predict price movements for the next 7–14 days whenever historical data exists, showing a confidence warning when data is limited.
+- **FR-008**: System MUST predict price movements for the next 7–14 days for all crops with available historical data, displaying a prominent confidence warning badge when prediction data is limited.
 - **FR-009**: System MUST display predicted prices for 14 discrete daily forecast points with a shaded upper and lower confidence range band.
 - **FR-010**: System MUST provide a sell/hold recommendation whenever data is available, accompanied by a prominent "High Volatility / Low Data" warning badge when prediction confidence is low.
 - **FR-011**: System MUST explain each recommendation in plain language alongside the recommendation.
@@ -207,8 +207,8 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 - **FR-014**: System MUST allow farmers to view, edit target prices in-place, toggle active/paused status, and delete their price alerts.
 - **FR-015**: System MUST allow farmers to compare prices and view distance in km from their farm location across multiple selected markets on a single view.
 - **FR-016**: System MUST handle markets with missing daily price updates from government APIs by showing the last recorded price with a prominent "Updated X days ago" badge.
-- **FR-017**: System MUST show predictions and recommendations for all crops with available historical data, displaying a confidence warning when data is limited.
-- **FR-018**: System MUST allow farmers to view price history for custom date ranges up to 12 months.
+- **FR-017**: System MUST ensure price displays, history charts, and trend predictions are tailored to the farmer's selected crops and district context.
+- **FR-018**: System MUST handle historical price data rendering seamlessly across custom date ranges up to 12 months without breaking visual charts.
 - **FR-019**: System MUST only show prices and predictions relevant to the farmer's selected crops and region.
 - **FR-020**: System MUST refresh and cache predictions daily via a scheduled nightly background cron job when new price data becomes available.
 - **FR-021**: System MUST provide a global search bar allowing farmers to search and select any mandi or crop across all districts of Pakistan.

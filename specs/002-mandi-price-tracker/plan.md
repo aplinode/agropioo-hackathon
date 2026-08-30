@@ -18,7 +18,7 @@ The Mandi Price Tracker & Predictor enables Pakistani farmers to access real-tim
 **Target Platform**: Web (Responsive Outdoor-Mobile, Next.js Fullstack)  
 **Project Type**: Full-stack Next.js Application  
 **Performance Goals**: <200ms p95 response time for `/api/prices` queries; <10ms forecasting calculations; client rendering at 60fps  
-**Constraints**: Server-side Route Handlers ONLY (no separate backend, no Server Actions); Neon Lakebase Postgres via `lib/db.ts` only; strictly approved dependencies; light mode default with outdoor high-contrast colors (`--color-agro-*`); 8 Pakistan language translations in Neon `translations` table before merge  
+**Constraints**: Server-side Route Handlers ONLY (no separate backend, no Server Actions); Neon Lakebase Postgres via `lib/db.ts` only; strictly approved dependencies; free GitHub Actions scheduled workflow (`.github/workflows/mandi-cron.yml`) triggering `/api/cron/predict-prices` and `/api/prices/ingest`; light mode default with outdoor high-contrast colors (`--color-agro-*`); 8 Pakistan language translations in Neon `translations` table before merge  
 **Scale/Scope**: All 150+ districts of Pakistan, multiple crop types per market, daily price ingestion, 14-day forecasts, unlimited sell alerts per farmer  
 
 ---
