@@ -1,0 +1,43 @@
+import { z } from "zod";
+
+export const getPricesQuerySchema = z.object({
+  crop_id: z.string().optional(),
+  district: z.string().optional(),
+  query: z.string().optional(),
+  include_bordering: z.coerce.boolean().default(true),
+});
+
+export const createPriceSchema = z.object({
+  crop_id: z.string().min(1, "crop_id is required"),
+  mandi_id: z.string().min(1, "mandi_id is required"),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "date must be YYYY-MM-DD"),
+  modal_price: z.coerce.number().positive("modal_price must be positive"),
+  min_price: z.coerce.number().positive("min_price must be positive"),
+  max_price: z.coerce.number().positive("max_price must be positive"),
+  is_holiday: z.coerce.boolean().default(false),
+});
+
+export type CurrentPriceRow = {
+  mandi_id: string;
+  mandi_name: string;
+  district: string;
+  latitude: number | null;
+  longitude: number | null;
+  crop_id: string;
+  crop_name: string;
+  date: string;
+  modal_price: number;
+  min_price: number;
+  max_price: number;
+  unit: string;
+  is_holiday: boolean;
+  updated_days_ago: number;
+  prev_modal: number | null;
+};
+
+export type EnrichedPrice = CurrentPriceRow & {
+  distance_km: number | null;
+  change_pct: number;
+  change_pkr: number;
+  is_best_price: boolean;
+};

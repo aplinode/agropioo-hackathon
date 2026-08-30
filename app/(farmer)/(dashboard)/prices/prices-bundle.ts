@@ -41,4 +41,8 @@ export interface PricesBundle {
   adminMaxPrice: string;
   adminHoliday: string;
   adminSave: string;
+  loading: string;
+  retry: string;
+  noPricesForCrop: string;
+  comingSoon: string;
 }

@@ -1051,4 +1051,8 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.prices.adminMaxPrice": "زیادہ سے زیادہ قیمت",
   "app.prices.adminHoliday": "مارکیٹ تعطیل",
   "app.prices.adminSave": "قیمت محفوظ کریں",
+  "app.prices.loading": "Loading prices...",
+  "app.prices.retry": "Try again",
+  "app.prices.noPricesForCrop": "No prices found for this crop nearby.",
+  "app.prices.comingSoon": "Coming soon",
 };

@@ -15,7 +15,7 @@ import type { DashboardBundle } from "@/app/(farmer)/(dashboard)/dashboard/dashb
 import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle";
 import type { AdvisorBundle } from "@/app/(farmer)/(dashboard)/advisor/advisor-bundle";
 import type { DetectBundle } from "@/app/(farmer)/(dashboard)/detect/detect-bundle";
-import type { PricesBundle } from "@/app/(farmer)/prices/prices-bundle";
+import type { PricesBundle } from "@/app/(farmer)/(dashboard)/prices/prices-bundle";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -542,6 +542,10 @@ export async function getPricesBundle(): Promise<PricesBundle> {
     adminMaxPrice: t("app.prices.adminMaxPrice").text,
     adminHoliday: t("app.prices.adminHoliday").text,
     adminSave: t("app.prices.adminSave").text,
+    loading: t("app.prices.loading").text,
+    retry: t("app.prices.retry").text,
+    noPricesForCrop: t("app.prices.noPricesForCrop").text,
+    comingSoon: t("app.prices.comingSoon").text,
   };
 }
 

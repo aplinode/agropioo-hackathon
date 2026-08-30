@@ -990,4 +990,8 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.prices.adminMaxPrice": "Max price",
   "app.prices.adminHoliday": "Market holiday",
   "app.prices.adminSave": "Save price",
+  "app.prices.loading": "Loading prices...",
+  "app.prices.retry": "Try again",
+  "app.prices.noPricesForCrop": "No prices found for this crop nearby.",
+  "app.prices.comingSoon": "Coming soon",
 };
