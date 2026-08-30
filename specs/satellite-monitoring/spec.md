@@ -10,6 +10,32 @@ Give every farmer a precise, up-to-date picture of crop health across their enti
 
 ---
 
+## Clarifications
+
+### Session 2026-08-30
+
+- Q: How should the system fetch NDVI imagery from Copernicus Data Space after a boundary is saved? → A: Async background job — boundary save responds immediately; server fetches Copernicus in the background; client polls a status endpoint.
+- Q: Where should rendered NDVI heatmap images be stored? → A: Cloudinary — rendered PNG heatmaps uploaded to Cloudinary; CDN URL stored in the database.
+- Q: Which map library should be used for field boundary drawing and the NDVI overlay? → A: Leaflet + Leaflet.draw — open-source, free, no API token required.
+- Q: What is the maximum acceptable p95 response time for the boundary save API call? → A: 500 ms p95.
+- Q: Should the satellite feature emit structured server-side observability signals? → A: Structured logs only — JSON-structured log lines for key events (boundary save, Copernicus request start/end/error, cache hit/miss, NDVI processing time).
+
+### Session 2026-08-30 (continued)
+
+- Q: How should the server authenticate with the Copernicus Data Space API? → A: Free API key stored in env vars (`COPERNICUS_API_KEY`); no OAuth flow required.
+- Q: When should the system fetch a new NDVI snapshot for a farm with a cached snapshot? → A: GitHub Actions cron job — a scheduled workflow runs on a defined cadence to fetch fresh snapshots for all farms with boundaries.
+- Q: What status values should the NDVI fetch job expose on the polling endpoint? → A: `pending` → `processing` → `completed` | `failed`.
+- Q: How should concurrent NDVI background jobs be managed? → A: One active job per farm at a time — new save/edit for a farm with a running job queues behind it rather than spawning a second.
+
+### Session 2026-08-30 (round 3)
+
+- Q: How should the server obtain the NDVI data? → A: Server-side from raw Sentinel-2 bands — fetch B04 (red) and B08 (NIR) GeoTIFFs, compute NDVI = (B08−B04)/(B08+B04) pixel-by-pixel, then render the PNG heatmap.
+- Q: Where should NDVI background job status be persisted? → A: Neon DB `ndvi_jobs` table — columns: id, farm_id, status, created_at, updated_at.
+- Q: What should happen when the GitHub Actions cron job fails? → A: Log the failure (structured JSON) and let GitHub Actions retry on the next scheduled run; no farmer notification.
+- Q: Which Copernicus Data Space API surface should be used? → A: STAC search to find available Sentinel-2 scenes, then OData/S3-compatible download for band GeoTIFFs (B04, B08).
+
+---
+
 ## 2. User Scenarios
 
 | # | When the farmer… | They get… |
@@ -49,6 +75,8 @@ Give every farmer a precise, up-to-date picture of crop health across their enti
 **FR-2.3:** When the authenticated farmer has no farms at all, the map is not rendered. An empty state is shown with a message explaining what the feature does and a button to add their first farm.
 
 ### FR-3: Field Boundary Drawing
+
+**FR-3.0:** The map is rendered using **Leaflet** with the **Leaflet.draw** plugin for polygon drawing and the NDVI overlay. No API token is required.
 
 **FR-3.1:** A "Draw Field" button is visible when the selected farm has no saved boundary. Tapping it activates polygon draw mode.
 
@@ -92,6 +120,16 @@ Give every farmer a precise, up-to-date picture of crop health across their enti
 
 ### FR-6: NDVI Imagery — Data Availability
 
+**FR-6.0 (Image storage):** Rendered NDVI heatmap images are stored as PNGs on **Cloudinary**. The Cloudinary CDN URL is persisted in the `ndvi_snapshots` table as `image_url`. The server never stores image bytes in the database or on disk.
+
+**FR-6.0a (Async fetch pattern):** When a boundary is saved or updated, the boundary save endpoint responds immediately (within 500 ms p95) without waiting for Copernicus. A background job on the server then fetches Copernicus imagery, computes NDVI, renders the PNG, uploads it to Cloudinary, and writes the snapshot row. Job state is persisted in a Neon `ndvi_jobs` table (columns: `id`, `farm_id`, `status`, `created_at`, `updated_at`). The client polls a `/api/satellite/snapshots/status?farm_id=` endpoint (max every 5 seconds) to detect when the snapshot is ready and replace the loading skeleton with the overlay. The job status lifecycle is: `pending` → `processing` → `completed` | `failed`. Only one active background job may run per farm at a time — if a job is already in `pending` or `processing` state for a farm when a new boundary save/edit arrives, the new job queues and waits for the current one to finish before starting.
+
+**FR-6.0b (Copernicus authentication):** The server authenticates with the Copernicus Data Space API using a free API key stored in the `COPERNICUS_API_KEY` environment variable. No OAuth flow is required. The key is never logged or exposed in API responses.
+
+**FR-6.0c (NDVI computation):** The server uses the Copernicus Data Space **STAC API** to search for available Sentinel-2 L2A scenes covering the field polygon. It then downloads the **B04** (red) and **B08** (NIR) GeoTIFF band files via OData or S3-compatible access. NDVI is computed server-side pixel-by-pixel as `(B08 − B04) / (B08 + B04)`. The resulting float array is colourised according to the FR-5.1 scale and rendered as a PNG heatmap clipped to the field boundary's bounding box.
+
+**FR-6.0d (Cron failure handling):** If the GitHub Actions cron workflow fails (e.g. server error, `CRON_SECRET` mismatch, timeout), the failure is logged as a structured JSON entry. GitHub Actions will retry on the next scheduled run. No alert is sent to farmers — they continue to see their most recent cached snapshot.
+
 **FR-6.1:** When a boundary is saved or updated, the system automatically searches for the most recent clear Sentinel-2 imagery in the past 14 days for that field. This search happens in the background; the farmer does not need to request it manually.
 
 **FR-6.2:** A snapshot is considered "clear" when the cloud-covered fraction of the field polygon area is 30% or less. Snapshots above this threshold are stored with a cloud flag and are not shown as the active overlay.
@@ -100,7 +138,9 @@ Give every farmer a precise, up-to-date picture of crop health across their enti
 
 **FR-6.4:** If no clear snapshot exists for a field in the past 14 days after the first save, the farmer sees a message: "Satellite imagery expected within 5–10 days — we'll have a clearer picture after the next satellite pass." No error state. No empty map.
 
-**FR-6.5:** Once a snapshot is fetched and stored, returning to the same farm on a future visit loads the stored image immediately. No new satellite request is made for a snapshot that already exists.
+**FR-6.5:** Once a snapshot is fetched and stored, returning to the same farm on a future visit loads the stored image immediately. No new satellite request is made unless a background cron job or boundary edit triggers one.
+
+**FR-6.6 (Scheduled refresh via GitHub Actions):** A GitHub Actions workflow runs on a weekly cron schedule. It calls a protected internal Route Handler (`/api/satellite/cron/refresh`) — authenticated via a `CRON_SECRET` header — which enqueues a background NDVI fetch for every farm that has an active boundary. This keeps snapshots fresh without requiring user action. The cron job follows the same one-job-per-farm queuing rule as manual boundary-save triggers.
 
 ### FR-7: History Timeline
 
@@ -134,6 +174,8 @@ Give every farmer a precise, up-to-date picture of crop health across their enti
 
 **FR-9.3:** Boundary IDs and snapshot IDs in API responses are UUIDs. Sequential integer IDs are not used.
 
+**FR-9.4 (Observability):** The server emits JSON-structured log lines for the following events: boundary save (success/failure), Copernicus request start, Copernicus request end (with duration), Copernicus request error (with status code), NDVI processing time, Cloudinary upload success/failure, snapshot cache hit, and polling status checks. No metrics pipeline or distributed tracing is required at this stage.
+
 ### FR-10: Internationalisation
 
 **FR-10.1:** Every visible string on the `/satellite` page — labels, buttons, messages, tooltips, empty states, error messages — has a translation key present in the Neon `translations` table for all 8 locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) before the feature is shipped.
@@ -164,6 +206,7 @@ Give every farmer a precise, up-to-date picture of crop health across their enti
 | E16 | Boundary coordinates are outside Pakistan's geographic bounding box | Server returns 400 with: "Coordinates appear to be outside Pakistan. Please check your field location." |
 | E17 | Farmer is on 2G connection | Map basemap and boundary load first. NDVI overlay loads asynchronously with a visible skeleton inside the field area. No full-page block. |
 | E18 | Session expires while the farmer is on the satellite page | The next API call (e.g. save boundary, fetch NDVI) returns 401; the client redirects to `/login`. In-progress drawings are lost — no auto-save. |
+| E19 | GitHub Actions cron job fails (CRON_SECRET mismatch, server error, or timeout) | Failure is logged as structured JSON. No farmer-visible change — they see their last cached snapshot. GitHub Actions retries on the next scheduled run. |
 
 ---
 
@@ -225,3 +268,4 @@ Give every farmer a precise, up-to-date picture of crop health across their enti
 | AC-30 | All new UI strings have translation keys in the Neon `translations` table for all 8 locales before merge. | Run `scripts/sync-translations.mts`; confirm zero missing keys for all 8 locale codes. |
 | AC-31 | `npm run lint` passes with no errors after all changes. | Run `npm run lint`; confirm clean output. |
 | AC-32 | `npm run build` completes successfully after all changes. | Run `npm run build`; confirm no build errors. |
+| AC-33 | The boundary save API endpoint responds within 500 ms at p95 under normal load. | Run a load test (e.g. 20 concurrent saves) and confirm p95 response time ≤ 500 ms. |
