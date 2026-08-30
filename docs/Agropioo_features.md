@@ -316,10 +316,8 @@
 | 3 | Smart Weather Advisory | Weather API + Rules Engine | OpenWeatherMap, IMD | 🔴 Must-Have |
 | 4 | Mandi Price Tracker & Predictor | ML / Time Series | Agmarknet, Data.gov.in | 🔴 Must-Have |
 | 5 | Regional Language Voice Chatbot | NLP / Speech | Whisper, Google TTS, Gemini | 🟡 Differentiator |
-| 6 | Government Scheme Matcher | Rule Engine / NLP | pmkisan.gov.in, nabard.org | 🟡 Differentiator |
 | 7 | Crop Recommendation Engine | ML / Analytics | Soil Health Card, ICAR | 🟡 Differentiator |
 | 8 | Farm Profit/Loss Calculator | Finance / Analytics | CACP, Mandi API | 🟡 Differentiator |
-| 9 | Community Forum + Expert Connect | Social / Real-time | Firebase, Socket.io | 🟡 Differentiator |
 | 10 | Satellite Change Detection | GIS / Image Processing | Sentinel Hub, GEE | 🟢 Wow Factor |
 | 11 | AI Pest Outbreak Prediction | ML / Predictive | Weather + Pest Data APIs | 🟢 Wow Factor |
 | 12 | Voice-First Phone Call UI | Telephony / NLP | Twilio, Whisper, ElevenLabs | 🟢 Wow Factor |
@@ -336,7 +334,6 @@
 2. **Satellite Field Monitoring** — Shows technical depth (real satellite imagery)
 3. **Mandi Price Predictor** — Solves a REAL farmer pain point
 4. **Regional Language Voice Bot** — Accessibility wins judge hearts
-5. **Government Scheme Matcher** — High social impact score
 6. **Offline-First + SMS Alerts** — Shows practical, real-world thinking
 
 **Demo Flow:**

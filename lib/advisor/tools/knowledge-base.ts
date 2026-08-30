@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { tool } from "@openai/agents";
 import { z } from "zod";
+import OpenAI from "openai";
 import { query as dbQuery } from "@/lib/db";
 
 let openaiClient: OpenAI | null = null;

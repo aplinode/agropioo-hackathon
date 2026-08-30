@@ -17,6 +17,7 @@ import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle"
 import type { AdvisorBundle } from "@/app/(farmer)/(dashboard)/advisor/advisor-bundle";
 import type { DetectBundle } from "@/app/(farmer)/(dashboard)/detect/detect-bundle";
 import type { WeatherBundle } from "@/app/(farmer)/(dashboard)/weather/weather-bundle";
+import type { PricesBundle } from "@/app/(farmer)/(dashboard)/prices/prices-bundle";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -604,6 +605,72 @@ export async function getWeatherBundle(): Promise<WeatherBundle> {
       generic: t("app.weather.errors.generic").text,
       noFarm: t("app.weather.errors.noFarm").text,
     },
+  };
+}
+
+/**
+ * Flat translation bundle for the Mandi Price Tracker feature.
+ * Built server-side and passed as props to client components.
+ */
+export async function getPricesBundle(): Promise<PricesBundle> {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    eyebrow: t("app.prices.eyebrow").text,
+    title: t("app.prices.title").text,
+    description: t("app.prices.description").text,
+    selectCrop: t("app.prices.selectCrop").text,
+    searchPlaceholder: t("app.prices.searchPlaceholder").text,
+    noData: t("app.prices.noData").text,
+    updatedToday: t("app.prices.updatedToday").text,
+    updatedDaysAgo: t("app.prices.updatedDaysAgo").text,
+    marketHoliday: t("app.prices.marketHoliday").text,
+    perMaund: t("app.prices.perMaund").text,
+    bestPrice: t("app.prices.bestPrice").text,
+    distanceKm: t("app.prices.distanceKm").text,
+    hold: t("app.prices.hold").text,
+    sell: t("app.prices.sell").text,
+    recommendationHold: t("app.prices.recommendationHold").text,
+    recommendationSell: t("app.prices.recommendationSell").text,
+    volatilityWarning: t("app.prices.volatilityWarning").text,
+    predictionTitle: t("app.prices.predictionTitle").text,
+    historyTitle: t("app.prices.historyTitle").text,
+    range1M: t("app.prices.range1M").text,
+    range3M: t("app.prices.range3M").text,
+    range6M: t("app.prices.range6M").text,
+    range12M: t("app.prices.range12M").text,
+    setAlert: t("app.prices.setAlert").text,
+    editAlert: t("app.prices.editAlert").text,
+    saveAlert: t("app.prices.saveAlert").text,
+    cancel: t("app.prices.cancel").text,
+    alertCrop: t("app.prices.alertCrop").text,
+    alertMandi: t("app.prices.alertMandi").text,
+    alertMandiOptional: t("app.prices.alertMandiOptional").text,
+    alertStatus: t("app.prices.alertStatus").text,
+    targetPrice: t("app.prices.targetPrice").text,
+    alertActive: t("app.prices.alertActive").text,
+    alertPaused: t("app.prices.alertPaused").text,
+    deleteAlert: t("app.prices.deleteAlert").text,
+    fallbackBanner: t("app.prices.fallbackBanner").text,
+    comparisonTitle: t("app.prices.comparisonTitle").text,
+    market: t("app.prices.market").text,
+    modalPrice: t("app.prices.modalPrice").text,
+    minPrice: t("app.prices.minPrice").text,
+    maxPrice: t("app.prices.maxPrice").text,
+    change: t("app.prices.change").text,
+    distance: t("app.prices.distance").text,
+    adminTitle: t("app.prices.adminTitle").text,
+    adminDate: t("app.prices.adminDate").text,
+    adminModalPrice: t("app.prices.adminModalPrice").text,
+    adminMinPrice: t("app.prices.adminMinPrice").text,
+    adminMaxPrice: t("app.prices.adminMaxPrice").text,
+    adminHoliday: t("app.prices.adminHoliday").text,
+    adminSave: t("app.prices.adminSave").text,
+    loading: t("app.prices.loading").text,
+    retry: t("app.prices.retry").text,
+    noPricesForCrop: t("app.prices.noPricesForCrop").text,
+    comingSoon: t("app.prices.comingSoon").text,
   };
 }
 
