@@ -17,6 +17,23 @@ export const createPriceSchema = z.object({
   is_holiday: z.coerce.boolean().default(false),
 });
 
+export const predictionQuerySchema = z.object({
+  crop_id: z.string().min(1, "crop_id is required"),
+  mandi_id: z.string().min(1, "mandi_id is required"),
+});
+
+export const alertCreateSchema = z.object({
+  crop_id: z.string().min(1, "crop_id is required"),
+  mandi_id: z.string().optional(),
+  target_price_pkr: z.coerce.number().positive("target_price_pkr must be positive"),
+  status: z.enum(["active", "paused"]).default("active"),
+});
+
+export const alertUpdateSchema = z.object({
+  target_price_pkr: z.coerce.number().positive("target_price_pkr must be positive").optional(),
+  status: z.enum(["active", "paused"]).optional(),
+});
+
 export type CurrentPriceRow = {
   mandi_id: string;
   mandi_name: string;

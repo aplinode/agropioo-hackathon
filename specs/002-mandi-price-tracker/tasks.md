@@ -66,9 +66,9 @@
 
 ### Implementation for User Story 2
 
-- [ ] T013 [P] [US2] Implement side-by-side market comparison table `components/prices/market-comparison-table.tsx` with price sorting and best price badge
-- [ ] T014 [US2] Integrate distance calculation (km from farm location to mandi) in `components/prices/market-comparison-table.tsx`
-- [ ] T015 [US2] Connect crop selector to update comparison view dynamically without full page reload in `app/(farmer)/prices/page.tsx`
+- [X] T013 [P] [US2] Implement side-by-side market comparison table `components/prices/market-comparison-table.tsx` with price sorting and best price badge
+- [X] T014 [US2] Integrate distance calculation (km from farm location to mandi) in `components/prices/market-comparison-table.tsx`
+- [X] T015 [US2] Connect crop selector to update comparison view dynamically without full page reload in `app/(farmer)/prices/page.tsx`
 
 **Checkpoint**: User Story 2 complete - market price comparisons functioning independently
 
@@ -82,10 +82,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T016 [P] [US3] Implement Holt-Winters triple exponential smoothing and linear trend time-series forecasting algorithm in `lib/prices/forecast.ts`
-- [ ] T017 [US3] Implement `GET /api/prices/predictions` Route Handler returning 14-day daily forecast points and 95% confidence bounds in `app/api/prices/predictions/route.ts`
-- [ ] T018 [P] [US3] Create 14-day discrete prediction chart component `components/prices/prediction-chart.tsx` with upper/lower confidence band shading
-- [ ] T019 [US3] Integrate prediction chart and confidence warning badge into `app/(farmer)/prices/page.tsx`
+- [X] T016 [P] [US3] Implement Holt-Winters triple exponential smoothing and linear trend time-series forecasting algorithm in `lib/prices/forecast.ts`
+- [X] T017 [US3] Implement `GET /api/prices/predictions` Route Handler returning 14-day daily forecast points and 95% confidence bounds in `app/api/prices/predictions/route.ts`
+- [X] T018 [P] [US3] Create 14-day discrete prediction chart component `components/prices/prediction-chart.tsx` with upper/lower confidence band shading
+- [X] T019 [US3] Integrate prediction chart and confidence warning badge into `app/(farmer)/prices/page.tsx`
 
 **Checkpoint**: User Story 3 complete - 14-day price trend predictions working independently
 
@@ -99,9 +99,9 @@
 
 ### Implementation for User Story 4
 
-- [ ] T020 [P] [US4] Implement sell/hold recommendation decision logic and plain-language reasoning generator in `lib/prices/forecast.ts`
-- [ ] T021 [P] [US4] Create recommendation badge component `components/prices/recommendation-badge.tsx` with "High Volatility / Low Data" warning badge support
-- [ ] T022 [US4] Embed recommendation badge and reasoning card into `app/(farmer)/prices/page.tsx`
+- [X] T020 [P] [US4] Implement sell/hold recommendation decision logic and plain-language reasoning generator in `lib/prices/forecast.ts`
+- [X] T021 [P] [US4] Create recommendation badge component `components/prices/recommendation-badge.tsx` with "High Volatility / Low Data" warning badge support
+- [X] T022 [US4] Embed recommendation badge and reasoning card into `app/(farmer)/prices/page.tsx`
 
 **Checkpoint**: User Story 4 complete - sell/hold recommendations displaying independently
 
@@ -115,11 +115,11 @@
 
 ### Implementation for User Story 5
 
-- [ ] T023 [P] [US5] Implement Zod validation schemas for alert creation and updates in `app/api/prices/alerts/route.ts`
-- [ ] T024 [US5] Implement `GET`, `POST`, `PUT`, `DELETE` Route Handlers for farmer price alerts in `app/api/prices/alerts/route.ts`
-- [ ] T025 [P] [US5] Create target price alert setup and edit modal `components/prices/price-alert-modal.tsx` supporting in-place editing and active/paused toggles
-- [ ] T026 [US5] Implement sell-only alert evaluation and `nodemailer` (SMTP) email dispatcher with deep-link button in `lib/prices/alerts.ts`
-- [ ] T027 [US5] Implement daily price ingestion and alert evaluation Route Handler `POST /api/prices/ingest` in `app/api/prices/ingest/route.ts`
+- [X] T023 [P] [US5] Implement Zod validation schemas for alert creation and updates in `app/api/prices/alerts/route.ts`
+- [X] T024 [US5] Implement `GET`, `POST`, `PUT`, `DELETE` Route Handlers for farmer price alerts in `app/api/prices/alerts/route.ts`
+- [X] T025 [P] [US5] Create target price alert setup and edit modal `components/prices/price-alert-modal.tsx` supporting in-place editing and active/paused toggles
+- [X] T026 [US5] Implement sell-only alert evaluation and `nodemailer` (SMTP) email dispatcher with deep-link button in `lib/prices/alerts.ts`
+- [X] T027 [US5] Implement daily price ingestion and alert evaluation Route Handler `POST /api/prices/ingest` in `app/api/prices/ingest/route.ts`
 
 **Checkpoint**: User Story 5 complete - target price alerts and notifications functional
 
