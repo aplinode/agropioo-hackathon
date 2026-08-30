@@ -66,7 +66,7 @@ export default function ResetPasswordForm() {
     }`;
 
   const toggleClass =
-    "absolute inset-y-0 right-1 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy";
+    "absolute inset-y-0 right-2 inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-lg text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy";
 
   function eyeIcon(show: boolean) {
     return show ? (

@@ -27,7 +27,7 @@ export const signupSchema = z
     email: normalizedEmailSchema,
     phone: z
       .string()
-      .optional()
+      .nullish()
       .transform((value) => {
         const trimmed = (value ?? "").trim();
         return trimmed.length === 0 ? null : trimmed;

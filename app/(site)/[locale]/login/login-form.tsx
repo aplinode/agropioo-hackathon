@@ -271,7 +271,7 @@ export default function LoginForm({ copy }: { copy: LoginCopy }) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-1 inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy"
+                  className="absolute inset-y-0 right-2 inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-lg text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy"
                   aria-pressed={showPassword}
                   aria-label={showPassword ? copy.hidePassword : copy.showPassword}
                 >
