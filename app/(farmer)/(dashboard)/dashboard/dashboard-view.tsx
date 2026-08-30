@@ -19,6 +19,7 @@ import {
   TrendingUpIcon,
   XIcon,
   LogOutIcon,
+  SproutIcon,
 } from "@/components/icons";
 import { getDemoData } from "./demo-data";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -100,6 +101,7 @@ const quickActionIcon = {
   chat: ChatIcon,
   camera: CameraIcon,
   tag: TagIcon,
+  sprout: SproutIcon,
 } as const;
 
 /* Section marker: mono field label on a furrow hairline running off to the
@@ -537,6 +539,33 @@ export default function DashboardView({
             aria-hidden="true"
           >
             <CameraIcon className="h-6 w-6" />
+          </span>
+        </div>
+      </Link>
+
+      {/* Crop recommendation CTA */}
+      <Link
+        href="/crops"
+        className="group relative block overflow-hidden rounded-3xl bg-agro-wheat p-6 text-agro-forest shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:p-7"
+      >
+        <FurrowMotif
+          tone="ghost"
+          className="pointer-events-none absolute inset-x-0 -bottom-1 w-full text-agro-forest/10"
+        />
+        <div className="relative flex items-center gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-agro-forest/70">
+              {bundle.recommendCrops}
+            </p>
+            <h2 className="display-heading mt-2 max-w-sm font-display text-xl font-bold leading-snug sm:text-2xl">
+              {bundle.recommendCropsBody}
+            </h2>
+          </div>
+          <span
+            className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-agro-forest/10 ring-1 ring-agro-forest/20 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:bg-agro-forest/20"
+            aria-hidden="true"
+          >
+            <SproutIcon className="h-6 w-6" />
           </span>
         </div>
       </Link>

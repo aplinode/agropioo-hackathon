@@ -31,6 +31,8 @@ export type DashboardBundle = {
   cropDoctor: string;
   detectTitle: string;
   detectBody: string;
+  recommendCrops: string;
+  recommendCropsBody: string;
   myFarms: string;
   addFarm: string;
   viewAllFarms: string;
@@ -76,5 +78,6 @@ export type DashboardBundle = {
     actionScan: string;
     actionPrices: string;
     actionRecord: string;
+    actionRecommend: string;
   };
 };
