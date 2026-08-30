@@ -14,49 +14,60 @@
 ## Setup Steps
 
 1. **Apply database migration**:
-   ```bash
-   npm run db:migrate
-   ```
-   This applies `scripts/migrations/0008_weather_advisory.sql`, adding columns to `farms` and creating `weather_advisories` and `weather_alerts`.
+    ```bash
+    npm run db:migrate
+    ```
+    This applies `db/migrations/0008_weather_advisory.sql`, adding columns to `farms` and creating `weather_advisories` and `weather_alerts`.
 
-2. **Install dependencies** (if any new packages were added):
-   ```bash
-   npm install
-   ```
-   *Note: This feature uses only approved libraries (Next.js, Neon, Zod, Nodemailer, Jose, Bcryptjs). No new installs expected.*
+2. **Add translation keys**:
+    Add weather advisory strings to `catalog/en.ts` under the `app.weather.*` namespace, then draft translations in the other 7 locale catalog files (`catalog/ur.ts`, `catalog/pa.ts`, `catalog/ps.ts`, `catalog/sd.ts`, `catalog/skr.ts`, `catalog/bal.ts`, `catalog/hno.ts`).
 
-3. **Environment variables**:
-   Ensure `.env.local` includes:
-   - `DATABASE_URL` — Neon connection string
-   - `OPENWEATHER_API_KEY` — OpenWeatherMap API key
-   - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — email delivery
-   - `ADVISOR_CRON_SECRET` — secret for internal cron endpoint
+3. **Sync translations to database**:
+    ```bash
+    npm run sync:translations
+    ```
+    This upserts the full `app.weather.*` key × 8-locale matrix into the Neon `translations` table. Verify coverage with the script's report.
 
-4. **Run development server**:
-   ```bash
-   npm run dev
-   ```
+4. **Install dependencies** (if any new packages were added):
+    ```bash
+    npm install
+    ```
+    *Note: This feature uses only approved libraries (Next.js, Neon, Zod, Nodemailer, Jose, Bcryptjs). No new installs expected.*
 
-5. **Verify manually**:
-   - Navigate to `/advisor` while authenticated.
-   - With no farm registered: see prompt to register a farm.
-   - Register a farm with crop, sowing date, and location.
-   - Confirm daily advisory appears with weather data and recommendation.
-   - Confirm 7-day forecast tab shows advice per day.
-   - Confirm alert banner appears when provider is unavailable (simulate by disabling network).
-   - Confirm notification center shows alerts and email is sent (check SMTP logs).
-   - Confirm advisory history page lists past days and detail view opens.
+5. **Environment variables**:
+    Ensure `.env.local` includes:
+    - `DATABASE_URL` — Neon connection string
+    - `OPENWEATHER_API_KEY` — OpenWeatherMap API key
+    - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — email delivery
+    - `ADVISOR_CRON_SECRET` — secret for internal cron endpoint
 
-6. **Run lint and build**:
-   ```bash
-   npm run lint
-   npm run build
-   ```
+6. **Run development server**:
+    ```bash
+    npm run dev
+    ```
+
+7. **Verify manually**:
+    - Navigate to `/weather` while authenticated.
+    - With no farm registered: see prompt to register a farm.
+    - Register a farm with crop, sowing date, and location.
+    - Confirm daily advisory appears with weather data and recommendation.
+    - Confirm 7-day forecast tab shows advice per day.
+    - Confirm alert banner appears when provider is unavailable (simulate by disabling network).
+    - Confirm notification center shows alerts and email is sent (check SMTP logs).
+    - Confirm advisory history page lists past days and detail view opens.
+    - Switch language via the nav language switcher and verify all advisory strings update.
+
+8. **Run lint and build**:
+    ```bash
+    npm run lint
+    npm run build
+    ```
 
 ## Architecture Notes
 
-- Route Handlers in `app/api/advisor/` serve as the API layer.
+- Route Handlers in `app/api/weather/` serve as the API layer.
 - `lib/weather/openweather.ts` wraps OpenWeatherMap calls with caching and retry.
 - `lib/weather/advisory.ts` contains rule-based advice generation keyed on growth stage + weather thresholds.
 - `lib/weather/alerts.ts` scans the next 3 hours of forecast data for critical conditions.
-- Advisory text templates live in the `translations` table under `feature = 'weather-advisory'`.
+- Advisory text templates are stored as `app.weather.*` keys in the `translations` table, synced from `catalog/*.ts`.
+- Server-side bundle `getWeatherBundle()` in `lib/i18n/server.ts` resolves translations per request and passes them as flat props to client components.

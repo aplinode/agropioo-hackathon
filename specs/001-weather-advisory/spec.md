@@ -90,17 +90,18 @@ Farmer reviews past advisories to see what was recommended on previous days and 
 - **FR-004**: System must generate personalized farming advice for each day by combining weather conditions, crop type, and crop growth stage. If the crop type is not in the knowledge base, the system falls back to generic weather-based advice without crop-specific recommendations.
 - **FR-005**: System must send alerts via email and in-app notification when weather conditions pose a significant risk to the farmer's crop.
 - **FR-006**: System must display advisory history for the farmer to review past recommendations.
-- **FR-007**: System must present all advice in the farmer's selected language.
+- **FR-007**: System must present all advice, alerts, labels, buttons, and status messages in the farmer's selected language. Every visible string in the weather advisory UI must have translation keys for all 8 project locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`). Translations are stored in the Neon `translations` table and resolved server-side at render time; the client never hardcodes user-facing copy.
 - **FR-008**: System must recommend irrigation timing based on expected rainfall.
 - **FR-009**: System must recommend disease prevention measures when humidity and temperature conditions favor crop diseases.
 - **FR-010**: System must support multiple farm registrations and deliver separate advisories per farm.
 - **FR-011**: System must allow the farmer to mark an advisory as acknowledged or acted upon.
+- **FR-012**: System must namespace all weather advisory translation keys under `app.weather.*` in the catalog and `translations` table. The server-side bundle `getWeatherBundle()` must resolve all UI strings per request; no user-facing string may be hardcoded in client components.
 
 ### Key Entities
 
 - **Farm Registration**: Represents a farmer's field with crop type, sowing date, location, farm name, area size, soil type, and irrigation method. One farmer may have multiple registrations.
-- **Weather Advisory**: Represents a daily recommendation tied to a specific farm, date, weather conditions, crop growth stage, and advice text. Includes a severity level.
-- **Weather Alert**: Represents a time-sensitive notification triggered by forecasted conditions that pose a risk to the farmer's crop.
+- **Weather Advisory**: Represents a daily recommendation tied to a specific farm, date, weather conditions, crop growth stage, and advice text. Includes a severity level. The `advice_text` is rendered from a translation key (`advice_key`) resolved server-side.
+- **Weather Alert**: Represents a time-sensitive notification triggered by forecasted conditions that pose a risk to the farmer's crop. The `recommendation` is rendered from a translation key (`recommendation_key`) resolved server-side.
 
 ---
 
@@ -113,6 +114,7 @@ Farmer reviews past advisories to see what was recommended on previous days and 
 - **SC-003**: Farmer receives critical weather alerts within 15 minutes of the condition being detected.
 - **SC-004**: Farmer can act on advisory recommendations using only information provided in the advisory — no external lookup required.
 - **SC-005**: Advisory helps the farmer avoid unnecessary irrigation before expected rainfall.
+- **SC-006**: Every visible string in the weather advisory UI is translated in all 8 project locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) with no hardcoded client-side copy.
 
 ---
 
@@ -125,6 +127,8 @@ Farmer reviews past advisories to see what was recommended on previous days and 
 - Q: What specific attributes must the Farm Registration entity store, and what validation constraints apply? → A: Option B — crop type, sowing date, location, farmer ID, farm name, area size, soil type, irrigation method
 - Q: What should happen when the weather provider is unavailable or returns incomplete data for the farmer's location? → A: Show last cached advisory with "data unavailable" banner; no new advice generated until weather data returns
 - Q: What should the system do when the farmer's crop type is not found in the advisory knowledge base? → A: Show generic weather advice without crop-specific recommendations
+- Q: How are weather advisory UI strings translated and delivered to the client? → A: Strings are authored in `catalog/en.ts` under `app.weather.*`, drafted in the other 7 locale catalogs, synced to the `translations` table via `npm run sync:translations`, and resolved server-side through `getWeatherBundle()`; no hardcoded client-side copy.
+- Q: What is the translation key namespace for weather advisory strings? → A: `app.weather.*` (e.g. `app.weather.pageTitle`, `app.weather.advisory.recommendation.irrigation`, `app.weather.alerts.heavyRain`).
 
 ## Assumptions
 
@@ -133,6 +137,7 @@ Farmer reviews past advisories to see what was recommended on previous days and 
 - Farmer's crop type and sowing date are the minimum inputs needed to generate useful advice.
 - The farmer has access to a smartphone or computer with internet connectivity to receive advisories and alerts.
 - Advisory language follows the project's language priority policy (English first, then Urdu, Punjabi, and other local languages).
+- The `translations` table is the single source of truth for all user-facing strings at runtime; build-time catalogs serve only as fallback.
 
 ---
 
