@@ -7,7 +7,7 @@ import { getWeatherBundle } from "@/lib/i18n/server";
 import { getAppLocale, getDictionary } from "@/lib/i18n/server";
 import type { CatalogKey } from "@/catalog";
 import { getForecast } from "@/lib/weather/openweather";
-import { buildAdvisoryDays, type GrowthStage, type Severity } from "@/lib/weather/advisory";
+import { buildAdvisoryDays, computeGrowthStage, type GrowthStage, type Severity } from "@/lib/weather/advisory";
 import FarmSelector from "@/components/weather/FarmSelector";
 import AdvisoryCard from "@/components/weather/AdvisoryCard";
 import ForecastList from "@/components/weather/ForecastList";
@@ -39,10 +39,43 @@ type FarmRow = {
   crops: string[];
   lat: number;
   lng: number;
+  growth_stages: Record<string, string> | null;
+};
+
+type RecordRow = {
+  type: string;
+  event_date: string;
 };
 
 function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function getEffectiveCropInfo(
+  farm: FarmRow,
+  records: RecordRow[],
+): { crop: string; sowingDate: string; stage: GrowthStage } | null {
+  const today = new Date().toISOString().slice(0, 10);
+
+  const sowingRecords = records.filter((r) => r.type === "sowing" || r.type === "planting");
+  const latestSowing = sowingRecords.length > 0 ? sowingRecords[0] : null;
+
+  if (latestSowing) {
+    const crop = farm.primary_crop || farm.crops[0] || null;
+    if (crop) {
+      const stageFromDb = farm.growth_stages?.[crop.toLowerCase()];
+      const stage = (stageFromDb as GrowthStage | undefined) ?? computeGrowthStage(crop, latestSowing.event_date, today);
+      return { crop, sowingDate: latestSowing.event_date, stage };
+    }
+  }
+
+  if (farm.primary_crop && farm.sowing_date) {
+    const stageFromDb = farm.growth_stages?.[farm.primary_crop.toLowerCase()];
+    const stage = (stageFromDb as GrowthStage | undefined) ?? computeGrowthStage(farm.primary_crop, farm.sowing_date, today);
+    return { crop: farm.primary_crop, sowingDate: farm.sowing_date, stage };
+  }
+
+  return null;
 }
 
 export default async function WeatherPage({
@@ -54,7 +87,7 @@ export default async function WeatherPage({
   const bundle = await getWeatherBundle();
 
   const farms = await query<FarmRow>(
-    `SELECT id, name, primary_crop, sowing_date, crops, lat, lng
+    `SELECT id, name, primary_crop, sowing_date, crops, lat, lng, growth_stages
      FROM farms WHERE account_id = $1 AND archived_at IS NULL
      ORDER BY created_at DESC`,
     [session.accountId],
@@ -106,8 +139,15 @@ export default async function WeatherPage({
     cropLabel: capitalize(f.primary_crop ?? f.crops?.[0] ?? ""),
   }));
 
-  // No weather profile yet → prompt the farmer to register crop + sowing date.
-  if (!selected.primary_crop) {
+  const records = await query<RecordRow>(
+    `SELECT type, event_date FROM records WHERE farm_id = $1 AND account_id = $2 ORDER BY event_date DESC`,
+    [selected.id, session.accountId],
+  );
+  const recordList = records ?? [];
+
+  const effectiveCrop = getEffectiveCropInfo(selected, recordList);
+
+  if (!effectiveCrop) {
     return (
       <div className="pt-1">
         <PageHeader eyebrow={bundle.eyebrow} title={bundle.pageTitle} description={bundle.description} />
@@ -136,7 +176,7 @@ export default async function WeatherPage({
 
   if (forecast) {
     dataSourceLabel = bundle.source.live;
-    const advisoryDays = buildAdvisoryDays(selected.primary_crop, selected.sowing_date, forecast);
+    const advisoryDays = buildAdvisoryDays(effectiveCrop.crop, effectiveCrop.sowingDate, forecast);
     forecastDays = advisoryDays.map((d) => ({
       date: d.date,
       weather: d.weather,
@@ -151,8 +191,7 @@ export default async function WeatherPage({
       severity: todays.severity,
     };
 
-    // Persist today's advisory so history accumulates (one row per farm per day).
-    const snapshot = JSON.stringify({ source: forecast.source, days: advisoryDays.length });
+    const snapshot = JSON.stringify({ source: forecast.source, days: advisoryDays.length, crop: effectiveCrop.crop, sowingDate: effectiveCrop.sowingDate });
     await queryOne(
       `INSERT INTO weather_advisories (
          farm_id, account_id, advisory_date, forecast_snapshot, growth_stage,
@@ -190,7 +229,6 @@ export default async function WeatherPage({
         severity: cached.severity as Severity,
       };
     } else {
-      // Fully offline: show a realistic demo advisory so the page stays useful.
       todayAdvice = {
         growth_stage: demoStageToSlug(demoWeather.today.growthStageLabel),
         advice_text: demoWeather.today.adviceText,
@@ -219,6 +257,17 @@ export default async function WeatherPage({
      ORDER BY wa.created_at DESC`,
     [session.accountId],
   );
+
+  const recentRecords = recordList.slice(0, 5);
+  const recordTypeLabels: Record<string, string> = {
+    sowing: "Sowing",
+    planting: "Planting",
+    irrigation: "Irrigation",
+    fertilizer: "Fertilizer",
+    pesticide: "Pesticide",
+    disease: "Disease",
+    harvest: "Harvest",
+  };
 
   return (
     <div className="pt-1">
@@ -263,6 +312,22 @@ export default async function WeatherPage({
         <span className="inline-flex h-2 w-2 rounded-full bg-agro-canopy" aria-hidden="true" />
         {dataSourceLabel}
       </p>
+
+      {recentRecords.length > 0 && (
+        <section className="mt-6" aria-labelledby="recent-records-heading">
+          <h2 id="recent-records-heading" className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate">
+            Recent Activity
+          </h2>
+          <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
+            {recentRecords.map((record) => (
+              <li key={record.event_date + record.type} className="flex items-center justify-between px-4 py-3 text-sm">
+                <span className="font-medium text-agro-forest">{recordTypeLabels[record.type] || record.type}</span>
+                <span className="text-agro-slate">{record.event_date}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {forecastDays.length > 0 && (
         <ForecastList
