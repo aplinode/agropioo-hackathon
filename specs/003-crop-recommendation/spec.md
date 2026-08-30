@@ -134,6 +134,93 @@ After selecting a crop for the current season, the farmer is shown a suggested c
 - Revenue estimates are projections, not guarantees — UI copy must make this explicit per the "UI honesty" constitution principle.
 - Voice input/output for the recommendation flow is out of scope; text chat and form input only.
 
+## Precision & Resolved Gaps (Checklist Gate)
+
+This section closes the gaps flagged by the requirements/quality-gate checklists. Each CHK reference maps to `checklists/requirements.md` and `checklists/quality-gate.md`.
+
+### UI states & loading (CHK001, CHK002, CHK011)
+- The recommendation form shows a deterministic loading state ("Calculating your recommendations…", skeleton + spinner) while the engine runs; the wait window is bounded by **SC-001's 15 seconds**. No silent wait.
+- Each degraded upstream source gets a **distinct** disclosure banner: `weather-missing` (recommendation cannot complete → 503 + retry offer, per FR-018), `market-missing` (recommendation shown but revenue flagged `unreliable`), `soil-missing` (recommendation shown but soil confidence reduced). Copy is per-source, not a generic message.
+
+### Regenerate flow (CHK003, CHK006, CHK056)
+- Regenerate is **destructive**: a confirm dialog ("This replaces your current recommendation and its saved plan") precedes DELETE of the request. The cascade removes its 3 recommendations, the related `farm_plan_entries`, and `crop_rotation_suggestions` (FKs `ON DELETE CASCADE`). A new request is then created. Rotation suggestions are recomputed at save-time, so they are regenerated with the new recommendation.
+
+### Zero-candidate & budget-too-low (CHK004, CHK015, CHK033, CHK041)
+- The engine filters candidates by season window + budget bracket. If **zero** crops pass, it returns `422` with code `no_candidates` and names the `lowest_viable_bracket`.
+- `lowest_viable_bracket` is **computed**, not per-farm-size: the lowest bracket (low < medium < high < very_high) that admits ≥ 1 candidate crop from the catalogue for the chosen season. It is a fixed label from the 4-bracket set.
+- UI shows this warning **before** producing recommendations when the selected bracket filters out all crops (T020 lowest-viable-bracket warning).
+
+### History, save collision, multi-farm (CHK005, CHK010, CHK037)
+- Past (season, year) recommendations are browsable from the farm records page via `GET /api/crops` (T014/T018).
+- `POST /api/crops/save` **upserts** keyed on `(farm_id, target_season, target_year)`; an existing entry is silently replaced (delete + insert). The client shows a one-line "Replaced your previous plan for this season" note.
+- Recommendations are generated **one farm at a time** via the farm selector; a "recommend for all my farms" batch flow is deferred.
+
+### Concurrent requests (CHK007, CHK022, CHK024)
+- The DB `UNIQUE (farm_id, target_season, target_year)` constraint is the authority. The handler checks existence first; on a rare concurrent double-submit, the second insert hits the UNIQUE constraint and is returned as `409 recommendation_exists`. No duplicate rows can ever exist.
+
+### Comparison chart a11y & failure (CHK008, CHK006-quality, CHK037-quality, CHK036)
+- The revenue chart exposes `role="img"` + `aria-label` summarising each crop's revenue, is keyboard-focusable, and respects `prefers-reduced-motion`.
+- On missing/extreme data the chart falls back to a plain HTML table + text list; the page never crashes.
+
+### Catalogue admin UI (CHK009, CHK010-quality)
+- Admin-editing of the crop catalogue is **explicitly deferred** to post-demo scope. Demo catalogue is seeded via migration and updated by future migrations only.
+
+### Quantified thresholds & taxonomies
+- **"Recent" market window (CHK012, CHK017-quality)**: trend uses the last **4 weeks (28 days)**; volatility uses the last **8 weeks**.
+- **Stale market data (CHK033-quality, CHK032)**: a price point older than **14 days** is `degraded` (not missing) — `market_confidence='degraded'`, `revenue_confidence` lowered; fully missing → `unreliable`.
+- **Revenue confidence bands (CHK013, CHK012-quality)** criteria:
+  - `high`: all three sources full AND price volatility < 0.15.
+  - `medium`: all sources present, or exactly one degraded but still usable; volatility 0.15–0.30.
+  - `low`: one source missing/degraded; volatility 0.30–0.40.
+  - `unreliable`: market missing OR volatility > 0.40.
+- **Risk taxonomy (CHK019, CHK015-quality)**: fixed set, each an i18n key in `risk_factors` — `price_volatility`, `pest_pressure`, `weather`, `water_stress`, `input_cost`.
+- **Generic rotation label (CHK018, CHK018-quality)**: translation key `app.crops.rotation.generic` → "Generic advice — based on common practice, not your field history."
+- **Irrigation mismatch (CHK014, CHK036-quality)**: the crop **still appears** in the top-3 with a clear mismatch warning banner and a reduced suitability score; it is never silently excluded.
+- **Soil impact in comparison (CHK021, CHK020-quality)**: not a stored field — the comparison view derives `soil_impact` from `crops.category` (`pulse` → "improves soil / nitrogen-fixing"; `cash` → "neutral to depleting"; others → "neutral"). Consistent with FR-009.
+- **Plain-language level (CHK054)**: farmer-first copy targeting roughly grade-5 reading level; implementer judgement within the farmer-first principle.
+
+### Consistency reconciliations
+- **Soil-type count (CHK020, CHK019-quality)**: the spec's "6–10" is an intentional range; the canonical taxonomy is **8 named types + `other` = 9 enum values** (research §7, data-model `soil_type_enum`). No conflict.
+- **Water requirement (CHK025, CHK025-quality)**: `crops.water_requirement_level` ('low'/'medium'/'high') is the single concept used by both FR-007 (recommendation) and FR-009 (comparison). Consistent.
+- **Season ↔ calendar mapping (CHK022, CHK021-quality)**: Pakistan agricultural seasons mapped to months (demo calendar):
+  - `winter` (rabi): Nov–Feb · `summer` (zaid): Mar–Jun · `rainy` (kharif/monsoon): Jun–Sep · `autumn`: Sep–Oct · `spring`: Feb–Mar · `windy` (lu winds): May–Jun.
+  - A farmer may request any season within `target_year` range (current −1 .. +2), including one already started.
+- **data_sources_used vs confidence (CHK055)**: `weather_confidence` / `market_confidence` / `soil_confidence` are independent per-source assessments; `data_sources_used` is derived from them (any source whose confidence ≠ `missing`).
+
+### Outside-Pakistan geofence (CHK039, CHK035-quality)
+- Bounding box: latitude **23.5–37.0**, longitude **60.5–77.0**. `recommendCrops()` rejects coordinates outside this box with `422` code `outside_pakistan` before scoring (T012a).
+
+### "Other" soil lookup failure (CHK040, CHK031-quality)
+- If the farmer picks `other` AND the district is absent from `soil_profiles`, fall back to a **national default** soil type (`loamy`) with explicit disclosure "Based on a national estimate, not your region."
+
+### Weather partial vs total failure (CHK042, CHK034-quality)
+- Partial weather (e.g., temperature present, rainfall absent) → `weather_confidence='degraded'`, `weather_fit` computed from available dimensions, recommendation still produced.
+- Total weather failure with no cached advisory → `503 service_unavailable` + retry offer (FR-018).
+
+### Success-criteria nature (CHK025-quality, CHK026, CHK027, CHK028, CHK029, CHK030, CHK029-quality, CHK031)
+- **SC-001's 15s is end-to-end** (including network); server-side scoring target is < 100 ms (plan Technical Context).
+- **SC-002, SC-003, SC-004, SC-005, SC-006 are aspirational targets**, not hard automated gates. SC-002/SC-004/SC-006 require analytics/feedback not in demo scope; they are measured post-demo via manual review / follow-up survey. SC-005 is verifiable from response `data_sources_used` metadata on every response.
+
+### Cross-session & lifecycle (CHK032, CHK034, CHK035, CHK038, CHK043)
+- Switching the selected farm mid-form **resets** the form state (client component).
+- Deleting/archiving a farm cascades (FKs) to its requests, recommendations, plan entries, and rotation suggestions.
+- Rotation uses the **most recent** past crop only (latest season/year); multiple history rows do not all influence the plan.
+- No impossible budget×farm-size combinations; budget brackets are independent of farm size.
+
+### Non-functional & security (CHK044, CHK045, CHK046, CHK047, CHK043-quality, CHK044-quality, CHK045-quality, CHK046-quality, CHK047-quality)
+- `GET /api/crops/catalogue` target < 500 ms (small static reference set, cacheable).
+- Recommendations retained for the account's lifetime; no purge in demo; removed only via farm cascade-delete.
+- Rate limit `cropsIp` = 20/hr/IP (contract) also caps **per account** at 20/hr.
+- `< 2 MB client JS delta` is a plan implementation budget, not a separate spec requirement (traceable to Technical Context).
+- All inputs Zod-validated; uniform `{ error: { code, message } }` shape; outdoor-mobile a11y (contrast ≥ 4.5:1, touch ≥ 44×44px, no 320px scroll) — all per constitution.
+
+### Dependencies & integration contracts (CHK048, CHK049, CHK050, CHK051, CHK052, CHK053, CHK049-quality, CHK048-quality, CHK050-quality, CHK051-quality, CHK052-quality, CHK053-quality)
+- **Weather (Feature #3)**: reuse `getForecastForLocation(lat, lon)` returning `{ current, daily: [{ date, tempAvg, rainfall }] }` (research §3).
+- **Mandi (Feature #4)**: static `crop_price_trends` shape (`crop_id, observed_at, price_per_maan_pkr, trend, volatility`) is the swap-in contract for live per-crop series; crop engine is read-only against it.
+- **Soil Health Card**: research §1 **rejected** the live API (no documented public endpoint); static `soil_profiles` lookup is the decision, swappable later without schema change.
+- **Charting library**: mandates verifying the mandi feature's approved choice; if none approved, `comparison-chart.tsx` falls back to pure-CSS bars (T025). Open approval item tracked in plan Risks.
+- Cross-feature types imported from `lib/weather` / `lib/prices` api-types; the static fallback decouples the crop engine from upstream churn.
+
 ## Out of Scope
 
 - Hardware-based soil sensing or satellite-derived soil analysis (satellite monitoring is a separate feature).

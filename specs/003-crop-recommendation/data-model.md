@@ -228,6 +228,14 @@ Used as a **demo-only fallback** for market price data when the Mandi Price Trac
 - `expected_revenue_per_acre_pkr ≥ 0`
 - All score fields ∈ [0, 1]
 
+**Revenue confidence band criteria** (resolves checklist CHK013 / CHK012-quality):
+- `high`: all three sources (`weather`, `market`, `soil`) confidence = `full` AND price volatility < 0.15.
+- `medium`: all sources present (confidence `full` or `degraded` but usable); volatility 0.15–0.30.
+- `low`: exactly one source `missing`/`degraded`; volatility 0.30–0.40.
+- `unreliable`: market source `missing` OR volatility > 0.40.
+
+**Risk taxonomy** (resolves checklist CHK019 / CHK015-quality): `risk_factors` is drawn from a fixed set of i18n keys — `price_volatility`, `pest_pressure`, `weather`, `water_stress`, `input_cost`.
+
 ---
 
 ### 13. `farm_plan_entries` — saved recommendation per (farm, season, year)
