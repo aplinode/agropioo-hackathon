@@ -1012,7 +1012,11 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.detect.healthy.causes": "اس پتے پر کوئی مرض نہیں ملا۔",
   "app.detect.healthy.steps.0": "کوئی علاج کی ضرورت نہیں۔ معمولی دیکھ بھال جاری رکھیں۔",
 
-  /* ── Mandi Price Tracker ─────────────────────────────── */
+    /* ── Weather ─────────────────────────────────────────── */
+  "app.weather.pageTitle": "موسم",
+  "app.weather.noData": "آپ کے فارم مقام کے لیے موسم کی پیشن گوئیاں جلد آرہی ہیں۔ اپنا فارم مقام سیٹ کرنے کے بعد دوبارہ چیک کریں۔",
+
+/* ── Mandi Price Tracker ─────────────────────────────── */
   "app.prices.eyebrow": "منڈی کی قیمتیں",
   "app.prices.title": "بیچنے سے پہلے قیمت جانیں",
   "app.prices.description": "آج کی قیمتیں قریبی منڈیوں سے، ہولڈ یا سیل کی سادہ رائے کے ساتھ۔",

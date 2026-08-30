@@ -16,6 +16,7 @@ import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle"
 import type { AdvisorBundle } from "@/app/(farmer)/(dashboard)/advisor/advisor-bundle";
 import type { DetectBundle } from "@/app/(farmer)/(dashboard)/detect/detect-bundle";
 import type { PricesBundle } from "@/app/(farmer)/(dashboard)/prices/prices-bundle";
+import type { WeatherBundle } from "@/app/(farmer)/(dashboard)/weather/weather-bundle";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -150,7 +151,7 @@ export async function getShellBundle() {
 }
 
 /**
- * Flat translation bundle for the client DashboardView (UI chrome + demo data).
+ * Flat translation bundle for the client DashboardView (UI chrome).
  * Server-only function — result crosses the RSC boundary as plain props.
  */
 export async function getDashboardBundle(): Promise<DashboardBundle> {
@@ -194,43 +195,8 @@ export async function getDashboardBundle(): Promise<DashboardBundle> {
     checklistProgress: t("app.dashboard.checklistProgress").text,
     dismissChecklist: t("app.dashboard.aria.dismissChecklist").text,
     setupProgress: t("app.dashboard.aria.setupProgress").text,
-    demoFooter: t("app.dashboard.demoFooter").text,
     languageLabel: t("app.dashboard.languageLabel").text,
     signOut: t("app.shell.signOut").text,
-    demo: {
-      todayLabel: t("app.dashboard.demo.todayLabel").text,
-      location: t("app.dashboard.demo.location").text,
-      advisoryCrop: t("app.dashboard.demo.advisoryCrop").text,
-      advisoryStage: t("app.dashboard.demo.advisoryStage").text,
-      advisoryAction: t("app.dashboard.demo.advisoryAction").text,
-      advisoryWhy: t("app.dashboard.demo.advisoryWhy").text,
-      seasonAction: t("app.dashboard.demo.seasonAction").text,
-      seasonWhy: t("app.dashboard.demo.seasonWhy").text,
-      weatherLocation: t("app.dashboard.demo.weatherLocation").text,
-      weatherCondition: t("app.dashboard.demo.weatherCondition").text,
-      rainNote: t("app.dashboard.demo.rainNote").text,
-      alertWhitefly: t("app.dashboard.demo.alertWhitefly").text,
-      alertRain: t("app.dashboard.demo.alertRain").text,
-      alertPrice: t("app.dashboard.demo.alertPrice").text,
-      farm1Name: t("app.dashboard.demo.farm1Name").text,
-      farm1Location: t("app.dashboard.demo.farm1Location").text,
-      farm1Crops: t("app.dashboard.demo.farm1Crops").text,
-      farm1Stage: t("app.dashboard.demo.farm1Stage").text,
-      farm2Name: t("app.dashboard.demo.farm2Name").text,
-      farm2Location: t("app.dashboard.demo.farm2Location").text,
-      farm2Crops: t("app.dashboard.demo.farm2Crops").text,
-      farm2Stage: t("app.dashboard.demo.farm2Stage").text,
-      farm3Name: t("app.dashboard.demo.farm3Name").text,
-      farm3Location: t("app.dashboard.demo.farm3Location").text,
-      farm3Crops: t("app.dashboard.demo.farm3Crops").text,
-      farm3Stage: t("app.dashboard.demo.farm3Stage").text,
-      checklistAdvisor: t("app.dashboard.demo.checklistAdvisor").text,
-      checklistDetect: t("app.dashboard.demo.checklistDetect").text,
-      actionAdvisor: t("app.dashboard.demo.actionAdvisor").text,
-      actionScan: t("app.dashboard.demo.actionScan").text,
-      actionPrices: t("app.dashboard.demo.actionPrices").text,
-      actionRecord: t("app.dashboard.demo.actionRecord").text,
-    },
   };
 }
 
@@ -307,7 +273,6 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
         saving: t("app.farms.new.buttons.saving").text,
         save: t("app.farms.new.buttons.save").text,
       },
-      demoNotice: t("app.farms.new.demoNotice").text,
       success: {
         heading: t("app.farms.new.success.heading").text,
         description: t("app.farms.new.success.description").text,
@@ -346,7 +311,6 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
         pageTitle: t("app.records.farmRecords.pageTitle").text,
         heading: t("app.records.farmRecords.heading").text,
         description: t("app.records.farmRecords.description").text,
-        demoNotice: t("app.records.farmRecords.demoNotice").text,
       },
       new: {
         pageTitle: t("app.records.new.pageTitle").text,
@@ -370,7 +334,6 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
           saving: t("app.records.new.buttons.saving").text,
           save: t("app.records.new.buttons.save").text,
         },
-        demoNotice: t("app.records.new.demoNotice").text,
         success: {
           heading: t("app.records.new.success.heading").text,
           description: t("app.records.new.success.description").text,
@@ -575,5 +538,15 @@ export function siteHeaderStrings(t: Translator) {
     closeMenu: t("nav.closeMenu").text,
     languageSwitcher: t("common.languageSwitcherLabel").text,
     dashboard: t("nav.dashboard").text,
+  };
+}
+
+export async function getWeatherBundle(): Promise<WeatherBundle> {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    title: t("app.weather.pageTitle").text,
+    noData: t("app.weather.noData").text,
   };
 }

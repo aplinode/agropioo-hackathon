@@ -1,32 +1,51 @@
 import { tool } from "@openai/agents";
 import { z } from "zod";
-import { demoPrices, demoMandi } from "@/app/(farmer)/(dashboard)/prices/demo-data";
+import { query } from "@/lib/db";
 
 export const getMarketPrices = tool({
   name: "get_market_prices",
   description:
     "Get current mandi (market) prices for agricultural commodities. Returns price per 40 kg (1 maund), weekly trend, and a sell/hold signal. Use this when the farmer asks about crop prices, mandi rates, or whether to sell.",
   parameters: z.object({
-    crop: z.string().optional().describe("Crop name to look up (wheat, cotton, sugarcane, maize). Omit for all available prices."),
-    market: z.string().optional().describe("Market/mandi name (currently only Multan available)"),
+    crop: z.string().optional().describe("Crop name to look up (wheat, cotton, sugarcane, maize, rice, gram, etc.). Omit for all available prices."),
+    market: z.string().optional().describe("Market/mandi name (e.g. Multan, Lahore, Faisalabad). Omit for all markets."),
   }),
-  async execute({ crop }) {
-    let prices = demoPrices;
+  async execute({ crop, market }) {
+    const rows = await query<{
+      crop_name: string;
+      mandi_name: string;
+      modal_price: number;
+      min_price: number;
+      max_price: number;
+      date: string;
+    }>(`
+      select distinct on (p.crop_id, p.mandi_id)
+             c.name_en as crop_name,
+             m.name_en as mandi_name,
+             p.modal_price,
+             p.min_price,
+             p.max_price,
+             p.date
+      from mandi_prices p
+      join crops c on c.id = p.crop_id
+      join mandis m on m.id = p.mandi_id
+      where ($1::text is null or c.name_en ilike '%' || $1 || '%')
+        and ($2::text is null or m.name_en ilike '%' || $2 || '%')
+      order by p.crop_id, p.mandi_id, p.date desc
+      limit 20
+    `, [crop ?? null, market ?? null]);
 
-    if (crop) {
-      const filtered = prices.filter(p =>
-        p.crop.toLowerCase().includes(crop.toLowerCase()) ||
-        p.urduName.includes(crop)
-      );
-      if (filtered.length > 0) prices = filtered;
+    if (rows.length === 0) {
+      return `No current mandi price data found${crop ? ` for "${crop}"` : ""}${market ? ` at "${market}"` : ""}. Prices are updated daily from major mandis across Pakistan.`;
     }
 
-    if (prices.length === 0) {
-      return `No price data available for "${crop}". Available crops: ${demoPrices.map(p => p.crop).join(", ")}. Mandi: ${demoMandi}.`;
-    }
+    const lines = rows.map((r) => {
+      const price = Number(r.modal_price).toLocaleString("en-PK");
+      const min = Number(r.min_price).toLocaleString("en-PK");
+      const max = Number(r.max_price).toLocaleString("en-PK");
+      return `• ${r.crop_name} at ${r.mandi_name}: Rs ${price}/maund (range Rs ${min}–${max}/maund, dated ${r.date})`;
+    });
 
-    return `Mandi prices at ${demoMandi}:\n${prices.map(p =>
-      `• ${p.crop} (${p.urduName}): Rs ${p.pricePer40kg.toLocaleString()}/40kg (${p.direction === "up" ? "↑" : "↓"} Rs ${Math.abs(p.changeRs)} this week). Signal: ${p.signal} — ${p.signalNote}`
-    ).join("\n")}\n\nNote: Prices are indicative rates and may vary at the actual mandi.`;
+    return `Current mandi prices${crop ? ` for ${crop}` : ""}${market ? ` at ${market}` : ""}:\n${lines.join("\n")}\n\nPrices are indicative and may vary at the actual mandi. Ask for a sell/hold recommendation if you want timing advice.`;
   },
 });

@@ -147,37 +147,35 @@ async function seedMandis(): Promise<void> {
 
 async function seedSamplePrices(): Promise<void> {
   const today = new Date();
-  const mandis = await query<{ id: string; district: string }>(`select id, district from mandis`);
-  const cropIds = CROPS.map((c) => c.id);
+  const dayCount = 90;
 
-  let inserted = 0;
+  await query(`truncate table mandi_prices restart identity`);
+
   await withTransaction(async (client) => {
-    for (let dayOffset = 90; dayOffset >= 0; dayOffset--) {
+    for (let dayOffset = dayCount; dayOffset >= 0; dayOffset--) {
       const date = new Date(today);
       date.setDate(date.getDate() - dayOffset);
       const dateStr = date.toISOString().split("T")[0];
-      const isSunday = date.getDay() === 0;
 
-      for (const mandi of mandis) {
-        for (const cropId of cropIds) {
-          const base = 2000 + Math.round(Math.random() * 4000);
-          const modal = base + Math.round((Math.random() - 0.5) * 400);
-          const min = modal - Math.round(Math.random() * 200);
-          const max = modal + Math.round(Math.random() * 200);
-          await client.query(
-            `insert into mandi_prices (mandi_id, crop_id, date, modal_price, min_price, max_price, source, is_holiday)
-             values ($1,$2,$3,$4,$5,$6,'govt_api',$7)
-             on conflict (mandi_id, crop_id, date) do update set
-               modal_price=excluded.modal_price, min_price=excluded.min_price,
-               max_price=excluded.max_price, is_holiday=excluded.is_holiday`,
-            [mandi.id, cropId, dateStr, modal, min, max, isSunday]
-          );
-          inserted++;
-        }
-      }
+      await client.query(
+        `insert into mandi_prices (mandi_id, crop_id, date, modal_price, min_price, max_price, source, is_holiday)
+         select m.id, c.id, $1::date,
+           floor(((2000 + random() * 4000)::numeric) * 100) / 100,
+           floor(((2000 + random() * 4000 - random() * 200)::numeric) * 100) / 100,
+           floor(((2000 + random() * 4000 + random() * 200)::numeric) * 100) / 100,
+           'govt_api', extract(dow from $1::date) = 0
+         from mandis m
+         cross join crops c
+         on conflict (mandi_id, crop_id, date) do update set
+           modal_price=excluded.modal_price, min_price=excluded.min_price,
+           max_price=excluded.max_price, is_holiday=excluded.is_holiday`,
+        [dateStr]
+      );
     }
   });
-  console.log(`Seeded ${inserted} sample price rows.`);
+
+  const [{ count }] = await query<{ count: string }>(`select count(*)::text as count from mandi_prices`);
+  console.log(`Seeded ${count} sample price rows.`);
 }
 
 async function main(): Promise<void> {

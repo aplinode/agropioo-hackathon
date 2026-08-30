@@ -950,7 +950,11 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.advisor.aria.sendMessage": "پیام ولېستل",
   "app.advisor.aria.chatMessages": "د چیټ پیامونه",
 
-  /* ── Mandi Price Tracker ─────────────────────────────── */
+    /* ── Weather ─────────────────────────────────────────── */
+  "app.weather.pageTitle": "Weather",
+  "app.weather.noData": "Weather forecasts for your farm location are coming soon. Check back after you have set your farm location.",
+
+/* ── Mandi Price Tracker ─────────────────────────────── */
   "app.prices.eyebrow": "Mandi prices",
   "app.prices.title": "Know the rate before you sell",
   "app.prices.description": "Today's rates from nearby mandis, with a plain word on holding or selling.",

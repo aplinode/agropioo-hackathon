@@ -20,13 +20,15 @@ import {
   XIcon,
   LogOutIcon,
 } from "@/components/icons";
-import { getDemoData } from "./demo-data";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { LatinInline } from "@/components/latin-inline";
 import type { Locale } from "@/lib/i18n/config";
 import type { DashboardBundle } from "./dashboard-bundle";
+import { demoNotifications } from "../notifications/demo-data";
 
 const CHECKLIST_DISMISS_KEY = "agropioo-checklist-dismissed";
+
+const topAlerts = demoNotifications.slice(0, 3);
 
 export { LatinInline };
 
@@ -627,24 +629,24 @@ export default function DashboardView({
               {bundle.setupChecklist}
             </h2>
             <span className="font-mono text-xs text-agro-slate">
-              {bundle.checklistProgress.replace("{done}", String(completedCount)).replace("{total}", String(checklistItems.length))}
+              {bundle.checklistProgress.replace("{done}", String(completedCount)).replace("{total}", String(CHECKLIST_ITEMS.length))}
             </span>
           </div>
           <div
             className="mt-3 h-1.5 overflow-hidden rounded-full bg-white"
             role="progressbar"
             aria-valuemin={0}
-            aria-valuemax={checklistItems.length}
+            aria-valuemax={CHECKLIST_ITEMS.length}
             aria-valuenow={completedCount}
             aria-label={bundle.setupProgress}
           >
             <div
               className="h-full rounded-full bg-agro-canopy transition-[width] duration-300"
-              style={{ width: `${(completedCount / checklistItems.length) * 100}%` }}
+              style={{ width: `${(completedCount / CHECKLIST_ITEMS.length) * 100}%` }}
             />
           </div>
           <ul className="mt-4 space-y-1">
-            {checklistItems.map((item, index) => {
+            {CHECKLIST_ITEMS.map((item, index) => {
               const done = index < completedCount;
               return (
                 <li key={item.id}>

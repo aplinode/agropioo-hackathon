@@ -1182,6 +1182,10 @@ export const en = {
   "app.detect.disease.tomato_mosaic_virus.steps.1": "Remove and destroy infected plants.",
   "app.detect.disease.tomato_mosaic_virus.steps.2": "Control aphid vectors and weeds.",
 
+  /* ── Weather ─────────────────────────────────────────── */
+  "app.weather.pageTitle": "Weather",
+  "app.weather.noData": "Weather forecasts for your farm location are coming soon. Check back after you have set your farm location.",
+
   /* ── Mandi Price Tracker ─────────────────────────────── */
   "app.prices.eyebrow": "Mandi prices",
   "app.prices.title": "Know the rate before you sell",
