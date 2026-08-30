@@ -2,14 +2,14 @@
   "version": "0.8.8.dev0",
   "integration_state_schema": 1,
   "installed_integrations": [
-    "kilocode"
+    "agy"
   ],
   "integration_settings": {
-    "kilocode": {
+    "agy": {
       "script": "ps",
-      "invoke_separator": "."
+      "invoke_separator": "-"
     }
   },
-  "integration": "kilocode",
-  "default_integration": "kilocode"
+  "integration": "agy",
+  "default_integration": "agy"
 }
