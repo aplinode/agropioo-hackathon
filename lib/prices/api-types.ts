@@ -17,6 +17,11 @@ export const createPriceSchema = z.object({
   is_holiday: z.coerce.boolean().default(false),
 });
 
+export const predictionQuerySchema = z.object({
+  crop_id: z.string().min(1, "crop_id is required"),
+  mandi_id: z.string().min(1, "mandi_id is required"),
+});
+
 export type CurrentPriceRow = {
   mandi_id: string;
   mandi_name: string;

@@ -82,10 +82,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T016 [P] [US3] Implement Holt-Winters triple exponential smoothing and linear trend time-series forecasting algorithm in `lib/prices/forecast.ts`
-- [ ] T017 [US3] Implement `GET /api/prices/predictions` Route Handler returning 14-day daily forecast points and 95% confidence bounds in `app/api/prices/predictions/route.ts`
-- [ ] T018 [P] [US3] Create 14-day discrete prediction chart component `components/prices/prediction-chart.tsx` with upper/lower confidence band shading
-- [ ] T019 [US3] Integrate prediction chart and confidence warning badge into `app/(farmer)/prices/page.tsx`
+- [X] T016 [P] [US3] Implement Holt-Winters triple exponential smoothing and linear trend time-series forecasting algorithm in `lib/prices/forecast.ts`
+- [X] T017 [US3] Implement `GET /api/prices/predictions` Route Handler returning 14-day daily forecast points and 95% confidence bounds in `app/api/prices/predictions/route.ts`
+- [X] T018 [P] [US3] Create 14-day discrete prediction chart component `components/prices/prediction-chart.tsx` with upper/lower confidence band shading
+- [X] T019 [US3] Integrate prediction chart and confidence warning badge into `app/(farmer)/prices/page.tsx`
 
 **Checkpoint**: User Story 3 complete - 14-day price trend predictions working independently
 

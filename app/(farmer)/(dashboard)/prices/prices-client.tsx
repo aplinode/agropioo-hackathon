@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import MandiPriceCard, { type MandiPrice } from "@/components/prices/mandi-price-card";
 import MarketComparisonTable from "@/components/prices/market-comparison-table";
+import PredictionChart from "@/components/prices/prediction-chart";
 import { SearchIcon } from "@/components/icons";
 import type { PricesBundle } from "./prices-bundle";
+import type { ForecastPoint } from "@/lib/prices/forecast";
 
 type CropOption = { id: string; name_en: string };
 
@@ -13,6 +15,11 @@ type PricesResponse = {
   district: string | null;
   is_fallback_hub: boolean;
   prices: MandiPrice[];
+};
+
+type PredictionResponse = {
+  predictions: ForecastPoint[];
+  volatility_warning: boolean;
 };
 
 interface PricesClientProps {
@@ -26,6 +33,8 @@ export default function PricesClient({ bundle, crops, initial }: PricesClientPro
   const [searchQuery, setSearchQuery] = useState("");
   const [prices, setPrices] = useState<PricesResponse>(initial);
   const [isPending, startTransition] = useTransition();
+  const [prediction, setPrediction] = useState<PredictionResponse | null>(null);
+  const [predictionPending, setPredictionPending] = useState(false);
 
   async function loadPrices(params: { crop_id?: string; query?: string }) {
     startTransition(async () => {
@@ -53,6 +62,44 @@ export default function PricesClient({ bundle, crops, initial }: PricesClientPro
     setSelectedCrop("");
     loadPrices({ query: searchQuery });
   }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      if (!selectedCrop || prices.prices.length === 0) {
+        if (!cancelled) setPrediction(null);
+        return;
+      }
+
+      const best = prices.prices.reduce((max, p) =>
+        p.modal_price > max.modal_price ? p : max, prices.prices[0]);
+      if (!best) {
+        if (!cancelled) setPrediction(null);
+        return;
+      }
+
+      if (!cancelled) setPredictionPending(true);
+      const url = new URL("/api/prices/predictions", window.location.origin);
+      url.searchParams.set("crop_id", best.crop_id);
+      url.searchParams.set("mandi_id", best.mandi_id);
+      const res = await fetch(url.toString(), { credentials: "same-origin" });
+      if (!cancelled) {
+        setPredictionPending(false);
+        if (res.ok) {
+          const data = (await res.json()) as PredictionResponse;
+          setPrediction(data);
+        } else {
+          setPrediction(null);
+        }
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCrop, prices.prices]);
 
   return (
     <div className="space-y-6">
@@ -131,6 +178,22 @@ export default function PricesClient({ bundle, crops, initial }: PricesClientPro
           </div>
           {selectedCrop ? (
             <MarketComparisonTable prices={prices.prices} bundle={bundle} />
+          ) : null}
+          {selectedCrop && prediction ? (
+            <div className="space-y-3">
+              {prediction.volatility_warning ? (
+                <div className="rounded-xl bg-agro-wheat/20 p-3 text-sm font-semibold text-agro-earth">
+                  {bundle.volatilityWarning}
+                </div>
+              ) : null}
+              <PredictionChart predictions={prediction.predictions} bundle={bundle} />
+            </div>
+          ) : null}
+          {selectedCrop && predictionPending ? (
+            <div className="flex items-center gap-3 rounded-2xl border border-agro-sprout bg-white p-6 text-agro-slate">
+              <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-agro-sprout border-t-agro-canopy" />
+              {bundle.loading}
+            </div>
           ) : null}
         </div>
       ) : (
