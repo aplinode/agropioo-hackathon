@@ -71,7 +71,7 @@ Final score = Σ(w_i × normalised_i) with weights tuned on the demo catalogue s
 **Rationale**:
 - Catalogue is reference data that must be queryable (filter by season, soil compatibility, irrigation needs) — flat files would be awkward.
 - Admin-editable later (consistent with constitution's admin-editable translation pattern).
-- Seeded once via migration (`db/migrations/0009_crop_catalogue.sql`); updates via future migrations.
+- Seeded once via migration (`db/migrations/0009_crop_recommendation.sql`); updates via future migrations.
 
 **Columns (sketch)**:
 - `crops`: id, name_en, name_ur, category (staple/cash/pulse/vegetable), typical_yield_per_acre, growing_duration_days, season_windows (array of the 6 seasons), water_requirement_level, labour_cost_level, market_risk_baseline.
@@ -161,7 +161,7 @@ Bracket labels are i18n keys (`app.crops.budget.*`) translated into all 8 locale
 2. Add the 8 soil-type labels, 4 budget-bracket labels, and crop names to the same catalog under `app.crops.soil.*`, `app.crops.budget.*`, `app.crops.catalogue.*`.
 3. Draft translations in the 7 non-English catalog files.
 4. Run `npm run sync:translations` to populate the `translations` table.
-5. Create `getCropsBundle()` in `lib/i18n/server.ts` following the `getWeatherBundle()` pattern.
+5. Create `getCropsBundle()` in `app/(farmer)/(dashboard)/crops/crops-bundle.ts` following the per-feature bundle pattern used by `getWeatherBundle()`.
 
 **Coverage gate**: All 8 locales must have translated values for every `app.crops.*` key before merge. RTL layout for Urdu / Pashto must render mirrored correctly (FR-016).
 

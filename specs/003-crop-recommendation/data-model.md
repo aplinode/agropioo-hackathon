@@ -18,7 +18,7 @@ CREATE TYPE season_enum AS ENUM (
 
 ### 2. Soil Type (enum)
 
-8 plain-language soil types, translated via `translations` table.
+8 plain-language soil types plus a fallback value (`other`), translated via `translations` table.
 
 ```sql
 CREATE TYPE soil_type_enum AS ENUM (

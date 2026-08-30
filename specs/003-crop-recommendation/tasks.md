@@ -3,7 +3,7 @@
 **Input**: Design documents from `/specs/003-crop-recommendation/`
 **Prerequisites**: plan.md (required), spec.md (required), research.md, data-model.md, contracts/route-handlers.md, quickstart.md
 
-**Tests**: Not explicitly requested in the feature specification. Test tasks are omitted. Manual acceptance run-through per constitution is assumed.
+**Tests**: Constitution Quality Gate mandates automated tests for Zod schemas and route handlers. Test tasks are included in Phase 2 (schema tests) and Phase 3 (route handler tests). Manual acceptance run-through per constitution covers UI verification.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -40,10 +40,12 @@ Single full-stack Next.js app. Feature code under `app/(farmer)/(dashboard)/crop
 - [ ] T006 Create shared API response types and interfaces (`CropRecommendationRequest`, `CropRecommendation`, `FarmPlanEntry`, `RotationSuggestion`, etc.) in `lib/crops/api-types.ts`
 - [ ] T007 [P] Create crop catalogue query helpers (filter by season, budget bracket; fetch by id) in `lib/crops/catalogue.ts`
 - [ ] T008 [P] Create district-to-soil-profile lookup (query `soil_profiles` by district, return dominant soil type with disclosure flag) in `lib/crops/soil-profiles.ts`
-- [ ] T009 Create the weighted multi-criteria scoring function with 5 dimensions (suitability, weather, profitability, risk, sustainability), normalisation, and configurable weights in `lib/crops/scoring.ts`
+- [ ] T009 Create the weighted multi-criteria scoring function with 5 dimensions (suitability, weather, profitability, risk, sustainability), normalisation, and configurable weights in `lib/crops/scoring.ts`. Sustainability sub-score sources: rotation fit from `crop_rotation_rules` (T011), nitrogen-fixing flag from `crops.category == 'pulse'`, water use from `crops.water_requirement_level`.
 - [ ] T010 Create plain-language reason template generator (i18n-keyed, per crop + season + soil combination) in `lib/crops/reasons.ts`
 - [ ] T011 Create rotation lookup logic (query `crop_rotation_rules`, handle past crop history exclusion, generic fallback when no history) in `lib/crops/rotation.ts`
-- [ ] T012 Create the `recommendCrops()` orchestration function that wires together validation, uniqueness check, weather fetch, market data fetch, soil lookup, catalogue filter, scoring, reason generation, and persistence in `lib/crops/engine.ts`
+- [ ] T012 Create the `recommendCrops()` orchestration function in `lib/crops/engine.ts` that wires together: validation, uniqueness check, weather fetch (reuse `lib/weather/`), market data fetch (reuse `lib/prices/` or static fallback), soil lookup, catalogue filter, scoring, reason generation, and persistence. Must include: (a) Pakistan geo-check — reject farms with coordinates outside Pakistan bounds, (b) compute `data_fresheness_seconds` as max age across upstream data sources, (c) throw a typed `WeatherUnavailableError` when weather API is completely unreachable and no cached advisory exists (route handler maps this to 503), (d) degrade gracefully with re-normalised weights when individual data sources are partially unavailable.
+- [ ] T012a [P] Write automated tests for Zod schemas (input validation, enum membership, boundary values, invalid combinations) in `lib/validation/crops.test.ts`
+- [ ] T012b [P] Write automated tests for scoring engine — verify top-3 output for 3 reference scenarios (wheat-after-cotton, rice-after-wheat, maize-after-potato) matches approved snapshots in `lib/crops/scoring.test.ts`
 
 **Checkpoint**: `recommendCrops()` can be called with mock inputs and returns a scored top-3 for a reference scenario. All lib modules import cleanly with no type errors.
 
@@ -57,17 +59,19 @@ Single full-stack Next.js app. Feature code under `app/(farmer)/(dashboard)/crop
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] Implement `POST /api/crops` route handler — validate input with Zod, call `recommendCrops()`, return 201/409/503 per contract — in `app/api/crops/route.ts`
-- [ ] T014 [P] [US1] Implement `GET /api/crops` route handler — list recommendation requests for a farm with cursor pagination per contract — in `app/api/crops/route.ts`
+- [ ] T013 [US1] Implement `POST /api/crops` route handler — validate input with Zod, call `recommendCrops()`, catch `WeatherUnavailableError` and return 503, handle 409 duplicate, return 201 on success — in `app/api/crops/route.ts`
+- [ ] T014 [P] [US1] Implement `GET /api/crops` route handler — list recommendation requests for a farm with cursor pagination per contract (same file as T013; GET export alongside POST) — in `app/api/crops/route.ts`
 - [ ] T015 [P] [US1] Implement `GET /api/crops/catalogue` route handler — return filtered crop catalogue per contract — in `app/api/crops/catalogue/route.ts`
 - [ ] T016 [P] [US1] Implement `GET /api/crops/[request_id]` route handler — fetch single request with its 3 recommendations per contract — in `app/api/crops/[request_id]/route.ts`
 - [ ] T017 [P] [US1] Implement `DELETE /api/crops/[request_id]` route handler — delete a recommendation request per contract — in `app/api/crops/[request_id]/route.ts`
 - [ ] T018 [US1] Create the recommendation landing page (Server Component) — fetch farm list for dropdown, pass i18n bundle to client component — in `app/(farmer)/(dashboard)/crops/page.tsx`
-- [ ] T019 [US1] Create the i18n bundle helper `getCropsBundle()` for server-side translation fetching in `app/(farmer)/(dashboard)/crops/crops-bundle.ts`
-- [ ] T020 [US1] Create the client-side recommendation form (farm selector, soil type dropdown, irrigation selector, budget bracket selector, submit) using `react-hook-form` + `@hookform/resolvers` with the Zod schemas from T002 — in `app/(farmer)/(dashboard)/crops/crops-client.tsx`
+- [ ] T019 [US1] Create the i18n bundle helper `getCropsBundle()` for server-side translation fetching, following the per-feature bundle pattern used by `getWeatherBundle()` — in `app/(farmer)/(dashboard)/crops/crops-bundle.ts`
+- [ ] T020 [US1] Create the client-side recommendation form (farm selector, soil type dropdown, irrigation selector, budget bracket selector, submit) using `react-hook-form` + `@hookform/resolvers` with the Zod schemas from T002. Must display a "lowest viable bracket" warning when the selected budget filters out all catalogue crops — in `app/(farmer)/(dashboard)/crops/crops-client.tsx`
 - [ ] T021 [US1] Create the recommendation result list component — renders 3 ranked cards with crop name, revenue, reason, risks, and "Save to farm plan" + "Compare" actions — in `app/(farmer)/(dashboard)/crops/crops-client.tsx` (same file, separate component)
 - [ ] T022 [US1] Create the recommendation detail page (Server Component) — fetch request by ID, render full breakdown with data-source labels and confidence — in `app/(farmer)/(dashboard)/crops/[request_id]/page.tsx`
 - [ ] T023 [US1] Implement the duplicate-recommendation flow — when a recommendation exists for (farm, season, year), show the existing result with a "Regenerate" button that calls DELETE then re-POSTs — in `app/(farmer)/(dashboard)/crops/crops-client.tsx`
+- [ ] T023a [P] [US1] Write automated tests for `POST /api/crops` route handler — auth, validation, 201 success, 409 duplicate, 503 weather unavailable in `app/api/crops/route.test.ts`
+- [ ] T023b [P] [US1] Write automated tests for `GET /api/crops` and `GET /api/crops/[request_id]` route handlers — auth, 403 cross-account, 404 not found, pagination in `app/api/crops/route.test.ts`
 
 **Checkpoint**: Farmer can navigate to `/crops`, fill the form, receive 3 recommendations, view detail, and see the duplicate-detection flow. API smoke tests from quickstart.md step 4 pass.
 
@@ -82,7 +86,7 @@ Single full-stack Next.js app. Feature code under `app/(farmer)/(dashboard)/crop
 ### Implementation for User Story 2
 
 - [ ] T024 [US2] Create the comparison view section (side-by-side table with revenue, growing duration, water requirement, market risk, soil impact, labour cost per crop) as a client component — in `app/(farmer)/(dashboard)/crops/crops-client.tsx` (separate component)
-- [ ] T025 [US2] Create the revenue comparison bar chart component using the project's approved charting library (verify mandi feature's choice; if none approved, propose one for approval) — in `app/(farmer)/(dashboard)/crops/comparison-chart.tsx`
+- [ ] T025 [US2] Create the revenue comparison bar chart component. **Prerequisite**: confirm charting library with founder (verify mandi feature's choice; if none approved, propose one per constitution's new-dependency rule before implementing). Fall back to pure-CSS horizontal bars if approval is blocked. — in `app/(farmer)/(dashboard)/crops/comparison-chart.tsx`
 - [ ] T026 [US2] Wire the "Compare crops" action from the recommendation list to open the comparison view, and allow selecting one crop from comparison to become the save target — in `app/(farmer)/(dashboard)/crops/crops-client.tsx`
 
 **Checkpoint**: From the recommendation list, tapping "Compare crops" opens the comparison view with real data in both the table and the chart. A crop selected from comparison can be saved.
@@ -98,7 +102,7 @@ Single full-stack Next.js app. Feature code under `app/(farmer)/(dashboard)/crop
 ### Implementation for User Story 3
 
 - [ ] T027 [US3] Implement `POST /api/crops/save` route handler — validate `recommendation_id`, upsert `farm_plan_entries`, compute and persist rotation suggestions per contract — in `app/api/crops/save/route.ts`
-- [ ] T028 [P] [US3] Implement `GET /api/crops/save` route handler — fetch saved farm plan entry with rotation suggestions for a (farm, season, year) per contract — in `app/api/crops/save/route.ts`
+- [ ] T028 [US3] Implement `GET /api/crops/save` route handler — fetch saved farm plan entry with rotation suggestions for a (farm, season, year) per contract (same file as T027; GET export alongside POST) — in `app/api/crops/save/route.ts`
 - [ ] T029 [US3] Add rotation suggestion display section to the recommendation detail page — renders 2–3 upcoming seasons with crop name, plain-language reason, and "generic advice" label when applicable — in `app/(farmer)/(dashboard)/crops/[request_id]/page.tsx`
 - [ ] T030 [US3] Wire the "Save to farm plan" button to call `POST /api/crops/save` and display the resulting rotation suggestions inline — in `app/(farmer)/(dashboard)/crops/crops-client.tsx`
 
@@ -146,9 +150,8 @@ Single full-stack Next.js app. Feature code under `app/(farmer)/(dashboard)/crop
 ### Parallel Opportunities
 
 - **Phase 1**: T002, T003, T004 can all run in parallel (different files, no dependencies)
-- **Phase 2**: T007 and T008 can run in parallel (different files, no dependencies)
-- **Phase 3**: T014, T015, T016, T017 can run in parallel once T013 is complete (different route files, same lib dependency)
-- **Phase 5**: T028 can run in parallel with T027 (same file but different handler, no blocking)
+- **Phase 2**: T007 and T008 can run in parallel (different files, no dependencies); T012a and T012b can run in parallel (different test files)
+- **Phase 3**: T014, T015, T016, T017 can run in parallel once T013 is complete (different route files, same lib dependency); T023a and T023b can run in parallel (different test scopes, same file)
 - **Phase 6**: T031, T032, T033 can all run in parallel (different files/concerns)
 
 ---
