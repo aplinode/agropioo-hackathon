@@ -1,114 +1,77 @@
-/* Typed demo data for the weather screen (UI-only demo build).
-   Values stay internally consistent with the dashboard's advisory
-   (rain after 2 PM, Multan, cloudy). */
+/* Demo fallback data for the weather advisory screen (spec T038). Used only when
+   the live forecast is unavailable and there is no cached advisory — keeps the
+   page honest and populated instead of blank (constitution Principle VI). */
 
-export type HourlyPoint = {
-  time: string;
-  tempC: number;
-  rainPct: number;
+export type DemoDay = {
+  date: string;
+  weather: { temp_max: number; temp_min: number; precip_mm: number; humidity: number; description: string };
+  growthStageLabel: string;
+  adviceText: string;
+  severity: "info" | "warning" | "critical";
 };
 
-export type DailyPoint = {
-  day: string;
-  condition: string;
-  hiC: number;
-  loC: number;
-  rainPct: number;
-};
-
-export type LocationWeather = {
-  label: string;
-  condition: string;
-  temperatureC: number;
-  highC: number;
-  lowC: number;
-  rainChance: number;
-  rainNote: string;
-  sprayWindow: string;
-  hourly: HourlyPoint[];
-  daily: DailyPoint[];
-};
-
-export const weatherLocations = ["multan", "sahiwal", "faisalabad"] as const;
-export type WeatherLocationId = (typeof weatherLocations)[number];
-
-export const demoWeatherByLocation: Record<WeatherLocationId, LocationWeather> = {
-  multan: {
-    label: "Multan",
-    condition: "Cloudy",
-    temperatureC: 24,
-    highC: 28,
-    lowC: 17,
-    rainChance: 80,
-    rainNote: "Rain likely after 2 PM · 80% chance",
-    sprayWindow:
-      "Spray window tomorrow: 6–10 AM. Wind stays low and leaves will be dry.",
-    hourly: [
-      { time: "9 AM", tempC: 21, rainPct: 10 },
-      { time: "11 AM", tempC: 24, rainPct: 20 },
-      { time: "1 PM", tempC: 26, rainPct: 45 },
-      { time: "3 PM", tempC: 24, rainPct: 80 },
-      { time: "5 PM", tempC: 22, rainPct: 85 },
-      { time: "7 PM", tempC: 20, rainPct: 60 },
-    ],
-    daily: [
-      { day: "Today", condition: "Cloudy, rain later", hiC: 28, loC: 17, rainPct: 80 },
-      { day: "Mon", condition: "Showers", hiC: 27, loC: 18, rainPct: 70 },
-      { day: "Tue", condition: "Partly sunny", hiC: 30, loC: 19, rainPct: 25 },
-      { day: "Wed", condition: "Sunny", hiC: 33, loC: 20, rainPct: 5 },
-      { day: "Thu", condition: "Sunny", hiC: 34, loC: 21, rainPct: 5 },
-    ],
+export const demoWeather = {
+  farmName: "North Field",
+  today: {
+    growthStageLabel: "Flowering",
+    adviceText: "Humidity favours disease — apply preventive fungicide in the dry morning window.",
+    severity: "warning" as const,
   },
-  sahiwal: {
-    label: "Sahiwal",
-    condition: "Light showers",
-    temperatureC: 23,
-    highC: 27,
-    lowC: 16,
-    rainChance: 65,
-    rainNote: "Passing showers through the evening · 65% chance",
-    sprayWindow:
-      "Hold sprays today — rain will wash them off. Tomorrow 6–10 AM looks right.",
-    hourly: [
-      { time: "9 AM", tempC: 20, rainPct: 20 },
-      { time: "11 AM", tempC: 23, rainPct: 35 },
-      { time: "1 PM", tempC: 25, rainPct: 50 },
-      { time: "3 PM", tempC: 24, rainPct: 60 },
-      { time: "5 PM", tempC: 22, rainPct: 55 },
-      { time: "7 PM", tempC: 19, rainPct: 40 },
-    ],
-    daily: [
-      { day: "Today", condition: "Light showers", hiC: 27, loC: 16, rainPct: 65 },
-      { day: "Mon", condition: "Cloudy", hiC: 28, loC: 17, rainPct: 40 },
-      { day: "Tue", condition: "Partly sunny", hiC: 31, loC: 18, rainPct: 20 },
-      { day: "Wed", condition: "Sunny", hiC: 33, loC: 20, rainPct: 5 },
-      { day: "Thu", condition: "Sunny", hiC: 34, loC: 20, rainPct: 10 },
-    ],
-  },
-  faisalabad: {
-    label: "Faisalabad",
-    condition: "Humid, building cloud",
-    temperatureC: 26,
-    highC: 31,
-    lowC: 19,
-    rainChance: 45,
-    rainNote: "Evening drizzle possible · 45% chance",
-    sprayWindow:
-      "Spray window today: finish by 11 AM before cloud builds. Avoid evening sprays.",
-    hourly: [
-      { time: "9 AM", tempC: 23, rainPct: 10 },
-      { time: "11 AM", tempC: 27, rainPct: 15 },
-      { time: "1 PM", tempC: 29, rainPct: 25 },
-      { time: "3 PM", tempC: 29, rainPct: 30 },
-      { time: "5 PM", tempC: 27, rainPct: 40 },
-      { time: "7 PM", tempC: 24, rainPct: 45 },
-    ],
-    daily: [
-      { day: "Today", condition: "Humid, cloud building", hiC: 31, loC: 19, rainPct: 45 },
-      { day: "Mon", condition: "Drizzle", hiC: 29, loC: 19, rainPct: 55 },
-      { day: "Tue", condition: "Showers", hiC: 29, loC: 20, rainPct: 60 },
-      { day: "Wed", condition: "Partly sunny", hiC: 32, loC: 21, rainPct: 20 },
-      { day: "Thu", condition: "Sunny", hiC: 34, loC: 22, rainPct: 5 },
-    ],
-  },
+  days: [
+    {
+      date: new Date().toISOString().slice(0, 10),
+      weather: { temp_max: 34, temp_min: 22, precip_mm: 0, humidity: 85, description: "Humid" },
+      growthStageLabel: "Flowering",
+      adviceText: "Humidity favours disease — apply preventive fungicide in the dry morning window.",
+      severity: "warning",
+    },
+    {
+      date: shiftDate(1),
+      weather: { temp_max: 33, temp_min: 21, precip_mm: 12, humidity: 80, description: "Rain" },
+      growthStageLabel: "Flowering",
+      adviceText: "Skip irrigation today — rain is expected. Save water and avoid waterlogging.",
+      severity: "warning",
+    },
+    {
+      date: shiftDate(2),
+      weather: { temp_max: 30, temp_min: 19, precip_mm: 2, humidity: 60, description: "Partly cloudy" },
+      growthStageLabel: "Flowering",
+      adviceText: "Good window to apply fertiliser ahead of steady weather.",
+      severity: "info",
+    },
+    {
+      date: shiftDate(3),
+      weather: { temp_max: 33, temp_min: 20, precip_mm: 0, humidity: 55, description: "Sunny" },
+      growthStageLabel: "Maturation",
+      adviceText: "Steady growth stage — keep up regular irrigation and weeding.",
+      severity: "info",
+    },
+    {
+      date: shiftDate(4),
+      weather: { temp_max: 41, temp_min: 24, precip_mm: 0, humidity: 35, description: "Hot" },
+      growthStageLabel: "Maturation",
+      adviceText: "Extreme heat — increase irrigation and avoid field work midday.",
+      severity: "warning",
+    },
+    {
+      date: shiftDate(5),
+      weather: { temp_max: 34, temp_min: 21, precip_mm: 0, humidity: 50, description: "Sunny" },
+      growthStageLabel: "Maturation",
+      adviceText: "Steady growth stage — keep up regular irrigation and weeding.",
+      severity: "info",
+    },
+    {
+      date: shiftDate(6),
+      weather: { temp_max: 32, temp_min: 18, precip_mm: 4, humidity: 65, description: "Showers" },
+      growthStageLabel: "Harvest ready",
+      adviceText: "Crops near harvest — plan the harvest for a dry day and protect ripe produce from rain.",
+      severity: "info",
+    },
+  ] as DemoDay[],
 };
+
+function shiftDate(days: number): string {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}

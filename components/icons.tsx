@@ -336,6 +336,14 @@ export function ChevronRightIcon(props: IconProps) {
   );
 }
 
+export function ChevronDownIcon(props: IconProps) {
+  return (
+    <svg {...base(props)} data-flip-rtl="">
+      <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    </svg>
+  );
+}
+
 /* ---- Farmer tool icons (prices, records, advisor) ---- */
 
 export function DropletIcon(props: IconProps) {

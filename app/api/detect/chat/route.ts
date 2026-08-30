@@ -53,23 +53,28 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!scanRow) {
-    return errorResponse("server_error", "Scan context not found for this chat.", 500);
-  }
-
-  const steps = Array.isArray(scanRow.treatment_steps)
-    ? scanRow.treatment_steps
-    : JSON.parse(scanRow.treatment_steps || "[]");
+  const diseaseName = scanRow?.disease_name ?? "Unknown";
+  const crop = scanRow?.crop ?? "Unknown crop";
+  const severity = scanRow?.severity ?? "watch";
+  const confidence = Number(scanRow?.confidence ?? 0);
+  const causes = scanRow?.causes ?? "";
+  const steps = scanRow?.treatment_steps
+    ? Array.isArray(scanRow.treatment_steps)
+      ? scanRow.treatment_steps
+      : JSON.parse(scanRow.treatment_steps || "[]")
+    : [];
+  const rescanTiming = scanRow?.rescan_timing ?? "";
+  const caution = scanRow?.caution ?? "";
 
   const agent = createDetectAgent({
-    diseaseName: scanRow.disease_name,
-    crop: scanRow.crop,
-    severity: scanRow.severity,
-    confidence: Number(scanRow.confidence),
-    causes: scanRow.causes,
+    diseaseName,
+    crop,
+    severity,
+    confidence,
+    causes,
     steps,
-    rescanTiming: scanRow.rescan_timing,
-    caution: scanRow.caution,
+    rescanTiming,
+    caution,
     locale: "en",
   });
 

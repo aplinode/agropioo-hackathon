@@ -1,183 +1,269 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SunIcon, CloudRainIcon, DropletIcon } from "@/components/icons";
 import PageHeader from "@/components/shell/page-header";
-import {
-  demoWeatherByLocation,
-  weatherLocations,
-  type WeatherLocationId,
-} from "./demo-data";
+import { requireSessionPage } from "@/lib/auth/guards";
+import { query, queryOne } from "@/lib/db";
+import { getWeatherBundle } from "@/lib/i18n/server";
+import { getAppLocale, getDictionary } from "@/lib/i18n/server";
+import type { CatalogKey } from "@/catalog";
+import { getForecast } from "@/lib/weather/openweather";
+import { buildAdvisoryDays, type GrowthStage, type Severity } from "@/lib/weather/advisory";
+import FarmSelector from "@/components/weather/FarmSelector";
+import AdvisoryCard from "@/components/weather/AdvisoryCard";
+import ForecastList from "@/components/weather/ForecastList";
+import AlertBanner from "@/components/weather/AlertBanner";
+import RegisterFarmForm from "@/components/weather/RegisterFarmForm";
+import { demoWeather } from "./demo-data";
+import { CROPS } from "@/lib/farms/constants";
 
-export const metadata: Metadata = {
-  title: "Weather — Agropioo",
+const DEMO_STAGE_SLUGS: Record<string, GrowthStage> = {
+  Seedling: "seedling",
+  Vegetative: "vegetative",
+  Flowering: "flowering",
+  Maturation: "maturation",
+  "Harvest ready": "harvestReady",
+  General: "generic",
 };
 
-/* Hyperlocal forecast: switch locations via query param (deep-linkable,
-   same pattern as the dashboard's ?view=empty). */
+function demoStageToSlug(label: string): GrowthStage {
+  return DEMO_STAGE_SLUGS[label] ?? "generic";
+}
+
+export const metadata: Metadata = { title: "Weather Advisory — Agropioo" };
+
+type FarmRow = {
+  id: string;
+  name: string;
+  primary_crop: string | null;
+  sowing_date: string | null;
+  crops: string[];
+  lat: number;
+  lng: number;
+};
+
+function capitalize(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 export default async function WeatherPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const session = await requireSessionPage();
+  const bundle = await getWeatherBundle();
+
+  const farms = await query<FarmRow>(
+    `SELECT id, name, primary_crop, sowing_date, crops, lat, lng
+     FROM farms WHERE account_id = $1 AND archived_at IS NULL
+     ORDER BY created_at DESC`,
+    [session.accountId],
+  );
+  const farmList = farms ?? [];
+
+  if (farmList.length === 0) {
+    return (
+      <div className="pt-1">
+        <PageHeader eyebrow={bundle.eyebrow} title={bundle.pageTitle} description={bundle.description} />
+        <section className="mt-5 rounded-3xl border border-agro-sprout bg-white p-6 text-center">
+          <h2 className="text-lg font-semibold text-agro-forest">{bundle.registerTitle}</h2>
+          <p className="mt-1 text-sm text-agro-slate">{bundle.registerBody}</p>
+          <Link
+            href="/farms/new"
+            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
+          >
+            {bundle.registerCta}
+          </Link>
+        </section>
+      </div>
+    );
+  }
+
   const params = await searchParams;
-  const requested = typeof params.loc === "string" ? params.loc : "multan";
-  const locationId: WeatherLocationId = weatherLocations.includes(
-    requested as WeatherLocationId
-  )
-    ? (requested as WeatherLocationId)
-    : "multan";
-  const weather = demoWeatherByLocation[locationId];
+  const requested = typeof params.farm === "string" ? params.farm : null;
+  const selected =
+    farmList.find((f) => f.id === requested) ??
+    farmList.find((f) => f.primary_crop) ??
+    farmList[0];
+
+  const stageLabels: Record<GrowthStage, string> = {
+    seedling: bundle.stages.seedling,
+    vegetative: bundle.stages.vegetative,
+    flowering: bundle.stages.flowering,
+    maturation: bundle.stages.maturation,
+    harvestReady: bundle.stages.harvestReady,
+    generic: bundle.stages.generic,
+  };
+  const severityLabels: Record<Severity, string> = {
+    info: bundle.severity.info,
+    warning: bundle.severity.warning,
+    critical: bundle.severity.critical,
+  };
+
+  const farmOptions = farmList.map((f) => ({
+    id: f.id,
+    name: f.name,
+    cropLabel: capitalize(f.primary_crop ?? f.crops?.[0] ?? ""),
+  }));
+
+  // No weather profile yet → prompt the farmer to register crop + sowing date.
+  if (!selected.primary_crop) {
+    return (
+      <div className="pt-1">
+        <PageHeader eyebrow={bundle.eyebrow} title={bundle.pageTitle} description={bundle.description} />
+        <div className="mt-5">
+          <FarmSelector farms={farmOptions} selectedId={selected.id} label={bundle.farmSelectorLabel} />
+        </div>
+        <RegisterFarmForm
+          farmId={selected.id}
+          cropOptions={[...(CROPS as readonly string[])]}
+          strings={bundle.registerForm}
+        />
+      </div>
+    );
+  }
+
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const forecast = await getForecast(Number(selected.lat), Number(selected.lng));
+
+  let todayAdvice: { growth_stage: GrowthStage; advice_text: string; severity: Severity } | null = null;
+  let forecastDays: Parameters<typeof ForecastList>[0]["days"] = [];
+
+  if (forecast) {
+    const advisoryDays = buildAdvisoryDays(selected.primary_crop, selected.sowing_date, forecast);
+    forecastDays = advisoryDays.map((d) => ({
+      date: d.date,
+      weather: d.weather,
+      growth_stage: d.growth_stage,
+      advice_text: t(d.advice_key as CatalogKey).text,
+      severity: d.severity,
+    }));
+    const todays = advisoryDays.find((d) => d.date === today) ?? advisoryDays[0];
+    todayAdvice = {
+      growth_stage: todays.growth_stage,
+      advice_text: t(todays.advice_key as CatalogKey).text,
+      severity: todays.severity,
+    };
+
+    // Persist today's advisory so history accumulates (one row per farm per day).
+    const snapshot = JSON.stringify({ source: forecast.source, days: advisoryDays.length });
+    await queryOne(
+      `INSERT INTO weather_advisories (
+         farm_id, account_id, advisory_date, forecast_snapshot, growth_stage,
+         advice_key, advice_text, severity
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       ON CONFLICT (farm_id, advisory_date) DO UPDATE SET
+         forecast_snapshot = EXCLUDED.forecast_snapshot,
+         growth_stage = EXCLUDED.growth_stage,
+         advice_key = EXCLUDED.advice_key,
+         advice_text = EXCLUDED.advice_text,
+         severity = EXCLUDED.severity`,
+      [
+        selected.id,
+        session.accountId,
+        today,
+        snapshot,
+        todays.growth_stage,
+        todays.advice_key,
+        todayAdvice.advice_text,
+        todays.severity,
+      ],
+    );
+  } else {
+    const cached = await queryOne<{ growth_stage: string | null; advice_text: string; severity: string }>(
+      `SELECT growth_stage, advice_text, severity
+       FROM weather_advisories WHERE farm_id = $1 AND advisory_date <= $2
+       ORDER BY advisory_date DESC LIMIT 1`,
+      [selected.id, today],
+    );
+    if (cached) {
+      todayAdvice = {
+        growth_stage: (cached.growth_stage as GrowthStage) ?? "generic",
+        advice_text: cached.advice_text,
+        severity: cached.severity as Severity,
+      };
+    } else {
+      // Fully offline: show a realistic demo advisory so the page stays useful.
+      todayAdvice = {
+        growth_stage: demoStageToSlug(demoWeather.today.growthStageLabel),
+        advice_text: demoWeather.today.adviceText,
+        severity: demoWeather.today.severity,
+      };
+      forecastDays = demoWeather.days.map((d) => ({
+        date: d.date,
+        weather: d.weather,
+        growth_stage: demoStageToSlug(d.growthStageLabel),
+        advice_text: d.adviceText,
+        severity: d.severity,
+      }));
+    }
+  }
+
+  const alerts = await query<{
+    id: string;
+    name: string;
+    alert_type: string;
+    recommendation: string;
+    severity: string;
+  }>(
+    `SELECT wa.id, f.name, wa.alert_type, wa.recommendation, wa.severity
+     FROM weather_alerts wa JOIN farms f ON f.id = wa.farm_id
+     WHERE wa.account_id = $1 AND wa.read_at IS NULL AND wa.dismissed_at IS NULL
+     ORDER BY wa.created_at DESC`,
+    [session.accountId],
+  );
 
   return (
     <div className="pt-1">
-      <PageHeader
-        eyebrow="Weather"
-        title="Your fields' forecast"
-        description="The forecast that drives your advisories — irrigation calls, spray windows, and harvest days."
+      <PageHeader eyebrow={bundle.eyebrow} title={bundle.pageTitle} description={bundle.description} />
+
+      <div className="mt-5">
+        <FarmSelector farms={farmOptions} selectedId={selected.id} label={bundle.farmSelectorLabel} />
+      </div>
+
+      {!forecast && (
+        <p className="mt-4 rounded-2xl border border-agro-canopy/30 bg-agro-mint px-4 py-3 text-sm text-agro-forest">
+          <strong className="font-semibold">{bundle.weatherUnavailable}</strong> — {bundle.weatherUnavailableBody}
+        </p>
+      )}
+
+      {todayAdvice && (
+        <AdvisoryCard
+          severity={todayAdvice.severity}
+          severityLabel={severityLabels[todayAdvice.severity]}
+          growthStageLabel={stageLabels[todayAdvice.growth_stage]}
+          adviceText={todayAdvice.advice_text}
+          dateLabel={bundle.todayAdvisory}
+        />
+      )}
+
+      <AlertBanner
+        alerts={(alerts ?? []).map((a) => ({
+          id: a.id,
+          farmName: a.name,
+          severity: a.severity as Severity,
+          recommendation: a.recommendation,
+          alertType: a.alert_type,
+        }))}
+        title={bundle.alerts.title}
+        dismissLabel={bundle.alerts.dismiss}
+        noAlertsLabel={bundle.alerts.noAlerts}
+        viewAllLabel={bundle.alerts.viewAll}
+        viewAllHref="/notifications"
       />
 
-      {/* Location switch */}
-      <nav aria-label="Choose farm location" className="mt-5 flex flex-wrap gap-2">
-        {weatherLocations.map((id) => {
-          const active = id === locationId;
-          return (
-            <Link
-              key={id}
-              href={`/weather?loc=${id}`}
-              aria-current={active ? "true" : undefined}
-              className={`inline-flex min-h-11 items-center rounded-full px-4 text-sm font-semibold transition-colors ${
-                active
-                  ? "bg-agro-canopy text-white"
-                  : "border border-agro-sprout bg-white text-agro-slate hover:border-agro-canopy hover:text-agro-canopy"
-              }`}
-            >
-              {demoWeatherByLocation[id].label}
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* Current conditions */}
-      <section
-        aria-labelledby="current-heading"
-        className="relative mt-5 overflow-hidden rounded-3xl bg-agro-forest p-6 text-white sm:p-8"
-      >
-        <svg
-          className="drift pointer-events-none absolute -end-20 -top-20 h-56 w-56 text-agro-sprout/15"
-          viewBox="0 0 400 400"
-          fill="none"
-          aria-hidden="true"
-        >
-          <circle cx="200" cy="200" r="164" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 10" />
-        </svg>
-        <h2 id="current-heading" className="sr-only">
-          Current conditions in {weather.label}
-        </h2>
-        <div className="relative flex items-end justify-between gap-4">
-          <div>
-            <p className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-sprout">
-              Now · {weather.label}
-            </p>
-            <p className="mt-3 flex items-center gap-2 text-lg font-semibold">
-              <CloudRainIcon size={22} className="text-agro-sprout" />
-              {weather.condition}
-            </p>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              <span className="rounded-md bg-white/10 px-2 py-1 font-mono text-xs text-agro-sprout">
-                H {weather.highC}°
-              </span>
-              <span className="rounded-md bg-white/10 px-2 py-1 font-mono text-xs text-agro-sprout">
-                L {weather.lowC}°
-              </span>
-            </div>
-          </div>
-          <p
-            className="font-mono text-[3.75rem] font-bold leading-none tracking-tight"
-            aria-label={`${weather.temperatureC} degrees Celsius`}
-          >
-            {weather.temperatureC}°
-          </p>
-        </div>
-        <p className="relative mt-4 rounded-xl bg-white/10 px-3.5 py-2.5 text-sm leading-relaxed text-agro-sprout">
-          <DropletIcon size={15} className="me-2 inline align-text-bottom" aria-hidden="true" />
-          {weather.rainNote}
-        </p>
-      </section>
-
-      {/* Spray window tip */}
-      <section
-        aria-labelledby="spray-heading"
-        className="mt-4 rounded-2xl border border-agro-sprout bg-agro-mint p-5"
-      >
-        <h2
-          id="spray-heading"
-          className="flex items-center gap-2 font-semibold leading-snug text-agro-forest"
-        >
-          <SunIcon size={18} className="shrink-0 text-agro-canopy" aria-hidden="true" />
-          Best spray window
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-agro-slate">{weather.sprayWindow}</p>
-      </section>
-
-      {/* Next hours */}
-      <section aria-labelledby="hours-heading" className="mt-7">
-        <h2
-          id="hours-heading"
-          className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate"
-        >
-          Next hours
-        </h2>
-        <ul className="-mx-4 mt-3 flex gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
-          {weather.hourly.map((point) => (
-            <li
-              key={point.time}
-              className="flex w-24 shrink-0 flex-col items-center gap-1.5 rounded-2xl border border-agro-sprout bg-white p-3 text-center"
-            >
-              <span className="font-mono text-xs uppercase tracking-wide text-agro-slate">
-                {point.time}
-              </span>
-              <span className="font-mono text-xl font-bold text-agro-forest">
-                {point.tempC}°
-              </span>
-              <span className="inline-flex items-center gap-1 font-mono text-[0.7rem] text-agro-canopy">
-                <DropletIcon size={12} aria-hidden="true" />
-                {point.rainPct}%
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Five-day outlook */}
-      <section aria-labelledby="week-heading" className="mt-7">
-        <h2
-          id="week-heading"
-          className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate"
-        >
-          Five days ahead
-        </h2>
-        <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
-          {weather.daily.map((day) => (
-            <li key={day.day} className="flex items-center gap-3 p-4">
-              <span className="w-14 shrink-0 font-semibold text-agro-ink">{day.day}</span>
-              <span className="min-w-0 flex-1 truncate text-sm text-agro-slate">
-                {day.condition}
-              </span>
-              <span className="hidden w-16 shrink-0 text-end font-mono text-[0.7rem] text-agro-canopy sm:block">
-                <DropletIcon size={11} className="me-1 inline align-text-bottom" aria-hidden="true" />
-                {day.rainPct}%
-              </span>
-              <span className="w-16 shrink-0 text-end font-mono text-sm text-agro-ink">
-                {day.loC}°–{day.hiC}°
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <p className="mt-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
-        Demo build · sample forecast only
-      </p>
+      {forecastDays.length > 0 && (
+        <ForecastList
+          days={forecastDays}
+          title={bundle.forecastTitle}
+          subtitle={bundle.forecastSubtitle}
+          stageLabels={stageLabels}
+        />
+      )}
     </div>
   );
 }

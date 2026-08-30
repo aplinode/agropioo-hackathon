@@ -25,16 +25,16 @@
 
 **Purpose**: Translation key authoring and database migration scaffolding
 
-- [ ] T001 Create database migration `db/migrations/0008_weather_advisory.sql` extending `farms` and creating `weather_advisories` and `weather_alerts` tables per data-model.md
-- [ ] T002 [P] Add weather advisory translation keys to `catalog/en.ts` under `app.weather.*` namespace (page, advisory, alerts, forecast, history, buttons, errors)
-- [ ] T003 [P] Draft weather advisory translations in `catalog/ur.ts`
-- [ ] T004 [P] Draft weather advisory translations in `catalog/pa.ts`
-- [ ] T005 [P] Draft weather advisory translations in `catalog/ps.ts`
-- [ ] T006 [P] Draft weather advisory translations in `catalog/sd.ts`
-- [ ] T007 [P] Draft weather advisory translations in `catalog/skr.ts`
-- [ ] T008 [P] Draft weather advisory translations in `catalog/bal.ts`
-- [ ] T009 [P] Draft weather advisory translations in `catalog/hno.ts`
-- [ ] T010 Run `npm run sync:translations` and verify 8-locale coverage report shows no missing `app.weather.*` keys
+- [x] T001 Create database migration `db/migrations/0008_weather_advisory.sql` extending `farms` and creating `weather_advisories` and `weather_alerts` tables per data-model.md
+- [x] T002 [P] Add weather advisory translation keys to `catalog/en.ts` under `app.weather.*` namespace (page, advisory, alerts, forecast, history, buttons, errors)
+- [x] T003 [P] Draft weather advisory translations in `catalog/ur.ts`
+- [x] T004 [P] Draft weather advisory translations in `catalog/pa.ts`
+- [x] T005 [P] Draft weather advisory translations in `catalog/ps.ts`
+- [x] T006 [P] Draft weather advisory translations in `catalog/sd.ts`
+- [x] T007 [P] Draft weather advisory translations in `catalog/skr.ts`
+- [x] T008 [P] Draft weather advisory translations in `catalog/bal.ts`
+- [x] T009 [P] Draft weather advisory translations in `catalog/hno.ts`
+- [x] T010 Run `npm run sync:translations` and verify 8-locale coverage report shows no missing `app.weather.*` keys
 
 ---
 
@@ -44,13 +44,13 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T011 [P] Implement OpenWeatherMap client wrapper in `lib/weather/openweather.ts` with caching, retry, and graceful degradation
-- [ ] T012 [P] Implement advisory generation engine in `lib/weather/advisory.ts` keyed on crop growth stage + weather thresholds per research.md
-- [ ] T013 [P] Implement alert rule engine in `lib/weather/alerts.ts` scanning next 3 hours for heavy rain, frost, extreme heat, and disease risk conditions
-- [ ] T014 Add `getWeatherBundle()` to `lib/i18n/server.ts` resolving all `app.weather.*` translation keys per request
-- [ ] T015 [P] Create Zod validation schemas for weather advisory route handlers in `lib/validation/weather.ts`
-- [ ] T016 Apply migration `db/migrations/0008_weather_advisory.sql` and verify `farms`, `weather_advisories`, and `weather_alerts` tables exist
-- [ ] T017 [P] Add `requireSessionApi()` auth guards to all new `/api/weather/*` route handlers per contracts/route-handlers.md
+- [x] T011 [P] Implement OpenWeatherMap client wrapper in `lib/weather/openweather.ts` with caching, retry, and graceful degradation
+- [x] T012 [P] Implement advisory generation engine in `lib/weather/advisory.ts` keyed on crop growth stage + weather thresholds per research.md
+- [x] T013 [P] Implement alert rule engine in `lib/weather/alerts.ts` scanning next 3 hours for heavy rain, frost, extreme heat, and disease risk conditions
+- [x] T014 Add `getWeatherBundle()` to `lib/i18n/server.ts` resolving all `app.weather.*` translation keys per request
+- [x] T015 [P] Create Zod validation schemas for weather advisory route handlers in `lib/validation/weather.ts`
+- [x] T016 Apply migration `db/migrations/0008_weather_advisory.sql` and verify `farms`, `weather_advisories`, and `weather_alerts` tables exist
+- [x] T017 [P] Add `requireSessionApi()` auth guards to all new `/api/weather/*` route handlers per contracts/route-handlers.md
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -64,12 +64,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T018 [US1] Implement POST `/api/weather/register` route handler in `app/api/weather/register/route.ts` accepting farm_id, primary_crop, sowing_date, soil_type, irrigation_method
-- [ ] T019 [US1] Implement GET `/api/weather/forecast` route handler in `app/api/weather/forecast/route.ts` returning 7-day forecast with daily advice and cached fallback on provider failure
-- [ ] T020 [US1] Create AdvisoryCard component in `components/weather/AdvisoryCard.tsx` displaying today's recommendation with growth stage and severity
-- [ ] T021 [US1] Create FarmSelector component in `components/weather/FarmSelector.tsx` for switching between registered farms
-- [ ] T022 [US1] Update `app/(farmer)/(dashboard)/weather/page.tsx` to load farm data via getWeatherBundle(), render FarmSelector and AdvisoryCard, and show register prompt when no farms exist
-- [ ] T023 [US1] Add no-farm-registered empty state in `app/(farmer)/(dashboard)/weather/page.tsx` with CTA to register farm details
+- [x] T018 [US1] Implement POST `/api/weather/register` route handler in `app/api/weather/register/route.ts` accepting farm_id, primary_crop, sowing_date, soil_type, irrigation_method
+- [x] T019 [US1] Implement GET `/api/weather/forecast` route handler in `app/api/weather/forecast/route.ts` returning 7-day forecast with daily advice and cached fallback on provider failure
+- [x] T020 [US1] Create AdvisoryCard component in `components/weather/AdvisoryCard.tsx` displaying today's recommendation with growth stage and severity
+- [x] T021 [US1] Create FarmSelector component in `components/weather/FarmSelector.tsx` for switching between registered farms
+- [x] T022 [US1] Update `app/(farmer)/(dashboard)/weather/page.tsx` to load farm data via getWeatherBundle(), render FarmSelector and AdvisoryCard, and show register prompt when no farms exist
+- [x] T023 [US1] Add no-farm-registered empty state in `app/(farmer)/(dashboard)/weather/page.tsx` with CTA to register farm details
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -83,12 +83,12 @@
 
 ### Implementation for User Story 2
 
-- [ ] T024 [US2] Implement GET `/api/weather/alerts` route handler in `app/api/weather/alerts/route.ts` returning active unread alerts for the authenticated farmer
-- [ ] T025 [US2] Implement POST `/api/weather/alerts/[id]/read` route handler in `app/api/weather/alerts/[id]/read/route.ts` marking alert as read
-- [ ] T026 [US2] Implement POST `/api/weather/alerts/trigger` internal cron endpoint in `app/api/weather/alerts/trigger/route.ts` protected by ADVISOR_CRON_SECRET
-- [ ] T027 [US2] Create AlertBanner component in `components/weather/AlertBanner.tsx` displaying critical alerts with severity, recommendation, and dismiss action
-- [ ] T028 [US2] Integrate email delivery via Nodemailer + SMTP in `lib/weather/alerts.ts` for critical alert notifications
-- [ ] T029 [US2] Add unread alert badge to shell navigation component using weather_alerts read_at index
+- [x] T024 [US2] Implement GET `/api/weather/alerts` route handler in `app/api/weather/alerts/route.ts` returning active unread alerts for the authenticated farmer
+- [x] T025 [US2] Implement POST `/api/weather/alerts/[id]/read` route handler in `app/api/weather/alerts/[id]/read/route.ts` marking alert as read
+- [x] T026 [US2] Implement POST `/api/weather/alerts/trigger` internal cron endpoint in `app/api/weather/alerts/trigger/route.ts` protected by ADVISOR_CRON_SECRET
+- [x] T027 [US2] Create AlertBanner component in `components/weather/AlertBanner.tsx` displaying critical alerts with severity, recommendation, and dismiss action
+- [x] T028 [US2] Integrate email delivery via Nodemailer + SMTP in `lib/weather/alerts.ts` for critical alert notifications
+- [x] T029 [US2] Add unread alert badge to shell navigation component using weather_alerts read_at index
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -102,9 +102,9 @@
 
 ### Implementation for User Story 3
 
-- [ ] T030 [US3] Create ForecastList component in `components/weather/ForecastList.tsx` rendering 7-day forecast cards with weather summary and daily advice
-- [ ] T031 [US3] Add 7-day forecast section to `app/(farmer)/(dashboard)/weather/page.tsx` below today's advisory using ForecastList
-- [ ] T032 [US3] Wire FarmSelector to reload forecast and advisory when a different farm is selected
+- [x] T030 [US3] Create ForecastList component in `components/weather/ForecastList.tsx` rendering 7-day forecast cards with weather summary and daily advice
+- [x] T031 [US3] Add 7-day forecast section to `app/(farmer)/(dashboard)/weather/page.tsx` below today's advisory using ForecastList
+- [x] T032 [US3] Wire FarmSelector to reload forecast and advisory when a different farm is selected
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -118,11 +118,11 @@
 
 ### Implementation for User Story 4
 
-- [ ] T033 [US4] Implement GET `/api/weather/history` route handler in `app/api/weather/history/route.ts` with farm_id, limit, and cursor pagination
-- [ ] T034 [US4] Implement POST `/api/weather/history/[id]/acknowledge` route handler in `app/api/weather/history/[id]/acknowledge/route.ts` accepting action: acknowledged or acted_upon
-- [ ] T035 [US4] Create HistoryList component in `components/weather/HistoryList.tsx` rendering paginated advisory history with date, severity, and action status
-- [ ] T036 [US4] Create `app/(farmer)/(dashboard)/weather/history/page.tsx` displaying HistoryList with farm selector
-- [ ] T037 [US4] Add advisory detail view in `app/(farmer)/(dashboard)/weather/history/[id]/page.tsx` showing full weather conditions, recommendation, and acknowledge/act buttons
+- [x] T033 [US4] Implement GET `/api/weather/history` route handler in `app/api/weather/history/route.ts` with farm_id, limit, and cursor pagination
+- [x] T034 [US4] Implement POST `/api/weather/history/[id]/acknowledge` route handler in `app/api/weather/history/[id]/acknowledge/route.ts` accepting action: acknowledged or acted_upon
+- [x] T035 [US4] Create HistoryList component in `components/weather/HistoryList.tsx` rendering paginated advisory history with date, severity, and action status
+- [x] T036 [US4] Create `app/(farmer)/(dashboard)/weather/history/page.tsx` displaying HistoryList with farm selector
+- [x] T037 [US4] Add advisory detail view in `app/(farmer)/(dashboard)/weather/history/[id]/page.tsx` showing full weather conditions, recommendation, and acknowledge/act buttons
 
 **Checkpoint**: Advisory history is fully navigable and actionable
 
@@ -132,12 +132,12 @@
 
 **Purpose**: Demo data, error states, accessibility, and final validation
 
-- [ ] T038 [P] Update `app/(farmer)/(dashboard)/weather/demo-data.ts` with realistic 7-day forecast and advisory demo data per quickstart.md
-- [ ] T039 Add loading skeletons and error boundaries to `app/(farmer)/(dashboard)/weather/page.tsx` and `app/(farmer)/(dashboard)/weather/history/page.tsx`
-- [ ] T040 Verify outdoor-mobile accessibility targets: ≥44px touch targets, ≥4.5:1 contrast, no horizontal scroll at 320px on all weather advisory pages
-- [ ] T041 Verify language switcher updates all `app.weather.*` strings across weather pages and history
-- [ ] T042 Run `npm run lint` and `npm run build` and fix any errors
-- [ ] T043 Run quickstart.md manual verification steps: register farm, view advisory, switch language, check history, verify alerts
+- [x] T038 [P] Update `app/(farmer)/(dashboard)/weather/demo-data.ts` with realistic 7-day forecast and advisory demo data per quickstart.md
+- [x] T039 Add loading skeletons and error boundaries to `app/(farmer)/(dashboard)/weather/page.tsx` and `app/(farmer)/(dashboard)/weather/history/page.tsx`
+- [x] T040 Verify outdoor-mobile accessibility targets: ≥44px touch targets, ≥4.5:1 contrast, no horizontal scroll at 320px on all weather advisory pages
+- [x] T041 Verify language switcher updates all `app.weather.*` strings across weather pages and history
+- [x] T042 Run `npm run lint` and `npm run build` and fix any errors
+- [x] T043 Run quickstart.md manual verification steps: register farm, view advisory, switch language, check history, verify alerts
 
 ---
 

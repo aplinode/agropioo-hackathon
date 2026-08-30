@@ -21,7 +21,7 @@
 | D10 | **`detect_scans` table scope** (FR-6) | Every scan saved regardless of farm link. `farm_id` is NULL until "Save to farm" is tapped. |
 | D11 | **LLM advice generation via advisor infrastructure** (FR-4.5, FR-4.6, FR-8.4) | After HF classification, detected disease label is sent to the same Groq/OpenAI-compatible LLM used by the advisor feature (`lib/advisor/tools/knowledge-base.ts`). LLM generates causes, treatment steps, rescan timing, and caution in the farmer's locale. Static catalog (`plantvillage-map.ts`) remains as fallback if LLM fails. Zero new dependencies. |
 | D12 | **Detect chat sessions use separate tables** (FR-10) | `detect_chats` + `detect_messages` tables mirror the advisor `conversations`/`messages` pattern. Keeps disease chat history scoped and independent from advisor. |
-| D13 | **Detect chat UI replaces diagnosis card** (FR-10.1) | After `/api/detect` returns a diagnosis, the same page transitions to a ChatGPT-like chat view. The diagnosis result is used to auto-generate the first farmer prompt. |
+| D13 | **Detect chat UI layout** (FR-10.1, FR-10.11) | Chat container is wider than upload flow. Image appears in messages area below composer (ChatGPT pattern). Auto-prompt pre-filled from diagnosis. Textarea auto-expands up to ~6 lines, then scrolls. Shift+Enter for line breaks; Enter submits. |
 | D14 | **Detect chat LLM reuses OpenAI client** (FR-10.10) | New `lib/detect/chat.ts` uses the same `getOpenAI()` client as the advisor. No new dependencies. Streaming via SSE with the same `toSSEStream` utility. |
 | D15 | **Auto-prompt generated from diagnosis** (FR-10.4) | Prompt templates select based on disease and crop. Example: "Why do my {crop} leaves have {symptom}?" The farmer can edit before sending. |
 
@@ -419,6 +419,7 @@ Body: { scanId: string, farmId: string }
 **File:** `app/(farmer)/(dashboard)/detect/page.tsx`
 
 - Server Component
+- Remove `lg:grid-cols-5` / `lg:col-span-3` layout constraint so `DetectUpload` can manage its own width.
 - Fetch farms (`query farms WHERE account_id = $1`) and recent scans (`query detect_scans ... LIMIT 20`) server-side
 - Pass as props to `DetectUpload`
 - Add `getDetectBundle()` for i18n strings
@@ -426,7 +427,7 @@ Body: { scanId: string, farmId: string }
 **File:** `app/(farmer)/(dashboard)/detect/detect-upload.tsx`
 
 - Rewrite from demo to real implementation
-- Stages: `idle` → `analyzing` → `result`
+- Stages: `idle` → `analyzing` → `result` → `chat`
 - Add `FarmSelector` component (client)
 - Add no-farms modal (FR-2.3)
 - Add drag-and-drop support (FR-1.2, E18)
@@ -438,11 +439,15 @@ Body: { scanId: string, farmId: string }
 - "Discuss with advisor" → `/advisor?draft=<msg>` (FR-5.2)
 - "Scan another leaf" → resets to idle, keeps farm selection (FR-5.3)
 - Error states: invalid file, service unavailable, no diagnosis (FR-3.4, FR-3.5, E1, E6, E7)
+- **Fix type guard in `enterChatMode`**: use `"id" in scan` to distinguish `ScanHistoryItem` from `DiagnosisResult` so `scanId` is preserved when creating chat sessions.
+- **Generate auto-prompt** from diagnosis (`crop`, `diseaseName`) and pass as `initialDraft` to `DetectChat`.
+- **Chat width**: when `stage === "chat"`, render with wider container classes.
 
 **New files:**
 - `detect/farm-selector.tsx` — dropdown + no-farms modal
 - `detect/scan-history.tsx` — paginated list, "Load more" button
 - `detect/diagnosis-card.tsx` — result display component
+- `detect/detect-chat.tsx` — chat UI with wider container, image in messages area, auto-expanding textarea composer
 
 ---
 
@@ -502,17 +507,21 @@ Add the 4 new env vars listed in the Dependencies section above.
 | AC-12 | "Save to farm" → scan appears in farm records |
 | AC-13 | "Discuss with advisor" → `/advisor` opens with pre-filled input |
 | AC-14 | Pre-filled text is editable before sending |
-| AC-15 | "Scan another leaf" → resets, farm selection stays |
-| AC-16 | 3 scans → history shows newest-first |
-| AC-17 | Tap history item → full result card opens |
-| AC-18 | Reload page → history persists |
-| AC-19 | Simulate HF failure → "Service temporarily unavailable" + retry |
-| AC-20 | 100+ scans → 20 shown, "Load more" loads next 20 |
-| AC-21 | Verify Cloudinary URL in DB + correct folder |
-| AC-22 | 11th request from same IP/hour → blocked |
-| AC-23 | Drag image onto drop zone → accepted and previewed |
-| AC-24 | `npm run lint` → zero errors |
-| AC-25 | `npm run build` → zero errors |
+| AC-15 | Chat container is wider than upload flow |
+| AC-16 | Uploaded image appears in chat messages area |
+| AC-17 | Auto-generated prompt pre-filled in chat input |
+| AC-18 | Prompt bar auto-expands with content |
+| AC-19 | "Scan another leaf" resets flow, farm selection stays |
+| AC-20 | 3 scans → history shows newest-first |
+| AC-21 | Tap history item → full result card opens |
+| AC-22 | Reload page → history persists |
+| AC-23 | Simulate HF failure → "Service temporarily unavailable" + retry |
+| AC-24 | 100+ scans → 20 shown, "Load more" loads next 20 |
+| AC-25 | Verify Cloudinary URL in DB + correct folder |
+| AC-26 | 11th request from same IP/hour → blocked |
+| AC-27 | Drag image onto drop zone → accepted and previewed |
+| AC-28 | `npm run lint` → zero errors |
+| AC-29 | `npm run build` → zero errors |
 
 ---
 

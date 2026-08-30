@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { DetectBundle } from "./detect-bundle";
 import type { DiagnosisResult } from "./detect-types";
 import { XIcon } from "@/components/icons";
+import MarkdownRender from "../advisor/markdown-render";
 
 type Role = "farmer" | "detect";
 
@@ -18,24 +19,28 @@ interface DetectChatProps {
   bundle: DetectBundle;
   chatId: string | null;
   initialMessages: ChatMessage[];
+  initialDraft?: string;
   diagnosis: DiagnosisResult;
   onNewScan: () => void;
 }
+
+const MAX_TEXTAREA_HEIGHT = 160;
 
 export default function DetectChat({
   bundle,
   chatId,
   initialMessages,
+  initialDraft,
   diagnosis,
   onNewScan,
 }: DetectChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
-  const [draft, setDraft] = useState("");
+  const [draft, setDraft] = useState(initialDraft ?? "");
   const [thinking, setThinking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [streamingText, setStreamingText] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -48,6 +53,19 @@ export default function DetectChat({
       inputRef.current.focus();
     }
   }, [chatId, initialMessages.length]);
+
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    if (el.scrollHeight > MAX_TEXTAREA_HEIGHT) {
+      el.style.height = `${MAX_TEXTAREA_HEIGHT}px`;
+      el.style.overflowY = "auto";
+    } else {
+      el.style.height = `${el.scrollHeight}px`;
+      el.style.overflowY = "hidden";
+    }
+  }, [draft]);
 
   async function send(text: string) {
     const clean = text.trim();
@@ -147,12 +165,21 @@ export default function DetectChat({
     send(draft);
   }
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  }
+
   function handleNewScan() {
     onNewScan();
   }
 
+  const showImageBubble = diagnosis.imageUrl && !thinking;
+
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full w-full flex-col">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-agro-sprout px-4 py-2">
         <div>
@@ -164,30 +191,11 @@ export default function DetectChat({
         <button
           type="button"
           onClick={handleNewScan}
-          className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-4 text-xs font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint"
+          className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg bg-agro-canopy px-4 text-xs font-semibold text-white transition-colors hover:bg-agro-forest"
         >
           {bundle.chat.newScan}
         </button>
       </div>
-
-      {/* Image thumbnail bar */}
-      {diagnosis.imageUrl && (
-        <div className="border-b border-agro-sprout bg-white px-4 py-2">
-          <button
-            type="button"
-            onClick={() => setPreviewOpen(true)}
-            className="inline-flex items-center gap-2 rounded-lg border border-agro-sprout p-1 transition-colors hover:border-agro-canopy"
-            aria-label={bundle.chat.imagePreview}
-          >
-            <img
-              src={diagnosis.imageUrl}
-              alt="Scanned leaf"
-              className="h-10 w-10 rounded-md object-cover"
-            />
-            <span className="text-xs text-agro-slate">{bundle.chat.imagePreview}</span>
-          </button>
-        </div>
-      )}
 
       {/* Messages */}
       <div
@@ -202,6 +210,22 @@ export default function DetectChat({
           </div>
         ) : (
           <div className="space-y-3">
+            {showImageBubble && (
+              <div className="flex justify-start">
+                <button
+                  type="button"
+                  onClick={() => setPreviewOpen(true)}
+                  className="rounded-2xl rounded-es-md border border-agro-sprout bg-white p-1 transition-colors hover:border-agro-canopy"
+                  aria-label={bundle.chat.imagePreview}
+                >
+                  <img
+                    src={diagnosis.imageUrl}
+                    alt="Scanned leaf"
+                    className="h-40 w-auto max-w-[200px] rounded-xl object-cover"
+                  />
+                </button>
+              </div>
+            )}
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -215,7 +239,11 @@ export default function DetectChat({
                       : "rounded-es-md border border-agro-sprout bg-white text-agro-ink"
                   }`}
                 >
-                  <p>{message.content}</p>
+                  {message.role === "detect" ? (
+                    <MarkdownRender text={message.content} />
+                  ) : (
+                    <p>{message.content}</p>
+                  )}
                 </div>
               </div>
             ))}
@@ -226,7 +254,7 @@ export default function DetectChat({
                   dir="ltr"
                   className="max-w-[85%] rounded-2xl rounded-es-md border border-agro-sprout bg-white px-4 py-3 text-sm leading-relaxed text-agro-ink sm:max-w-[75%]"
                 >
-                  <p>{streamingText}</p>
+                  <MarkdownRender text={streamingText} />
                   <span className="ms-1 inline-block h-4 w-0.5 animate-pulse bg-agro-canopy" />
                 </div>
               </div>
@@ -254,20 +282,21 @@ export default function DetectChat({
         onSubmit={handleSubmit}
         className="sticky bottom-0 border-t border-agro-sprout bg-white/95 px-4 py-3 backdrop-blur"
       >
-        <div className="flex items-center gap-2 rounded-2xl border border-agro-sprout bg-white p-2 shadow-md transition-colors duration-200 focus-within:border-agro-canopy focus-within:ring-2 focus-within:ring-agro-canopy/20">
+        <div className="flex items-end gap-2 rounded-2xl border border-agro-sprout bg-white p-2 shadow-md transition-colors duration-200 focus-within:border-agro-canopy focus-within:ring-2 focus-within:ring-agro-canopy/20 focus-within:ring-offset-1">
           <label htmlFor="detect-chat-input" className="sr-only">
             {bundle.chat.placeholder}
           </label>
-          <input
+          <textarea
             id="detect-chat-input"
             name="message"
-            type="text"
             autoComplete="off"
             placeholder={bundle.chat.placeholder}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={handleKeyDown}
             ref={inputRef}
-            className="h-11 min-w-0 flex-1 bg-transparent px-3 text-sm text-agro-ink placeholder:text-agro-cloud outline-none"
+            className="max-h-[160px] min-h-[44px] min-w-0 flex-1 resize-none bg-transparent px-3 py-2.5 text-sm text-agro-ink placeholder:text-agro-cloud outline-none"
+            style={{ height: "auto", overflowY: "hidden" }}
           />
           <button
             type="submit"

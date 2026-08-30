@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRightIcon } from "@/components/icons";
+import { ChevronDownIcon } from "@/components/icons";
 import type { FarmOption } from "./detect-types";
 import type { DetectBundle } from "./detect-bundle";
 
@@ -28,36 +28,41 @@ export default function FarmSelector({
 }: FarmSelectorProps) {
   if (farms.length === 0) {
     return (
-      <>
-        <button
-          type="button"
-          onClick={onNoFarms}
-          className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-agro-canopy/30 bg-agro-mint px-4 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-white"
-        >
-          {bundle.noFarmsTitle}
-        </button>
-      </>
+      <button
+        type="button"
+        onClick={onNoFarms}
+        className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-agro-canopy/30 bg-agro-mint px-4 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-white"
+      >
+        {bundle.noFarmsTitle}
+      </button>
     );
   }
 
   return (
-    <label className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-agro-slate">
-      <span>Link to a farm</span>
-      <select
-        value={selected?.id ?? ""}
-        onChange={(e) => {
-          const farm = farms.find((f) => f.id === e.target.value) ?? null;
-          onSelect(farm);
-        }}
-        className="w-full rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
-      >
-        {farms.map((farm) => (
-          <option key={farm.id} value={farm.id}>
-            {farm.name} — {farm.crops || "—"}
-          </option>
-        ))}
-      </select>
-      <ChevronRightIcon size={14} className="text-agro-slate" />
-    </label>
+    <div className="flex flex-wrap items-center gap-2">
+      <label htmlFor="farm-select" className="text-xs font-semibold text-agro-slate">
+        {bundle.linkToFarm}
+      </label>
+      <div className="relative">
+        <select
+          id="farm-select"
+          value={selected?.id ?? ""}
+          onChange={(e) => {
+            const farm = farms.find((f) => f.id === e.target.value) ?? null;
+            onSelect(farm);
+          }}
+          className="h-11 w-64 appearance-none rounded-xl border border-agro-sprout bg-white pl-4 pr-10 text-sm font-sans text-agro-ink outline-none transition-colors focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+        >
+          {farms.map((farm) => (
+            <option key={farm.id} value={farm.id}>
+              {farm.name} — {farm.crops || "—"}
+            </option>
+          ))}
+        </select>
+        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-agro-slate">
+          <ChevronDownIcon size={16} />
+        </span>
+      </div>
+    </div>
   );
 }

@@ -7,6 +7,7 @@ import { connection } from "next/server";
 import { CATALOG, ENGLISH_TABLE, type CatalogKey } from "@/catalog";
 import { APP_LOCALE_COOKIE, isLocale } from "./config";
 import { query } from "@/lib/db";
+import { requireSessionApi } from "@/lib/auth/guards";
 
 import type { Locale } from "./config";
 import { formatMessage } from "./logic";
@@ -15,6 +16,7 @@ import type { DashboardBundle } from "@/app/(farmer)/(dashboard)/dashboard/dashb
 import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle";
 import type { AdvisorBundle } from "@/app/(farmer)/(dashboard)/advisor/advisor-bundle";
 import type { DetectBundle } from "@/app/(farmer)/(dashboard)/detect/detect-bundle";
+import type { WeatherBundle } from "@/app/(farmer)/(dashboard)/weather/weather-bundle";
 import type { PricesBundle } from "@/app/(farmer)/(dashboard)/prices/prices-bundle";
 
 export interface Translator {
@@ -120,6 +122,25 @@ export const getAppLocale = cache(async (): Promise<Locale> => {
 });
 
 /**
+ * Unread weather-alert count for the shell badge. Never throws — a missing
+ * table or unavailable DB simply yields zero so the shell always renders.
+ */
+async function getUnreadAlertCount(): Promise<number> {
+  try {
+    const session = await requireSessionApi();
+    if (!session) return 0;
+    const rows = await query<{ count: number }>(
+      `SELECT count(*)::int AS count FROM weather_alerts
+       WHERE account_id = $1 AND read_at IS NULL AND dismissed_at IS NULL`,
+      [session.accountId],
+    );
+    return Number(rows?.[0]?.count ?? 0);
+  } catch {
+    return 0;
+  }
+}
+
+/**
  * Flat translation bundle for the client shell (sidebar + bottom tabs).
  * Server-only function — result crosses the RSC boundary as plain props.
  */
@@ -146,6 +167,7 @@ export async function getShellBundle() {
     },
     productOf: t("common.productOfAplinode").text,
     builtForPakistan: t("common.builtForPakistan").text,
+    alertsUnread: await getUnreadAlertCount(),
   } as const;
 }
 
@@ -472,7 +494,10 @@ export async function getDetectBundle(): Promise<DetectBundle> {
     savedStatus: t("app.detect.savedStatus").text,
     unsavedStatus: t("app.detect.unsavedStatus").text,
     dragDropPrompt: t("app.detect.dragDropPrompt").text,
+    dragDropPromptLine1: t("app.detect.dragDropPromptLine1").text,
+    dragDropPromptLine2: t("app.detect.dragDropPromptLine2").text,
     historyEmpty: t("app.detect.historyEmpty").text,
+    linkToFarm: t("app.detect.linkToFarm").text,
     severity: {
       watch: t("app.detect.severity.watch").text,
       treatNow: t("app.detect.severity.treatNow").text,
@@ -491,6 +516,94 @@ export async function getDetectBundle(): Promise<DetectBundle> {
       deleteSession: t("app.detect.chat.deleteSession").text,
       deleteConfirm: t("app.detect.chat.deleteConfirm").text,
       cancel: t("app.detect.chat.cancel").text,
+    },
+  };
+}
+
+/**
+ * Flat translation bundle for the weather advisory feature (server chrome).
+ * Per-day advice and per-alert recommendation are resolved dynamically from the
+ * dictionary in the page (their keys are data-driven), so only fixed chrome and
+ * enum labels live here.
+ */
+export async function getWeatherBundle(): Promise<WeatherBundle> {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    pageTitle: t("app.weather.pageTitle").text,
+    eyebrow: t("app.weather.eyebrow").text,
+    description: t("app.weather.description").text,
+    todayAdvisory: t("app.weather.todayAdvisory").text,
+    growthStage: t("app.weather.growthStage").text,
+    severity: {
+      info: t("app.weather.severity.info").text,
+      warning: t("app.weather.severity.warning").text,
+      critical: t("app.weather.severity.critical").text,
+    },
+    forecastTitle: t("app.weather.forecastTitle").text,
+    forecastSubtitle: t("app.weather.forecastSubtitle").text,
+    weatherUnavailable: t("app.weather.weatherUnavailable").text,
+    weatherUnavailableBody: t("app.weather.weatherUnavailableBody").text,
+    farmSelectorLabel: t("app.weather.farmSelectorLabel").text,
+    registerTitle: t("app.weather.registerTitle").text,
+    registerBody: t("app.weather.registerBody").text,
+    registerCta: t("app.weather.registerCta").text,
+    registerForm: {
+      title: t("app.weather.registerTitle").text,
+      body: t("app.weather.registerBody").text,
+      crop: t("app.weather.registerForm.crop").text,
+      sowing: t("app.weather.registerForm.sowing").text,
+      soil: t("app.weather.registerForm.soil").text,
+      irrigation: t("app.weather.registerForm.irrigation").text,
+      soilTypes: t("app.weather.registerForm.soilTypes").text,
+      irrigationMethods: t("app.weather.registerForm.irrigationMethods").text,
+      save: t("app.weather.registerForm.save").text,
+      saving: t("app.weather.registerForm.saving").text,
+      success: t("app.weather.registerForm.success").text,
+      error: t("app.weather.registerForm.error").text,
+    },
+    historyTitle: t("app.weather.historyTitle").text,
+    historySubtitle: t("app.weather.historySubtitle").text,
+    historyEmpty: t("app.weather.history.empty").text,
+    historyDate: t("app.weather.history.date").text,
+    historySeverity: t("app.weather.history.severity").text,
+    historyStatus: t("app.weather.history.status").text,
+    historyStatusNew: t("app.weather.history.status.new").text,
+    historyStatusSeen: t("app.weather.history.status.seen").text,
+    historyStatusActed: t("app.weather.history.status.acted").text,
+    historyLoadMore: t("app.weather.history.loadMore").text,
+    historyViewAll: t("app.weather.history.viewAll").text,
+    detail: {
+      back: t("app.weather.detail.back").text,
+      weatherConditions: t("app.weather.detail.weatherConditions").text,
+      recommendation: t("app.weather.detail.recommendation").text,
+      markActed: t("app.weather.detail.markActed").text,
+      markAcknowledged: t("app.weather.detail.markAcknowledged").text,
+      markedActed: t("app.weather.detail.markedActed").text,
+      markedSeen: t("app.weather.detail.markedSeen").text,
+    },
+    alerts: {
+      title: t("app.weather.alerts.title").text,
+      dismiss: t("app.weather.alerts.dismiss").text,
+      noAlerts: t("app.weather.alerts.noAlerts").text,
+      viewAll: t("app.weather.alerts.viewAll").text,
+    },
+    stages: {
+      seedling: t("app.weather.stages.seedling").text,
+      vegetative: t("app.weather.stages.vegetative").text,
+      flowering: t("app.weather.stages.flowering").text,
+      maturation: t("app.weather.stages.maturation").text,
+      harvestReady: t("app.weather.stages.harvestReady").text,
+      generic: t("app.weather.stages.generic").text,
+    },
+    buttons: {
+      register: t("app.weather.buttons.register").text,
+      refresh: t("app.weather.buttons.refresh").text,
+    },
+    errors: {
+      generic: t("app.weather.errors.generic").text,
+      noFarm: t("app.weather.errors.noFarm").text,
     },
   };
 }
