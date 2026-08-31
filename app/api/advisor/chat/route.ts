@@ -92,7 +92,10 @@ async function loadFarms(accountId: string): Promise<FarmSummary[]> {
   });
 }
 
-async function loadRecentSummaries(accountId: string): Promise<string> {
+async function loadRecentSummaries(
+  accountId: string,
+  excludeConvId: string,
+): Promise<string> {
   const rows = await query<{ title: string; summary: string; updated_at: string }>(
     `SELECT title, summary, updated_at
      FROM advisor_conversations
@@ -101,7 +104,7 @@ async function loadRecentSummaries(accountId: string): Promise<string> {
        AND id != $2
      ORDER BY updated_at DESC
      LIMIT 3`,
-    [accountId, ""],
+    [accountId, excludeConvId],
   );
 
   if (rows.length === 0) return "";
@@ -154,7 +157,7 @@ export async function POST(request: Request) {
   const [profile, farms, recentSummaries] = await Promise.all([
     loadUserProfile(session.accountId),
     loadFarms(session.accountId),
-    loadRecentSummaries(session.accountId),
+    loadRecentSummaries(session.accountId, convId),
   ]);
 
   const seasonInfo = getCurrentSeason();
