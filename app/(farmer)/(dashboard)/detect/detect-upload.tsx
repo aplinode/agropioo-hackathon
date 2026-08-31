@@ -123,6 +123,14 @@ export default function DetectUpload({
   }
 
   async function loadChatFromHistory(chat: DetectChatMeta) {
+    abortRef.current?.abort();
+    setAnalyzingError(null);
+    setAnalyzingErrorKind("service");
+    setSaveState("idle");
+    setSavedFarmName("");
+    setPreviewUrl(null);
+    setFileName("");
+
     const [chatRes, messagesRes] = await Promise.all([
       fetch(`/api/detect/chats/${chat.id}`, { credentials: "same-origin" }),
       fetch(`/api/detect/messages/${chat.id}`, { credentials: "same-origin" }),
