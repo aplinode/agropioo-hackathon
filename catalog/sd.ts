@@ -638,10 +638,6 @@ export const sd: Partial<Record<CatalogKey, string>> = {
     "اگروپيو ۾ داخل ٿيو — اے آئي سان هلندڙ فارم ذهانت جو پليٽ فارم. توهان جو مشير، رڪارڊ ۽ هدايتون — اتي موجود جتي توهان ڇڏيون هيو.",
   "li.brand.headingA": "توهان جي فارم جي ذهانت،",
   "li.brand.headingB": "اتي انتظار ۾ جتي توهان ڇڏي.",
-  "li.demo.aria": "اگروپيو مشير سان ڳالهه ٻولهه جي جھلڪ",
-  "li.demo.user": "منهنجي ڪڻڪ جا پن پيل ٿي رهيا آهن — ڇا ڪيان؟",
-  "li.demo.advisorLabel": "ٻه سبب:",
-  "li.demo.advisorBody": "پاڻي جي کوٽ يا نائيٽروجن جي کوٽ. پهرين صبح ٿڌي وقت ۾ پاڻي ڏيو.",
   "li.point1": "توهان جي پنهنجي ٻولي ۾ اے آئي مشير",
   "li.point2": "سيٽيلائيٽ ذريعي فصل جي صحت جي نگراني",
   "li.point3": "هر موسم جو ڊجيٽل رڪارڊ",
@@ -757,46 +753,8 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.dashboard.checklistProgress": "{total} مان {done} مکمل",
   "app.dashboard.aria.dismissChecklist": "سيٽ اپ چيڪ لسٽ بند ڪريو",
   "app.dashboard.aria.setupProgress": "سيٽ اپ جي ترقي",
-  "app.dashboard.demoFooter": "ڊيمو بلڊ \u00b7 صرف نمونو ڊيٽا",
 
   /* ── ڊيش بورڊ ڊيمو ڊيٽا ──────────────────────────── */
-  "app.dashboard.demo.todayLabel": "آتوار، ۲۳ اگسٽ",
-  "app.dashboard.demo.location": "ملتان، پنجاب",
-  "app.dashboard.demo.advisoryCrop": "گندم",
-  "app.dashboard.demo.advisoryStage": "سبزه جو مرحلو",
-  "app.dashboard.demo.advisoryAction": "اڄ پاني پاشي ۾ تاخير ڪريو",
-  "app.dashboard.demo.advisoryWhy":
-    "اڄ دوپهر کان واري بارش جو امڪان آهي — توھان جو کيثر قدرتي طور تي پاني وڃي.",
-  "app.dashboard.demo.seasonAction": "بارش آڻن کان اڳ پنھا کيثرن ۾ وڃو",
-  "app.dashboard.demo.seasonWhy":
-    "خشڪ ڏينهنن کان واري سست چال ڏکهايو ٿو ڪهڙا حصا خراب نڪاسڢي ڪري ٿا — بونن کان اڳ نوٽ ڪريو.",
-  "app.dashboard.demo.weatherLocation": "ملتان",
-  "app.dashboard.demo.weatherCondition": "ابرآلود",
-  "app.dashboard.demo.rainNote": "دوپهر ۲ بجيا کان واري بارش جو امڪان \u00b7 ۸۰٪ امڪان",
-  "app.dashboard.demo.alertWhitefly":
-    "ملتان ڍڙي ۾ هن هفتي کپاس تي سفيد مکي جو خطروڙو آهي.",
-  "app.dashboard.demo.alertRain":
-    "اڄ دوپهر ۲ بجيا کان واري بارش متوقع آهي — چھڙي چھڙڻ جو منصوبو ملتوی ڪريو.",
-  "app.dashboard.demo.alertPrice":
-    "ملتان منڊي تي گندم جا قیمتون گزشتہ هفتي جي بلانيتي ۴٪ وڌيون آهن.",
-  "app.dashboard.demo.farm1Name": "خليل پور کيثر",
-  "app.dashboard.demo.farm1Location": "خليل پور، ملتان",
-  "app.dashboard.demo.farm1Crops": "گندم",
-  "app.dashboard.demo.farm1Stage": "سبزه جو مرحلو",
-  "app.dashboard.demo.farm2Name": "سahiوال پلاٽ",
-  "app.dashboard.demo.farm2Location": "دیپالپور روڊ، سahiوال",
-  "app.dashboard.demo.farm2Crops": "کپاس",
-  "app.dashboard.demo.farm2Stage": "پھول آڻڻ",
-  "app.dashboard.demo.farm3Name": "چک ۶۲ جي بي",
-  "app.dashboard.demo.farm3Location": "چک ۶۲ جي بي، فيصل آباد",
-  "app.dashboard.demo.farm3Crops": "گنا",
-  "app.dashboard.demo.farm3Stage": "پري جو مرحلو",
-  "app.dashboard.demo.checklistAdvisor": "هڪ ڏفتي مشير سان پڇھو",
-  "app.dashboard.demo.checklistDetect": "پنھو پهريون تشخيص چلائو",
-  "app.dashboard.demo.actionAdvisor": "مشير سان پڇھو",
-  "app.dashboard.demo.actionScan": "پله اسڪين ڪريو",
-  "app.dashboard.demo.actionPrices": "قيمتون چيڪ ڪريو",
-  "app.dashboard.demo.actionRecord": "ریڪارڊ شامل ڪريو",
 
   /* ── کيثر عام ────────────────────────────────────────── */
   "app.farms.eyebrow": "کيثر",
@@ -856,8 +814,6 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.farms.new.placeholders.location": "ڳوٺ یا شھر جو نالو لکو",
   "app.farms.new.buttons.saving": "خوندي ٿي رهيو آهي…",
   "app.farms.new.buttons.save": "کيثر خوندي ڪريو",
-  "app.farms.new.demoNotice": "ڊيمو — خوندي ڪرڻ هن وقت ڊيٽابیس سان نه جوڑي",
-  "app.farms.new.success.heading": "کيثر ڊيمو ۾ خوندي ٿيو",
   "app.farms.new.success.description":
     "بشپړ بلڊ ۾ هن کيثر توهان جي ڊيش بورڊ تي ڏيکارو ۽ هدايتون شکل اخیستل شروع ڪنن.",
   "app.farms.new.success.goToFarms": "منھنجا کيثر تي وڃو",
@@ -878,6 +834,7 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.farms.detail.viewAllRecords": "سڀ رڪارڊ ڏيڪھو",
   "app.farms.detail.logFieldEvent": "کيثر جو واقعو درج ڪريو",
   "app.farms.detail.scanCrop": "فصل اسڪين ڪريو",
+  "app.farms.detail.noRecords": "",
 
   /* ── رڪارڊ عام ───────────────────────────────────────── */
   "app.records.eyebrow": "کيثر جا رڪارڊ",
@@ -892,8 +849,6 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.records.farmRecords.heading": "کيثر جي يادداشت",
   "app.records.farmRecords.description":
     "هر آبپاشي، اسپري ۽ علاج لکييل — ته جيئن راتلونڪي ھفتا يادداشت تي منحصر نه ٿي.",
-  "app.records.farmRecords.demoNotice":
-    "ڊيمو — صرف نمونا اندراجات — نئون خوندي ڪرڻ هن وقت نه جوڑي",
 
   /* ── نئون رڪارڊ ──────────────────────────────────────── */
   "app.records.new.pageTitle": "نئون رڪارڊ — اگروپيو",
@@ -913,8 +868,6 @@ export const sd: Partial<Record<CatalogKey, string>> = {
     "راتلونڪي ھفتا لاءِ جيڪو ڳ travelled ڌاريو وڃي — مقدار، موسم، کيثر جي حالت.",
   "app.records.new.buttons.saving": "خوندي ٿي رهيو آهي…",
   "app.records.new.buttons.save": "رڪارڊ خوندي ڪريو",
-  "app.records.new.demoNotice": "ڊيمو — خوندي ڪرڻ هن وقت ڊيٽابیس سان نه جوڑي",
-  "app.records.new.success.heading": "رڪارڊ ڊيمو ۾ خوندي ٿيو",
   "app.records.new.success.description":
     "بشپړ بلڊ ۾ هن اندراج توهان جي کيثر جي رڪارڊ ۾ شامل ٿي جيڳو ۽ راتلونڪي هدايتون تيز ٿي ان.",
   "app.records.new.success.backToDashboard": "واپس ڊيش بورڊ تي",

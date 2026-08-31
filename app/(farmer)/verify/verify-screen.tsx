@@ -170,7 +170,6 @@ export default function VerifyScreen({ context, maskedEmail }: VerifyScreenProps
             email={maskedEmail}
             submitCode={submitCode}
             resendCode={resendCode}
-            demoCode={undefined}
             escapeLabel={context === "reset" ? "Back to login" : "Use a different account"}
             onEscape={() => router.replace(context === "reset" ? "/login" : "/signup")}
             onVerified={() => {

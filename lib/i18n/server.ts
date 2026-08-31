@@ -278,7 +278,6 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
         save: t("app.farms.new.buttons.save").text,
       },
       success: {
-        heading: t("app.farms.new.success.heading").text,
         description: t("app.farms.new.success.description").text,
         goToFarms: t("app.farms.new.success.goToFarms").text,
         backToDashboard: t("app.farms.new.success.backToDashboard").text,
@@ -339,7 +338,6 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
           save: t("app.records.new.buttons.save").text,
         },
         success: {
-          heading: t("app.records.new.success.heading").text,
           description: t("app.records.new.success.description").text,
           backToDashboard: t("app.records.new.success.backToDashboard").text,
           viewFarms: t("app.records.new.success.viewFarms").text,
@@ -415,7 +413,6 @@ export async function getDetectBundle(): Promise<DetectBundle> {
     description: t("app.dashboard.detectBody").text,
     uploadPrompt: t("app.detect.uploadPrompt").text,
     takePhoto: t("app.detect.takePhoto").text,
-    sampleScan: t("app.detect.sampleScan").text,
     readingLeaf: t("app.detect.readingLeaf").text,
     analyzing: t("app.detect.analyzing").text,
     scanAnother: t("app.detect.scanAnother").text,

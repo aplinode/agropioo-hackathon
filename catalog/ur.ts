@@ -638,10 +638,6 @@ export const ur: Partial<Record<CatalogKey, string>> = {
     "اگروپیو، اے آئی سے لیس فارم ذہانت کے پلیٹ فارم میں سائن اِن کریں۔ آپ کا مشیر، ریکارڈ اور رہنمائیاں — وہیں موجود جہاں آپ نے چھوڑی تھیں۔",
   "li.brand.headingA": "آپ کے فارم کی ذہانت،",
   "li.brand.headingB": "وہیں منتظر جہاں آپ نے چھوڑی۔",
-  "li.demo.aria": "اگروپیو مشیر سے گفتگو کی جھلک",
-  "li.demo.user": "میری گندم کے پتے پیلے ہو رہے ہیں — کیا کروں؟",
-  "li.demo.advisorLabel": "دو وجوہات:",
-  "li.demo.advisorBody": "پانی کی کمی یا نائٹروجن کی کمی۔ پہلے صبح ٹھنڈے وقت میں پانی دیں۔",
   "li.point1": "آپ کی اپنی زبان میں اے آئی مشیر",
   "li.point2": "سیٹیلائٹ سے فصل کی صحت کی نگرانی",
   "li.point3": "ہر موسم کا ڈیجیٹل ریکارڈ",
@@ -758,46 +754,8 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.dashboard.checklistProgress": "{done} میں سے {total} مکمل",
   "app.dashboard.aria.dismissChecklist": "سیٹ اپ چیک لسٹ بند کریں",
   "app.dashboard.aria.setupProgress": "سیٹ اپ کی پیشرفت",
-  "app.dashboard.demoFooter": "ڈیمو بلڈ \u00b7 صرف نمونہ ڈیٹا",
 
   /* ── ڈیش بورڈ ڈیمو ڈیٹا ──────────────────────────── */
-  "app.dashboard.demo.todayLabel": "اتوار، 23 اگست",
-  "app.dashboard.demo.location": "ملتان، پنجاب",
-  "app.dashboard.demo.advisoryCrop": "گندم",
-  "app.dashboard.demo.advisoryStage": "سبزی کا مرحلہ",
-  "app.dashboard.demo.advisoryAction": "آج آبپاشی میں تاخیر کریں",
-  "app.dashboard.demo.advisoryWhy":
-    "آج دوپہر کے بعد بارش کا امکان ہے — آپ کا کھیت قدرتی طور پر پانی پائے گا۔",
-  "app.dashboard.demo.seasonAction": "بارش آنے سے پہلے اپنے کھیتوں میں چلیں",
-  "app.dashboard.demo.seasonWhy":
-    "خشک دنوں کے بعد آہستہ چلنا دکھاتا ہے کہ کون سے حصے خراب نکاسی کرتے ہیں — بونے سے پہلے نوٹ کریں۔",
-  "app.dashboard.demo.weatherLocation": "ملتان",
-  "app.dashboard.demo.weatherCondition": "ابرآلود",
-  "app.dashboard.demo.rainNote": "دوپہر 2 بجے کے بعد بارش کا امکان \u00b7 80% امکان",
-  "app.dashboard.demo.alertWhitefly":
-    "ملتان ضلع میں اس ہفتے کپاس پر سفید مکھی کا خطرہ زیادہ ہے۔",
-  "app.dashboard.demo.alertRain":
-    "آج دوپہر 2 بجے کے بعد بارش متوقع ہے — چھڑی چھڑکنے کا منصوبہ ملتوی کریں۔",
-  "app.dashboard.demo.alertPrice":
-    "ملتان مڑی پر گندم کی قیمتیں گزشتہ ہفتے کے مقابلے میں 4% زیادہ ہیں۔",
-  "app.dashboard.demo.farm1Name": "خلیل پور کھیت",
-  "app.dashboard.demo.farm1Location": "خلیل پور، ملتان",
-  "app.dashboard.demo.farm1Crops": "گندم",
-  "app.dashboard.demo.farm1Stage": "سبزی کا مرحلہ",
-  "app.dashboard.demo.farm2Name": "سہیوال پلاٹ",
-  "app.dashboard.demo.farm2Location": "دیپالپور روڈ، سہیوال",
-  "app.dashboard.demo.farm2Crops": "کپاس",
-  "app.dashboard.demo.farm2Stage": "پھول آنا",
-  "app.dashboard.demo.farm3Name": "چک 62 جی بی",
-  "app.dashboard.demo.farm3Location": "چک 62 جی بی، فیصل آباد",
-  "app.dashboard.demo.farm3Crops": "گنا",
-  "app.dashboard.demo.farm3Stage": "پَرچی کا مرحلہ",
-  "app.dashboard.demo.checklistAdvisor": "ایک بار مشیر سے پوچھیں",
-  "app.dashboard.demo.checklistDetect": "اپنی پہلی تشخیص چلائیں",
-  "app.dashboard.demo.actionAdvisor": "مشیر سے پوچھیں",
-  "app.dashboard.demo.actionScan": "فصل اسکین کریں",
-  "app.dashboard.demo.actionPrices": "قیمتیں چیک کریں",
-  "app.dashboard.demo.actionRecord": "ریکارڈ شامل کریں",
 
   /* ── کھیت عام ──────────────────────────────────────── */
   "app.farms.eyebrow": "کھیت",
@@ -857,8 +815,6 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.farms.new.placeholders.location": "گاؤں یا شہر کا نام لکھیں",
   "app.farms.new.buttons.saving": "محفوظ ہو رہا ہے…",
   "app.farms.new.buttons.save": "کھیت محفوظ کریں",
-  "app.farms.new.demoNotice": "ڈیمو — محفوظ کرنا ابھی ڈیٹابیس سے نہیں جڑا",
-  "app.farms.new.success.heading": "کھیت ڈیمو میں محفوظ ہو گیا",
   "app.farms.new.success.description":
     "مکمل بلڈ میں یہ کھیت آپ کے ڈیش بورڈ پر دکھائے گا اور رہنمائیاں شکل لینا شروع کریں گی۔",
   "app.farms.new.success.goToFarms": "میرے کھیتوں پر جائیں",
@@ -879,6 +835,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.farms.detail.viewAllRecords": "تمام ریکارڈ دیکھیں",
   "app.farms.detail.logFieldEvent": "کھیت کا واقعہ درج کریں",
   "app.farms.detail.scanCrop": "فصل اسکین کریں",
+  "app.farms.detail.noRecords": "",
 
   /* ── ریکارڈ عام ─────────────────────────────────────── */
   "app.records.eyebrow": "کھیت کے ریکارڈ",
@@ -893,8 +850,6 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.records.farmRecords.heading": "کھیت کی یادداشت",
   "app.records.farmRecords.description":
     "ہر آبپاشی، اسپرے اور علاج لکھا ہوا — تاکہ اگلے ہفتے کے فیصلے یادداشت پر منحصر نہ ہوں۔",
-  "app.records.farmRecords.demoNotice":
-    "ڈیمو — صرف نمونہ اندراجات — نئے محفوظ کرنا ابھی نہیں جڑا",
 
   /* ── نیا ریکارڈ ─────────────────────────────────────── */
   "app.records.new.pageTitle": "نیا ریکارڈ — اگروپیو",
@@ -914,8 +869,6 @@ export const ur: Partial<Record<CatalogKey, string>> = {
     "اگلے ہفتے کے لیے جو بھی یاد رکھنا ضروری ہو — مقدار، موسم، کھیت کی صورتحال۔",
   "app.records.new.buttons.saving": "محفوظ ہو رہا ہے…",
   "app.records.new.buttons.save": "ریکارڈ محفوظ کریں",
-  "app.records.new.demoNotice": "ڈیمو — محفوظ کرنا ابھی ڈیٹابیس سے نہیں جڑا",
-  "app.records.new.success.heading": "ریکارڈ ڈیمو میں محفوظ ہو گیا",
   "app.records.new.success.description":
     "مکمل بلڈ میں یہ اندراج آپ کے کھیت کے ریکارڈ میں شامل ہوگا اور مستقبل کی رہنمائیاں تیز ہوں گی۔",
   "app.records.new.success.backToDashboard": "واپس ڈیش بورڈ پر",
@@ -957,7 +910,6 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.detect.title": "بیماری پھیلنے سے پہلے پکڑیں",
   "app.detect.uploadPrompt": "بیمار پتے کی تصویر لیں",
   "app.detect.takePhoto": "تصویر لیں یا منتخب کریں",
-  "app.detect.sampleScan": "کوئی تصویر نہیں؟ ایک مثالی اسکین چلائیں",
   "app.detect.readingLeaf": "پتے کو پڑھ رہا ہے…",
   "app.detect.analyzing": "تجزیہ کر رہا ہے…",
   "app.detect.scanAnother": "ایک اور پتے کا اسکین کریں",

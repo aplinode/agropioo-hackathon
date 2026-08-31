@@ -643,10 +643,6 @@ export const en = {
     "Sign in to Agropioo, the AI-powered farm intelligence platform. Your advisor, records, and advisories — waiting where you left them.",
   "li.brand.headingA": "Your Farm's Intelligence,",
   "li.brand.headingB": "Waiting Where You Left It.",
-  "li.demo.aria": "Preview of an Agropioo advisor conversation",
-  "li.demo.user": "Meri gandum ki pattiyan peeli ho rahi hain — kya karoon?",
-  "li.demo.advisorLabel": "Do causes:",
-  "li.demo.advisorBody": "water stress ya nitrogen ki kami. Pehle subah cool hours mein pani dein.",
   "li.point1": "AI advisor in your own language",
   "li.point2": "Satellite crop health monitoring",
   "li.point3": "Digital records for every season",
@@ -763,46 +759,7 @@ export const en = {
   "app.dashboard.checklistProgress": "{done} of {total} complete",
   "app.dashboard.aria.dismissChecklist": "Dismiss setup checklist",
   "app.dashboard.aria.setupProgress": "Setup progress",
-  "app.dashboard.demoFooter": "Demo build \u00b7 sample data only",
 
-  /* ── Dashboard demo data ───────────────────────────── */
-  "app.dashboard.demo.todayLabel": "Sunday, 23 Aug",
-  "app.dashboard.demo.location": "Multan, Punjab",
-  "app.dashboard.demo.advisoryCrop": "Wheat",
-  "app.dashboard.demo.advisoryStage": "Vegetative",
-  "app.dashboard.demo.advisoryAction": "Delay irrigation today",
-  "app.dashboard.demo.advisoryWhy":
-    "Heavy rain is expected this afternoon \u2014 your field will get the water naturally.",
-  "app.dashboard.demo.seasonAction": "Walk your fields before the rains arrive",
-  "app.dashboard.demo.seasonWhy":
-    "A slow walk after dry spells shows you which patches drain poorly \u2014 note them before sowing.",
-  "app.dashboard.demo.weatherLocation": "Multan",
-  "app.dashboard.demo.weatherCondition": "Cloudy",
-  "app.dashboard.demo.rainNote": "Rain likely after 2 PM \u00b7 80% chance",
-  "app.dashboard.demo.alertWhitefly":
-    "Whitefly risk is high on cotton across Multan district this week.",
-  "app.dashboard.demo.alertRain":
-    "Rain expected after 2 PM today \u2014 postpone any spraying plans.",
-  "app.dashboard.demo.alertPrice":
-    "Wheat prices at Multan mandi are up 4% compared to last week.",
-  "app.dashboard.demo.farm1Name": "Khalilpur Farm",
-  "app.dashboard.demo.farm1Location": "Khalilpur, Multan",
-  "app.dashboard.demo.farm1Crops": "Wheat",
-  "app.dashboard.demo.farm1Stage": "Vegetative",
-  "app.dashboard.demo.farm2Name": "Sahiwal Plot",
-  "app.dashboard.demo.farm2Location": "Depalpur Road, Sahiwal",
-  "app.dashboard.demo.farm2Crops": "Cotton",
-  "app.dashboard.demo.farm2Stage": "Squaring",
-  "app.dashboard.demo.farm3Name": "Chak 62 GB",
-  "app.dashboard.demo.farm3Location": "Chak 62 GB, Faisalabad",
-  "app.dashboard.demo.farm3Crops": "Sugarcane",
-  "app.dashboard.demo.farm3Stage": "Tillering",
-  "app.dashboard.demo.checklistAdvisor": "Ask the advisor once",
-  "app.dashboard.demo.checklistDetect": "Run your first detection",
-  "app.dashboard.demo.actionAdvisor": "Ask advisor",
-  "app.dashboard.demo.actionScan": "Scan crop",
-  "app.dashboard.demo.actionPrices": "Check prices",
-  "app.dashboard.demo.actionRecord": "Add record",
 
   /* ── Farms common ───────────────────────────────────── */
   "app.farms.eyebrow": "Farms",
@@ -862,8 +819,6 @@ export const en = {
   "app.farms.new.placeholders.location": "Type village or city name",
   "app.farms.new.buttons.saving": "Saving\u2026",
   "app.farms.new.buttons.save": "Save farm",
-  "app.farms.new.demoNotice": "DEMO \u00b7 saving isn\u2019t wired to a database yet",
-  "app.farms.new.success.heading": "Farm saved in demo",
   "app.farms.new.success.description":
     "In the full build this farm would now appear on your dashboard and start shaping your advisories.",
   "app.farms.new.success.goToFarms": "Go to my farms",
@@ -884,6 +839,7 @@ export const en = {
   "app.farms.detail.viewAllRecords": "View all records",
   "app.farms.detail.logFieldEvent": "Log a field event",
   "app.farms.detail.scanCrop": "Scan this crop",
+  "app.farms.detail.noRecords": "No records yet — start logging field events to build your farm's memory.",
 
   /* ── Records common ─────────────────────────────────── */
   "app.records.eyebrow": "Farm records",
@@ -898,8 +854,6 @@ export const en = {
   "app.records.farmRecords.heading": "The farm\u2019s memory",
   "app.records.farmRecords.description":
     "Every irrigation, spray, and treatment written down \u2014 so decisions next week don\u2019t rely on memory.",
-  "app.records.farmRecords.demoNotice":
-    "DEMO \u00b7 sample entries only \u2014 saving new ones isn\u2019t wired yet",
 
   /* ── Records new ────────────────────────────────────── */
   "app.records.new.pageTitle": "New record \u2014 Agropioo",
@@ -919,8 +873,6 @@ export const en = {
     "Anything worth remembering next week \u2014 amounts, weather, how the field looked.",
   "app.records.new.buttons.saving": "Saving\u2026",
   "app.records.new.buttons.save": "Save record",
-  "app.records.new.demoNotice": "DEMO \u00b7 saving isn\u2019t wired to a database yet",
-  "app.records.new.success.heading": "Record saved in demo",
   "app.records.new.success.description":
     "In the full build this entry would appear in your farm\u2019s record log and sharpen future advisories.",
   "app.records.new.success.backToDashboard": "Back to dashboard",
@@ -962,7 +914,6 @@ export const en = {
   "app.detect.title": "Spot disease before it spreads",
   "app.detect.uploadPrompt": "Photograph the sick leaf",
   "app.detect.takePhoto": "Take or choose a photo",
-  "app.detect.sampleScan": "No photo handy? Run a sample scan",
   "app.detect.readingLeaf": "Reading the leaf…",
   "app.detect.analyzing": "Analyzing…",
   "app.detect.scanAnother": "Scan another leaf",

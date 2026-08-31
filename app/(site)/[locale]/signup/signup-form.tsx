@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { signupSchema } from "@/lib/validation/auth";
-import { stashDemoCode } from "@/lib/auth/demo-code";
 import { splitLocalePrefix } from "@/lib/i18n/logic";
 import logoOnDark from "@/references/Agropioo-logo-footer.png";
 import logoOnLight from "@/references/Agropioo-logo-withoutbg-text.png";
@@ -138,12 +137,10 @@ export default function SignupForm({ copy }: { copy: SignupCopy }) {
     });
     const payload = (await response.json().catch(() => ({}))) as {
       ok?: boolean;
-      demoCode?: string;
       error?: { code?: string; message?: string };
     };
 
     if (response.ok && payload.ok) {
-      stashDemoCode(payload.demoCode);
       router.replace("/verify");
       return;
     }

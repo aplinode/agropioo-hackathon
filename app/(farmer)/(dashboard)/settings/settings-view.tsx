@@ -18,7 +18,7 @@ const languages = [
   { name: "سنڌي · Sindhi", code: "SD", available: false },
 ] as const;
 
-/* Profile & preferences (UI-only demo). Toggles and language selection
+/* Profile & preferences. Toggles and language selection
    are session-only until preferences are wired to the database. */
 export default function SettingsView() {
   const [alertsOn, setAlertsOn] = useState({

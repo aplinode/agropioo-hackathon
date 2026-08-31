@@ -24,11 +24,16 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { LatinInline } from "@/components/latin-inline";
 import type { Locale } from "@/lib/i18n/config";
 import type { DashboardBundle } from "./dashboard-bundle";
-import { demoNotifications } from "../notifications/demo-data";
 
 const CHECKLIST_DISMISS_KEY = "agropioo-checklist-dismissed";
 
-const topAlerts = demoNotifications.slice(0, 3);
+const topAlerts: Array<{
+  id: string;
+  kind: "pest" | "weather" | "price";
+  severity: "critical" | "warning" | "info";
+  message: string;
+  relativeTime: string;
+}> = [];
 
 export { LatinInline };
 
@@ -412,7 +417,7 @@ export default function DashboardView({
             ) : undefined
           }
         />
-        {isEmpty ? (
+        {topAlerts.length === 0 ? (
           <p className="mt-3 flex items-center gap-3 rounded-2xl border border-agro-sprout bg-agro-mint p-4 text-sm text-agro-slate">
             <span
               className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-agro-canopy"

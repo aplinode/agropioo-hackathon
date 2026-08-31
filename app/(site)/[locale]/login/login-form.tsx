@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { loginSchema } from "@/lib/validation/auth";
-import { stashDemoCode } from "@/lib/auth/demo-code";
 import { splitLocalePrefix } from "@/lib/i18n/logic";
 import logoOnDark from "@/references/Agropioo-logo-footer.png";
 import logoOnLight from "@/references/Agropioo-logo-withoutbg-text.png";
@@ -26,10 +25,6 @@ export type LoginCopy = {
   productOf: string;
   brandHeadingA: string;
   brandHeadingB: string;
-  demoAria: string;
-  demoUser: string;
-  demoAdvisorLabel: string;
-  demoAdvisorBody: string;
   points: [string, string, string];
   backHome: string;
   eyebrow: string;
@@ -90,12 +85,10 @@ export default function LoginForm({ copy }: { copy: LoginCopy }) {
     });
     const payload = (await response.json().catch(() => ({}))) as {
       redirect?: string;
-      demoCode?: string;
       error?: { code?: string; message?: string };
     };
 
     if (response.ok && payload.redirect) {
-      stashDemoCode(payload.demoCode);
       router.replace(payload.redirect);
       return;
     }
@@ -144,23 +137,6 @@ export default function LoginForm({ copy }: { copy: LoginCopy }) {
             {copy.brandHeadingB}
           </h2>
 
-          <div
-            className="mt-8 space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5"
-            role="img"
-            aria-label={copy.demoAria}
-          >
-            <div className="flex justify-end">
-              <p className="max-w-[85%] rounded-xl rounded-br-sm bg-agro-canopy px-3.5 py-2.5 text-sm leading-relaxed shadow-sm">
-                {copy.demoUser}
-              </p>
-            </div>
-            <div className="flex justify-start">
-              <p className="max-w-[92%] rounded-xl rounded-bl-sm border border-white/10 bg-white/10 px-3.5 py-2.5 text-sm leading-relaxed text-white/90">
-                <span className="font-semibold text-agro-sprout">{copy.demoAdvisorLabel}</span>{" "}
-                {copy.demoAdvisorBody}
-              </p>
-            </div>
-          </div>
           <ul className="mt-8 space-y-3">
             {copy.points.map((point) => (
               <li key={point} className="flex items-center gap-3 text-agro-sprout/90">

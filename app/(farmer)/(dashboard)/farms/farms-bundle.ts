@@ -70,7 +70,6 @@ export type FarmsBundle = {
       save: string;
     };
     success: {
-      heading: string;
       description: string;
       goToFarms: string;
       backToDashboard: string;
@@ -131,7 +130,6 @@ export type FarmsBundle = {
         save: string;
       };
       success: {
-        heading: string;
         description: string;
         backToDashboard: string;
         viewFarms: string;

@@ -8,7 +8,6 @@ import {
   CheckIcon,
 } from "@/components/icons";
 import type { AlertKind } from "./notifications-bundle";
-import { demoNotifications } from "./demo-data";
 
 const severityChip = {
   critical: "bg-agro-forest text-white",

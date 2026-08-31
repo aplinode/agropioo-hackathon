@@ -638,10 +638,6 @@ export const ps: Partial<Record<CatalogKey, string>> = {
     "اګروپیو ته ننوځئ — د اے آي فارم ځيرکتيا پلیټفارم. ستاسو سلاکار، ثبتونه او لارښوونې — هلته چې تاسو یې پرېښودلې وې.",
   "li.brand.headingA": "ستاسو د فارم ځيرکتيا،",
   "li.brand.headingB": "هلته چې تاسو یې پرېښوده.",
-  "li.demo.aria": "د اګروپیو سلاکار سره د خبرو اترو کتنه",
-  "li.demo.user": "زما د غنمو پاڼې ژېرې کېږي — څه وکړم؟",
-  "li.demo.advisorLabel": "دوه لاملونه:",
-  "li.demo.advisorBody": "د اوبو کمښت یا د نایتروجن کمښت. لومړی په سهار یخو ساعتونو کې اوبه ورکړئ.",
   "li.point1": "ستاسو په خپله ژبه د اے آي سلاکار",
   "li.point2": "د سپوټنیټ له لارې د فصل روغتیا څارنه",
   "li.point3": "د هر موسم ډیجیټل ثبت",
@@ -757,45 +753,7 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.dashboard.checklistProgress": "{total} نه {done} بشپړ شوې",
   "app.dashboard.aria.dismissChecklist": "سیټ اپ چیک لیست بند کړئ",
   "app.dashboard.aria.setupProgress": "د سیټ اپ پرمختګ",
-  "app.dashboard.demoFooter": "ډیمو بلډ \u00b7 یوازې نمونه ډیټا",
   /* ── ډیشبورډ ډیمو ډیټا ──────────────────────────── */
-  "app.dashboard.demo.todayLabel": "اتوار، ۲۳ اگست",
-  "app.dashboard.demo.location": "ملتان، پنجاب",
-  "app.dashboard.demo.advisoryCrop": "غندم",
-  "app.dashboard.demo.advisoryStage": "سبزۍ په ترټولو",
-  "app.dashboard.demo.advisoryAction": "نن اوبو پاشي مخنیوئ",
-  "app.dashboard.demo.advisoryWhy":
-    "نن ماسپړن ته بارش امکان لري — ستا کډه طبقي ډول اوبه اخیسي.",
-  "app.dashboard.demo.seasonAction": "بارش ته راشي مخکې خپله کډه ګورئ",
-  "app.dashboard.demo.seasonWhy":
-    "خشکه ورځې تر نه ورو ګټل ښکاره کوي چې کومه ځایه خراب دريښي — بونه ته مخکې یاد کړئ.",
-  "app.dashboard.demo.weatherLocation": "ملتان",
-  "app.dashboard.demo.weatherCondition": "اورونکي",
-  "app.dashboard.demo.rainNote": "ماسپړن ۲ بجې تر نه بارش امکان لري \u00b7 ۸۰٪ امکان",
-  "app.dashboard.demo.alertWhitefly":
-    "ملتان ولسوالي کې دا هفته په پاټه کې سپین مکه خطره لو高的 ده.",
-  "app.dashboard.demo.alertRain":
-    "نن ماسپړن ۲ بجې تر نه بارش متوقع ده — څرکنې پروګرام ملتوی کړئ.",
-  "app.dashboard.demo.alertPrice":
-    "ملتان منډي کې غندم قیمت تر گزشته اونۍ په بلنیتیا ۴٪ لو高的 دي.",
-  "app.dashboard.demo.farm1Name": "خلیل پور کډه",
-  "app.dashboard.demo.farm1Location": "خلیل پور، ملتان",
-  "app.dashboard.demo.farm1Crops": "غندم",
-  "app.dashboard.demo.farm1Stage": "سبزۍ په ترټولو",
-  "app.dashboard.demo.farm2Name": "سahiوال پلاټ",
-  "app.dashboard.demo.farm2Location": "دیپالپور سړک، سahiوال",
-  "app.dashboard.demo.farm2Crops": "پاټه",
-  "app.dashboard.demo.farm2Stage": "ښکنۍ",
-  "app.dashboard.demo.farm3Name": "چک ۶۲ جی بی",
-  "app.dashboard.demo.farm3Location": "چک ۶۲ جی بی، فیصل آباد",
-  "app.dashboard.demo.farm3Crops": "شکره",
-  "app.dashboard.demo.farm3Stage": "ریښه کول",
-  "app.dashboard.demo.checklistAdvisor": "یو ځله مشیر وپرسوئ",
-  "app.dashboard.demo.checklistDetect": "خپله لومړۍ تشخیص چلوي",
-  "app.dashboard.demo.actionAdvisor": "مشیر وپرسوئ",
-  "app.dashboard.demo.actionScan": "زبڼه اسکین کړئ",
-  "app.dashboard.demo.actionPrices": "قیمتونه وګورئ",
-  "app.dashboard.demo.actionRecord": "ریکارډ اضافه کړئ",
 
   /* ── کډې عمومي ──────────────────────────────────────── */
   "app.farms.eyebrow": "کډې",
@@ -855,8 +813,6 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.farms.new.placeholders.location": "کلیو یا ښار نوم لیکئ",
   "app.farms.new.buttons.saving": "خونديږي…",
   "app.farms.new.buttons.save": "کډه خوندي کړئ",
-  "app.farms.new.demoNotice": "ډیمو — خوندي کول اوسه د ډیټابیس سره نه لري",
-  "app.farms.new.success.heading": "کډه په ډیمو کې خوندي شوې",
   "app.farms.new.success.description":
     "په بشپړ بلډ کې دا کډه ستا د ډیشبورډ په مخ کې ښکاره کیږي او رهنمايونه شکل اخیستل پیل کوي.",
   "app.farms.new.success.goToFarms": "زما کډې ته ورکړئ",
@@ -877,6 +833,7 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.farms.detail.viewAllRecords": "ټولې ثبتونه وګورئ",
   "app.farms.detail.logFieldEvent": "د کړو واقعه ثبت کړئ",
   "app.farms.detail.scanCrop": "زبڼه اسکین کړئ",
+  "app.farms.detail.noRecords": "",
 
   /* ── ثبتونه عمومي ─────────────────────────────────────── */
   "app.records.eyebrow": "د کړو ثبتونه",
@@ -891,8 +848,6 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.records.farmRecords.heading": "د کړو یاددونکي",
   "app.records.farmRecords.description":
     "هر آبپاشي، اسپری او علاج لیکل شوی — ترڅو راتلونکۍ اونۍ په یاددونکي ته ملاتړ مه شي.",
-  "app.records.farmRecords.demoNotice":
-    "ډیمو — یوازې نمونه اندراجات — نوو خوندي کول اوسه نه لري",
 
   /* ── نوې ثبت ──────────────────────────────────────────── */
   "app.records.new.pageTitle": "نوې ثبت — اګروپیو",
@@ -912,8 +867,6 @@ export const ps: Partial<Record<CatalogKey, string>> = {
     "د راتلونکۍ اونۍ لپاره څه هغه چې یاد راتلونکی وي — اندازه، هوا، د کړو حالت.",
   "app.records.new.buttons.saving": "خونديږي…",
   "app.records.new.buttons.save": "ثبت خوندي کړئ",
-  "app.records.new.demoNotice": "ډیمو — خوندي کول اوسه د ډیټابیس سره نه لري",
-  "app.records.new.success.heading": "ثبت په ډیمو کې خوندي شوی",
   "app.records.new.success.description":
     "په بشپړ بلډ کې دا اندراج ستا د کړو د ثبت کې شامل کیږي او راتلونکۍ رهنماي تیز کوي.",
   "app.records.new.success.backToDashboard": "بیرته ډیشبورډ ته",

@@ -789,7 +789,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
           <CheckIcon size={26} />
         </span>
         <h2 className="display-heading mt-5 font-display text-3xl font-bold tracking-tight text-agro-ink">
-          {bundle.new.success.heading}
+          Farm saved
         </h2>
         <p className="mt-3 max-w-md leading-relaxed text-agro-slate">
           {bundle.new.success.description}
