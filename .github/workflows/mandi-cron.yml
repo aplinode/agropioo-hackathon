@@ -1,0 +1,38 @@
+name: Mandi Price Tracker — Nightly Cron
+
+on:
+  schedule:
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+
+jobs:
+  ingest-and-predict:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger price ingestion and alert evaluation
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$APP_URL" ]; then
+            echo "APP_URL secret is not set. Skipping."
+            exit 0
+          fi
+          curl -sS -X POST "$APP_URL/api/prices/ingest" \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Content-Type: application/json" \
+            -w "\ningest_status=%{http_code}\n"
+
+      - name: Trigger nightly price predictions
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$APP_URL" ]; then
+            echo "APP_URL secret is not set. Skipping."
+            exit 0
+          fi
+          curl -sS -X POST "$APP_URL/api/cron/predict-prices" \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Content-Type: application/json" \
+            -w "\npredict_status=%{http_code}\n"

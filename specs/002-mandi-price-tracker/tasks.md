@@ -146,10 +146,10 @@
 **Purpose**: Cross-cutting features including dashboard summary widget, Pakistan-wide mandi search, offline localstorage caching, and free GitHub Actions cron workflow.
 
 - [X] T031 [P] Create Pakistan-wide global crop and mandi search bar component `components/prices/global-mandi-search.tsx`
-- [ ] T032 [P] Create dashboard summary widget `components/prices/dashboard-prices-widget.tsx` rendering top 3 tracked crops with 7-day mini-sparklines
-- [ ] T033 Integrate summary widget into main farmer dashboard in `app/(farmer)/(dashboard)/page.tsx`
-- [ ] T034 [P] Create offline price list and history caching hook `hooks/use-offline-prices.ts` storing data in browser `localStorage`
-- [ ] T035 Create scheduled nightly prediction background cron Route Handler `POST /api/cron/predict-prices` in `app/api/cron/predict-prices/route.ts`
+- [X] T032 [P] Create dashboard summary widget `components/prices/dashboard-prices-widget.tsx` rendering top 3 tracked crops with 7-day mini-sparklines
+- [X] T033 Integrate summary widget into main farmer dashboard in `app/(farmer)/(dashboard)/dashboard/page.tsx`
+- [X] T034 [P] Create offline price list and history caching hook `hooks/use-offline-prices.ts` storing data in browser `localStorage`
+- [X] T035 Create scheduled nightly prediction background cron Route Handler `POST /api/cron/predict-prices` in `app/api/cron/predict-prices/route.ts`
 - [ ] T036 Create free GitHub Actions scheduled workflow configuration `.github/workflows/mandi-cron.yml` triggering daily price ingestion and predictions
 
 ---

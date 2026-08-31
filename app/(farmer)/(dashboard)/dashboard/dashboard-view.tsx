@@ -24,6 +24,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { LatinInline } from "@/components/latin-inline";
 import type { Locale } from "@/lib/i18n/config";
 import type { DashboardBundle } from "./dashboard-bundle";
+import DashboardPricesWidget, { type WidgetCropPrice } from "@/components/prices/dashboard-prices-widget";
 
 const CHECKLIST_DISMISS_KEY = "agropioo-checklist-dismissed";
 
@@ -141,6 +142,7 @@ type DashboardViewProps = {
   bundle: DashboardBundle;
   farms?: Array<Record<string, unknown>>;
   user?: { fullName: string; email: string };
+  widgetPrices?: WidgetCropPrice[];
 };
 
 const CHECKLIST_ITEMS = [
@@ -163,6 +165,7 @@ export default function DashboardView({
   bundle,
   farms: realFarms,
   user: realUser,
+  widgetPrices = [],
 }: DashboardViewProps) {
   const isEmpty = variant === "empty";
   const completedCount = isEmpty ? 0 : 1;
@@ -486,6 +489,9 @@ export default function DashboardView({
           })}
         </ul>
       </section>
+
+      {/* Mandi prices summary widget */}
+      <DashboardPricesWidget prices={widgetPrices} bundle={bundle} />
 
       {/* Detect CTA — the page's single high-emphasis surface (deep green) */}
       <Link
