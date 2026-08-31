@@ -200,7 +200,7 @@ export default function PricesClient({ bundle, crops, mandis, initial }: PricesC
       </header>
 
       {prices.is_fallback_hub ? (
-        <div className="rounded-2xl bg-agro-wheat/20 p-4 text-sm font-semibold text-agro-forest">
+        <div className="rounded-2xl bg-agro-mint p-4 text-sm font-semibold text-agro-ink">
           {bundle.fallbackBanner}
         </div>
       ) : null}
@@ -328,7 +328,7 @@ export default function PricesClient({ bundle, crops, mandis, initial }: PricesC
                     className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
                       alert.status === "active"
                         ? "bg-agro-mint text-agro-canopy"
-                        : "bg-agro-stone text-agro-slate"
+                        : "bg-agro-mint/50 text-agro-slate"
                     }`}
                   >
                     {alert.status === "active" ? bundle.alertActive : bundle.alertPaused}

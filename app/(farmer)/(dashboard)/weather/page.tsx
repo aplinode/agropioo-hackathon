@@ -140,7 +140,7 @@ export default async function WeatherPage({
   }));
 
   const records = await query<RecordRow>(
-    `SELECT type, event_date FROM records WHERE farm_id = $1 AND account_id = $2 ORDER BY event_date DESC`,
+    `SELECT type, event_date::text AS event_date FROM records WHERE farm_id = $1 AND account_id = $2 ORDER BY event_date DESC`,
     [selected.id, session.accountId],
   );
   const recordList = records ?? [];
