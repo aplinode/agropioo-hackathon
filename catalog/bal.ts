@@ -878,6 +878,13 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "app.advisor.chat.suggested2": "مرۏچ ملتانءَ باران بیت؟",
   "app.advisor.chat.suggested3": "مرۏچ منڈیءَ بھا چِے اِنت؟",
   "app.advisor.chat.suggested4": "کسان کارڈ سکیمءَ بارہءَ بگوشئ",
+  "app.advisor.chat.emptyEyebrow": "شمی اگروپیو صلاح کار",
+  "app.advisor.chat.emptyTitle": "مُچھہ چہ کنّءَ؟",
+  "app.advisor.chat.emptyBody": "السلام علیکم! میں شمی زرعی صلاح کاراں۔ فصل، موسم، منڈیءَ بھاء یا سرکاری سکیم بارہ شمی زبانءَ پرس۔",
+  "app.advisor.chat.onlineStatus": "آن لائن · شمی زبانءَ جواب دنت",
+  "app.advisor.chat.typing": "صلاح کار لکھیت",
+  "app.advisor.chat.composerHint": "ہڈیرےءَ انٹر · بلوچی، اردو یا انگریزیءَ پرس",
+  "app.advisor.chat.farmerYou": "شما",
 
   "app.advisor.pageTitle": "مشورہ گر",
   "app.advisor.sidebar.title": "گفتگو",

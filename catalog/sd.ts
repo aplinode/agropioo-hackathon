@@ -879,6 +879,13 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.advisor.chat.suggested2": "ڇا اڄ ملتان ۾ مينھن پوندو؟",
   "app.advisor.chat.suggested3": "اڄ منڊي جا اگھ ڇا آھن؟",
   "app.advisor.chat.suggested4": "ڪسان ڪارڊ اسڪيم بابت ٻڌايو",
+  "app.advisor.chat.emptyEyebrow": "توهان جو اگروپيو مشير",
+  "app.advisor.chat.emptyTitle": "اڄ ڇا ڪريان؟",
+  "app.advisor.chat.emptyBody": "السلام عليڪم! آءُ توهان جو زرعي مشير آهيان. فصل، موسم، منڊي جي قيمت يا سرڪاري اسڪيمن بابت پنهنجي ٻولي ۾ پڇو.",
+  "app.advisor.chat.onlineStatus": "آن لائن · توهان جي ٻولي ۾ جواب ڏئي ٿو",
+  "app.advisor.chat.typing": "مشير لکي رهيو آهي",
+  "app.advisor.chat.composerHint": "موڪلڻ لاءِ اينٽر · سنڌي، اردو يا انگريزي ۾ پڇو",
+  "app.advisor.chat.farmerYou": "توهان",
 
   "app.advisor.pageTitle": "مشیر",
   "app.advisor.sidebar.title": "گفتگو",

@@ -878,6 +878,13 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.advisor.chat.suggested2": "ایا نن په ملتان کې باران کیږي؟",
   "app.advisor.chat.suggested3": "نن د منډي نرخونه څه دي؟",
   "app.advisor.chat.suggested4": "د کسان کارډ سکیم په اړه راته ووایه",
+  "app.advisor.chat.emptyEyebrow": "ستاسو اګروپیو سلاکار",
+  "app.advisor.chat.emptyTitle": "نن څه وکړم؟",
+  "app.advisor.chat.emptyBody": "السلام علیکم! زه ستاسو کرنیز سلاکار یم. د فصل، هوا، منډۍ بیې یا حکومتي سکیمونو په اړه په خپله ژبه وپوښتئ.",
+  "app.advisor.chat.onlineStatus": "آنلاین · ستاسو په ژبه ځواب ورکوي",
+  "app.advisor.chat.typing": "سلاکار لیکي",
+  "app.advisor.chat.composerHint": "د لیږلو لپاره اینټر · پښتو، اردو یا انګلیسي کې وپوښتئ",
+  "app.advisor.chat.farmerYou": "تاسو",
 
   "app.advisor.pageTitle": "مشیر",
   "app.advisor.sidebar.title": "گفتگو",

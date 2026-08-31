@@ -878,6 +878,13 @@ export const hno: Partial<Record<CatalogKey, string>> = {
   "app.advisor.chat.suggested2": "کیہہ اج ملتان وِچ مینہہ پوۓ گا؟",
   "app.advisor.chat.suggested3": "اج منڈی دے بھا کیہہ نین؟",
   "app.advisor.chat.suggested4": "کسان کارڈ سکیم بارے دسو",
+  "app.advisor.chat.emptyEyebrow": "تھواڈا اگروپیو مشیر",
+  "app.advisor.chat.emptyTitle": "اج کیہ کراں؟",
+  "app.advisor.chat.emptyBody": "السلام علیکم! میں تھواڈا زرعی مشیر آں۔ فصل، موسم، منڈی دے بھاء یا سرکاری سکیم بارے اپݨی زبان اچ پچھو۔",
+  "app.advisor.chat.onlineStatus": "آن لائن · تھواڈی زبان اچ جواب دیندا اے",
+  "app.advisor.chat.typing": "مشیر لکھ رہیا اے",
+  "app.advisor.chat.composerHint": "بھیجن لئی انٹر · ہندکو، اردو یا انگریزی اچ پچھو",
+  "app.advisor.chat.farmerYou": "تُسیں",
 
   "app.advisor.pageTitle": "مشیر",
   "app.advisor.sidebar.title": "گفتگو",

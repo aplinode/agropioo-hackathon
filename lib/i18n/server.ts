@@ -384,6 +384,13 @@ export async function getAdvisorBundle(): Promise<AdvisorBundle> {
       suggested2: t("app.advisor.chat.suggested2").text,
       suggested3: t("app.advisor.chat.suggested3").text,
       suggested4: t("app.advisor.chat.suggested4").text,
+      emptyEyebrow: t("app.advisor.chat.emptyEyebrow").text,
+      emptyTitle: t("app.advisor.chat.emptyTitle").text,
+      emptyBody: t("app.advisor.chat.emptyBody").text,
+      onlineStatus: t("app.advisor.chat.onlineStatus").text,
+      typing: t("app.advisor.chat.typing").text,
+      composerHint: t("app.advisor.chat.composerHint").text,
+      farmerYou: t("app.advisor.chat.farmerYou").text,
     },
     errors: {
       serviceUnavailable: t("app.advisor.errors.serviceUnavailable").text,

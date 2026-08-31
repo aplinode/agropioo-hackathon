@@ -878,6 +878,13 @@ export const skr: Partial<Record<CatalogKey, string>> = {
   "app.advisor.chat.suggested2": "کیا اج ملتان وِچ مین٘ہ وَسسی؟",
   "app.advisor.chat.suggested3": "اج منڈی دے بھا کیا ہِن؟",
   "app.advisor.chat.suggested4": "کسان کارڈ سکیم بارے ݙسیو",
+  "app.advisor.chat.emptyEyebrow": "تہاݙا اگروپیو مشیر",
+  "app.advisor.chat.emptyTitle": "اج کیا کراں؟",
+  "app.advisor.chat.emptyBody": "السلام علیکم! میں تہاݙا زرعی مشیر ہاں۔ فصل، موسم، منڈی دے بھاء یا سرکاری سکیم بارے اپݨی زبان وچ پچھو۔",
+  "app.advisor.chat.onlineStatus": "آن لائن · تہاݙی زبان وچ جواب ݙیندے",
+  "app.advisor.chat.typing": "مشیر لکھدا پئے",
+  "app.advisor.chat.composerHint": "بھیجن کیتے انٹر · سرائیکی، اردو یا انگریزی وچ پچھو",
+  "app.advisor.chat.farmerYou": "تُساں",
 
   "app.advisor.pageTitle": "مشیر",
   "app.advisor.sidebar.title": "گفتگو",

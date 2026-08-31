@@ -23,6 +23,13 @@ export type AdvisorBundle = {
     suggested2: string;
     suggested3: string;
     suggested4: string;
+    emptyEyebrow: string;
+    emptyTitle: string;
+    emptyBody: string;
+    onlineStatus: string;
+    typing: string;
+    composerHint: string;
+    farmerYou: string;
   };
   errors: {
     serviceUnavailable: string;
