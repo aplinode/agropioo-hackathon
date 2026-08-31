@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
   createCropRecommendationSchema,
   listCropRecommendationsQuerySchema,
-  cropCatalogueQuerySchema,
   saveRecommendationSchema,
   getSavedPlanQuerySchema,
 } from "@/lib/validation/crops";
