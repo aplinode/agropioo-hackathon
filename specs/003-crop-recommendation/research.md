@@ -38,6 +38,8 @@
 
 Final score = Σ(w_i × normalised_i) with weights tuned on the demo catalogue so that output agrees with agronomist-judged "top 3" for 3–4 representative scenarios (wheat-after-cotton in Punjab, rice-after-wheat in Sindh, maize-after-potato in KP, mixed vegetables in peri-urban).
 
+**Concrete weights (demo-tuned, settled)**: `w_suitability = 0.30`, `w_weather = 0.20`, `w_profit = 0.25`, `w_risk = 0.15` (inverted — higher risk lowers the score), `w_sustain = 0.10`. Sum = 1.00. When a source is unavailable, its weight is dropped and the remaining weights are re-normalised to sum to 1.00 (degradation path).
+
 **Alternatives considered**:
 - Scikit-learn / XGBoost (user's original suggestion): rejected — requires Python runtime, training dataset, approval for new stack, and opaque explanation of results.
 - LLM-ranked recommendations (Groq / OpenAI): rejected — violates SC-001 (latency), cost, non-determinism, and constitution's "no invented metrics" principle.

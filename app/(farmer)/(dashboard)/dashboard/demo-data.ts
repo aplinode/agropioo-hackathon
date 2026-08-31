@@ -131,6 +131,7 @@ export const checklistItems: DemoChecklistItem[] = [
 ];
 
 export const quickActions = [
+  { id: "action-recommend", label: "Recommend crops", href: "/crops", icon: "sprout" },
   { id: "action-record", label: "Add record", href: "/records/new", icon: "clipboard" },
   { id: "action-advisor", label: "Ask advisor", href: "/advisor", icon: "chat" },
   { id: "action-scan", label: "Scan crop", href: "/detect", icon: "camera" },
@@ -191,6 +192,7 @@ export function getDemoData(bundle: DashboardBundle) {
   ];
 
   const quickActions = [
+    { id: "action-recommend", label: d.actionRecommend, href: "/crops", icon: "sprout" },
     { id: "action-record", label: d.actionRecord, href: "/records/new", icon: "clipboard" },
     { id: "action-advisor", label: d.actionAdvisor, href: "/advisor", icon: "chat" },
     { id: "action-scan", label: d.actionScan, href: "/detect", icon: "camera" },

@@ -18,6 +18,7 @@ import type { AdvisorBundle } from "@/app/(farmer)/(dashboard)/advisor/advisor-b
 import type { DetectBundle } from "@/app/(farmer)/(dashboard)/detect/detect-bundle";
 import type { WeatherBundle } from "@/app/(farmer)/(dashboard)/weather/weather-bundle";
 import type { PricesBundle } from "@/app/(farmer)/(dashboard)/prices/prices-bundle";
+import type { CropsBundle } from "@/app/(farmer)/(dashboard)/crops/crops-bundle";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -207,6 +208,8 @@ export async function getDashboardBundle(): Promise<DashboardBundle> {
     cropDoctor: t("app.dashboard.cropDoctor").text,
     detectTitle: t("app.dashboard.detectTitle").text,
     detectBody: t("app.dashboard.detectBody").text,
+    recommendCrops: t("app.dashboard.recommendCrops").text,
+    recommendCropsBody: t("app.dashboard.recommendCropsBody").text,
     myFarms: t("app.dashboard.myFarms").text,
     addFarm: t("app.dashboard.addFarm").text,
     viewAllFarms: t("app.dashboard.viewAllFarms").text,
@@ -252,6 +255,7 @@ export async function getDashboardBundle(): Promise<DashboardBundle> {
       actionScan: t("app.dashboard.demo.actionScan").text,
       actionPrices: t("app.dashboard.demo.actionPrices").text,
       actionRecord: t("app.dashboard.demo.actionRecord").text,
+      actionRecommend: t("app.dashboard.demo.actionRecommend").text,
     },
   };
 }
@@ -681,6 +685,186 @@ export async function getPricesBundle(): Promise<PricesBundle> {
     retry: t("app.prices.retry").text,
     noPricesForCrop: t("app.prices.noPricesForCrop").text,
     comingSoon: t("app.prices.comingSoon").text,
+  };
+}
+
+/**
+ * Flat translation bundle for the crop recommendation feature.
+ * Built server-side and passed as props to client components.
+ */
+export async function getCropsBundle(): Promise<CropsBundle> {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    eyebrow: t("app.crops.eyebrow").text,
+    title: t("app.crops.title").text,
+    description: t("app.crops.description").text,
+    nav: t("app.crops.nav").text,
+    form: {
+      farmLabel: t("app.crops.form.farmLabel").text,
+      seasonLabel: t("app.crops.form.seasonLabel").text,
+      yearLabel: t("app.crops.form.yearLabel").text,
+      soilLabel: t("app.crops.form.soilLabel").text,
+      irrigationLabel: t("app.crops.form.irrigationLabel").text,
+      budgetLabel: t("app.crops.form.budgetLabel").text,
+      soilOther: t("app.crops.form.soilOther").text,
+      submit: t("app.crops.form.submit").text,
+      submitting: t("app.crops.form.submitting").text,
+      lowestViableWarning: t("app.crops.form.lowestViableWarning").text,
+      switchBracket: t("app.crops.form.switchBracket").text,
+      noFarm: t("app.crops.form.noFarm").text,
+      geoError: t("app.crops.form.geoError").text,
+      regionalSoilNote: t("app.crops.form.regionalSoilNote").text,
+      nationalSoilNote: t("app.crops.form.nationalSoilNote").text,
+    },
+    seasons: {
+      summer: t("app.crops.seasons.summer").text,
+      winter: t("app.crops.seasons.winter").text,
+      autumn: t("app.crops.seasons.autumn").text,
+      spring: t("app.crops.seasons.spring").text,
+      rainy: t("app.crops.seasons.rainy").text,
+      windy: t("app.crops.seasons.windy").text,
+    },
+    soil: {
+      sandy: t("app.crops.soil.sandy").text,
+      sandy_loam: t("app.crops.soil.sandy_loam").text,
+      loamy: t("app.crops.soil.loamy").text,
+      clay_loam: t("app.crops.soil.clay_loam").text,
+      clay: t("app.crops.soil.clay").text,
+      silty: t("app.crops.soil.silty").text,
+      saline: t("app.crops.soil.saline").text,
+      rocky: t("app.crops.soil.rocky").text,
+      other: t("app.crops.soil.other").text,
+    },
+    budget: {
+      low: t("app.crops.budget.low").text,
+      medium: t("app.crops.budget.medium").text,
+      high: t("app.crops.budget.high").text,
+      very_high: t("app.crops.budget.very_high").text,
+    },
+    irrigation: {
+      rainfed: t("app.crops.irrigation.rainfed").text,
+      canal: t("app.crops.irrigation.canal").text,
+      tubewell: t("app.crops.irrigation.tubewell").text,
+      mixed: t("app.crops.irrigation.mixed").text,
+    },
+    results: {
+      title: t("app.crops.results.title").text,
+      rank: t("app.crops.results.rank").text,
+      revenue: t("app.crops.results.revenue").text,
+      reason: t("app.crops.results.reason").text,
+      risks: t("app.crops.results.risks").text,
+      saveToPlan: t("app.crops.results.saveToPlan").text,
+      saved: t("app.crops.results.saved").text,
+      compare: t("app.crops.results.compare").text,
+      projectionNote: t("app.crops.results.projectionNote").text,
+      sourceWeather: t("app.crops.results.sourceWeather").text,
+      sourceMarket: t("app.crops.results.sourceMarket").text,
+      sourceSoil: t("app.crops.results.sourceSoil").text,
+      weatherMissing: t("app.crops.results.weatherMissing").text,
+      marketMissing: t("app.crops.results.marketMissing").text,
+      soilMissing: t("app.crops.results.soilMissing").text,
+      regenerate: t("app.crops.results.regenerate").text,
+      alreadyExists: t("app.crops.results.alreadyExists").text,
+      viewExisting: t("app.crops.results.viewExisting").text,
+      noCandidates: t("app.crops.results.noCandidates").text,
+      replacedPlan: t("app.crops.results.replacedPlan").text,
+    },
+    detail: {
+      title: t("app.crops.detail.title").text,
+      back: t("app.crops.detail.back").text,
+      confidence: t("app.crops.detail.confidence").text,
+      scoreBreakdown: t("app.crops.detail.scoreBreakdown").text,
+      suitability: t("app.crops.detail.suitability").text,
+      weatherFit: t("app.crops.detail.weatherFit").text,
+      profitability: t("app.crops.detail.profitability").text,
+      risk: t("app.crops.detail.risk").text,
+      sustainability: t("app.crops.detail.sustainability").text,
+      final: t("app.crops.detail.final").text,
+      dataFreshness: t("app.crops.detail.dataFreshness").text,
+      soilImpact: t("app.crops.detail.soilImpact").text,
+    },
+    water: {
+      low: t("app.crops.water.low").text,
+      medium: t("app.crops.water.medium").text,
+      high: t("app.crops.water.high").text,
+    },
+    confidence: {
+      high: t("app.crops.confidence.high").text,
+      medium: t("app.crops.confidence.medium").text,
+      low: t("app.crops.confidence.low").text,
+      unreliable: t("app.crops.confidence.unreliable").text,
+    },
+    risk: {
+      price_volatility: t("app.crops.risk.price_volatility").text,
+      pest_pressure: t("app.crops.risk.pest_pressure").text,
+      weather: t("app.crops.risk.weather").text,
+      water_stress: t("app.crops.risk.water_stress").text,
+      input_cost: t("app.crops.risk.input_cost").text,
+    },
+    soilImpact: {
+      improves: t("app.crops.soilImpact.improves").text,
+      neutral: t("app.crops.soilImpact.neutral").text,
+      depletes: t("app.crops.soilImpact.depletes").text,
+    },
+    compare: {
+      title: t("app.crops.compare.title").text,
+      close: t("app.crops.compare.close").text,
+      revenue: t("app.crops.compare.revenue").text,
+      duration: t("app.crops.compare.duration").text,
+      water: t("app.crops.compare.water").text,
+      marketRisk: t("app.crops.compare.marketRisk").text,
+      soilImpact: t("app.crops.compare.soilImpact").text,
+      labour: t("app.crops.compare.labour").text,
+      chartAria: t("app.crops.compare.chartAria").text,
+      chartUnavailable: t("app.crops.compare.chartUnavailable").text,
+      selectToSave: t("app.crops.compare.selectToSave").text,
+      saveSelected: t("app.crops.compare.saveSelected").text,
+    },
+    rotation: {
+      title: t("app.crops.rotation.title").text,
+      subtitle: t("app.crops.rotation.subtitle").text,
+      generic: t("app.crops.rotation.generic").text,
+      nextSeason: t("app.crops.rotation.nextSeason").text,
+      savedTitle: t("app.crops.rotation.savedTitle").text,
+    },
+    catalogue: {
+      empty: t("app.crops.catalogue.empty").text,
+    },
+    errors: {
+      serviceUnavailable: t("app.crops.errors.serviceUnavailable").text,
+      generic: t("app.crops.errors.generic").text,
+      notFound: t("app.crops.errors.notFound").text,
+      rateLimited: t("app.crops.errors.rateLimited").text,
+    },
+    reason: {
+      suitability: t("app.crops.reason.suitability").text,
+      weather_fit: t("app.crops.reason.weather_fit").text,
+      profit: t("app.crops.reason.profit").text,
+      rotation_fit: t("app.crops.reason.rotation_fit").text,
+      low_risk: t("app.crops.reason.low_risk").text,
+      generic: t("app.crops.reason.generic").text,
+    },
+    rotationKeys: {
+      wheat_then_mung: t("app.crops.rotation.wheat_then_mung").text,
+      wheat_then_chickpea: t("app.crops.rotation.wheat_then_chickpea").text,
+      wheat_then_cotton: t("app.crops.rotation.wheat_then_cotton").text,
+      cotton_then_wheat: t("app.crops.rotation.cotton_then_wheat").text,
+      cotton_then_maize: t("app.crops.rotation.cotton_then_maize").text,
+      rice_then_wheat: t("app.crops.rotation.rice_then_wheat").text,
+      rice_then_maize: t("app.crops.rotation.rice_then_maize").text,
+      maize_then_potato: t("app.crops.rotation.maize_then_potato").text,
+      maize_then_wheat: t("app.crops.rotation.maize_then_wheat").text,
+      potato_then_maize: t("app.crops.rotation.potato_then_maize").text,
+      sugarcane_then_maize: t("app.crops.rotation.sugarcane_then_maize").text,
+      mung_then_wheat: t("app.crops.rotation.mung_then_wheat").text,
+      chickpea_then_cotton: t("app.crops.rotation.chickpea_then_cotton").text,
+      mustard_then_cotton: t("app.crops.rotation.mustard_then_cotton").text,
+      soybean_then_wheat: t("app.crops.rotation.soybean_then_wheat").text,
+      onion_then_maize: t("app.crops.rotation.onion_then_maize").text,
+      tomato_then_wheat: t("app.crops.rotation.tomato_then_wheat").text,
+    },
   };
 }
 

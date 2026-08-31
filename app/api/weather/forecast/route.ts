@@ -1,4 +1,4 @@
-import { queryOne } from "@/lib/db";
+import { query, queryOne } from "@/lib/db";
 import { errorResponse, jsonResponse } from "@/lib/http";
 import { requireSessionApi } from "@/lib/auth/guards";
 import { forecastQuerySchema } from "@/lib/validation/weather";
@@ -6,6 +6,40 @@ import { getForecast } from "@/lib/weather/openweather";
 import { buildAdvisoryDays } from "@/lib/weather/advisory";
 import { getAppLocale, getDictionary } from "@/lib/i18n/server";
 import type { CatalogKey } from "@/catalog";
+
+type FarmRow = {
+  id: string;
+  name: string;
+  primary_crop: string | null;
+  sowing_date: string | null;
+  lat: number;
+  lng: number;
+  growth_stages: Record<string, string> | null;
+};
+
+type RecordRow = {
+  type: string;
+  event_date: string;
+};
+
+function getEffectiveCropInfo(
+  farm: FarmRow,
+  records: RecordRow[],
+): { crop: string; sowingDate: string } | null {
+  const sowingRecords = records.filter((r) => r.type === "sowing" || r.type === "planting");
+  const latestSowing = sowingRecords.length > 0 ? sowingRecords[0] : null;
+
+  if (latestSowing) {
+    const crop = farm.primary_crop || null;
+    if (crop) return { crop, sowingDate: latestSowing.event_date };
+  }
+
+  if (farm.primary_crop && farm.sowing_date) {
+    return { crop: farm.primary_crop, sowingDate: farm.sowing_date };
+  }
+
+  return null;
+}
 
 /* GET /api/weather/forecast — 7-day forecast with a daily farming recommendation
    for the farm's crop + growth stage. Degrades to the last cached advisory when
@@ -24,19 +58,20 @@ export async function GET(request: Request) {
   }
 
   try {
-    const farm = await queryOne<{
-      id: string;
-      name: string;
-      primary_crop: string | null;
-      sowing_date: string | null;
-      lat: number;
-      lng: number;
-    }>(
-      `SELECT id, name, primary_crop, sowing_date, lat, lng
+    const farm = await queryOne<FarmRow>(
+      `SELECT id, name, primary_crop, sowing_date, lat, lng, growth_stages
        FROM farms WHERE id = $1 AND account_id = $2 AND archived_at IS NULL`,
       [parsed.data.farm_id, session.accountId],
     );
     if (!farm) return errorResponse("not_found", "Farm not found", 404);
+
+    const records = await query<RecordRow>(
+      `SELECT type, event_date FROM records WHERE farm_id = $1 AND account_id = $2 ORDER BY event_date DESC`,
+      [farm.id, session.accountId],
+    );
+    const recordList = records ?? [];
+
+    const effectiveCrop = getEffectiveCropInfo(farm, recordList);
 
     const today = new Date().toISOString().slice(0, 10);
     const forecast = await getForecast(Number(farm.lat), Number(farm.lng));
@@ -64,7 +99,17 @@ export async function GET(request: Request) {
       });
     }
 
-    const advisoryDays = buildAdvisoryDays(farm.primary_crop, farm.sowing_date, forecast);
+    if (!effectiveCrop) {
+      return jsonResponse({
+        farm_id: farm.id,
+        farm_name: farm.name,
+        weather_data_unavailable: false,
+        days: [],
+        today: null,
+      });
+    }
+
+    const advisoryDays = buildAdvisoryDays(effectiveCrop.crop, effectiveCrop.sowingDate, forecast);
 
     const locale = await getAppLocale();
     const dict = await getDictionary(locale);
@@ -81,7 +126,7 @@ export async function GET(request: Request) {
 
     const todayAdvice = advisoryDays.find((d) => d.date === today) ?? advisoryDays[0];
     if (todayAdvice) {
-      const snapshot = JSON.stringify({ source: forecast.source, days: advisoryDays.length });
+      const snapshot = JSON.stringify({ source: forecast.source, days: advisoryDays.length, crop: effectiveCrop.crop, sowingDate: effectiveCrop.sowingDate });
       await queryOne(
         `INSERT INTO weather_advisories (
            farm_id, account_id, advisory_date, forecast_snapshot, growth_stage,

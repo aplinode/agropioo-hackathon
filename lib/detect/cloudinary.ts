@@ -5,6 +5,7 @@
  */
 
 import { v2 as cloudinary } from "cloudinary";
+import { randomUUID } from "node:crypto";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -27,7 +28,8 @@ export async function uploadScanImage(
   accountId: string,
   filename: string,
 ): Promise<UploadResult> {
-  const publicId = filename.replace(/\.[^.]+$/, "");
+  const safeName = filename.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 40);
+  const publicId = `scan_${safeName ? safeName + "_" : ""}${Date.now()}_${randomUUID().slice(0, 8)}`;
 
   return new Promise<UploadResult>((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -35,9 +37,7 @@ export async function uploadScanImage(
         folder: `scans/user_${accountId}`,
         public_id: publicId,
         resource_type: "image",
-        use_filename: true,
-        unique_filename: true,
-        overwrite: false,
+        overwrite: true,
       },
       (err, result) => {
         if (err) {

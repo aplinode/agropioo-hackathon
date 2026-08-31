@@ -4,10 +4,14 @@
 export type ApiErrorCode =
   | "validation_error"
   | "unauthorized"
+  | "forbidden"
   | "not_found"
+  | "recommendation_exists"
   | "conflict"
   | "conflict_registered"
   | "rate_limited"
+  | "service_unavailable"
+  | "internal_error"
   | "server_error";
 
 export function errorBody(code: ApiErrorCode, message: string) {
