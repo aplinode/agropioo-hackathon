@@ -31,21 +31,21 @@ export async function POST(request: Request) {
   for (const crop of crops) {
     try {
       // Pull 90 days of daily average modal prices for this crop.
-      const rows = await query<{ price_date: string; modal_price: number }>(
-        `SELECT price_date::text AS price_date,
+      const rows = await query<{ date: string; modal_price: number }>(
+        `SELECT date::text AS date,
                 ROUND(AVG(modal_price))::int AS modal_price
          FROM mandi_prices
          WHERE crop_id = $1
-           AND price_date >= CURRENT_DATE - INTERVAL '90 days'
-         GROUP BY price_date
-         ORDER BY price_date`,
+           AND date >= CURRENT_DATE - INTERVAL '90 days'
+         GROUP BY date
+         ORDER BY date`,
         [crop.id],
       );
 
       if (!rows || rows.length < 7) continue;
 
       const result = forecastPrices(
-        rows.map((r) => ({ date: r.price_date, modal_price: Number(r.modal_price) })),
+        rows.map((r) => ({ date: r.date, modal_price: Number(r.modal_price) })),
       );
 
       // Upsert 14-day forecast into price_predictions table.

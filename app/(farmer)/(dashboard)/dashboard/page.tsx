@@ -81,13 +81,13 @@ export default async function DashboardPage({
         );
 
         // 7 most recent daily modal prices (any mandi, average)
-        const histRows = await query<{ price_date: string; avg_modal: number }>(
-          `SELECT price_date::text,
+        const histRows = await query<{ date: string; avg_modal: number }>(
+          `SELECT date::text,
                   ROUND(AVG(modal_price))::int AS avg_modal
            FROM mandi_prices
            WHERE crop_id = $1
-           GROUP BY price_date
-           ORDER BY price_date DESC
+           GROUP BY date
+           ORDER BY date DESC
            LIMIT 7`,
           [cropId],
         );
