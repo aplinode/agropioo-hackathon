@@ -56,7 +56,7 @@ export default function MarketComparisonTable({
                       </span>
                     ) : null}
                   </td>
-                  <td className="px-5 py-3 font-display text-base font-bold text-agro-forest">
+                  <td className="px-5 py-3 font-mono text-base font-bold text-agro-forest">
                     {formatNumber(price.modal_price)}
                   </td>
                   <td className="px-5 py-3 text-agro-slate">{formatNumber(price.min_price)}</td>
@@ -67,7 +67,7 @@ export default function MarketComparisonTable({
                         price.change_pct > 0.05
                           ? "bg-agro-mint text-agro-canopy"
                           : price.change_pct < -0.05
-                            ? "bg-agro-wheat/20 text-agro-earth"
+                            ? "bg-agro-mint/60 text-agro-canopy"
                             : "bg-agro-stone text-agro-slate"
                       }`}
                     >

@@ -28,7 +28,7 @@ export default function MandiPriceCard({
     tone === "up"
       ? "bg-agro-mint text-agro-canopy"
       : tone === "down"
-        ? "bg-agro-wheat/20 text-agro-earth"
+        ? "bg-agro-mint/60 text-agro-canopy"
         : "bg-agro-stone text-agro-slate";
 
   const updatedText =
@@ -60,7 +60,7 @@ export default function MandiPriceCard({
       </div>
 
       <div className="mt-5 flex items-baseline gap-2">
-        <span className="font-display text-4xl font-bold text-agro-forest">
+        <span className="font-mono text-4xl font-bold text-agro-forest">
           {formatNumber(price.modal_price)}
         </span>
         <span className="text-sm font-medium text-agro-slate">{bundle.perMaund}</span>
@@ -97,7 +97,7 @@ export default function MandiPriceCard({
         <span
           className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${
             price.updated_days_ago > 0 || price.is_holiday
-              ? "bg-agro-wheat/20 text-agro-earth"
+              ? "bg-agro-mint/60 text-agro-canopy"
               : "bg-agro-mint text-agro-canopy"
           }`}
         >
