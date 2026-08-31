@@ -1,17 +1,19 @@
+import type { CropSummary } from "@/lib/crops/api-types";
 import { describe, expect, it } from "vitest";
 import { rankCandidates, WEIGHTS } from "@/lib/crops/scoring";
-import type { CropSummary, ScoreContext } from "@/lib/crops/scoring";
+import type { ScoreContext } from "@/lib/crops/scoring";
 
 function makeCrop(partial: Partial<CropSummary> & { id: string; nameEn: string }): CropSummary {
   return {
-    category: "staple",
-    typicalYieldPerAcreKg: 800,
-    growingDurationDays: 120,
-    seasonWindows: ["winter"],
-    waterRequirementLevel: "medium",
-    labourCostLevel: "medium",
-    capitalRequirementPerAcrePkr: 18000,
-    marketRiskBaseline: "low",
+    nameKey: partial.id,
+    category: partial.category ?? "staple",
+    typicalYieldPerAcreKg: partial.typicalYieldPerAcreKg ?? 800,
+    growingDurationDays: partial.growingDurationDays ?? 120,
+    seasonWindows: partial.seasonWindows ?? ["winter"],
+    waterRequirementLevel: partial.waterRequirementLevel ?? "medium",
+    labourCostLevel: partial.labourCostLevel ?? "medium",
+    capitalRequirementPerAcrePkr: partial.capitalRequirementPerAcrePkr ?? 18000,
+    marketRiskBaseline: partial.marketRiskBaseline ?? "low",
     ...partial,
   };
 }

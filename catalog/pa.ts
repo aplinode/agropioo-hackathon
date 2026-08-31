@@ -708,6 +708,7 @@ export const pa: Partial<Record<CatalogKey, string>> = {
   "app.shell.nav.farms": "کھیت",
   "app.shell.nav.advisor": "مشیر",
   "app.shell.nav.detect": "تشخیص",
+  "app.shell.nav.crops": "Crops",
   "app.shell.nav.prices": "قیمتاں",
   "app.shell.nav.weather": "موسم",
   "app.shell.nav.notifications": "اطلاعات",
@@ -1225,3 +1226,4 @@ export const pa: Partial<Record<CatalogKey, string>> = {
   "app.crops.rotation.onion_then_maize": "Maize after onion on a fertile bed.",
   "app.crops.rotation.tomato_then_wheat": "Wheat after tomato.",
 };
+

@@ -81,7 +81,7 @@ export async function POST(request: Request) {
     await client.query(
       `DELETE FROM crop_rotation_suggestions
        WHERE farm_plan_entry_id = $1`,
-      [planRow[0].id],
+      [planRow.rows[0].id],
     );
 
     const pastCrop = await queryOne<{ category: string | null }>(
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
         category: r.category,
         typicalYieldPerAcreKg: Number(r.typical_yield_per_acre_kg),
         growingDurationDays: Number(r.growing_duration_days),
-        seasonWindows: r.season_windows,
+      seasonWindows: r.season_windows as unknown as RotationSuggestion["crop"]["seasonWindows"],
         waterRequirementLevel: r.water_requirement_level,
         labourCostLevel: r.labour_cost_level,
         capitalRequirementPerAcrePkr: Number(r.capital_requirement_per_acre_pkr),
@@ -124,7 +124,7 @@ export async function POST(request: Request) {
          RETURNING *`,
         [
           require("node:crypto").randomUUID(),
-          planRow[0].id,
+          planRow.rows[0].id,
           rot.sequencePosition,
           rot.targetSeason,
           rot.targetYear,
@@ -133,10 +133,10 @@ export async function POST(request: Request) {
           rot.isGeneric,
         ],
       );
-      savedRotations.push({ ...row[0]!, crop: rot.crop });
+      savedRotations.push({ ...row.rows[0]!, crop: rot.crop });
     }
 
-    return { plan: planRow[0]!, rotations: savedRotations };
+    return { plan: planRow.rows[0]!, rotations: savedRotations };
   });
 
   return jsonResponse({
@@ -184,7 +184,24 @@ export async function GET(request: Request) {
   );
   if (!rec) return errorResponse("not_found", "Recommendation not found", 404);
 
-  const rotations = await query(
+  const rotations = await query<{
+    sequence_position: number;
+    target_season: string;
+    target_year: number;
+    crop_id: string;
+    reason_key: string;
+    is_generic: boolean;
+    name_en: string;
+    name_key: string;
+    category: string;
+    typical_yield_per_acre_kg: number;
+    growing_duration_days: number;
+    season_windows: string[];
+    water_requirement_level: string;
+    labour_cost_level: string;
+    capital_requirement_per_acre_pkr: number;
+    market_risk_baseline: string;
+  }>(
     `SELECT rs.*, c.id AS crop_id, c.name_en, c.name_key, c.category,
             c.typical_yield_per_acre_kg, c.growing_duration_days, c.season_windows,
             c.water_requirement_level, c.labour_cost_level,
@@ -196,22 +213,22 @@ export async function GET(request: Request) {
     [plan.id],
   );
 
-  const rotationSuggestions: RotationSuggestion[] = (rotations ?? []).map((r) => ({
+  const rotationSuggestions: RotationSuggestion[] = (rotations ?? []).map((r): RotationSuggestion => ({
     sequencePosition: r.sequence_position,
-    targetSeason: r.target_season,
+    targetSeason: r.target_season as RotationSuggestion["targetSeason"],
     targetYear: r.target_year,
     crop: {
       id: r.crop_id,
       nameEn: r.name_en,
       nameKey: r.name_key,
-      category: r.category,
+      category: r.category as RotationSuggestion["crop"]["category"],
       typicalYieldPerAcreKg: Number(r.typical_yield_per_acre_kg),
       growingDurationDays: Number(r.growing_duration_days),
-      seasonWindows: r.season_windows,
-      waterRequirementLevel: r.water_requirement_level,
-      labourCostLevel: r.labour_cost_level,
+      seasonWindows: r.season_windows as RotationSuggestion["crop"]["seasonWindows"],
+      waterRequirementLevel: r.water_requirement_level as RotationSuggestion["crop"]["waterRequirementLevel"],
+      labourCostLevel: r.labour_cost_level as RotationSuggestion["crop"]["labourCostLevel"],
       capitalRequirementPerAcrePkr: Number(r.capital_requirement_per_acre_pkr),
-      marketRiskBaseline: r.market_risk_baseline,
+      marketRiskBaseline: r.market_risk_baseline as RotationSuggestion["crop"]["marketRiskBaseline"],
     },
     reasonKey: r.reason_key,
     isGeneric: r.is_generic,

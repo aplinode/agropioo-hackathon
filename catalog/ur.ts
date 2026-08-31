@@ -708,6 +708,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.shell.nav.farms": "کھیت",
   "app.shell.nav.advisor": "مشیر",
   "app.shell.nav.detect": "تشخیص",
+  "app.shell.nav.crops": "Crops",
   "app.shell.nav.prices": "قیمتیں",
   "app.shell.nav.weather": "موسم",
   "app.shell.nav.notifications": "اطلاعات",
@@ -1288,3 +1289,4 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.crops.rotation.onion_then_maize": "پیاز کے بعد زرخیز زمین پر مکئی۔",
   "app.crops.rotation.tomato_then_wheat": "ٹماٹر کے بعد گیہوں۔",
 };
+

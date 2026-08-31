@@ -3,14 +3,13 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { query, queryOne, withTransaction } from "@/lib/db";
 import { getForecast } from "@/lib/weather/openweather";
-import type { Season } from "@/lib/weather/openweather";
 import { requireSessionApi } from "@/lib/auth/guards";
 import {
   getCropsBySeasonAndBudget,
   getCompatibilityByCrop,
 } from "@/lib/crops/catalogue";
 import { resolveSoilType } from "@/lib/crops/soil-profiles";
-import { rankCandidates, ScoreContext, WEIGHTS } from "@/lib/crops/scoring";
+import { rankCandidates, ScoreContext, WEIGHTS, type ScoredCrop } from "@/lib/crops/scoring";
 import { pickReason } from "@/lib/crops/reasons";
 import { buildRotation } from "@/lib/crops/rotation";
 import type {
@@ -20,8 +19,8 @@ import type {
   CropSummary,
   RecommendCropsInput,
   RotationSuggestion,
-  ScoredCrop,
   SoilType,
+  Season,
 } from "./api-types";
 
 export class WeatherUnavailableError extends Error {
@@ -257,7 +256,7 @@ export async function recommendCrops(
       ],
     );
 
-    const request = requestRow[0]!;
+    const request = requestRow.rows[0]!;
     const recommendations: CropRecommendation[] = [];
 
     for (let rank = 1; rank <= ranked.length; rank++) {
@@ -299,7 +298,7 @@ export async function recommendCrops(
       );
 
       recommendations.push({
-        ...recRow[0]!,
+        ...recRow.rows[0]!,
         crop: item.crop,
         scores: item.scores,
       });
