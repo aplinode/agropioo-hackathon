@@ -14,6 +14,7 @@ import {
   SproutIcon,
   TagIcon,
   WeatherIcon,
+  WheatIcon,
 } from "@/components/icons";
 import logoOnDark from "@/references/Agropioo-logo-footer.png";
 import type { ShellBundle } from "./shell-bundle";
@@ -35,6 +36,7 @@ export default function AppSidebar({ bundle }: AppSidebarProps) {
     { href: "/farms", label: nav.farms, Icon: LeafIcon },
     { href: "/advisor", label: nav.advisor, Icon: ChatIcon },
     { href: "/detect", label: nav.detect, Icon: CameraIcon },
+    { href: "/crops", label: nav.crops, Icon: WheatIcon },
     { href: "/prices", label: nav.prices, Icon: TagIcon },
     { href: "/weather", label: nav.weather, Icon: WeatherIcon },
     { href: "/notifications", label: nav.notifications, Icon: BellIcon },

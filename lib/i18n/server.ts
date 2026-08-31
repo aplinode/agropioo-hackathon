@@ -155,6 +155,7 @@ export async function getShellBundle() {
       farms: t("app.shell.nav.farms").text,
       advisor: t("app.shell.nav.advisor").text,
       detect: t("app.shell.nav.detect").text,
+      crops: t("app.shell.nav.crops").text,
       prices: t("app.shell.nav.prices").text,
       weather: t("app.shell.nav.weather").text,
       notifications: t("app.shell.nav.notifications").text,

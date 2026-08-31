@@ -713,6 +713,7 @@ export const en = {
   "app.shell.nav.farms": "Farms",
   "app.shell.nav.advisor": "Advisor",
   "app.shell.nav.detect": "Detect",
+  "app.shell.nav.crops": "Crops",
   "app.shell.nav.prices": "Prices",
   "app.shell.nav.weather": "Weather",
   "app.shell.nav.notifications": "Notifications",
@@ -1461,3 +1462,4 @@ export const en = {
   "app.crops.rotation.tomato_then_wheat": "Wheat after tomato.",} as const;
 
 export type CatalogKey = keyof typeof en;
+

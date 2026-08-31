@@ -10,6 +10,7 @@ export type ShellBundle = {
     farms: string;
     advisor: string;
     detect: string;
+    crops: string;
     prices: string;
     weather: string;
     notifications: string;

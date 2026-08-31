@@ -322,7 +322,7 @@ export default function PricesClient({ bundle, crops, mandis, initial }: PricesC
                     {alert.mandi_name_en ? ` · ${alert.mandi_name_en}` : null}
                   </p>
                   <p className="text-xs text-agro-slate">
-                    {bundle.targetPrice}: {Number(alert.target_price_pkr).toLocaleString("en-PK")}
+                    {bundle.targetPrice}: <span className="font-mono">{Number(alert.target_price_pkr).toLocaleString("en-PK")}</span>
                   </p>
                   <span
                     className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
