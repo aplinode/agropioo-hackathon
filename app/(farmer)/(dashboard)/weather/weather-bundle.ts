@@ -70,6 +70,12 @@ export type WeatherBundle = {
     harvestReady: string;
     generic: string;
   };
+  metric: {
+    temperature: string;
+    precipitation: string;
+    wind: string;
+    humidity: string;
+  };
   buttons: {
     register: string;
     refresh: string;

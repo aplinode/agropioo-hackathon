@@ -1144,5 +1144,9 @@ export const skr: Partial<Record<CatalogKey, string>> = {
   "app.crops.rotation.soybean_then_wheat": "Wheat after soybean.",
   "app.crops.rotation.onion_then_maize": "Maize after onion on a fertile bed.",
   "app.crops.rotation.tomato_then_wheat": "Wheat after tomato.",
+  "app.weather.metric.temperature": "Temperature",
+  "app.weather.metric.precipitation": "Precipitation",
+  "app.weather.metric.wind": "Wind",
+  "app.weather.metric.humidity": "Humidity",
 };
 

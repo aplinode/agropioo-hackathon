@@ -247,6 +247,14 @@ export function CloudRainIcon(props: IconProps) {
   );
 }
 
+export function CloudIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M6 15a4.5 4.5 0 01.3-8.99 6 6 0 0111.32 2.99 3.75 3.75 0 01-.41 7.5H6Z" />
+    </svg>
+  );
+}
+
 export function SunIcon(props: IconProps) {
   return (
     <svg {...base(props)}>
@@ -376,6 +384,14 @@ export function FlaskIcon(props: IconProps) {
       <path d="M9.5 3h5" />
       <path d="M10 3v6.2L5.8 17a3 3 0 0 0 2.7 4.3h7a3 3 0 0 0 2.7-4.3L14 9.2V3" />
       <path d="M7.6 14.5h8.8" />
+    </svg>
+  );
+}
+
+export function WindIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M9.59 13.5a2.25 2.25 0 01.9 4.35 2.25 2.25 0 01-2.25-2.25c0-1.05.66-1.85 1.35-2.1M15 6.75a2.25 2.25 0 012.25-2.25c1.05 0 1.85.66 2.1 1.35M12 18.75a2.25 2.25 0 01-2.25-2.25c0-1.05.66-1.85 1.35-2.1M17.25 13.5a2.25 2.25 0 01-2.25 2.25c-1.05 0-1.85-.66-2.1-1.35M6.75 12a2.25 2.25 0 012.25 2.25c.63 0 1.35-.21 1.35-1.35" />
     </svg>
   );
 }
