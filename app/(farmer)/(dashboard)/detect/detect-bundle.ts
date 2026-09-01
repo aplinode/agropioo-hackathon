@@ -12,6 +12,7 @@ export type DetectBundle = {
   description: string;
   uploadPrompt: string;
   takePhoto: string;
+  sampleScan: string;
   readingLeaf: string;
   analyzing: string;
   scanAnother: string;

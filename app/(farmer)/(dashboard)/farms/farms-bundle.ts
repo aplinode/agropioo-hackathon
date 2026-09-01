@@ -74,7 +74,9 @@ export type FarmsBundle = {
       saving: string;
       save: string;
     };
+    demoNotice: string;
     success: {
+      heading: string;
       description: string;
       goToFarms: string;
       backToDashboard: string;
@@ -107,38 +109,41 @@ export type FarmsBundle = {
       disease: string;
       harvest: string;
     };
-    farmRecords: {
-      pageTitle: string;
-      heading: string;
-      description: string;
-    };
-    new: {
-      pageTitle: string;
-      heading: string;
-      description: string;
-      fields: {
-        type: string;
-        farm: string;
-        date: string;
-        title: string;
-        optional: string;
-        details: string;
-      };
-      placeholders: {
-        farm: string;
-        titleIrrigation: string;
-        titleOther: string;
-        details: string;
-      };
-      buttons: {
-        saving: string;
-        save: string;
-      };
-      success: {
+      farmRecords: {
+        pageTitle: string;
+        heading: string;
         description: string;
-        backToDashboard: string;
-        viewFarms: string;
+        demoNotice: string;
       };
+      new: {
+        pageTitle: string;
+        heading: string;
+        description: string;
+        fields: {
+          type: string;
+          farm: string;
+          date: string;
+          title: string;
+          optional: string;
+          details: string;
+        };
+        placeholders: {
+          farm: string;
+          titleIrrigation: string;
+          titleOther: string;
+          details: string;
+        };
+        buttons: {
+          saving: string;
+          save: string;
+        };
+        demoNotice: string;
+        success: {
+          heading: string;
+          description: string;
+          backToDashboard: string;
+          viewFarms: string;
+        };
       errors: {
         farmRequired: string;
         dateRequired: string;
