@@ -4,7 +4,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { AdvisorBundle } from "./advisor-bundle";
 import AdvisorSidebar, { type ConversationMeta } from "./advisor-sidebar";
 import MarkdownRender from "./markdown-render";
-import { MenuIcon } from "@/components/icons";
+import {
+  MenuIcon,
+  SendIcon,
+  SparklesIcon,
+  SproutIcon,
+} from "@/components/icons";
 import { LOCALE_REGISTRY, type Locale } from "@/lib/i18n/config";
 
 type Props = { bundle: AdvisorBundle; appLocale?: Locale; initialDraft?: string };
@@ -20,6 +25,16 @@ const ARABIC_URDU_RE = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
 
 function textDirection(text: string): "rtl" | "ltr" {
   return ARABIC_URDU_RE.test(text) ? "rtl" : "ltr";
+}
+
+function Dots() {
+  return (
+    <span className="inline-flex items-center gap-1" aria-hidden>
+      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-agro-leaf" style={{ animationDelay: "0ms" }} />
+      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-agro-leaf" style={{ animationDelay: "150ms" }} />
+      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-agro-leaf" style={{ animationDelay: "300ms" }} />
+    </span>
+  );
 }
 
 export default function AdvisorChat({ bundle, appLocale, initialDraft }: Props) {
@@ -255,6 +270,8 @@ export default function AdvisorChat({ bundle, appLocale, initialDraft }: Props) 
     bundle.chat.suggested4,
   ];
 
+  const hasContent = messages.length > 0 || streamingText;
+
   return (
     <div className="flex flex-1 overflow-hidden">
       <AdvisorSidebar
@@ -270,44 +287,80 @@ export default function AdvisorChat({ bundle, appLocale, initialDraft }: Props) 
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* Header with sidebar toggle */}
-        <div className="flex items-center gap-3 border-b border-agro-sprout px-4 py-2">
+        {/* Header */}
+        <header className="flex items-center gap-3 border-b border-agro-sprout bg-gradient-to-br from-agro-mint via-white to-agro-stone px-4 py-3">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-agro-slate transition-colors hover:bg-agro-mint"
+            className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl text-agro-canopy transition-colors hover:bg-agro-mint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-agro-canopy lg:hidden"
             aria-label={bundle.aria.openSidebar}
           >
             <MenuIcon className="h-5 w-5" />
           </button>
-          <h1 className="text-sm font-semibold text-agro-ink">{bundle.pageTitle}</h1>
-        </div>
+
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-agro-leaf to-agro-forest text-white shadow-sm">
+            <SproutIcon className="h-5 w-5" />
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate font-display text-base font-semibold text-agro-ink">
+              {bundle.pageTitle}
+            </h1>
+            <p className="flex items-center gap-1.5 text-xs text-agro-slate">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-agro-success opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-agro-success" />
+              </span>
+              {bundle.chat.onlineStatus}
+            </p>
+          </div>
+        </header>
 
         {/* Messages */}
         <div
           aria-live="polite"
           aria-label={bundle.aria.chatMessages}
-          className="flex-1 overflow-y-auto px-4 py-4"
+          className="flex-1 overflow-y-auto bg-gradient-to-b from-agro-stone/50 to-white px-4 py-5"
         >
-          {messages.length === 0 && !thinking ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <p className="max-w-sm text-sm leading-relaxed text-agro-slate">
-                {bundle.chat.openingGreeting}
+          {!hasContent && !error ? (
+            /* Empty state hero */
+            <div className="mx-auto flex max-w-xl flex-col items-center justify-center py-10 text-center">
+              <div className="relative">
+                <span className="absolute -inset-3 rounded-full bg-agro-leaf/15 blur-xl" />
+                <div className="relative flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-agro-leaf to-agro-forest text-white shadow-lg">
+                  <SparklesIcon className="h-8 w-8" />
+                </div>
+              </div>
+
+              <p className="mt-6 font-mono text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-agro-leaf">
+                {bundle.chat.emptyEyebrow}
               </p>
-              <div className="mt-6">
+              <h2 className="mt-2 font-display text-3xl font-semibold text-agro-forest sm:text-4xl">
+                {bundle.chat.emptyTitle}
+              </h2>
+              <p
+                dir={textDirection(bundle.chat.emptyBody)}
+                className="mt-3 max-w-md text-sm leading-relaxed text-agro-slate"
+              >
+                {bundle.chat.emptyBody}
+              </p>
+
+              <div className="mt-8 w-full">
                 <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-agro-cloud">
                   {bundle.chat.tryAsking}
                 </p>
-                <ul className="mt-3 flex flex-wrap justify-center gap-2">
-                  {suggestedQuestions.map((q) => (
+                <ul className="mt-4 flex flex-wrap justify-center gap-2">
+                  {suggestedQuestions.map((q, i) => (
                     <li key={q}>
                       <button
                         type="button"
                         onClick={() => send(q)}
                         dir={textDirection(q)}
-                        className="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-agro-sprout bg-white px-3.5 text-sm font-medium text-agro-canopy transition-colors hover:bg-agro-mint"
+                        className="group inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full border border-agro-sprout bg-white px-4 text-sm font-medium text-agro-canopy shadow-sm transition-all hover:-translate-y-0.5 hover:border-agro-leaf hover:bg-agro-mint hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-agro-canopy"
+                        style={{ animationDelay: `${i * 60}ms` }}
                       >
-                        {q}
+                        <SparklesIcon className="h-3.5 w-3.5 text-agro-leaf" />
+                        <span>{q}</span>
                       </button>
                     </li>
                   ))}
@@ -315,51 +368,70 @@ export default function AdvisorChat({ bundle, appLocale, initialDraft }: Props) 
               </div>
             </div>
           ) : (
-            <div className="space-y-3">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === "farmer" ? "justify-end" : "justify-start"}`}
-                >
+            <div className="mx-auto max-w-3xl space-y-4">
+              {messages.map((message) =>
+                message.role === "farmer" ? (
                   <div
-                    dir={textDirection(message.text)}
-                    className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed sm:max-w-[75%] ${
-                      message.role === "farmer"
-                        ? "rounded-ee-md bg-agro-canopy text-white"
-                        : "rounded-es-md border border-agro-sprout bg-white text-agro-ink"
-                    }`}
+                    key={message.id}
+                    className="flex justify-end gap-2"
+                    dir={localeDir}
                   >
-                    {message.role === "advisor" ? (
-                      <MarkdownRender text={message.text} />
-                    ) : (
+                    <div
+                      dir={textDirection(message.text)}
+                      className="max-w-[85%] rounded-2xl rounded-ee-md bg-gradient-to-br from-agro-canopy to-agro-forest px-4 py-3 text-sm leading-relaxed text-white shadow-sm sm:max-w-[75%]"
+                    >
+                      <p className="mb-0.5 text-[0.65rem] font-semibold uppercase tracking-wider text-white/70">
+                        {bundle.chat.farmerYou}
+                      </p>
                       <p>{message.text}</p>
-                    )}
+                    </div>
                   </div>
-                </div>
-              ))}
-
-              {/* Streaming message in progress */}
-              {thinking && streamingText && (
-                <div className="flex justify-start">
-                  <div
-                    dir={textDirection(streamingText)}
-                    className="max-w-[85%] rounded-2xl rounded-es-md border border-agro-sprout bg-white px-4 py-3 text-sm leading-relaxed text-agro-ink sm:max-w-[75%]"
-                  >
-                    <MarkdownRender text={streamingText} />
-                    <span className="ms-1 inline-block h-4 w-0.5 animate-pulse bg-agro-canopy" />
+                ) : (
+                  <div key={message.id} className="flex items-start gap-2.5" dir={localeDir}>
+                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-agro-leaf to-agro-forest text-white shadow-sm">
+                      <SproutIcon className="h-4 w-4" />
+                    </div>
+                    <div
+                      dir={textDirection(message.text)}
+                      className="max-w-[85%] rounded-2xl rounded-es-md border border-agro-sprout bg-white px-4 py-3 text-sm leading-relaxed text-agro-ink shadow-sm sm:max-w-[75%]"
+                    >
+                      <p className="mb-1 text-[0.65rem] font-semibold uppercase tracking-wider text-agro-leaf">
+                        {bundle.pageTitle}
+                      </p>
+                      <MarkdownRender text={message.text} />
+                    </div>
                   </div>
-                </div>
+                ),
               )}
 
-              {/* Thinking indicator (before any text arrives) */}
-              {thinking && !streamingText && (
-                <p className="font-mono text-xs uppercase tracking-[0.18em] text-agro-slate">
-                  {bundle.chat.thinking}
-                </p>
+              {/* Streaming advisor message in progress */}
+              {thinking && (
+                <div className="flex items-start gap-2.5" dir={localeDir}>
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-agro-leaf to-agro-forest text-white shadow-sm">
+                    <SproutIcon className="h-4 w-4" />
+                  </div>
+                  {streamingText ? (
+                    <div
+                      dir={textDirection(streamingText)}
+                      className="max-w-[85%] rounded-2xl rounded-es-md border border-agro-sprout bg-white px-4 py-3 text-sm leading-relaxed text-agro-ink shadow-sm sm:max-w-[75%]"
+                    >
+                      <MarkdownRender text={streamingText} />
+                      <span className="ms-1 inline-block h-4 w-0.5 animate-pulse bg-agro-canopy align-text-bottom" />
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2.5 rounded-2xl rounded-es-md border border-agro-sprout bg-white px-4 py-3 shadow-sm">
+                      <Dots />
+                      <span className="sr-only">{bundle.chat.typing}</span>
+                    </div>
+                  )}
+                </div>
               )}
 
               {error && (
-                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <div
+                  role="alert"
+                  className="mx-auto flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                >
                   {error}
                 </div>
               )}
@@ -375,31 +447,39 @@ export default function AdvisorChat({ bundle, appLocale, initialDraft }: Props) 
             e.preventDefault();
             send(draft);
           }}
-          className="sticky bottom-0 border-t border-agro-sprout bg-white/95 px-4 py-3 backdrop-blur"
+          dir={localeDir}
+          className="sticky bottom-0 border-t border-agro-sprout bg-white/95 px-4 pb-3 pt-2 backdrop-blur"
         >
-          <div className="flex items-center gap-2 rounded-2xl border border-agro-sprout bg-white p-2 shadow-md transition-colors duration-200 focus-within:border-agro-canopy focus-within:ring-2 focus-within:ring-agro-canopy/20">
-            <label htmlFor="advisor-input" className="sr-only">
-              {bundle.chat.placeholder}
-            </label>
-            <input
-              id="advisor-input"
-              name="message"
-              type="text"
-              autoComplete="off"
-              dir={localeDir}
-              placeholder={bundle.chat.placeholder}
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              ref={inputRef}
-              className="h-11 min-w-0 flex-1 bg-transparent px-3 text-sm text-agro-ink placeholder:text-agro-cloud outline-none"
-            />
-            <button
-              type="submit"
-              disabled={!draft.trim() || thinking}
-              className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {bundle.chat.send}
-            </button>
+          <div className="mx-auto max-w-3xl">
+            <div className="flex items-center gap-2 rounded-2xl border border-agro-sprout bg-white p-1.5 shadow-md transition-colors duration-200 focus-within:border-agro-canopy focus-within:ring-2 focus-within:ring-agro-canopy/20">
+              <label htmlFor="advisor-input" className="sr-only">
+                {bundle.chat.placeholder}
+              </label>
+              <input
+                id="advisor-input"
+                name="message"
+                type="text"
+                autoComplete="off"
+                dir={localeDir}
+                placeholder={bundle.chat.placeholder}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                ref={inputRef}
+                className="h-11 min-w-0 flex-1 bg-transparent px-3 text-sm text-agro-ink placeholder:text-agro-cloud outline-none"
+              />
+              <button
+                type="submit"
+                disabled={!draft.trim() || thinking}
+                aria-label={bundle.aria.sendMessage}
+                className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-agro-canopy to-agro-forest px-5 text-sm font-semibold text-white shadow-sm transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <span className="hidden sm:inline">{bundle.chat.send}</span>
+                <SendIcon className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="mt-1.5 px-2 text-center text-[0.7rem] text-agro-cloud sm:text-start">
+              {bundle.chat.composerHint}
+            </p>
           </div>
         </form>
       </div>

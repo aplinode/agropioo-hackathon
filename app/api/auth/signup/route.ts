@@ -100,10 +100,9 @@ export async function POST(request: Request): Promise<Response> {
     const pass = await mintPass("verify", { accountId: account.id, email });
     await setPassCookie("verify", pass.token);
 
-    const delivery = await deliverCode("verify", email, code);
+    void deliverCode("verify", email, code);
     return jsonResponse({
       ok: true,
-      ...(delivery.demoCode ? { demoCode: delivery.demoCode } : {}),
     });
   } catch (error) {
     console.error("[signup]", error instanceof Error ? error.message : error);

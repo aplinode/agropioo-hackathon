@@ -86,10 +86,9 @@ export async function POST(request: Request): Promise<Response> {
         email: user.email,
       });
       await setPassCookie("verify", pass.token);
-      const delivery = await deliverCode("verify", user.email, code);
+      void deliverCode("verify", user.email, code);
       return jsonResponse({
         redirect: "/verify",
-        ...(delivery.demoCode ? { demoCode: delivery.demoCode } : {}),
       });
     }
 

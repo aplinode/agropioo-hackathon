@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import DetectUpload from "./detect-upload";
 import { getDetectBundle } from "@/lib/i18n/server";
-import { query } from "@/lib/db";
 import { requireSessionPage } from "@/lib/auth/guards";
+import { query } from "@/lib/db";
+import DetectUpload from "./detect-upload";
 import type { FarmOption, ScanHistoryItem } from "./detect-types";
 
 export const metadata: Metadata = {

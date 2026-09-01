@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRightIcon, AlertTriangleIcon } from "@/components/icons";
 
 const CODE_LENGTH = 6;
-const MAX_ATTEMPTS = 5; // cosmetic mirror of the server-side per-code cap
+const MAX_ATTEMPTS = 5;
 const RESEND_COOLDOWN_SECONDS = 60;
 
 export type OtpSubmitResult =
@@ -13,24 +13,16 @@ export type OtpSubmitResult =
   | { status: "eject" };
 
 export type OtpResendResult =
-  | { status: "ok"; demoCode?: string }
+  | { status: "ok" }
   | { status: "retry"; message?: string }
   | { status: "eject" };
 
 type OtpVerifyProps = {
-  /** "signup" = email verification after sign-up · "reset" = password-reset step */
   context: "signup" | "reset";
-  /** Destination shown masked, e.g. a•••@gmail.com */
   email: string;
-  /** Checks the code against the real Route Handler; fatal results eject. */
   submitCode: (code: string) => Promise<OtpSubmitResult>;
-  /** Requests a fresh code from the real resend endpoint. */
   resendCode: () => Promise<OtpResendResult>;
-  /** Rendered ONLY when the FR17 demo gate produced it — never otherwise. */
-  demoCode?: string;
-  /** Called after the correct code is verified — parent owns the hand-off. */
   onVerified: () => void;
-  /** Escape-hatch label, e.g. "Use a different account" or "Back". */
   escapeLabel: string;
   onEscape: () => void;
 };
@@ -39,17 +31,11 @@ function formatCooldown(seconds: number): string {
   return `0:${String(seconds).padStart(2, "0")}`;
 }
 
-/* Shared 6-digit verification screen serving BOTH purposes (FR12): signup
-   verification and step 2 of password recovery. Layout, inputs, and rules
-   are identical; context copy and escape hatches switch per purpose.
-   Greens + whites/neutrals only: wrong-code states lean on deep-forest
-   borders, an alert icon, and words — never a second hue. */
 export default function OtpVerify({
   context,
   email,
   submitCode,
   resendCode,
-  demoCode,
   onVerified,
   escapeLabel,
   onEscape,
@@ -58,7 +44,6 @@ export default function OtpVerify({
   const [status, setStatus] = useState<"idle" | "loading" | "error" | "locked">("idle");
   const [attempts, setAttempts] = useState(0);
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
-  const [bannerCode, setBannerCode] = useState<string | undefined>(demoCode);
   const [notice, setNotice] = useState<string | null>(null);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -100,7 +85,7 @@ export default function OtpVerify({
       onVerified();
       return;
     }
-    if (result.status === "eject") return; // parent navigated away
+    if (result.status === "eject") return;
     const nextAttempts = attempts + 1;
     setAttempts(nextAttempts);
     if (nextAttempts >= MAX_ATTEMPTS || result.message === "dead") {
@@ -169,13 +154,12 @@ export default function OtpVerify({
     if (cooldown > 0 || status === "loading") return;
     setStatus("loading");
     const result = await resendCode();
-    if (result.status === "eject") return; // parent navigated away
+    if (result.status === "eject") return;
     if (result.status === "retry") {
       setStatus("idle");
-      setNotice(result.message ?? "Couldn’t send a new code yet — try again shortly.");
+      setNotice(result.message ?? "Couldn't send a new code yet — try again shortly.");
       return;
     }
-    if (result.demoCode) setBannerCode(result.demoCode);
     setAttempts(0);
     setStatus("idle");
     setNotice("A fresh code is on its way.");
@@ -196,13 +180,6 @@ export default function OtpVerify({
         We sent a 6-digit code to <strong className="font-semibold text-agro-ink">{email}</strong>.
         Enter it below to continue.
       </p>
-
-      {/* Demo affordance — renders ONLY when the FR17 gate delivered a code. */}
-      {bannerCode && (
-        <p className="mt-5 rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 font-mono text-xs tracking-wide text-agro-slate">
-          DEMO ONLY · Verification code: <strong className="text-agro-ink">{bannerCode}</strong> · no email was sent
-        </p>
-      )}
 
       <div
         className="mt-6 flex items-center justify-between gap-2 sm:gap-3"

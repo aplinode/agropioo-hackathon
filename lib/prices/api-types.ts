@@ -34,6 +34,12 @@ export const alertUpdateSchema = z.object({
   status: z.enum(["active", "paused"]).optional(),
 });
 
+export const historyQuerySchema = z.object({
+  crop_id: z.string().min(1, "crop_id is required"),
+  mandi_id: z.string().min(1, "mandi_id is required"),
+  range: z.enum(["1M", "3M", "6M", "12M"]).default("3M"),
+});
+
 export type CurrentPriceRow = {
   mandi_id: string;
   mandi_name: string;

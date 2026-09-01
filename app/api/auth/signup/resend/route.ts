@@ -64,10 +64,9 @@ export async function POST(): Promise<Response> {
       pass.claims.email,
       account.id as string,
     );
-    const delivery = await deliverCode("verify", pass.claims.email, code);
+    void deliverCode("verify", pass.claims.email, code);
     return jsonResponse({
       ok: true,
-      ...(delivery.demoCode ? { demoCode: delivery.demoCode } : {}),
     });
   } catch (error) {
     console.error(

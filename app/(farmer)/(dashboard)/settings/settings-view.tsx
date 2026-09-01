@@ -18,7 +18,7 @@ const languages = [
   { name: "سنڌي · Sindhi", code: "SD", available: false },
 ] as const;
 
-/* Profile & preferences (UI-only demo). Toggles and language selection
+/* Profile & preferences. Toggles and language selection
    are session-only until preferences are wired to the database. */
 export default function SettingsView() {
   const [alertsOn, setAlertsOn] = useState({
@@ -183,10 +183,6 @@ export default function SettingsView() {
         <LogOutIcon size={18} className="shrink-0" />
         Sign out
       </Link>
-
-      <p className="pb-2 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
-        Agropioo demo · v0.1 · a product of Aplinode
-      </p>
     </div>
   );
 }

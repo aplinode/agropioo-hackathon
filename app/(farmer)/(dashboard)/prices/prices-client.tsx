@@ -7,6 +7,7 @@ import MarketComparisonTable from "@/components/prices/market-comparison-table";
 import PredictionChart from "@/components/prices/prediction-chart";
 import RecommendationBadge from "@/components/prices/recommendation-badge";
 import PriceAlertModal, { type AlertFormData, type SavedAlert } from "@/components/prices/price-alert-modal";
+import PriceHistoryChart, { type HistoryPoint } from "@/components/prices/price-history-chart";
 import { SearchIcon } from "@/components/icons";
 import type { PricesBundle } from "./prices-bundle";
 import type { ForecastPoint } from "@/lib/prices/forecast";
@@ -28,6 +29,11 @@ type PredictionResponse = {
   model_confidence: number;
 };
 
+type HistoryResponse = {
+  history: HistoryPoint[];
+  range: "1M" | "3M" | "6M" | "12M";
+};
+
 interface PricesClientProps {
   bundle: PricesBundle;
   crops: CropOption[];
@@ -42,6 +48,9 @@ export default function PricesClient({ bundle, crops, mandis, initial }: PricesC
   const [isPending, startTransition] = useTransition();
   const [prediction, setPrediction] = useState<PredictionResponse | null>(null);
   const [predictionPending, setPredictionPending] = useState(false);
+  const [history, setHistory] = useState<HistoryResponse | null>(null);
+  const [historyRange, setHistoryRange] = useState<"1M" | "3M" | "6M" | "12M">("3M");
+  const [historyPending, setHistoryPending] = useState(false);
   const [alerts, setAlerts] = useState<SavedAlert[]>([]);
   const [alertsPending, setAlertsPending] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -112,6 +121,45 @@ export default function PricesClient({ bundle, crops, mandis, initial }: PricesC
       cancelled = true;
     };
   }, [selectedCrop, prices.prices]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      if (!selectedCrop || prices.prices.length === 0) {
+        if (!cancelled) setHistory(null);
+        return;
+      }
+
+      const best = prices.prices.reduce((max, p) =>
+        p.modal_price > max.modal_price ? p : max, prices.prices[0]);
+      if (!best) {
+        if (!cancelled) setHistory(null);
+        return;
+      }
+
+      if (!cancelled) setHistoryPending(true);
+      const url = new URL("/api/prices/history", window.location.origin);
+      url.searchParams.set("crop_id", best.crop_id);
+      url.searchParams.set("mandi_id", best.mandi_id);
+      url.searchParams.set("range", historyRange);
+      const res = await fetch(url.toString(), { credentials: "same-origin" });
+      if (!cancelled) {
+        setHistoryPending(false);
+        if (res.ok) {
+          const data = (await res.json()) as HistoryResponse;
+          setHistory(data);
+        } else {
+          setHistory(null);
+        }
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCrop, prices.prices, historyRange]);
 
   useEffect(() => {
     let cancelled = false;
@@ -280,6 +328,20 @@ export default function PricesClient({ bundle, crops, mandis, initial }: PricesC
             </div>
           ) : null}
           {selectedCrop && predictionPending ? (
+            <div className="flex items-center gap-3 rounded-2xl border border-agro-sprout bg-white p-6 text-agro-slate">
+              <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-agro-sprout border-t-agro-canopy" />
+              {bundle.loading}
+            </div>
+          ) : null}
+          {selectedCrop && history ? (
+            <PriceHistoryChart
+              history={history.history}
+              range={history.range}
+              onRangeChange={setHistoryRange}
+              bundle={bundle}
+            />
+          ) : null}
+          {selectedCrop && historyPending ? (
             <div className="flex items-center gap-3 rounded-2xl border border-agro-sprout bg-white p-6 text-agro-slate">
               <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-agro-sprout border-t-agro-canopy" />
               {bundle.loading}

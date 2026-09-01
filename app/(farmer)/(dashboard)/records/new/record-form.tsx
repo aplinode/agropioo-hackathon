@@ -116,7 +116,7 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
           <CheckIcon size={26} />
         </span>
         <h2 className="display-heading mt-5 font-display text-3xl font-bold tracking-tight text-agro-ink">
-          {bundle.records.new.success.heading}
+          Record saved
         </h2>
         <p className="mt-3 max-w-md leading-relaxed text-agro-slate">
           {bundle.records.new.success.description}
