@@ -17,20 +17,17 @@ type WeatherOverviewProps = {
   };
 };
 
-function ConditionIcon({ condition }: { condition: string | null }) {
-  if (!condition) return CloudIcon;
-  switch (condition) {
-    case "Clear":
-      return SunIcon;
-    case "Clouds":
-      return CloudIcon;
-    case "Rain":
-    case "Drizzle":
-    case "Thunderstorm":
-      return CloudRainIcon;
-    default:
-      return CloudIcon;
-  }
+const CONDITION_ICON: Record<string, React.ComponentType<{ size?: number }>> = {
+  Clear: SunIcon,
+  Clouds: CloudIcon,
+  Rain: CloudRainIcon,
+  Drizzle: CloudRainIcon,
+  Thunderstorm: CloudRainIcon,
+};
+
+function WeatherIcon({ condition }: { condition: string | null }) {
+  const Icon = condition ? (CONDITION_ICON[condition] ?? CloudIcon) : CloudIcon;
+  return <Icon size={32} />;
 }
 
 export default function WeatherOverview({
@@ -42,14 +39,12 @@ export default function WeatherOverview({
   farmName,
   dateTime,
 }: WeatherOverviewProps) {
-  const Icon = ConditionIcon({ condition });
-
   return (
     <div className="rounded-3xl border border-agro-sprout bg-white p-6 sm:p-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-5">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy">
-            <Icon size={32} />
+            <WeatherIcon condition={condition} />
           </div>
           <div>
             <p className="text-5xl font-semibold text-agro-forest tabular-nums">

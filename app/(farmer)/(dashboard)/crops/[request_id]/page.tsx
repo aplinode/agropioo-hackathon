@@ -109,7 +109,6 @@ export default async function CropRecommendationDetailPage({ params }: PageProps
         bundle={bundle}
         farms={[]}
         initialRecommendations={mappedRecommendations}
-        initialRequestId={request.id as string}
       />
     </div>
   );
