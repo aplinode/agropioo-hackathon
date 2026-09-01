@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, type Mock } from "vitest";
 import { chunkBatch, postBatch, type IngestBatch } from "../../../scripts/scrape-prices/post";
 
 function makeRow(i: number) {
@@ -39,7 +39,8 @@ describe("postBatch", () => {
 
     expect(result.status).toBe(200);
     expect(mockFetch).toHaveBeenCalledOnce();
-    const [calledUrl, calledInit] = mockFetch.mock.calls[0];
+    const calls = (mockFetch as Mock).mock.calls as Array<[string, RequestInit]>;
+    const [calledUrl, calledInit] = calls[0];
     expect(calledUrl).toBe("https://api.example.test/api/prices/ingest");
     expect(calledInit.method).toBe("POST");
     const headers = calledInit.headers as Record<string, string>;

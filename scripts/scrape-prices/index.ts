@@ -78,7 +78,8 @@ export async function executeRun(input: ExecuteRunInput): Promise<ExecuteRunOutp
         rowsScrapedToday: source.rows.length,
       },
       {
-        pool: { query: async () => ({ rows: [] as Array<{ day: string; is_weekday: boolean }>, rowCount: 0 }) } as never,
+        queryFn: (async () => []) as never,
+        queryOneFn: (async () => null) as never,
         lookbackDays: 60,
       },
     );

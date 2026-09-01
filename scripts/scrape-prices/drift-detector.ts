@@ -1,5 +1,4 @@
-import type { Pool } from "pg";
-import { getPool } from "../../lib/db";
+import { query as dbQuery, queryOne as dbQueryOne } from "../../lib/db";
 
 export type DriftKind = "drift_suspected" | "healthy" | "no_history" | "weekend";
 
@@ -42,31 +41,39 @@ export interface DriftContext {
 }
 
 export interface DriftDbDeps {
-  pool: Pool;
+  queryFn?: typeof dbQuery;
+  queryOneFn?: typeof dbQueryOne;
   lookbackDays?: number;
+}
+
+interface WeekdayHistoryRow {
+  day: string;
+  is_weekday: boolean;
+}
+
+interface MostRecentRunRow {
+  obs_date: string;
+  rows: number;
 }
 
 export async function detectDrift(
   ctx: DriftContext,
-  deps: DriftDbDeps,
+  deps: DriftDbDeps = {},
 ): Promise<DriftResult> {
-  const result = deps.pool === null
-    ? null
-    : await deps.pool.query<{ day: string; is_weekday: boolean }>(
-        `SELECT to_char(d::date, 'YYYY-MM-DD') AS day,
-                EXTRACT(ISODOW FROM d)::int BETWEEN 1 AND 5 AS is_weekday
-         FROM generate_series(($1::date - ($2::int || ' days')::interval), ($1::date - interval '1 day'), interval '1 day') AS d`,
-        [ctx.todayIso, deps.lookbackDays ?? 60],
-      );
+  const queryFn = deps.queryFn ?? dbQuery;
+  const queryOneFn = deps.queryOneFn ?? dbQueryOne;
+  const weekdayRows = await queryFn<WeekdayHistoryRow>(
+    `SELECT to_char(d::date, 'YYYY-MM-DD') AS day,
+            EXTRACT(ISODOW FROM d)::int BETWEEN 1 AND 5 AS is_weekday
+     FROM generate_series(($1::date - ($2::int || ' days')::interval), ($1::date - interval '1 day'), interval '1 day') AS d`,
+    [ctx.todayIso, deps.lookbackDays ?? 60],
+  );
+  const mostRecent = await queryOneFn<MostRecentRunRow>(
+    "SELECT to_char(observed_date, 'YYYY-MM-DD') AS obs_date, rows FROM scraper_runs WHERE source = $1 ORDER BY observed_date DESC LIMIT 1",
+    [ctx.source],
+  );
 
-  const weekdayHistory = (result?.rows ?? []).filter((row) => row.is_weekday).length;
-  const mostRecentResult = deps.pool === null
-    ? null
-    : await deps.pool.query<{ obs_date: string; rows: number }>(
-        "SELECT to_char(observed_date, 'YYYY-MM-DD') AS obs_date, rows FROM scraper_runs WHERE source = $1 ORDER BY observed_date DESC LIMIT 1",
-        [ctx.source],
-      );
-  const mostRecent = mostRecentResult?.rows[0] ?? null;
+  const weekdayHistory = weekdayRows.filter((row) => row.is_weekday).length;
   const mostRecentAgeDays = mostRecent
     ? Math.floor((Date.parse(ctx.todayIso) - Date.parse(mostRecent.obs_date)) / SEVEN_DAYS * 7)
     : null;
@@ -81,8 +88,4 @@ export async function detectDrift(
     mostRecentDate: mostRecent?.obs_date ?? null,
     mostRecentAgeDays,
   });
-}
-
-export function createDriftDetector() {
-  return (ctx: DriftContext) => detectDrift(ctx, { pool: getPool() });
 }

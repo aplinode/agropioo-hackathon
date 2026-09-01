@@ -1,5 +1,5 @@
 import type { Pool } from "pg";
-import { getPool } from "../../lib/db";
+import { query } from "../../lib/db";
 
 export type HolidaySource = "amis_pk" | "samis_pk" | "fmis_kp" | "bmis_balochistan" | "pbs_spi";
 
@@ -14,15 +14,15 @@ interface HolidayRow {
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
-export function createDbHolidayLookup(pool: Pool): HolidayLookup {
+export function createDbHolidayLookup(_pool: Pool | null = null): HolidayLookup {
   return {
     async isHoliday(source, date) {
       if (!DATE_RE.test(date)) return false;
-      const result = await pool.query<HolidayRow>(
+      const rows = await query<HolidayRow>(
         "SELECT source, holiday_date::text FROM mandi_holidays WHERE source = $1 AND holiday_date = $2 LIMIT 1",
         [source, date],
       );
-      return result.rowCount !== null && result.rowCount > 0;
+      return rows.length > 0;
     },
   };
 }
@@ -53,7 +53,3 @@ export const ALWAYS_OPEN_HOLIDAY_LOOKUP: HolidayLookup = {
     return false;
   },
 };
-
-export function defaultHolidayLookup(): HolidayLookup {
-  return createDbHolidayLookup(getPool());
-}
