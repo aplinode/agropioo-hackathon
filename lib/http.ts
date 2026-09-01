@@ -12,7 +12,9 @@ export type ApiErrorCode =
   | "rate_limited"
   | "service_unavailable"
   | "internal_error"
-  | "server_error";
+  | "server_error"
+  | "no_candidates"
+  | "outside_pakistan";
 
 export function errorBody(code: ApiErrorCode, message: string) {
   return { error: { code, message } };

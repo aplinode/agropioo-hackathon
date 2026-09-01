@@ -46,6 +46,22 @@ export class OutsidePakistanError extends Error {
   }
 }
 
+export class FarmNotFoundError extends Error {
+  code = "not_found" as const;
+  status = 404;
+  constructor() {
+    super("Farm not found.");
+  }
+}
+
+export class FarmForbiddenError extends Error {
+  code = "forbidden" as const;
+  status = 403;
+  constructor() {
+    super("Farm does not belong to the account.");
+  }
+}
+
 export class RecommendationExistsError extends Error {
   code = "recommendation_exists" as const;
   status = 409;
@@ -145,9 +161,9 @@ export async function recommendCrops(
     `SELECT id, account_id, district, lat, lng FROM farms WHERE id = $1`,
     [input.farmId],
   );
-  if (!farm) throw new Error("Farm not found.");
+  if (!farm) throw new FarmNotFoundError();
   if (farm.account_id !== accountId)
-    throw new Error("Farm does not belong to the account.");
+    throw new FarmForbiddenError();
 
   const lat = Number(farm.lat);
   const lng = Number(farm.lng);

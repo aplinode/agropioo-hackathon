@@ -9,7 +9,7 @@ import {
   createCropRecommendationSchema,
   listCropRecommendationsQuerySchema,
 } from "@/lib/validation/crops";
-import { recommendCrops, WeatherUnavailableError, RecommendationExistsError } from "@/lib/crops/engine";
+import { recommendCrops, WeatherUnavailableError, RecommendationExistsError, NoCandidatesError, OutsidePakistanError, FarmNotFoundError, FarmForbiddenError } from "@/lib/crops/engine";
 import { query, queryOne } from "@/lib/db";
 import type { RecommendCropsInput } from "@/lib/crops/api-types";
 
@@ -61,6 +61,18 @@ export async function POST(request: Request) {
         { error: errorBody(err.code, err.message), existing: err.existing },
         err.status,
       );
+    }
+    if (err instanceof NoCandidatesError) {
+      return errorResponse(err.code, err.message, err.status);
+    }
+    if (err instanceof OutsidePakistanError) {
+      return errorResponse(err.code, err.message, err.status);
+    }
+    if (err instanceof FarmNotFoundError) {
+      return errorResponse(err.code, err.message, err.status);
+    }
+    if (err instanceof FarmForbiddenError) {
+      return errorResponse(err.code, err.message, err.status);
     }
     console.error("crops recommendation failed:", err);
     return errorResponse("server_error", "Something went wrong. Please try again.", 500);
