@@ -45,6 +45,8 @@ export type DashboardBundle = {
   demoFooter: string;
   languageLabel: string;
   signOut: string;
+  weatherNoLocation: string;
+  weatherYourArea: string;
   pricesWidgetTitle: string;
   pricesWidgetView: string;
   pricesWidgetPerMaund: string;

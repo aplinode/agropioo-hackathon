@@ -75,10 +75,14 @@ export default async function DashboardPage({
 
     widgetPrices = await Promise.all(
       cropIds.map(async (cropId) => {
-        const nameRow = await queryOne<{ name_en: string }>(
-          `SELECT name_en FROM crops WHERE id = $1`,
+        const localeColumn = `name_${appLocale}`;
+        const nameRow = await queryOne<{ [key: string]: string }>(
+          `SELECT ${localeColumn} AS name_local, name_en FROM crops WHERE id = $1`,
           [cropId],
         );
+
+        const cropName =
+          (nameRow?.name_local && nameRow.name_local.trim() !== "") ? nameRow.name_local : nameRow?.name_en ?? cropId;
 
         // 7 most recent daily modal prices (any mandi, average)
         const histRows = await query<{ date: string; avg_modal: number }>(
@@ -100,7 +104,7 @@ export default async function DashboardPage({
 
         return {
           crop_id: cropId,
-          crop_name: nameRow?.name_en ?? cropId,
+          crop_name: cropName,
           modal_price: latest,
           change_pct: changePct,
           sparkline,

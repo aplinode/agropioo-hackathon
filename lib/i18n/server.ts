@@ -227,6 +227,8 @@ export async function getDashboardBundle(): Promise<DashboardBundle> {
     pricesWidgetNoTracked: t("app.dashboard.pricesWidgetNoTracked").text,
     languageLabel: t("app.dashboard.languageLabel").text,
     signOut: t("app.shell.signOut").text,
+    weatherNoLocation: t("app.dashboard.weatherNoLocation").text,
+    weatherYourArea: t("app.dashboard.weatherYourArea").text,
     demo: {
       todayLabel: t("app.dashboard.demo.todayLabel").text,
       location: t("app.dashboard.demo.location").text,

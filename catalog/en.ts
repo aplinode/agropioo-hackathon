@@ -750,6 +750,8 @@ export const en = {
   "app.dashboard.severity.watch": "Watch",
   "app.dashboard.severity.info": "Info",
   "app.dashboard.languageLabel": "Language",
+  "app.dashboard.weatherNoLocation": "Weather data will appear here once your farm location is set.",
+  "app.dashboard.weatherYourArea": "Your area",
   "app.dashboard.quickActionsHeading": "Quick actions",
   "app.dashboard.cropDoctor": "Crop doctor",
   "app.dashboard.detectTitle": "Spot disease before it spreads",
@@ -909,6 +911,8 @@ export const en = {
   "app.farms.detail.viewAllRecords": "View all records",
   "app.farms.detail.logFieldEvent": "Log a field event",
   "app.farms.detail.scanCrop": "Scan this crop",
+  "app.farms.detail.noRecords":
+    "No records yet — start logging field events to build your farm's memory.",
 
   /* ── Records common ─────────────────────────────────── */
   "app.records.eyebrow": "Farm records",
