@@ -573,6 +573,12 @@ export async function getWeatherBundle(): Promise<WeatherBundle> {
       success: t("app.weather.registerForm.success").text,
       error: t("app.weather.registerForm.error").text,
     },
+    metric: {
+      temperature: t("app.weather.metric.temperature").text,
+      precipitation: t("app.weather.metric.precipitation").text,
+      wind: t("app.weather.metric.wind").text,
+      humidity: t("app.weather.metric.humidity").text,
+    },
     historyTitle: t("app.weather.historyTitle").text,
     historySubtitle: t("app.weather.historySubtitle").text,
     historyEmpty: t("app.weather.history.empty").text,

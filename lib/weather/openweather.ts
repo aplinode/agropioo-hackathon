@@ -28,6 +28,7 @@ export type ForecastHour = {
   rain_pct: number;
   precip_mm: number;
   humidity: number;
+  wind_kph: number;
   condition: string;
 };
 
@@ -148,6 +149,7 @@ async function fetchForecast(lat: number, lng: number): Promise<ForecastResult |
           pop?: number;
           rain?: { "3h"?: number };
           snow?: { "3h"?: number };
+          wind?: { speed?: number };
         }>;
       };
       const list = data.list ?? [];
@@ -161,6 +163,7 @@ async function fetchForecast(lat: number, lng: number): Promise<ForecastResult |
           rain_pct: Math.round((s.pop ?? 0) * 100),
           precip_mm: Math.round((s.rain?.["3h"] ?? s.snow?.["3h"] ?? 0) * 10) / 10,
           humidity: Math.round(s.main?.humidity ?? 0),
+          wind_kph: s.wind?.speed != null ? Math.round(s.wind.speed * 3.6) : 0,
           condition: s.weather?.[0]?.main ?? "Clear",
         }));
 

@@ -1269,6 +1269,12 @@ export const en = {
   "app.weather.buttons.refresh": "Refresh",
   "app.weather.errors.generic": "Something went wrong. Please try again.",
   "app.weather.errors.noFarm": "Select a farm to see its advisory.",
+  "app.weather.metric.temperature": "Temperature",
+  "app.weather.metric.precipitation": "Precipitation",
+  "app.weather.metric.wind": "Wind",
+  "app.weather.metric.humidity": "Humidity",
+
+
   /* ── Mandi Price Tracker ─────────────────────────────── */
   "app.prices.eyebrow": "Mandi prices",
   "app.prices.title": "Know the rate before you sell",

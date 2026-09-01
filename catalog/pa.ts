@@ -1034,6 +1034,10 @@ export const pa: Partial<Record<CatalogKey, string>> = {
   "app.weather.buttons.refresh": "تازہ کرو",
   "app.weather.errors.generic": "کچھ غلط ہو گیا۔ براہ کرم دوبارہ کوشش کرو۔",
   "app.weather.errors.noFarm": "اپنی صلاح ویکھن لئی ایک فارم منتخب کرو۔",
+  "app.weather.metric.temperature": "Temperature",
+  "app.weather.metric.precipitation": "Precipitation",
+  "app.weather.metric.wind": "Wind",
+  "app.weather.metric.humidity": "Humidity",
 
   /* ── Mandi Price Tracker ─────────────────────────────── */
   "app.prices.eyebrow": "Mandi prices",

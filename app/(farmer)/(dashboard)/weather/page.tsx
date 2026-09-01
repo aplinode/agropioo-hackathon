@@ -6,7 +6,8 @@ import { query, queryOne } from "@/lib/db";
 import { getWeatherBundle } from "@/lib/i18n/server";
 import { getAppLocale, getDictionary } from "@/lib/i18n/server";
 import type { CatalogKey } from "@/catalog";
-import { getForecast } from "@/lib/weather/openweather";
+import { getForecast, type ForecastHour } from "@/lib/weather/openweather";
+import { fetchCurrentWeather } from "@/lib/farms/weather";
 import { computeGrowthStage, type GrowthStage, type Severity } from "@/lib/weather/advisory";
 import { generateAIAdviceBatch } from "@/lib/weather/ai-advisory";
 import FarmSelector from "@/components/weather/FarmSelector";
@@ -14,9 +15,10 @@ import AdvisoryCard from "@/components/weather/AdvisoryCard";
 import ForecastList from "@/components/weather/ForecastList";
 import AlertBanner from "@/components/weather/AlertBanner";
 import RegisterFarmForm from "@/components/weather/RegisterFarmForm";
+import WeatherDashboard from "@/components/weather/WeatherDashboard";
 import { CROPS } from "@/lib/farms/constants";
 
-export const metadata: Metadata = { title: "Weather Advisory — Agropioo" };
+export const metadata: Metadata = { title: "Weather — Agropioo" };
 
 type FarmRow = {
   id: string;
@@ -106,6 +108,24 @@ export default async function WeatherPage({
     farmList.find((f) => f.primary_crop) ??
     farmList[0];
 
+  if (selected.lat == null || selected.lng == null || Number.isNaN(selected.lat) || Number.isNaN(selected.lng)) {
+    return (
+      <div className="pt-1">
+        <PageHeader eyebrow={bundle.eyebrow} title={bundle.pageTitle} description={bundle.description} />
+        <div className="mt-5">
+          <FarmSelector farms={farmList.map((f) => ({
+            id: f.id,
+            name: f.name,
+            cropLabel: capitalize(f.primary_crop ?? f.crops?.[0] ?? ""),
+          }))} selectedId={selected.id} label={bundle.farmSelectorLabel} />
+        </div>
+        <p className="mt-4 rounded-2xl border border-agro-canopy/30 bg-agro-mint px-4 py-3 text-sm text-agro-forest">
+          {bundle.weatherUnavailable} — Please add location coordinates to your farm to see weather data.
+        </p>
+      </div>
+    );
+  }
+
   const stageLabels: Record<GrowthStage, string> = {
     seedling: bundle.stages.seedling,
     vegetative: bundle.stages.vegetative,
@@ -155,7 +175,10 @@ export default async function WeatherPage({
   const t = dict.t;
 
   const today = new Date().toISOString().slice(0, 10);
-  const forecast = await getForecast(Number(selected.lat), Number(selected.lng));
+  const [currentWeather, forecast] = await Promise.all([
+    fetchCurrentWeather(Number(selected.lat), Number(selected.lng)),
+    getForecast(Number(selected.lat), Number(selected.lng)),
+  ]);
 
   let todayAdvice: { growth_stage: GrowthStage; advice_text: string; severity: Severity } | null = null;
   let forecastDays: Parameters<typeof ForecastList>[0]["days"] = [];
@@ -233,8 +256,8 @@ export default async function WeatherPage({
   } else {
     const cached = await queryOne<{ growth_stage: string | null; advice_text: string; severity: string }>(
       `SELECT growth_stage, advice_text, severity
-       FROM weather_advisories WHERE farm_id = $1 AND advisory_date <= $2
-       ORDER BY advisory_date DESC LIMIT 1`,
+        FROM weather_advisories WHERE farm_id = $1 AND advisory_date <= $2
+        ORDER BY advisory_date DESC LIMIT 1`,
       [selected.id, today],
     );
     if (cached) {
@@ -255,9 +278,9 @@ export default async function WeatherPage({
     severity: string;
   }>(
     `SELECT wa.id, f.name, wa.alert_type, wa.recommendation, wa.severity
-     FROM weather_alerts wa JOIN farms f ON f.id = wa.farm_id
-     WHERE wa.account_id = $1 AND wa.read_at IS NULL AND wa.dismissed_at IS NULL
-     ORDER BY wa.created_at DESC`,
+      FROM weather_alerts wa JOIN farms f ON f.id = wa.farm_id
+      WHERE wa.account_id = $1 AND wa.read_at IS NULL AND wa.dismissed_at IS NULL
+      ORDER BY wa.created_at DESC`,
     [session.accountId],
   );
 
@@ -272,6 +295,24 @@ export default async function WeatherPage({
     harvest: "Harvest",
   };
 
+  const hourlyByDay: Record<string, ForecastHour[]> = {};
+  if (forecast?.hourly) {
+    for (const h of forecast.hourly) {
+      const date = h.time.slice(0, 10);
+      if (!hourlyByDay[date]) hourlyByDay[date] = [];
+      hourlyByDay[date].push(h);
+    }
+  }
+
+  const dateTime = new Date().toLocaleString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
   return (
     <div className="pt-1">
       <PageHeader eyebrow={bundle.eyebrow} title={bundle.pageTitle} description={bundle.description} />
@@ -285,6 +326,25 @@ export default async function WeatherPage({
           <strong className="font-semibold">{bundle.weatherUnavailable}</strong> — {bundle.weatherUnavailableBody}
         </p>
       )}
+
+      <WeatherDashboard
+        currentWeather={currentWeather}
+        farmName={selected.name}
+        dateTime={dateTime}
+        hourlyByDay={hourlyByDay}
+        days={forecast?.days ?? []}
+        selectedDay={today}
+        metricLabels={{
+          temperature: t("app.weather.metric.temperature").text,
+          precipitation: t("app.weather.metric.precipitation").text,
+          wind: t("app.weather.metric.wind").text,
+        }}
+        overviewLabels={{
+          precipitation: t("app.weather.metric.precipitation").text,
+          humidity: t("app.weather.metric.humidity").text,
+          wind: t("app.weather.metric.wind").text,
+        }}
+      />
 
       {todayAdvice && (
         <AdvisoryCard
