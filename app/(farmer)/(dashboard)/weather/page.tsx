@@ -7,27 +7,14 @@ import { getWeatherBundle } from "@/lib/i18n/server";
 import { getAppLocale, getDictionary } from "@/lib/i18n/server";
 import type { CatalogKey } from "@/catalog";
 import { getForecast } from "@/lib/weather/openweather";
-import { buildAdvisoryDays, computeGrowthStage, type GrowthStage, type Severity } from "@/lib/weather/advisory";
+import { computeGrowthStage, type GrowthStage, type Severity } from "@/lib/weather/advisory";
+import { generateAIAdviceBatch } from "@/lib/weather/ai-advisory";
 import FarmSelector from "@/components/weather/FarmSelector";
 import AdvisoryCard from "@/components/weather/AdvisoryCard";
 import ForecastList from "@/components/weather/ForecastList";
 import AlertBanner from "@/components/weather/AlertBanner";
 import RegisterFarmForm from "@/components/weather/RegisterFarmForm";
-import { demoWeather } from "./demo-data";
 import { CROPS } from "@/lib/farms/constants";
-
-const DEMO_STAGE_SLUGS: Record<string, GrowthStage> = {
-  Seedling: "seedling",
-  Vegetative: "vegetative",
-  Flowering: "flowering",
-  Maturation: "maturation",
-  "Harvest ready": "harvestReady",
-  General: "generic",
-};
-
-function demoStageToSlug(label: string): GrowthStage {
-  return DEMO_STAGE_SLUGS[label] ?? "generic";
-}
 
 export const metadata: Metadata = { title: "Weather Advisory — Agropioo" };
 
@@ -176,22 +163,51 @@ export default async function WeatherPage({
 
   if (forecast) {
     dataSourceLabel = bundle.source.live;
-    const advisoryDays = buildAdvisoryDays(effectiveCrop.crop, effectiveCrop.sowingDate, forecast);
-    forecastDays = advisoryDays.map((d) => ({
-      date: d.date,
-      weather: d.weather,
-      growth_stage: d.growth_stage,
-      advice_text: t(d.advice_key as CatalogKey).text,
-      severity: d.severity,
-    }));
-    const todays = advisoryDays.find((d) => d.date === today) ?? advisoryDays[0];
+
+    const recentActivities = recordList
+      .slice(0, 10)
+      .map((r) => `${r.type} on ${r.event_date}`);
+
+    const aiAdvice = await generateAIAdviceBatch({
+      days: forecast.days,
+      crop: effectiveCrop.crop,
+      growthStage: effectiveCrop.stage,
+      locale,
+      farmName: selected.name,
+      recentActivities,
+    });
+
+    forecastDays = forecast.days.map((d) => {
+      const ai = aiAdvice.get(d.date);
+      return {
+        date: d.date,
+        weather: {
+          temp_max: d.temp_max,
+          temp_min: d.temp_min,
+          precip_mm: d.precip_mm,
+          humidity: d.humidity,
+          description: d.description,
+        },
+        growth_stage: effectiveCrop.stage,
+        advice_text: ai?.advice_text ?? "Keep monitoring your crop and the forecast.",
+        severity: ai?.severity ?? "info",
+        label: ai?.label,
+      };
+    });
+
+    const todays = forecastDays.find((d) => d.date === today) ?? forecastDays[0];
     todayAdvice = {
       growth_stage: todays.growth_stage,
-      advice_text: t(todays.advice_key as CatalogKey).text,
+      advice_text: todays.advice_text,
       severity: todays.severity,
     };
 
-    const snapshot = JSON.stringify({ source: forecast.source, days: advisoryDays.length, crop: effectiveCrop.crop, sowingDate: effectiveCrop.sowingDate });
+    const snapshot = JSON.stringify({
+      source: forecast.source,
+      days: forecast.days.length,
+      crop: effectiveCrop.crop,
+      sowingDate: effectiveCrop.sowingDate,
+    });
     await queryOne(
       `INSERT INTO weather_advisories (
          farm_id, account_id, advisory_date, forecast_snapshot, growth_stage,
@@ -208,10 +224,10 @@ export default async function WeatherPage({
         session.accountId,
         today,
         snapshot,
-        todays.growth_stage,
-        todays.advice_key,
+        todayAdvice.growth_stage,
+        todays.advice_text ? `ai-${today}` : "generic",
         todayAdvice.advice_text,
-        todays.severity,
+        todayAdvice.severity,
       ],
     );
   } else {
@@ -228,19 +244,6 @@ export default async function WeatherPage({
         advice_text: cached.advice_text,
         severity: cached.severity as Severity,
       };
-    } else {
-      todayAdvice = {
-        growth_stage: demoStageToSlug(demoWeather.today.growthStageLabel),
-        advice_text: demoWeather.today.adviceText,
-        severity: demoWeather.today.severity,
-      };
-      forecastDays = demoWeather.days.map((d) => ({
-        date: d.date,
-        weather: d.weather,
-        growth_stage: demoStageToSlug(d.growthStageLabel),
-        advice_text: d.adviceText,
-        severity: d.severity,
-      }));
     }
   }
 
