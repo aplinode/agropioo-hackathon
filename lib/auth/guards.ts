@@ -5,6 +5,7 @@
 
 import { redirect } from "next/navigation";
 import { readValidPass, type VerifiedPass } from "@/lib/auth/pass";
+import { getAppLocale } from "@/lib/i18n/server";
 
 export type SessionContext = {
   accountId: string;
@@ -18,7 +19,10 @@ function toSessionContext(pass: VerifiedPass): SessionContext {
 /** For protected pages/layouts. Redirects guests to /login (FR27/FR29). */
 export async function requireSessionPage(): Promise<SessionContext> {
   const pass = await readValidPass("session");
-  if (!pass) redirect("/login");
+  if (!pass) {
+    const locale = await getAppLocale();
+    redirect(`/${locale}/login`);
+  }
   return toSessionContext(pass);
 }
 
