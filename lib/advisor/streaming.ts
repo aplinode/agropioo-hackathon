@@ -58,8 +58,8 @@ export function toSSEStream(
       if (farmerMessage && output) {
         await generateAndSaveSummary(conversationId, farmerMessage, output);
       }
-    } catch {
-      // Persistence failure is non-fatal: the farmer still sees the stream.
+    } catch (error) {
+      console.error("[SSE Stream] Failed to persist message:", error);
     }
   }
 

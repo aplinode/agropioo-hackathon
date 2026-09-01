@@ -26,10 +26,20 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const scanId = body?.scanId ?? null;
 
-  const row = await queryOne<{ id: string }>(
-    `INSERT INTO detect_chats (account_id, scan_id, title) VALUES ($1, $2, $3) RETURNING id`,
-    [session.accountId, scanId, "New detection chat"],
-  );
+  let row;
+  if (scanId) {
+    row = await queryOne<{ id: string }>(
+      `SELECT id FROM detect_chats WHERE account_id = $1 AND scan_id = $2 ORDER BY updated_at DESC LIMIT 1`,
+      [session.accountId, scanId],
+    );
+  }
+
+  if (!row) {
+    row = await queryOne<{ id: string }>(
+      `INSERT INTO detect_chats (account_id, scan_id, title) VALUES ($1, $2, $3) RETURNING id`,
+      [session.accountId, scanId, "New detection chat"],
+    );
+  }
 
   return jsonResponse({ chatId: row?.id ?? null });
 }

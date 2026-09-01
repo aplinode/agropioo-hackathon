@@ -19,7 +19,6 @@ import DetectChat from "./detect-chat";
 import DetectSidebar from "./detect-sidebar";
 import type { DetectBundle } from "./detect-bundle";
 import type { DiagnosisResult, FarmOption, ScanHistoryItem } from "./detect-types";
-import type { DetectChatMeta } from "./chat-history";
 import { toDiagnosis } from "./detect-types";
 
 type Stage = "idle" | "analyzing" | "result" | "error" | "chat";
@@ -29,7 +28,6 @@ interface DetectUploadProps {
   farms: FarmOption[];
   initialScans: ScanHistoryItem[];
   nextCursor: string | null;
-  initialChats: DetectChatMeta[];
 }
 
 const SAMPLE_LEAF_URL = "/assets/sample-leaf.jpg";
@@ -39,7 +37,6 @@ export default function DetectUpload({
   farms,
   initialScans,
   nextCursor,
-  initialChats,
 }: DetectUploadProps) {
   const [stage, setStage] = useState<Stage>("idle");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -60,8 +57,9 @@ export default function DetectUpload({
     { id: string; role: "farmer" | "detect"; content: string }[]
   >([]);
 
-  const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [scans, setScans] = useState<ScanHistoryItem[]>(initialScans);
 
   const objectUrlRef = useRef<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -125,55 +123,16 @@ export default function DetectUpload({
     setChatMessages(data.messages ?? []);
   }
 
-  async function loadChatFromHistory(chat: DetectChatMeta) {
-    abortRef.current?.abort();
-    setAnalyzingError(null);
-    setAnalyzingErrorKind("service");
-    setSaveState("idle");
-    setSavedFarmName("");
-    setPreviewUrl(null);
-    setFileName("");
-
-    const [chatRes, messagesRes] = await Promise.all([
-      fetch(`/api/detect/chats/${chat.id}`, { credentials: "same-origin" }),
-      fetch(`/api/detect/messages/${chat.id}`, { credentials: "same-origin" }),
-    ]);
-
-    if (!chatRes.ok || !messagesRes.ok) {
-      setAnalyzingErrorKind("service");
-      setAnalyzingError("Failed to load chat.");
-      setStage("error");
-      return;
+  async function handleDeleteScan(scanId: string) {
+    const res = await fetch(`/api/detect/scans/${scanId}`, {
+      method: "DELETE",
+      credentials: "same-origin",
+    });
+    if (!res.ok) return;
+    setScans((prev) => prev.filter((s) => s.id !== scanId));
+    if (viewingScan?.id === scanId) {
+      resetToIdle();
     }
-
-    const chatData = await chatRes.json();
-    const messagesData = await messagesRes.json();
-
-    const scan = chatData.scan;
-    if (scan) {
-      const diagnosis: DiagnosisResult = {
-        scanId: scan.id,
-        diseaseName: scan.diseaseName,
-        confidence: scan.confidence,
-        severity: scan.severity,
-        crop: scan.crop,
-        causes: scan.causes,
-        steps: scan.steps,
-        rescanTiming: scan.rescanTiming,
-        caution: scan.caution,
-        imageUrl: scan.imageUrl,
-        saveStatus: "not_saved",
-      };
-      setResult(diagnosis);
-    } else {
-      setResult(null);
-    }
-
-    setChatId(chat.id);
-    setChatMessages(messagesData.messages ?? []);
-    setActiveChatId(chat.id);
-    setStage("chat");
-    setSidebarOpen(false);
   }
 
   async function enterChatMode(scan: DiagnosisResult | ScanHistoryItem) {
@@ -440,17 +399,15 @@ export default function DetectUpload({
     <div className="flex h-full w-full">
       <DetectSidebar
         bundle={bundle}
-        scans={initialScans}
-        chats={initialChats}
-        activeChatId={activeChatId}
+        scans={scans}
         onSelectScan={(scan) => enterChatMode(scan)}
-        onSelectChat={loadChatFromHistory}
+        onDeleteScan={handleDeleteScan}
         onNewScan={resetToIdle}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col ms-3 lg:ms-4">
         <div className="flex items-center gap-3 border-b border-agro-sprout px-4 py-2 lg:hidden">
           <button
             type="button"

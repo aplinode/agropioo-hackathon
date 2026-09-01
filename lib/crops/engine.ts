@@ -46,6 +46,16 @@ export class OutsidePakistanError extends Error {
   }
 }
 
+export class RecommendationExistsError extends Error {
+  code = "recommendation_exists" as const;
+  status = 409;
+  existing: CropRecommendationRequest;
+  constructor(existing: CropRecommendationRequest) {
+    super("You already have a recommendation for this farm, season, and year.");
+    this.existing = existing;
+  }
+}
+
 const PAKISTAN_BOUNDS = {
   latMin: 23.5,
   latMax: 37.0,
@@ -67,10 +77,6 @@ type PriceTrendRow = {
   trend: "up" | "stable" | "down";
   volatility: number;
   observed_at: string;
-};
-
-type PastCropRow = {
-  category: CropCategory | null;
 };
 
 function withinPakistan(lat: number | null, lng: number | null): boolean {
@@ -150,6 +156,22 @@ export async function recommendCrops(
     throw new OutsidePakistanError();
   }
 
+  const existingRequest = await queryOne<CropRecommendationRequest>(
+    `SELECT * FROM crop_recommendation_requests
+     WHERE account_id = $1 AND farm_id = $2 AND target_season = $3 AND target_year = $4`,
+    [accountId, input.farmId, input.targetSeason, input.targetYear],
+  );
+
+  if (existingRequest) {
+    if (!input.regenerate) {
+      throw new RecommendationExistsError(existingRequest);
+    }
+    await query(
+      `DELETE FROM crop_recommendation_requests WHERE id = $1`,
+      [existingRequest.id],
+    );
+  }
+
   const resolved = await resolveSoilType(input.soilType, farm.district ?? "");
 
   const forecast = await getForecast(lat, lng);
@@ -191,12 +213,11 @@ export async function recommendCrops(
     }
   }
 
-  const pastCrop = await queryOne<PastCropRow>(
+  const pastCrop = await queryOne<{ category: CropCategory | null }>(
     `SELECT c.category
-     FROM records r
-     JOIN crops c ON c.name_en = r.crop
-     WHERE r.farm_id = $1
-     ORDER BY r.event_date DESC
+     FROM farms f
+     JOIN crops c ON c.name_en = f.primary_crop
+     WHERE f.id = $1
      LIMIT 1`,
     [input.farmId],
   );

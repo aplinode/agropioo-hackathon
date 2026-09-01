@@ -113,6 +113,11 @@ export async function POST(request: Request) {
       `UPDATE detect_chats SET updated_at = now() WHERE id = $1`,
       [chatId],
     );
+    const title = farmerMessage.length > 80 ? `${farmerMessage.slice(0, 80)}…` : farmerMessage;
+    await query(
+      `UPDATE detect_chats SET title = $1 WHERE id = $2 AND title = 'New detection chat'`,
+      [title, chatId],
+    );
   }, farmerMessage);
 
   return new Response(sseStream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache", Connection: "keep-alive" } });
