@@ -52,7 +52,7 @@ export async function getCropsBySeasonAndBudget(
 ): Promise<CropSummary[]> {
   const rows = await query<CropRow>(
     `SELECT * FROM crops
-     WHERE season_windows @> $1::season_enum[]
+     WHERE season_windows @> $1::text[]
        AND capital_requirement_per_acre_pkr <= $2
      ORDER BY name_en`,
     [[season], BUDGET_CAP[budget] === Infinity ? 9_999_999_999 : BUDGET_CAP[budget]],
@@ -72,7 +72,7 @@ export async function listCrops(
   const values: unknown[] = [];
   if (opts.season) {
     values.push([opts.season]);
-    clauses.push(`season_windows @> $${values.length}::season_enum[]`);
+    clauses.push(`season_windows @> $${values.length}::text[]`);
   }
   if (opts.category) {
     values.push(opts.category);
