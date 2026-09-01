@@ -6,6 +6,16 @@ import { buildRotation } from "@/lib/crops/rotation";
 import type { CropRecommendation, FarmPlanEntry, RotationSuggestion } from "@/lib/crops/api-types";
 import { randomUUID } from "node:crypto";
 
+type FarmPlanRow = {
+  id: string;
+  account_id: string;
+  farm_id: string;
+  recommendation_id: string;
+  target_season: string;
+  target_year: number;
+  created_at: string;
+  updated_at: string;
+};
 type FarmRow = { account_id: string };
 type CropRow = {
   id: string;
@@ -206,7 +216,7 @@ export async function GET(request: Request) {
     return errorResponse("forbidden", "Forbidden", 403);
   }
 
-  const plan = await queryOne<FarmPlanEntry>(
+  const plan = await queryOne<FarmPlanRow>(
     `SELECT * FROM farm_plan_entries WHERE farm_id = $1 AND target_season = $2 AND target_year = $3`,
     [farm_id, season, year],
   );
