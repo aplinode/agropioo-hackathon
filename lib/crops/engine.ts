@@ -79,10 +79,6 @@ type PriceTrendRow = {
   observed_at: string;
 };
 
-type PastCropRow = {
-  category: CropCategory | null;
-};
-
 function withinPakistan(lat: number | null, lng: number | null): boolean {
   if (lat == null || lng == null) return false;
   return (
@@ -217,12 +213,11 @@ export async function recommendCrops(
     }
   }
 
-  const pastCrop = await queryOne<PastCropRow>(
+  const pastCrop = await queryOne<{ category: string | null }>(
     `SELECT c.category
-     FROM records r
-     JOIN crops c ON c.name_en = r.crop
-     WHERE r.farm_id = $1
-     ORDER BY r.event_date DESC
+     FROM farms f
+     JOIN crops c ON c.name_en = f.primary_crop
+     WHERE f.id = $1
      LIMIT 1`,
     [input.farmId],
   );
