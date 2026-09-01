@@ -66,7 +66,7 @@
 
 ### Implementation for US-S1
 
-- [ ] T014 [P] Create `scripts/scrape-prices/selectors.ts` exporting a single object keyed by `source_code` with each portal's CSS selectors, the base URL, and the date-extraction strategy (single file so drift is auditable)
+- [x] T014 [P] Create `scripts/scrape-prices/selectors.ts` exporting a single object keyed by `source_code` with each portal's CSS selectors, the base URL, and the date-extraction strategy (single file so drift is auditable)
 - [ ] T015 [P] Create `scripts/scrape-prices/sources/amis.ts` (Punjab AMIS) — Playwright opens `ViewPrices.aspx`, walks per-commodity + per-mandi, returns `IngestRow[]` (≥3 historical rows per active mandi to satisfy the FR-008 prediction bar of ≥3 rows / ≤7d)
 - [ ] T016 [P] Create `scripts/scrape-prices/sources/samis.ts` (Sindh SAMIS) — Playwright navigates the React frontend at `new-theme.staging-amis.com/market_price`, applies district/market/commodity filters via URL, returns `IngestRow[]`
 - [ ] T017 [P] Create `scripts/scrape-prices/sources/fmis-kp.ts` (KP FMIS) — Playwright loads `fmis.kp.gov.pk/kp_essential_commodities_price`, iterates the datatable rows, returns `IngestRow[]` (the built-in CSV export endpoint is the preferred happy path; fall back to table scrape if needed)
