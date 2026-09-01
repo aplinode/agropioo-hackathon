@@ -13,7 +13,6 @@ import {
   CheckIcon,
   ChevronDownIcon,
   MapPinIcon,
-  SearchIcon,
   XIcon,
 } from "@/components/icons";
 import Link from "next/link";
@@ -102,35 +101,37 @@ function CropSearchSelect({
             Add crop
           </button>
           {open && (
-            <div className="absolute start-0 z-[9999] mt-1 w-64 max-w-[calc(100vw-2rem)] overflow-auto rounded-xl border border-agro-sprout bg-white shadow-xl">
-              <div className="p-2">
+            <div className="absolute start-0 z-[9999] mt-1 w-64 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-agro-sprout bg-white shadow-xl">
+              <div className="p-1.5">
                 <input
                   autoFocus
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search crops..."
-                  className="focus-ring-none h-9 w-full rounded-lg border border-agro-sprout px-3 text-sm focus:outline-none focus:ring-2 focus:ring-agro-canopy/20"
+                  className="focus-ring-none h-8 w-full rounded-md border border-agro-sprout px-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-agro-canopy/20"
                 />
               </div>
-              {filtered.length > 0 ? (
-                filtered.map((crop) => (
-                  <button
-                    key={crop}
-                    type="button"
-                    className="flex w-full items-center px-4 py-2.5 text-start text-sm capitalize text-agro-ink transition-colors hover:bg-agro-mint"
-                    onClick={() => {
-                      onToggle(crop);
-                      setQuery("");
-                    }}
-                  >
-                    {crop}
-                  </button>
-                ))
-              ) : (
-                <p className="px-4 py-3 text-sm text-agro-cloud">
-                  No crops found
-                </p>
-              )}
+              <div className="max-h-40 overflow-auto">
+                {filtered.length > 0 ? (
+                  filtered.map((crop) => (
+                    <button
+                      key={crop}
+                      type="button"
+                      className="flex w-full items-center px-3 py-1.5 text-start text-xs capitalize text-agro-ink transition-colors hover:bg-agro-mint"
+                      onClick={() => {
+                        onToggle(crop);
+                        setQuery("");
+                      }}
+                    >
+                      {crop}
+                    </button>
+                  ))
+                ) : (
+                  <p className="px-3 py-2 text-xs text-agro-cloud">
+                    No crops found
+                  </p>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -563,16 +564,13 @@ function DistrictSelect({
       {open && (
         <div className="absolute left-0 right-0 z-[9999] mt-1 max-h-72 overflow-hidden rounded-xl border border-agro-sprout bg-white shadow-xl">
           <div className="p-2">
-            <div className="relative">
-              <SearchIcon size={16} className="absolute start-3 top-1/2 mt-1 text-agro-cloud" />
-              <input
-                autoFocus
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search district..."
-                className="focus-ring-none h-9 w-full rounded-lg border border-agro-sprout bg-agro-mint/30 pe-3 ps-9 text-sm text-agro-ink placeholder:text-agro-slate focus:outline-none focus:ring-2 focus:ring-agro-canopy/20"
-              />
-            </div>
+            <input
+              autoFocus
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search district..."
+              className="focus-ring-none h-9 w-full rounded-lg border border-agro-sprout bg-agro-mint/30 px-3 text-sm text-agro-ink placeholder:text-agro-slate focus:outline-none focus:ring-2 focus:ring-agro-canopy/20"
+            />
           </div>
           <div className="max-h-56 overflow-auto">
             {filtered.length > 0 ? (
