@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -155,29 +155,151 @@ const DISTRICT_SUGGESTIONS: Record<string, string[]> = {
   Bahawalpur: ["Milad Chowk", "Model Town", "Bahawalpur Road", "Satellite Town", "Hasilpur Road", "Yazman Road", "Chishtian Road", "Ahmadpur East"],
 };
 
-function LocationSearch({
+function CustomSelect({
   value,
-  district,
   onChange,
-  onLocationPick,
+  options,
+  placeholder,
   error,
-  suggestions = [],
+  disabled = false,
+  id,
 }: {
+  value: string;
+  onChange: (val: string) => void;
+  options: Array<{ value: string; label: string }>;
+  placeholder?: string;
+  error?: string;
+  disabled?: boolean;
+  id?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+        setQuery("");
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filtered = options.filter((o) =>
+    o.label.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const selected = options.find((o) => o.value === value);
+
+  return (
+    <div ref={ref} className="relative">
+      <label htmlFor={id} className="block text-sm font-semibold text-agro-ink">
+        {placeholder}
+      </label>
+      <div className="relative">
+        <button
+          type="button"
+          id={id}
+          disabled={disabled}
+          onClick={() => !disabled && setOpen(!open)}
+          className={`focus-ring-none mt-2 flex h-12 w-full items-center justify-between rounded-xl border bg-white px-3 py-2.5 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 ${
+            disabled
+              ? "cursor-not-allowed border-agro-sprout/60 bg-agro-mint/20 text-agro-slate"
+              : error
+                ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
+                : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
+          }`}
+        >
+          <span className={selected ? "" : "text-agro-cloud"}>
+            {selected ? selected.label : (placeholder || "Select...")}
+          </span>
+          <ChevronDownIcon
+            size={16}
+            className={`shrink-0 text-agro-slate transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          />
+        </button>
+      </div>
+
+      {open && (
+        <div className="absolute left-0 right-0 z-[9999] mt-1 max-h-72 overflow-hidden rounded-xl border border-agro-sprout bg-white shadow-xl">
+          <div className="p-2">
+            <input
+              autoFocus
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={`Search ${placeholder}...`}
+              className="focus-ring-none h-9 w-full rounded-lg border border-agro-sprout bg-agro-mint/30 px-3 text-sm text-agro-ink placeholder:text-agro-slate focus:outline-none focus:ring-2 focus:ring-agro-canopy/20"
+            />
+          </div>
+          <div className="max-h-56 overflow-auto">
+            {filtered.length > 0 ? (
+              filtered.map((o) => (
+                <button
+                  key={o.value}
+                  type="button"
+                  className={`flex w-full items-center px-4 py-2.5 text-start text-sm transition-colors ${
+                    o.value === value
+                      ? "bg-agro-canopy/10 font-semibold text-agro-canopy"
+                      : "text-agro-ink hover:bg-agro-mint"
+                  }`}
+                  onClick={() => {
+                    onChange(o.value);
+                    setOpen(false);
+                    setQuery("");
+                  }}
+                >
+                  {o.value === value && (
+                    <CheckIcon size={14} className="me-2 shrink-0 text-agro-canopy" />
+                  )}
+                  {o.label}
+                </button>
+              ))
+            ) : (
+              <p className="px-4 py-3 text-sm text-agro-cloud">No options found</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <p className="mt-1.5 text-sm font-medium text-agro-forest">{error}</p>
+      )}
+    </div>
+  );
+}
+
+const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
   value: string;
   district: string;
   onChange: (val: string) => void;
   onLocationPick: (lat: number, lng: number) => void;
   error?: string;
   suggestions?: string[];
-}) {
+}>(function LocationSearch({
+  value,
+  district,
+  onChange,
+  onLocationPick,
+  error,
+  suggestions = [],
+}, ref) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<
     Array<{ display_name: string; lat: string; lon: string }>
   >([]);
   const [loading, setLoading] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<number | undefined>(undefined);
+  const skipAutoGeocodeRef = useRef(false);
+
+  useImperativeHandle(ref, () => ({
+    skipAutoGeocode: () => {
+      skipAutoGeocodeRef.current = true;
+    },
+  }));
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -186,7 +308,7 @@ function LocationSearch({
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
     }
@@ -297,6 +419,10 @@ function LocationSearch({
   useEffect(() => {
     if (autoGeocodeRef.current) clearTimeout(autoGeocodeRef.current);
     if (query.length < 3 || open) return;
+    if (skipAutoGeocodeRef.current) {
+      skipAutoGeocodeRef.current = false;
+      return;
+    }
 
     autoGeocodeRef.current = window.setTimeout(async () => {
       try {
@@ -331,6 +457,7 @@ function LocationSearch({
     onLocationPick(parseFloat(item.lat), parseFloat(item.lon));
     setOpen(false);
     setQuery(placeName);
+    skipAutoGeocodeRef.current = true;
   };
 
   const handlePresetSelect = async (area: string) => {
@@ -338,6 +465,7 @@ function LocationSearch({
     onChange(fullLoc);
     setQuery(fullLoc);
     setOpen(false);
+    skipAutoGeocodeRef.current = true;
 
     try {
       const res = await fetch(
@@ -353,7 +481,7 @@ function LocationSearch({
   };
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={containerRef} className="relative">
       <label htmlFor="farm-location" className="block text-sm font-semibold text-agro-ink">
         Location / Village
       </label>
@@ -456,7 +584,7 @@ function LocationSearch({
       )}
     </div>
   );
-}
+});
 
 function DistrictSelect({
   value,
@@ -620,6 +748,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
   const [selectedLocationName, setSelectedLocationName] = useState<string>("");
   const [isGeocoding, setIsGeocoding] = useState<boolean>(false);
   const [districtSuggestions, setDistrictSuggestions] = useState<string[]>([]);
+  const locationSearchRef = useRef<{ skipAutoGeocode: () => void }>(null);
 
   const {
     register,
@@ -652,6 +781,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
     setMarker({ lat, lng });
     setValue("lat", lat);
     setValue("lng", lng);
+    locationSearchRef.current?.skipAutoGeocode();
 
     setIsGeocoding(true);
     try {
@@ -900,6 +1030,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
       </div>
 
       <LocationSearch
+        ref={locationSearchRef}
         value={watch("location")}
         district={selectedDistrict}
         onChange={(val) => setValue("location", val)}
@@ -923,46 +1054,27 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label
-            htmlFor="farm-primary-crop"
-            className="block text-sm font-semibold text-agro-ink"
-          >
-            {bundle.new.fields.primaryCrop}
-          </label>
-          <select
+          <CustomSelect
             id="farm-primary-crop"
             value={primaryCrop}
-            onChange={(e) => setPrimaryCrop(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm capitalize text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
-          >
-            {(selectedCrops.length ? selectedCrops : CROPS).map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => setPrimaryCrop(val)}
+            options={(selectedCrops.length ? selectedCrops : CROPS).map((c) => ({ value: c, label: c }))}
+            placeholder={bundle.new.fields.primaryCrop}
+            disabled={selectedCrops.length === 0}
+          />
+          {selectedCrops.length === 0 && (
+            <p className="mt-1.5 text-xs text-agro-slate">Add at least one crop first</p>
+          )}
         </div>
 
         <div>
-          <label
-            htmlFor="farm-soil"
-            className="block text-sm font-semibold text-agro-ink"
-          >
-            {bundle.new.fields.soilType}
-          </label>
-          <select
+          <CustomSelect
             id="farm-soil"
             value={soil}
-            onChange={(e) => setSoil(e.target.value as SoilType)}
-            className="mt-2 w-full rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm capitalize text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
-          >
-            <option value="">—</option>
-            {SOIL_TYPES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => setSoil(val as SoilType)}
+            options={SOIL_TYPES.map((s) => ({ value: s, label: s }))}
+            placeholder={bundle.new.fields.soilType}
+          />
         </div>
       </div>
 
@@ -984,24 +1096,13 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
         </div>
 
         <div>
-          <label
-            htmlFor="farm-irrigation"
-            className="block text-sm font-semibold text-agro-ink"
-          >
-            {bundle.new.fields.irrigationMethod}
-          </label>
-          <select
+          <CustomSelect
             id="farm-irrigation"
             value={irrigation}
-            onChange={(e) => setIrrigation(e.target.value as IrrigationMethod)}
-            className="mt-2 w-full rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm capitalize text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
-          >
-            {IRRIGATION_METHODS.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
+            onChange={(val) => setIrrigation(val as IrrigationMethod)}
+            options={IRRIGATION_METHODS.map((m) => ({ value: m, label: m }))}
+            placeholder={bundle.new.fields.irrigationMethod}
+          />
         </div>
       </div>
 
