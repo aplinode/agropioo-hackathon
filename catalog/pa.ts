@@ -762,7 +762,6 @@ export const pa: Partial<Record<CatalogKey, string>> = {
   "app.dashboard.aria.dismissChecklist": "╪│█î┘╣ ╪º┘╛ ┌å█î┌⌐ ┘ä╪│┘╣ ╪¿┘å╪» ┌⌐╪▒┘ê",
   "app.dashboard.aria.setupProgress": "╪│█î┘╣ ╪º┘╛ ╪»█î ┘╛█î╪┤╪▒┘ü╪¬",
   "app.dashboard.demoFooter": "┌ê█î┘à┘ê ╪¿┘ä┌ê \u00b7 ╪╡╪▒┘ü ┘å┘à┘ê┘å█ü ┌ê█î┘╣╪º",
-
   /* ΓöÇΓöÇ ┌ê█î╪┤ ╪¿┘ê╪▒┌ê ┌ê█î┘à┘ê ┌ê█î┘╣╪º ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
   "app.dashboard.demo.todayLabel": "╪º╪¬┘ê╪º╪▒╪î 23 ╪º┌»╪│╪¬",
   "app.dashboard.demo.location": "┘à┘ä╪¬╪º┘å╪î ┘╛┘å╪¼╪º╪¿",

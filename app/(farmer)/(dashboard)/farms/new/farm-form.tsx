@@ -149,6 +149,7 @@ const DISTRICT_SUGGESTIONS: Record<string, string[]> = {
   Peshawar: ["Hayatabad", "University Town", "University Road", "Charsadda Road", "Bara Tehsil"],
   Quetta: ["Chaman Road", "Sariab Road", "Satellite Town", "Kuchlak", "Hazara Town"],
   Islamabad: ["F-6", "F-7", "G-11", "Tarlai", "Bhara Kahu", "Chak Shahzad", "Rawat"],
+  Bahawalpur: ["Milad Chowk", "Model Town", "Bahawalpur Road", "Satellite Town", "Hasilpur Road", "Yazman Road", "Chishtian Road", "Ahmadpur East"],
 };
 
 function LocationSearch({
@@ -190,9 +191,10 @@ function LocationSearch({
 
   const suggestions = DISTRICT_SUGGESTIONS[district] || [];
 
-  const isWithinDistrict = (addr: Record<string, string>, district: string): boolean => {
+  const isWithinDistrict = (addr: Record<string, string>, displayName: string, district: string): boolean => {
     if (!district) return true;
     const lower = district.toLowerCase();
+    if (displayName.toLowerCase().includes(lower)) return true;
     const candidates = [
       addr.city_district,
       addr.state_district,
@@ -203,7 +205,10 @@ function LocationSearch({
       addr.suburb,
       addr.neighbourhood,
     ].filter(Boolean);
-    return candidates.some((c) => c!.toLowerCase() === lower);
+    return candidates.some((c) => {
+      const cl = c!.toLowerCase();
+      return cl.includes(lower) || lower.includes(cl);
+    });
   };
 
   useEffect(() => {
@@ -235,19 +240,21 @@ function LocationSearch({
           address?: Record<string, string>;
         }>;
 
+        let filtered: Array<{ display_name: string; lat: string; lon: string; address?: Record<string, string> }>;
         if (data.length === 0) {
           const fallbackRes = await fetch(
             `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ", Pakistan")}&countrycodes=pk&limit=6&addressdetails=1`
           );
-          data = await fallbackRes.json() as Array<{
+          const fallbackData = await fallbackRes.json() as Array<{
             display_name: string;
             lat: string;
             lon: string;
             address?: Record<string, string>;
           }>;
+          filtered = fallbackData;
+        } else {
+          filtered = data.filter((item) => isWithinDistrict(item.address || {}, item.display_name || "", district));
         }
-
-        const filtered = data.filter((item) => isWithinDistrict(item.address || {}, district));
 
         setResults(filtered);
         setOpen(filtered.length > 0);
@@ -339,6 +346,11 @@ function LocationSearch({
           onChange={(e) => {
             setQuery(e.target.value);
             onChange(e.target.value);
+          }}
+          onFocus={() => {
+            if (district && suggestions.length > 0) {
+              setOpen(true);
+            }
           }}
           placeholder={district ? `Type village or area in ${district}...` : "Select district or city first"}
           disabled={!district}
@@ -544,7 +556,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
     defaultValues: {
       name: "",
       location: "",
-      district: PAKISTAN_DISTRICTS[0],
+      district: "",
       crops: [],
       acres: 1,
       lat: 30.3753,
@@ -596,17 +608,13 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
           addr.village,
         ].filter(Boolean);
 
-        let district = districtCandidates[0] || placeName;
         const matchedDistrict = PAKISTAN_DISTRICTS.find((d) =>
           districtCandidates.some((c) => c!.toLowerCase() === d.toLowerCase())
         );
 
         if (matchedDistrict) {
-          district = matchedDistrict;
+          setValue("district", matchedDistrict);
         }
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setValue("district", district as any);
       }
     } catch (err) {
       console.error("Reverse geocoding error:", err);

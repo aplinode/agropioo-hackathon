@@ -761,7 +761,6 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.dashboard.aria.dismissChecklist": "╪│┘è┘╜ ╪º┘╛ ┌å┘è┌¬ ┘ä╪│┘╜ ╪¿┘å╪» ┌¬╪▒┘è┘ê",
   "app.dashboard.aria.setupProgress": "╪│┘è┘╜ ╪º┘╛ ╪¼┘è ╪¬╪▒┘é┘è",
   "app.dashboard.demoFooter": "┌è┘è┘à┘ê ╪¿┘ä┌è \u00b7 ╪╡╪▒┘ü ┘å┘à┘ê┘å┘ê ┌è┘è┘╜╪º",
-
   /* ΓöÇΓöÇ ┌è┘è╪┤ ╪¿┘ê╪▒┌è ┌è┘è┘à┘ê ┌è┘è┘╜╪º ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
   "app.dashboard.demo.todayLabel": "╪ó╪¬┘ê╪º╪▒╪î █▓█│ ╪º┌»╪│┘╜",
   "app.dashboard.demo.location": "┘à┘ä╪¬╪º┘å╪î ┘╛┘å╪¼╪º╪¿",
