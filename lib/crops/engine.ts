@@ -213,7 +213,7 @@ export async function recommendCrops(
     }
   }
 
-  const pastCrop = await queryOne<{ category: string | null }>(
+  const pastCrop = await queryOne<{ category: CropCategory | null }>(
     `SELECT c.category
      FROM farms f
      JOIN crops c ON c.name_en = f.primary_crop
