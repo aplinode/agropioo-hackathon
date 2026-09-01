@@ -18,11 +18,11 @@
 
 **Purpose**: Branch + dependency additions for the scraper-only path.
 
-- [ ] T001 Create feature branch `feat/002-scraper` from `main` and push it (per AGENTS.md hybrid branching — multi-file feature)
-- [ ] T002 [P] Add `playwright` to `devDependencies` in `package.json` (scoped to scraper; **requires founder approval per Constitution new-dependency rule**)
-- [ ] T003 [P] Add `xlsx` to `devDependencies` in `package.json` (PBS SPI parsing; **requires founder approval**)
-- [ ] T004 [P] Add `npm` script `scrape:prices` in `package.json` that runs `node --experimental-strip-types --env-file-if-exists=.env scripts/scrape-prices/index.ts`
-- [ ] T005 [P] Add `PRICES_CRON_SECRET` placeholder to `.env.example` with a comment marking it required for the cron job
+- [x] T001 Create feature branch `feat/002-scraper` from `main` and push it (per AGENTS.md hybrid branching — multi-file feature)
+- [x] T002 [P] Add `playwright` to `devDependencies` in `package.json` (scoped to scraper; **requires founder approval per Constitution new-dependency rule**)
+- [x] T003 [P] Add `xlsx` to `devDependencies` in `package.json` (PBS SPI parsing; **requires founder approval**)
+- [x] T004 [P] Add `npm` script `scrape:prices` in `package.json` that runs `node --experimental-strip-types --env-file-if-exists=.env scripts/scrape-prices/index.ts`
+- [x] T005 [P] Add `PRICES_CRON_SECRET` placeholder to `.env.example` with a comment marking it required for the cron job
 
 **Checkpoint**: Branch up; deps approved and installed.
 
