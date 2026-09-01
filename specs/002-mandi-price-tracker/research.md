@@ -12,11 +12,21 @@ All technical choices satisfy the project **Constitution** (`.specify/memory/con
 
 ### 1. Daily Mandi Price Data Ingestion & Fallbacks
 
-- **Decision**: Multi-tier ingestion via Route Handler (`POST /api/prices/ingest`).
-  1. **Primary API Scraper**: Automated daily fetch/scraper connecting to government market portals (Punjab AMIS / Market Information System).
-  2. **Admin Web Panel**: An admin interface in `/prices/admin` for manual price entry, overrides, and market holiday flagging.
-  3. **Offline / Missing Data Handling**: Markets with missing daily data maintain their last known price marked with a prominent `"Updated X days ago"` badge. Market holidays (Sundays / official holidays) render a `"Mandi Closed / Market Holiday"` status badge.
-- **Rationale**: Direct scraper API integration guarantees real-time daily prices, while admin manual entry ensures resilience against external government server downtime.
+- **Decision**: Multi-source ingestion via Route Handler (`POST /api/prices/ingest`) backed by a Playwright-based scraper running on the free GitHub Actions cron (`.github/workflows/mandi-cron.yml`). **No admin panel in this build.**
+  1. **Provincial official portals** (one scraper per source, unified into `mandi_prices` with `source = 'govt_api'`):
+     - **Punjab — AMIS** (`http://www.amis.pk`, run by PITB / Agriculture Dept Punjab). 135 markets. Scrapes `ViewPrices.aspx?commodityId=X` per commodity → mandi table.
+     - **Sindh — SAMIS** (`https://new-theme.staging-amis.com/market_price`). 27 markets across 22 districts. Modern HTML frontend; district + market + commodity filters in URL.
+     - **KP — FMIS KP** (`https://fmis.kp.gov.pk/kp_essential_commodities_price`). 35+ districts, datatable with built-in CSV export and filter URL params (district/item/dateFrom/dateTo) — preferred scrape path.
+     - **Balochistan — BMIS** (`https://amisbalochistan.org/prices/`) + `https://balochistankissan.gob.pk/pages/market-rates` district selectors. Sparse coverage; existing seed data fills gaps until portals report.
+  2. **Federal cross-check — PBS Weekly SPI XLSX** (`https://www.pbs.gov.pk/price-statistics/`). 50 markets, 17 cities, 51 essential items. Weekly cadence; parsed via `xlsx` library. Used as a sanity check, not a primary feed.
+  3. **Offline / Missing Data Handling**: Markets with no fresh row keep their last known price (from scraper or seed), surfaced with a prominent `"Updated X days ago"` badge. Sundays / official holidays render a `"Mandi Closed / Market Holiday"` status badge.
+- **Rationale**: No free, public, all-Pakistan REST API exists (Zarai Mandi and PAR are paid; PBS exposes XLSX, AMIS exposes HTML). Playwright on GitHub Actions is the lowest-cost path to daily nationwide coverage without violating the no-new-runtime-deps rule for the Next.js app itself — Playwright lives only in the cron workflow and a standalone `scripts/scrape-prices/` runner, never imported by app code. The existing seed (`scripts/seed-mandi-prices.ts`) covers Balochistan gaps when BMIS is down.
+- **Scraper choice**: `playwright` (full Chromium) on `runs-on: ubuntu-latest` GitHub Actions runner. Browser bundle size is fine for Actions (~300 MB cached); Vercel is not in scope for the scraper. Install command: `npx playwright install --with-deps chromium` inside the workflow. Result rows are POSTed in batches to `/api/prices/ingest` (bearer-token authenticated) so the Route Handler stays the single write path per the Constitution.
+- **Excluded from build** (record the no-go, per the constitution's ADR expectation):
+  - Admin web panel — explicitly out of scope for this build (no `admin_manual` source channel).
+  - Zarai Mandi public API — does not exist; only WhatsApp subscription.
+  - PAR Daily Commodity Prices — login-gated, commercial product.
+  - PBS dcrates.data.gov.pk — retail CPI only, not mandi-level wholesale.
 
 ### 2. Time-Series Price Prediction & Volatility Engine (7–14 Days)
 
@@ -57,6 +67,9 @@ All technical choices satisfy the project **Constitution** (`.specify/memory/con
 | ML Prediction Framework | Pure TS Holt-Winters / Linear Trend engine in `lib/prices/forecast.ts` with 95% confidence bands |
 | Prediction Caching | Postgres table `price_predictions` populated by free GitHub Actions cron (`/api/cron/predict-prices`) |
 | Data Unit | Standardized Maund (40 kg / Pakistani Mann) for all database rows and UI displays |
+| Scraper runtime | Playwright full Chromium on free GitHub Actions cron; scraper never imported by the Next.js app (kept under `scripts/scrape-prices/`) |
+| Coverage | Punjab AMIS (primary), Sindh SAMIS, KP FMIS, Balochistan BMIS + admin manual fallback, PBS Weekly SPI XLSX as cross-check |
+| Source value in DB | `govt_api` (scraper) — single channel. Scraper rows carry the source code of the portal that produced them |
 | Alerts Delivery | Dual channel: pinned green in-app notifications + `nodemailer` SMTP emails with deep links |
 | Transport Costs | Distance shown in km from farm location to each mandi; no speculative PKR transport calculation |
 | Multi-language Localisation | All 8 Pakistan locales inserted into Neon `translations` DB table via Neon MCP / `sync-translations.mts` |
