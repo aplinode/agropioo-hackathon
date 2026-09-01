@@ -92,4 +92,5 @@ export type RecommendCropsInput = {
   soilType: SoilType;
   irrigationType: IrrigationType;
   budgetBracket: BudgetBracket;
+  regenerate?: boolean;
 };

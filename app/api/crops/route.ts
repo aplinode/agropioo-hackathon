@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { jsonResponse, errorResponse, readJsonBody, clientIp } from "@/lib/http";
+import { jsonResponse, errorResponse, errorBody, readJsonBody, clientIp } from "@/lib/http";
 import { requireSessionApi } from "@/lib/auth/guards";
 import {
   hitLimiter,
@@ -9,7 +9,7 @@ import {
   createCropRecommendationSchema,
   listCropRecommendationsQuerySchema,
 } from "@/lib/validation/crops";
-import { recommendCrops, WeatherUnavailableError } from "@/lib/crops/engine";
+import { recommendCrops, WeatherUnavailableError, RecommendationExistsError } from "@/lib/crops/engine";
 import { query, queryOne } from "@/lib/db";
 import type { RecommendCropsInput } from "@/lib/crops/api-types";
 
@@ -45,6 +45,7 @@ export async function POST(request: Request) {
       soilType: parsed.data.soil_type,
       irrigationType: parsed.data.irrigation_type,
       budgetBracket: parsed.data.budget_bracket,
+      regenerate: parsed.data.regenerate,
     };
     const result = await recommendCrops(input, session.accountId);
     return jsonResponse(
@@ -54,6 +55,12 @@ export async function POST(request: Request) {
   } catch (err) {
     if (err instanceof WeatherUnavailableError) {
       return errorResponse(err.code, err.message, err.status);
+    }
+    if (err instanceof RecommendationExistsError) {
+      return jsonResponse(
+        { error: errorBody(err.code, err.message), existing: err.existing },
+        err.status,
+      );
     }
     console.error("crops recommendation failed:", err);
     return errorResponse("server_error", "Something went wrong. Please try again.", 500);

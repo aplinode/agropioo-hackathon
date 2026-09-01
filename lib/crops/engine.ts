@@ -46,6 +46,16 @@ export class OutsidePakistanError extends Error {
   }
 }
 
+export class RecommendationExistsError extends Error {
+  code = "recommendation_exists" as const;
+  status = 409;
+  existing: CropRecommendationRequest;
+  constructor(existing: CropRecommendationRequest) {
+    super("You already have a recommendation for this farm, season, and year.");
+    this.existing = existing;
+  }
+}
+
 const PAKISTAN_BOUNDS = {
   latMin: 23.5,
   latMax: 37.0,
@@ -148,6 +158,22 @@ export async function recommendCrops(
 
   if (!withinPakistan(lat, lng)) {
     throw new OutsidePakistanError();
+  }
+
+  const existingRequest = await queryOne<CropRecommendationRequest>(
+    `SELECT * FROM crop_recommendation_requests
+     WHERE account_id = $1 AND farm_id = $2 AND target_season = $3 AND target_year = $4`,
+    [accountId, input.farmId, input.targetSeason, input.targetYear],
+  );
+
+  if (existingRequest) {
+    if (!input.regenerate) {
+      throw new RecommendationExistsError(existingRequest);
+    }
+    await query(
+      `DELETE FROM crop_recommendation_requests WHERE id = $1`,
+      [existingRequest.id],
+    );
   }
 
   const resolved = await resolveSoilType(input.soilType, farm.district ?? "");
