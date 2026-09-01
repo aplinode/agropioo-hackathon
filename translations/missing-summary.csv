@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 locale,key,english_value
 bal,app.detect.addFarm,Add farm
 bal,app.detect.analyzing,Analyzing…
@@ -1732,3 +1733,1739 @@ ur,app.detect.disease.tomato_ylcv.steps.1,Remove and destroy infected plants —
 ur,app.detect.disease.tomato_ylcv.steps.2,Use resistant varieties and control weeds that host whiteflies.
 ur,app.farms.detail.noRecords,No records yet — start logging field events to build your farm's memory.
 ur,nav.dashboard,Dashboard
+=======
+locale,key,english_value
+bal,app.detect.addFarm,Add farm
+bal,app.detect.analyzing,Analyzing…
+bal,app.detect.caution,Always confirm treatment with your local agriculture office before spraying.
+bal,app.detect.chat.cancel,Cancel
+bal,app.detect.chat.closePreview,Close preview
+bal,app.detect.chat.deleteConfirm,Are you sure you want to delete this chat?
+bal,app.detect.chat.deleteSession,Delete session
+bal,app.detect.chat.emptyState,Ask a follow-up question about this detection.
+bal,app.detect.chat.imagePreview,View full image
+bal,app.detect.chat.newScan,New scan
+bal,app.detect.chat.noSessions,No detection chats yet.
+bal,app.detect.chat.placeholder,Ask about this detection...
+bal,app.detect.chat.send,Send
+bal,app.detect.chat.sessionsTitle,Detection chats
+bal,app.detect.chat.thinking,Thinking...
+bal,app.detect.confidence,Confidence {pct}%
+bal,app.detect.crop.apple,Apple
+bal,app.detect.crop.blueberry,Blueberry
+bal,app.detect.crop.cherry,Cherry
+bal,app.detect.crop.corn,Corn
+bal,app.detect.crop.grape,Grape
+bal,app.detect.crop.orange,Orange
+bal,app.detect.crop.peach,Peach
+bal,app.detect.crop.pepper,Pepper
+bal,app.detect.crop.potato,Potato
+bal,app.detect.crop.raspberry,Raspberry
+bal,app.detect.crop.soybean,Soybean
+bal,app.detect.crop.squash,Squash
+bal,app.detect.crop.strawberry,Strawberry
+bal,app.detect.crop.tomato,Tomato
+bal,app.detect.discussAdvisor,Discuss with advisor
+bal,app.detect.disease.apple_black_rot.causes,"A fungus (Botryosphaeria obtusa) attacks fruit and branches, favoured by wet, humid weather."
+bal,app.detect.disease.apple_black_rot.name,Apple black rot
+bal,app.detect.disease.apple_black_rot.steps.0,Prune out infected limbs well below visible lesions and burn them.
+bal,app.detect.disease.apple_black_rot.steps.1,Apply a protective fungicide at bloom and after petal fall.
+bal,app.detect.disease.apple_black_rot.steps.2,Keep the canopy open and mulch-free to reduce moisture retention.
+bal,app.detect.disease.apple_cedar_rust.causes,A rust fungus (Gymnosporangium) that alternates between apple trees and eastern red cedar in wet springs.
+bal,app.detect.disease.apple_cedar_rust.name,Cedar-apple rust
+bal,app.detect.disease.apple_cedar_rust.steps.0,Plant rust-resistant rootstocks or varieties where possible.
+bal,app.detect.disease.apple_cedar_rust.steps.1,Spray with a copper or myclobutanil fungicide at bud-break and again in early summer.
+bal,app.detect.disease.apple_cedar_rust.steps.2,Remove nearby red cedar hosts within 500 m.
+bal,app.detect.disease.apple_scab.causes,"Fungal spores (Venturia inaequalis) spread in cool, wet springs and infect young leaves and fruit."
+bal,app.detect.disease.apple_scab.name,Apple scab
+bal,app.detect.disease.apple_scab.steps.0,Rake and destroy infected fallen leaves in autumn to cut reinfection.
+bal,app.detect.disease.apple_scab.steps.1,"In spring, spray a horticultural oil or copper-based fungicide at bud-break."
+bal,app.detect.disease.apple_scab.steps.2,Prune for good air flow and avoid overhead irrigation.
+bal,app.detect.disease.cherry_powdery_mildew.causes,A fungal disease (Podosphaera leucotricha) that forms white powdery spots on leaves in warm days with cool nights.
+bal,app.detect.disease.cherry_powdery_mildew.name,Cherry powdery mildew
+bal,app.detect.disease.cherry_powdery_mildew.steps.0,Improve air circulation by thinning crowded branches.
+bal,app.detect.disease.cherry_powdery_mildew.steps.1,Spray with sulfur or a mildew-specific fungicide when first spots appear.
+bal,app.detect.disease.cherry_powdery_mildew.steps.2,Avoid nitrogen-heavy fertilizers that promote tender growth.
+bal,app.detect.disease.corn_common_rust.causes,"A fungal rust (Puccinia sorghi) that forms orange pustules on leaves, favoured by dew and moderate temperatures."
+bal,app.detect.disease.corn_common_rust.name,Corn common rust
+bal,app.detect.disease.corn_common_rust.steps.0,Plant rust-resistant hybrids where available.
+bal,app.detect.disease.corn_common_rust.steps.1,Apply a systemic fungicide at early tassel if infection is heavy.
+bal,app.detect.disease.corn_common_rust.steps.2,Avoid planting corn after corn to reduce inoculum build-up.
+bal,app.detect.disease.corn_gray_leaf_spot.causes,"A fungus (Cercospora zeae) that starts as small gray lesions with yellow halos and spreads in warm, humid conditions."
+bal,app.detect.disease.corn_gray_leaf_spot.name,Gray leaf spot
+bal,app.detect.disease.corn_gray_leaf_spot.steps.0,Use resistant hybrids and rotate crops away from corn residue.
+bal,app.detect.disease.corn_gray_leaf_spot.steps.1,Apply a triazole or strobilurin fungicide at tasseling if pressure is high.
+bal,app.detect.disease.corn_gray_leaf_spot.steps.2,Irrigate in the morning so foliage dries quickly.
+bal,app.detect.disease.corn_northern_leaf_blight.causes,"A fungus (Exserohilum turcicum) causing long grey-tan lesions, worse in cool, wet weather and high residue."
+bal,app.detect.disease.corn_northern_leaf_blight.name,Northern leaf blight
+bal,app.detect.disease.corn_northern_leaf_blight.steps.0,Rotate with soybeans or broadleaf crops and till under residue.
+bal,app.detect.disease.corn_northern_leaf_blight.steps.1,Use resistant hybrids and apply a fungicide at VT stage if needed.
+bal,app.detect.disease.corn_northern_leaf_blight.steps.2,Space plants for good air flow and avoid overcrowding.
+bal,app.detect.disease.grape_black_rot.causes,A fungus (Guignardia bidwellii) that creates black circular spots on berries and leaves in wet springs.
+bal,app.detect.disease.grape_black_rot.name,Grape black rot
+bal,app.detect.disease.grape_black_rot.steps.0,Prune out infected canes and remove mummified berries.
+bal,app.detect.disease.grape_black_rot.steps.1,Apply an effective fungicide (mancozeb or tebuconazole) at swell and bloom.
+bal,app.detect.disease.grape_black_rot.steps.2,Avoid overhead irrigation during bloom.
+bal,app.detect.disease.grape_esca.causes,A vascular fungal complex (Phaeoacremonium) that causes dark streaks on canes and wilting leaves.
+bal,app.detect.disease.grape_esca.name,Grape esca (black measles)
+bal,app.detect.disease.grape_esca.steps.0,Prune out and destroy infected wood in autumn.
+bal,app.detect.disease.grape_esca.steps.1,Apply a lime sulfur or copper spray at bud-break to reduce inoculum.
+bal,app.detect.disease.grape_esca.steps.2,Manage irrigation to avoid water stress which worsens symptoms.
+bal,app.detect.disease.grape_leaf_blight.causes,"A fungus causing small dark spots with yellow halos, most visible in humid conditions."
+bal,app.detect.disease.grape_leaf_blight.name,Grape leaf blight (Isariopsis)
+bal,app.detect.disease.grape_leaf_blight.steps.0,Remove and destroy infected leaves at the first sign.
+bal,app.detect.disease.grape_leaf_blight.steps.1,Apply a broad-spectrum fungicide (mancozeb or captan) during shoot growth.
+bal,app.detect.disease.grape_leaf_blight.steps.2,Improve canopy airflow by selective pruning.
+bal,app.detect.disease.orange_huanglongbing.causes,"A bacterial disease spread by psyllids, causing yellow mottling, misshapen fruit, and tree decline."
+bal,app.detect.disease.orange_huanglongbing.name,Citrus greening (Huanglongbing)
+bal,app.detect.disease.orange_huanglongbing.steps.0,Control the Asian citrus psyllid with coordinated insecticide sprays.
+bal,app.detect.disease.orange_huanglongbing.steps.1,Remove and destroy infected trees — there is no cure once established.
+bal,app.detect.disease.orange_huanglongbing.steps.2,Use certified disease-free nursery stock and screen for resistance.
+bal,app.detect.disease.peach_bacterial_spot.causes,"A bacterial pathogen (Xanthomonas) that causes dark spots on leaves and fruit, spread by rain splash."
+bal,app.detect.disease.peach_bacterial_spot.name,Peach bacterial spot
+bal,app.detect.disease.peach_bacterial_spot.steps.0,Prune in dry weather and sterilize tools between trees.
+bal,app.detect.disease.peach_bacterial_spot.steps.1,Apply a copper-based bactericide at bloom and after heavy rain.
+bal,app.detect.disease.peach_bacterial_spot.steps.2,Avoid overhead irrigation and choose resistant varieties.
+bal,app.detect.disease.pepper_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on peppers, spread in warm, wet weather."
+bal,app.detect.disease.pepper_bacterial_spot.name,Pepper bacterial spot
+bal,app.detect.disease.pepper_bacterial_spot.steps.0,Space plants for good air flow and avoid wetting foliage.
+bal,app.detect.disease.pepper_bacterial_spot.steps.1,Apply copper hydroxide at first sign of disease.
+bal,app.detect.disease.pepper_bacterial_spot.steps.2,Remove and destroy infected leaves promptly.
+bal,app.detect.disease.potato_early_blight.causes,"A fungus (Alternaria solani) causing brown target-like rings on lower leaves, worse in warm, humid conditions."
+bal,app.detect.disease.potato_early_blight.name,Potato early blight
+bal,app.detect.disease.potato_early_blight.steps.0,Plant certified seed and rotate away from potatoes and tomatoes.
+bal,app.detect.disease.potato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when first lesions appear.
+bal,app.detect.disease.potato_early_blight.steps.2,Hill soil onto stems and practice wide spacing to keep lower leaves dry.
+bal,app.detect.disease.potato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, water-soaked lesions — the cause of the Irish potato famine, spreads rapidly in cool, wet weather."
+bal,app.detect.disease.potato_late_blight.name,Potato late blight
+bal,app.detect.disease.potato_late_blight.steps.0,Remove and destroy infected tubers and haulm immediately — do NOT compost.
+bal,app.detect.disease.potato_late_blight.steps.1,"Apply a systemic fungicide (metalaxyl-based) at first sign, then every 5-7 days while wet."
+bal,app.detect.disease.potato_late_blight.steps.2,Plant resistant varieties and avoid irrigation during late afternoon.
+bal,app.detect.disease.squash_powdery_mildew.causes,A fungus (Podosphaera xanthii) forming white powdery spots on leaves in warm days with high humidity.
+bal,app.detect.disease.squash_powdery_mildew.name,Squash powdery mildew
+bal,app.detect.disease.squash_powdery_mildew.steps.0,Plant resistant varieties and space vines for good air flow.
+bal,app.detect.disease.squash_powdery_mildew.steps.1,Apply sulfur or potassium bicarbonate spray weekly once symptoms appear.
+bal,app.detect.disease.squash_powdery_mildew.steps.2,Water at the base to keep leaves dry in the morning.
+bal,app.detect.disease.strawberry_leaf_scorch.causes,"A fungus (Physophella salicis) causing reddish-purple spots that turn tan, common in wet spring weather."
+bal,app.detect.disease.strawberry_leaf_scorch.name,Strawberry leaf scorch
+bal,app.detect.disease.strawberry_leaf_scorch.steps.0,Avoid overhead irrigation and keep beds well-drained.
+bal,app.detect.disease.strawberry_leaf_scorch.steps.1,Apply a fungicide (captan or tebuconazole) at first sign of leaf spots.
+bal,app.detect.disease.strawberry_leaf_scorch.steps.2,Remove and destroy severely infected leaves.
+bal,app.detect.disease.tomato_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on leaves and fruit, spread by rain splash."
+bal,app.detect.disease.tomato_bacterial_spot.name,Tomato bacterial spot
+bal,app.detect.disease.tomato_bacterial_spot.steps.0,Use disease-free seed and trellis to keep foliage dry.
+bal,app.detect.disease.tomato_bacterial_spot.steps.1,Apply a copper-based bactericide at first sign and after heavy rain.
+bal,app.detect.disease.tomato_bacterial_spot.steps.2,Remove and destroy infected leaves and fruit.
+bal,app.detect.disease.tomato_early_blight.causes,"A fungus (Alternaria solani) causing dark concentric rings on lower leaves, starting from the soil up."
+bal,app.detect.disease.tomato_early_blight.name,Tomato early blight
+bal,app.detect.disease.tomato_early_blight.steps.0,Mulch and water at the base to avoid soil splash.
+bal,app.detect.disease.tomato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when lower leaves show spots.
+bal,app.detect.disease.tomato_early_blight.steps.2,Remove the lowest infected leaves and stake plants for airflow.
+bal,app.detect.disease.tomato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, fuzzy lesions on leaves and fruit — highly destructive in wet, cool weather."
+bal,app.detect.disease.tomato_late_blight.name,Tomato late blight
+bal,app.detect.disease.tomato_late_blight.steps.0,Remove and destroy infected foliage and fruit immediately; do NOT compost.
+bal,app.detect.disease.tomato_late_blight.steps.1,Apply a systemic fungicide (metalaxyl-based) at first sign and reapply after rain.
+bal,app.detect.disease.tomato_late_blight.steps.2,Plant late-blight-resistant varieties and avoid overhead watering.
+bal,app.detect.disease.tomato_leaf_mold.causes,"A fungus (Cladosporium fulvum) causing yellow patches on upper leaves and fuzzy brown undersides in humid, poorly ventilated conditions."
+bal,app.detect.disease.tomato_leaf_mold.name,Tomato leaf mold
+bal,app.detect.disease.tomato_leaf_mold.steps.0,Ventilate greenhouses and space plants for air flow.
+bal,app.detect.disease.tomato_leaf_mold.steps.1,Apply a fungicide (chlorothalonil) when yellowing appears.
+bal,app.detect.disease.tomato_leaf_mold.steps.2,Water at the base and keep foliage dry.
+bal,app.detect.disease.tomato_mosaic_virus.causes,"A virus that causes mottled, distorted leaves and poor fruit, spread on tools and hands."
+bal,app.detect.disease.tomato_mosaic_virus.name,Tomato mosaic virus
+bal,app.detect.disease.tomato_mosaic_virus.steps.0,Disinfect tools between plants with bleach or alcohol.
+bal,app.detect.disease.tomato_mosaic_virus.steps.1,Remove and destroy infected plants.
+bal,app.detect.disease.tomato_mosaic_virus.steps.2,Control aphid vectors and weeds.
+bal,app.detect.disease.tomato_septoria.causes,A fungus (Septoria lycopersici) causing small tan spots with dark borders on older leaves.
+bal,app.detect.disease.tomato_septoria.name,Tomato septoria leaf spot
+bal,app.detect.disease.tomato_septoria.steps.0,Rotate crops and mulch to prevent soil splash.
+bal,app.detect.disease.tomato_septoria.steps.1,Apply a fungicide (mancozeb or chlorothalonil) at first sign.
+bal,app.detect.disease.tomato_septoria.steps.2,Remove and destroy infected lower leaves.
+bal,app.detect.disease.tomato_spider_mites.causes,"Tiny spider-like mites (Tetranychus urticae) that suck leaf juices, leaving stippled, bronzed leaves and fine webbing."
+bal,app.detect.disease.tomato_spider_mites.name,Tomato spider mites
+bal,app.detect.disease.tomato_spider_mites.steps.0,Hose off mites with a strong spray of water early in the day.
+bal,app.detect.disease.tomato_spider_mites.steps.1,"Release beneficial insects (ladybugs, lacewings) or apply neem oil."
+bal,app.detect.disease.tomato_spider_mites.steps.2,Avoid broad-spectrum insecticides that kill natural predators.
+bal,app.detect.disease.tomato_target_spot.causes,"A fungus (Corynespora cassiicola) causing dark concentric 'target' spots on leaves, favoured by warm, humid weather."
+bal,app.detect.disease.tomato_target_spot.name,Tomato target spot
+bal,app.detect.disease.tomato_target_spot.steps.0,Improve air circulation by pruning lower leaves and staking plants.
+bal,app.detect.disease.tomato_target_spot.steps.1,Apply a fungicide (azoxystrobin or chlorothalonil) when spots first appear.
+bal,app.detect.disease.tomato_target_spot.steps.2,Water at the base early in the day.
+bal,app.detect.disease.tomato_ylcv.causes,"A virus spread by whiteflies, causing yellowing and curling of leaves and stunted growth."
+bal,app.detect.disease.tomato_ylcv.name,Tomato yellow leaf curl virus
+bal,app.detect.disease.tomato_ylcv.steps.0,Control whiteflies with reflective mulches and insecticides at transplant.
+bal,app.detect.disease.tomato_ylcv.steps.1,Remove and destroy infected plants — there is no cure.
+bal,app.detect.disease.tomato_ylcv.steps.2,Use resistant varieties and control weeds that host whiteflies.
+bal,app.detect.dismiss,I'll do this later
+bal,app.detect.dragDropPrompt,Drag an image here or click to browse
+bal,app.detect.dragDropPromptLine1,Drag an image here
+bal,app.detect.dragDropPromptLine2,or click to browse
+bal,app.detect.eyebrow,Crop doctor
+bal,app.detect.healthy.causes,No disease symptoms were detected on this leaf.
+bal,app.detect.healthy.name,Healthy
+bal,app.detect.healthy.steps.0,No treatment needed. Resume normal care and scouting.
+bal,app.detect.historyEmpty,No scans yet. Take a photo to begin.
+bal,app.detect.invalidFile,Please upload an image file.
+bal,app.detect.linkToFarm,Link to a farm
+bal,app.detect.loadMore,Load more
+bal,app.detect.noDiagnosis,Could not identify the disease — try a clearer photo of the affected area.
+bal,app.detect.noFarmsBody,Link your scans to a farm to build a full disease history.
+bal,app.detect.noFarmsTitle,Register a farm first
+bal,app.detect.notSaved,Not saved
+bal,app.detect.pastScans,Past scans
+bal,app.detect.readingLeaf,Reading the leaf…
+bal,app.detect.rescan.14,Scan again in 14 days
+bal,app.detect.rescan.21,Scan again in 21 days
+bal,app.detect.rescan.7,Scan again in 7 days
+bal,app.detect.retry,Retry
+bal,app.detect.sampleScan,No photo handy? Run a sample scan
+bal,app.detect.saveToFarm,Save to farm
+bal,app.detect.savedStatus,Saved to {farm}
+bal,app.detect.savedToFarm,Saved to {farm}
+bal,app.detect.scanAnother,Scan another leaf
+bal,app.detect.serviceUnavailable,Service temporarily unavailable. Please try again.
+bal,app.detect.severity.clear,Clear
+bal,app.detect.severity.treatNow,Treat Now
+bal,app.detect.severity.watch,Watch
+bal,app.detect.takePhoto,Take or choose a photo
+bal,app.detect.title,Spot disease before it spreads
+bal,app.detect.unsavedStatus,Not saved
+bal,app.detect.uploadPrompt,Photograph the sick leaf
+bal,app.detect.whatToDo,What to do now
+bal,app.farms.detail.noRecords,No records yet — start logging field events to build your farm's memory.
+bal,app.farms.new.fields.irrigationMethod,Irrigation method
+bal,app.farms.new.fields.primaryCrop,Primary crop
+bal,app.farms.new.fields.soilType,Soil type
+bal,app.farms.new.fields.sowingDate,Sowing date
+bal,app.farms.new.placeholders.soilType,"Clay, loam, sandy, or silt"
+bal,app.weather.advisory.recommendation.fertilize,Good window to apply fertiliser ahead of steady weather.
+bal,app.weather.advisory.recommendation.frostProtect,Frost risk tonight — cover young plants or irrigate to warm the soil.
+bal,app.weather.advisory.recommendation.generic,No special action today — keep an eye on the field and the forecast.
+bal,app.weather.advisory.recommendation.harvest,Crops near harvest — plan the harvest for a dry day and protect ripe produce from rain.
+bal,app.weather.advisory.recommendation.heatProtect,Extreme heat — increase irrigation and avoid field work midday.
+bal,app.weather.advisory.recommendation.irrigateNow,Irrigate in the cool hours (before 9 AM) — heat is building and the soil is drying.
+bal,app.weather.advisory.recommendation.irrigation,Skip irrigation today — rain is expected. Save water and avoid waterlogging.
+bal,app.weather.advisory.recommendation.plantCare,Steady growth stage — keep up regular irrigation and weeding.
+bal,app.weather.advisory.recommendation.sprayDisease,Humidity favours disease — apply preventive fungicide in the dry morning window.
+bal,app.weather.alerts.diseaseRisk,High humidity favours disease — apply preventive fungicide in the dry morning window.
+bal,app.weather.alerts.dismiss,Dismiss
+bal,app.weather.alerts.extremeHeat,Extreme heat — increase irrigation and avoid midday field work.
+bal,app.weather.alerts.frost,Frost risk — protect sensitive crops tonight.
+bal,app.weather.alerts.heavyRain,Heavy rain expected — delay irrigation and protect harvested crops.
+bal,app.weather.alerts.noAlerts,No active alerts right now.
+bal,app.weather.alerts.title,Active alerts
+bal,app.weather.alerts.viewAll,View all notifications
+bal,app.weather.buttons.refresh,Refresh
+bal,app.weather.buttons.register,Register farm
+bal,app.weather.description,"Daily farming advice for your crops, driven by the forecast and your crop's growth stage."
+bal,app.weather.detail.back,Back to history
+bal,app.weather.detail.markAcknowledged,Mark as seen
+bal,app.weather.detail.markActed,Mark as acted on
+bal,app.weather.detail.markedActed,Marked as acted on
+bal,app.weather.detail.markedSeen,Marked as seen
+bal,app.weather.detail.recommendation,Recommendation
+bal,app.weather.detail.weatherConditions,Weather conditions
+bal,app.weather.errors.generic,Something went wrong. Please try again.
+bal,app.weather.errors.noFarm,Select a farm to see its advisory.
+bal,app.weather.eyebrow,Weather
+bal,app.weather.farmSelectorLabel,Farm
+bal,app.weather.forecastSubtitle,Each day's weather with a farming recommendation for your crop.
+bal,app.weather.forecastTitle,7-day forecast
+bal,app.weather.growthStage,Growth stage
+bal,app.weather.history.date,Date
+bal,app.weather.history.empty,No past advisories yet.
+bal,app.weather.history.loadMore,Load more
+bal,app.weather.history.severity,Severity
+bal,app.weather.history.status,Status
+bal,app.weather.history.status.acted,Acted on
+bal,app.weather.history.status.new,New
+bal,app.weather.history.status.seen,Seen
+bal,app.weather.history.viewAll,View full history
+bal,app.weather.historySubtitle,"Past recommendations for your farms, newest first."
+bal,app.weather.historyTitle,Advisory history
+bal,app.weather.pageTitle,Weather Advisory
+bal,app.weather.registerBody,"Add your crop, sowing date, and location to start getting personalised daily advice."
+bal,app.weather.registerCta,Register a farm
+bal,app.weather.registerForm.crop,Primary crop
+bal,app.weather.registerForm.error,Could not save your farm details. Please try again.
+bal,app.weather.registerForm.irrigation,Irrigation method
+bal,app.weather.registerForm.irrigationMethods,"Drip, sprinkler, flood, or rainfed"
+bal,app.weather.registerForm.save,Save and see my advisory
+bal,app.weather.registerForm.saving,Saving…
+bal,app.weather.registerForm.soil,Soil type
+bal,app.weather.registerForm.soilTypes,"Clay, loam, sandy, or silt"
+bal,app.weather.registerForm.sowing,Sowing date
+bal,app.weather.registerForm.success,Saved — here is your advisory
+bal,app.weather.registerTitle,Register your farm
+bal,app.weather.severity.critical,Critical
+bal,app.weather.severity.info,Info
+bal,app.weather.severity.warning,Warning
+bal,app.weather.source.cached,Last saved forecast
+bal,app.weather.source.demo,Sample forecast — add an API key for live data
+bal,app.weather.source.live,Live forecast · OpenWeather
+bal,app.weather.stages.flowering,Flowering
+bal,app.weather.stages.generic,General
+bal,app.weather.stages.harvestReady,Harvest ready
+bal,app.weather.stages.maturation,Maturation
+bal,app.weather.stages.seedling,Seedling
+bal,app.weather.stages.vegetative,Vegetative
+bal,app.weather.todayAdvisory,Today's advisory
+bal,app.weather.weatherUnavailable,Weather data unavailable
+bal,app.weather.weatherUnavailableBody,Showing your last saved advice. New advice appears when the forecast returns.
+bal,nav.dashboard,Dashboard
+hno,app.detect.addFarm,Add farm
+hno,app.detect.analyzing,Analyzing…
+hno,app.detect.caution,Always confirm treatment with your local agriculture office before spraying.
+hno,app.detect.chat.cancel,Cancel
+hno,app.detect.chat.closePreview,Close preview
+hno,app.detect.chat.deleteConfirm,Are you sure you want to delete this chat?
+hno,app.detect.chat.deleteSession,Delete session
+hno,app.detect.chat.emptyState,Ask a follow-up question about this detection.
+hno,app.detect.chat.imagePreview,View full image
+hno,app.detect.chat.newScan,New scan
+hno,app.detect.chat.noSessions,No detection chats yet.
+hno,app.detect.chat.placeholder,Ask about this detection...
+hno,app.detect.chat.send,Send
+hno,app.detect.chat.sessionsTitle,Detection chats
+hno,app.detect.chat.thinking,Thinking...
+hno,app.detect.confidence,Confidence {pct}%
+hno,app.detect.crop.apple,Apple
+hno,app.detect.crop.blueberry,Blueberry
+hno,app.detect.crop.cherry,Cherry
+hno,app.detect.crop.corn,Corn
+hno,app.detect.crop.grape,Grape
+hno,app.detect.crop.orange,Orange
+hno,app.detect.crop.peach,Peach
+hno,app.detect.crop.pepper,Pepper
+hno,app.detect.crop.potato,Potato
+hno,app.detect.crop.raspberry,Raspberry
+hno,app.detect.crop.soybean,Soybean
+hno,app.detect.crop.squash,Squash
+hno,app.detect.crop.strawberry,Strawberry
+hno,app.detect.crop.tomato,Tomato
+hno,app.detect.discussAdvisor,Discuss with advisor
+hno,app.detect.disease.apple_black_rot.causes,"A fungus (Botryosphaeria obtusa) attacks fruit and branches, favoured by wet, humid weather."
+hno,app.detect.disease.apple_black_rot.name,Apple black rot
+hno,app.detect.disease.apple_black_rot.steps.0,Prune out infected limbs well below visible lesions and burn them.
+hno,app.detect.disease.apple_black_rot.steps.1,Apply a protective fungicide at bloom and after petal fall.
+hno,app.detect.disease.apple_black_rot.steps.2,Keep the canopy open and mulch-free to reduce moisture retention.
+hno,app.detect.disease.apple_cedar_rust.causes,A rust fungus (Gymnosporangium) that alternates between apple trees and eastern red cedar in wet springs.
+hno,app.detect.disease.apple_cedar_rust.name,Cedar-apple rust
+hno,app.detect.disease.apple_cedar_rust.steps.0,Plant rust-resistant rootstocks or varieties where possible.
+hno,app.detect.disease.apple_cedar_rust.steps.1,Spray with a copper or myclobutanil fungicide at bud-break and again in early summer.
+hno,app.detect.disease.apple_cedar_rust.steps.2,Remove nearby red cedar hosts within 500 m.
+hno,app.detect.disease.apple_scab.causes,"Fungal spores (Venturia inaequalis) spread in cool, wet springs and infect young leaves and fruit."
+hno,app.detect.disease.apple_scab.name,Apple scab
+hno,app.detect.disease.apple_scab.steps.0,Rake and destroy infected fallen leaves in autumn to cut reinfection.
+hno,app.detect.disease.apple_scab.steps.1,"In spring, spray a horticultural oil or copper-based fungicide at bud-break."
+hno,app.detect.disease.apple_scab.steps.2,Prune for good air flow and avoid overhead irrigation.
+hno,app.detect.disease.cherry_powdery_mildew.causes,A fungal disease (Podosphaera leucotricha) that forms white powdery spots on leaves in warm days with cool nights.
+hno,app.detect.disease.cherry_powdery_mildew.name,Cherry powdery mildew
+hno,app.detect.disease.cherry_powdery_mildew.steps.0,Improve air circulation by thinning crowded branches.
+hno,app.detect.disease.cherry_powdery_mildew.steps.1,Spray with sulfur or a mildew-specific fungicide when first spots appear.
+hno,app.detect.disease.cherry_powdery_mildew.steps.2,Avoid nitrogen-heavy fertilizers that promote tender growth.
+hno,app.detect.disease.corn_common_rust.causes,"A fungal rust (Puccinia sorghi) that forms orange pustules on leaves, favoured by dew and moderate temperatures."
+hno,app.detect.disease.corn_common_rust.name,Corn common rust
+hno,app.detect.disease.corn_common_rust.steps.0,Plant rust-resistant hybrids where available.
+hno,app.detect.disease.corn_common_rust.steps.1,Apply a systemic fungicide at early tassel if infection is heavy.
+hno,app.detect.disease.corn_common_rust.steps.2,Avoid planting corn after corn to reduce inoculum build-up.
+hno,app.detect.disease.corn_gray_leaf_spot.causes,"A fungus (Cercospora zeae) that starts as small gray lesions with yellow halos and spreads in warm, humid conditions."
+hno,app.detect.disease.corn_gray_leaf_spot.name,Gray leaf spot
+hno,app.detect.disease.corn_gray_leaf_spot.steps.0,Use resistant hybrids and rotate crops away from corn residue.
+hno,app.detect.disease.corn_gray_leaf_spot.steps.1,Apply a triazole or strobilurin fungicide at tasseling if pressure is high.
+hno,app.detect.disease.corn_gray_leaf_spot.steps.2,Irrigate in the morning so foliage dries quickly.
+hno,app.detect.disease.corn_northern_leaf_blight.causes,"A fungus (Exserohilum turcicum) causing long grey-tan lesions, worse in cool, wet weather and high residue."
+hno,app.detect.disease.corn_northern_leaf_blight.name,Northern leaf blight
+hno,app.detect.disease.corn_northern_leaf_blight.steps.0,Rotate with soybeans or broadleaf crops and till under residue.
+hno,app.detect.disease.corn_northern_leaf_blight.steps.1,Use resistant hybrids and apply a fungicide at VT stage if needed.
+hno,app.detect.disease.corn_northern_leaf_blight.steps.2,Space plants for good air flow and avoid overcrowding.
+hno,app.detect.disease.grape_black_rot.causes,A fungus (Guignardia bidwellii) that creates black circular spots on berries and leaves in wet springs.
+hno,app.detect.disease.grape_black_rot.name,Grape black rot
+hno,app.detect.disease.grape_black_rot.steps.0,Prune out infected canes and remove mummified berries.
+hno,app.detect.disease.grape_black_rot.steps.1,Apply an effective fungicide (mancozeb or tebuconazole) at swell and bloom.
+hno,app.detect.disease.grape_black_rot.steps.2,Avoid overhead irrigation during bloom.
+hno,app.detect.disease.grape_esca.causes,A vascular fungal complex (Phaeoacremonium) that causes dark streaks on canes and wilting leaves.
+hno,app.detect.disease.grape_esca.name,Grape esca (black measles)
+hno,app.detect.disease.grape_esca.steps.0,Prune out and destroy infected wood in autumn.
+hno,app.detect.disease.grape_esca.steps.1,Apply a lime sulfur or copper spray at bud-break to reduce inoculum.
+hno,app.detect.disease.grape_esca.steps.2,Manage irrigation to avoid water stress which worsens symptoms.
+hno,app.detect.disease.grape_leaf_blight.causes,"A fungus causing small dark spots with yellow halos, most visible in humid conditions."
+hno,app.detect.disease.grape_leaf_blight.name,Grape leaf blight (Isariopsis)
+hno,app.detect.disease.grape_leaf_blight.steps.0,Remove and destroy infected leaves at the first sign.
+hno,app.detect.disease.grape_leaf_blight.steps.1,Apply a broad-spectrum fungicide (mancozeb or captan) during shoot growth.
+hno,app.detect.disease.grape_leaf_blight.steps.2,Improve canopy airflow by selective pruning.
+hno,app.detect.disease.orange_huanglongbing.causes,"A bacterial disease spread by psyllids, causing yellow mottling, misshapen fruit, and tree decline."
+hno,app.detect.disease.orange_huanglongbing.name,Citrus greening (Huanglongbing)
+hno,app.detect.disease.orange_huanglongbing.steps.0,Control the Asian citrus psyllid with coordinated insecticide sprays.
+hno,app.detect.disease.orange_huanglongbing.steps.1,Remove and destroy infected trees — there is no cure once established.
+hno,app.detect.disease.orange_huanglongbing.steps.2,Use certified disease-free nursery stock and screen for resistance.
+hno,app.detect.disease.peach_bacterial_spot.causes,"A bacterial pathogen (Xanthomonas) that causes dark spots on leaves and fruit, spread by rain splash."
+hno,app.detect.disease.peach_bacterial_spot.name,Peach bacterial spot
+hno,app.detect.disease.peach_bacterial_spot.steps.0,Prune in dry weather and sterilize tools between trees.
+hno,app.detect.disease.peach_bacterial_spot.steps.1,Apply a copper-based bactericide at bloom and after heavy rain.
+hno,app.detect.disease.peach_bacterial_spot.steps.2,Avoid overhead irrigation and choose resistant varieties.
+hno,app.detect.disease.pepper_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on peppers, spread in warm, wet weather."
+hno,app.detect.disease.pepper_bacterial_spot.name,Pepper bacterial spot
+hno,app.detect.disease.pepper_bacterial_spot.steps.0,Space plants for good air flow and avoid wetting foliage.
+hno,app.detect.disease.pepper_bacterial_spot.steps.1,Apply copper hydroxide at first sign of disease.
+hno,app.detect.disease.pepper_bacterial_spot.steps.2,Remove and destroy infected leaves promptly.
+hno,app.detect.disease.potato_early_blight.causes,"A fungus (Alternaria solani) causing brown target-like rings on lower leaves, worse in warm, humid conditions."
+hno,app.detect.disease.potato_early_blight.name,Potato early blight
+hno,app.detect.disease.potato_early_blight.steps.0,Plant certified seed and rotate away from potatoes and tomatoes.
+hno,app.detect.disease.potato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when first lesions appear.
+hno,app.detect.disease.potato_early_blight.steps.2,Hill soil onto stems and practice wide spacing to keep lower leaves dry.
+hno,app.detect.disease.potato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, water-soaked lesions — the cause of the Irish potato famine, spreads rapidly in cool, wet weather."
+hno,app.detect.disease.potato_late_blight.name,Potato late blight
+hno,app.detect.disease.potato_late_blight.steps.0,Remove and destroy infected tubers and haulm immediately — do NOT compost.
+hno,app.detect.disease.potato_late_blight.steps.1,"Apply a systemic fungicide (metalaxyl-based) at first sign, then every 5-7 days while wet."
+hno,app.detect.disease.potato_late_blight.steps.2,Plant resistant varieties and avoid irrigation during late afternoon.
+hno,app.detect.disease.squash_powdery_mildew.causes,A fungus (Podosphaera xanthii) forming white powdery spots on leaves in warm days with high humidity.
+hno,app.detect.disease.squash_powdery_mildew.name,Squash powdery mildew
+hno,app.detect.disease.squash_powdery_mildew.steps.0,Plant resistant varieties and space vines for good air flow.
+hno,app.detect.disease.squash_powdery_mildew.steps.1,Apply sulfur or potassium bicarbonate spray weekly once symptoms appear.
+hno,app.detect.disease.squash_powdery_mildew.steps.2,Water at the base to keep leaves dry in the morning.
+hno,app.detect.disease.strawberry_leaf_scorch.causes,"A fungus (Physophella salicis) causing reddish-purple spots that turn tan, common in wet spring weather."
+hno,app.detect.disease.strawberry_leaf_scorch.name,Strawberry leaf scorch
+hno,app.detect.disease.strawberry_leaf_scorch.steps.0,Avoid overhead irrigation and keep beds well-drained.
+hno,app.detect.disease.strawberry_leaf_scorch.steps.1,Apply a fungicide (captan or tebuconazole) at first sign of leaf spots.
+hno,app.detect.disease.strawberry_leaf_scorch.steps.2,Remove and destroy severely infected leaves.
+hno,app.detect.disease.tomato_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on leaves and fruit, spread by rain splash."
+hno,app.detect.disease.tomato_bacterial_spot.name,Tomato bacterial spot
+hno,app.detect.disease.tomato_bacterial_spot.steps.0,Use disease-free seed and trellis to keep foliage dry.
+hno,app.detect.disease.tomato_bacterial_spot.steps.1,Apply a copper-based bactericide at first sign and after heavy rain.
+hno,app.detect.disease.tomato_bacterial_spot.steps.2,Remove and destroy infected leaves and fruit.
+hno,app.detect.disease.tomato_early_blight.causes,"A fungus (Alternaria solani) causing dark concentric rings on lower leaves, starting from the soil up."
+hno,app.detect.disease.tomato_early_blight.name,Tomato early blight
+hno,app.detect.disease.tomato_early_blight.steps.0,Mulch and water at the base to avoid soil splash.
+hno,app.detect.disease.tomato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when lower leaves show spots.
+hno,app.detect.disease.tomato_early_blight.steps.2,Remove the lowest infected leaves and stake plants for airflow.
+hno,app.detect.disease.tomato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, fuzzy lesions on leaves and fruit — highly destructive in wet, cool weather."
+hno,app.detect.disease.tomato_late_blight.name,Tomato late blight
+hno,app.detect.disease.tomato_late_blight.steps.0,Remove and destroy infected foliage and fruit immediately; do NOT compost.
+hno,app.detect.disease.tomato_late_blight.steps.1,Apply a systemic fungicide (metalaxyl-based) at first sign and reapply after rain.
+hno,app.detect.disease.tomato_late_blight.steps.2,Plant late-blight-resistant varieties and avoid overhead watering.
+hno,app.detect.disease.tomato_leaf_mold.causes,"A fungus (Cladosporium fulvum) causing yellow patches on upper leaves and fuzzy brown undersides in humid, poorly ventilated conditions."
+hno,app.detect.disease.tomato_leaf_mold.name,Tomato leaf mold
+hno,app.detect.disease.tomato_leaf_mold.steps.0,Ventilate greenhouses and space plants for air flow.
+hno,app.detect.disease.tomato_leaf_mold.steps.1,Apply a fungicide (chlorothalonil) when yellowing appears.
+hno,app.detect.disease.tomato_leaf_mold.steps.2,Water at the base and keep foliage dry.
+hno,app.detect.disease.tomato_mosaic_virus.causes,"A virus that causes mottled, distorted leaves and poor fruit, spread on tools and hands."
+hno,app.detect.disease.tomato_mosaic_virus.name,Tomato mosaic virus
+hno,app.detect.disease.tomato_mosaic_virus.steps.0,Disinfect tools between plants with bleach or alcohol.
+hno,app.detect.disease.tomato_mosaic_virus.steps.1,Remove and destroy infected plants.
+hno,app.detect.disease.tomato_mosaic_virus.steps.2,Control aphid vectors and weeds.
+hno,app.detect.disease.tomato_septoria.causes,A fungus (Septoria lycopersici) causing small tan spots with dark borders on older leaves.
+hno,app.detect.disease.tomato_septoria.name,Tomato septoria leaf spot
+hno,app.detect.disease.tomato_septoria.steps.0,Rotate crops and mulch to prevent soil splash.
+hno,app.detect.disease.tomato_septoria.steps.1,Apply a fungicide (mancozeb or chlorothalonil) at first sign.
+hno,app.detect.disease.tomato_septoria.steps.2,Remove and destroy infected lower leaves.
+hno,app.detect.disease.tomato_spider_mites.causes,"Tiny spider-like mites (Tetranychus urticae) that suck leaf juices, leaving stippled, bronzed leaves and fine webbing."
+hno,app.detect.disease.tomato_spider_mites.name,Tomato spider mites
+hno,app.detect.disease.tomato_spider_mites.steps.0,Hose off mites with a strong spray of water early in the day.
+hno,app.detect.disease.tomato_spider_mites.steps.1,"Release beneficial insects (ladybugs, lacewings) or apply neem oil."
+hno,app.detect.disease.tomato_spider_mites.steps.2,Avoid broad-spectrum insecticides that kill natural predators.
+hno,app.detect.disease.tomato_target_spot.causes,"A fungus (Corynespora cassiicola) causing dark concentric 'target' spots on leaves, favoured by warm, humid weather."
+hno,app.detect.disease.tomato_target_spot.name,Tomato target spot
+hno,app.detect.disease.tomato_target_spot.steps.0,Improve air circulation by pruning lower leaves and staking plants.
+hno,app.detect.disease.tomato_target_spot.steps.1,Apply a fungicide (azoxystrobin or chlorothalonil) when spots first appear.
+hno,app.detect.disease.tomato_target_spot.steps.2,Water at the base early in the day.
+hno,app.detect.disease.tomato_ylcv.causes,"A virus spread by whiteflies, causing yellowing and curling of leaves and stunted growth."
+hno,app.detect.disease.tomato_ylcv.name,Tomato yellow leaf curl virus
+hno,app.detect.disease.tomato_ylcv.steps.0,Control whiteflies with reflective mulches and insecticides at transplant.
+hno,app.detect.disease.tomato_ylcv.steps.1,Remove and destroy infected plants — there is no cure.
+hno,app.detect.disease.tomato_ylcv.steps.2,Use resistant varieties and control weeds that host whiteflies.
+hno,app.detect.dismiss,I'll do this later
+hno,app.detect.dragDropPrompt,Drag an image here or click to browse
+hno,app.detect.dragDropPromptLine1,Drag an image here
+hno,app.detect.dragDropPromptLine2,or click to browse
+hno,app.detect.eyebrow,Crop doctor
+hno,app.detect.healthy.causes,No disease symptoms were detected on this leaf.
+hno,app.detect.healthy.name,Healthy
+hno,app.detect.healthy.steps.0,No treatment needed. Resume normal care and scouting.
+hno,app.detect.historyEmpty,No scans yet. Take a photo to begin.
+hno,app.detect.invalidFile,Please upload an image file.
+hno,app.detect.linkToFarm,Link to a farm
+hno,app.detect.loadMore,Load more
+hno,app.detect.noDiagnosis,Could not identify the disease — try a clearer photo of the affected area.
+hno,app.detect.noFarmsBody,Link your scans to a farm to build a full disease history.
+hno,app.detect.noFarmsTitle,Register a farm first
+hno,app.detect.notSaved,Not saved
+hno,app.detect.pastScans,Past scans
+hno,app.detect.readingLeaf,Reading the leaf…
+hno,app.detect.rescan.14,Scan again in 14 days
+hno,app.detect.rescan.21,Scan again in 21 days
+hno,app.detect.rescan.7,Scan again in 7 days
+hno,app.detect.retry,Retry
+hno,app.detect.sampleScan,No photo handy? Run a sample scan
+hno,app.detect.saveToFarm,Save to farm
+hno,app.detect.savedStatus,Saved to {farm}
+hno,app.detect.savedToFarm,Saved to {farm}
+hno,app.detect.scanAnother,Scan another leaf
+hno,app.detect.serviceUnavailable,Service temporarily unavailable. Please try again.
+hno,app.detect.severity.clear,Clear
+hno,app.detect.severity.treatNow,Treat Now
+hno,app.detect.severity.watch,Watch
+hno,app.detect.takePhoto,Take or choose a photo
+hno,app.detect.title,Spot disease before it spreads
+hno,app.detect.unsavedStatus,Not saved
+hno,app.detect.uploadPrompt,Photograph the sick leaf
+hno,app.detect.whatToDo,What to do now
+hno,app.farms.detail.noRecords,No records yet — start logging field events to build your farm's memory.
+hno,app.farms.new.fields.irrigationMethod,Irrigation method
+hno,app.farms.new.fields.primaryCrop,Primary crop
+hno,app.farms.new.fields.soilType,Soil type
+hno,app.farms.new.fields.sowingDate,Sowing date
+hno,app.farms.new.placeholders.soilType,"Clay, loam, sandy, or silt"
+hno,app.weather.advisory.recommendation.fertilize,Good window to apply fertiliser ahead of steady weather.
+hno,app.weather.advisory.recommendation.frostProtect,Frost risk tonight — cover young plants or irrigate to warm the soil.
+hno,app.weather.advisory.recommendation.generic,No special action today — keep an eye on the field and the forecast.
+hno,app.weather.advisory.recommendation.harvest,Crops near harvest — plan the harvest for a dry day and protect ripe produce from rain.
+hno,app.weather.advisory.recommendation.heatProtect,Extreme heat — increase irrigation and avoid field work midday.
+hno,app.weather.advisory.recommendation.irrigateNow,Irrigate in the cool hours (before 9 AM) — heat is building and the soil is drying.
+hno,app.weather.advisory.recommendation.irrigation,Skip irrigation today — rain is expected. Save water and avoid waterlogging.
+hno,app.weather.advisory.recommendation.plantCare,Steady growth stage — keep up regular irrigation and weeding.
+hno,app.weather.advisory.recommendation.sprayDisease,Humidity favours disease — apply preventive fungicide in the dry morning window.
+hno,app.weather.alerts.diseaseRisk,High humidity favours disease — apply preventive fungicide in the dry morning window.
+hno,app.weather.alerts.dismiss,Dismiss
+hno,app.weather.alerts.extremeHeat,Extreme heat — increase irrigation and avoid midday field work.
+hno,app.weather.alerts.frost,Frost risk — protect sensitive crops tonight.
+hno,app.weather.alerts.heavyRain,Heavy rain expected — delay irrigation and protect harvested crops.
+hno,app.weather.alerts.noAlerts,No active alerts right now.
+hno,app.weather.alerts.title,Active alerts
+hno,app.weather.alerts.viewAll,View all notifications
+hno,app.weather.buttons.refresh,Refresh
+hno,app.weather.buttons.register,Register farm
+hno,app.weather.description,"Daily farming advice for your crops, driven by the forecast and your crop's growth stage."
+hno,app.weather.detail.back,Back to history
+hno,app.weather.detail.markAcknowledged,Mark as seen
+hno,app.weather.detail.markActed,Mark as acted on
+hno,app.weather.detail.markedActed,Marked as acted on
+hno,app.weather.detail.markedSeen,Marked as seen
+hno,app.weather.detail.recommendation,Recommendation
+hno,app.weather.detail.weatherConditions,Weather conditions
+hno,app.weather.errors.generic,Something went wrong. Please try again.
+hno,app.weather.errors.noFarm,Select a farm to see its advisory.
+hno,app.weather.eyebrow,Weather
+hno,app.weather.farmSelectorLabel,Farm
+hno,app.weather.forecastSubtitle,Each day's weather with a farming recommendation for your crop.
+hno,app.weather.forecastTitle,7-day forecast
+hno,app.weather.growthStage,Growth stage
+hno,app.weather.history.date,Date
+hno,app.weather.history.empty,No past advisories yet.
+hno,app.weather.history.loadMore,Load more
+hno,app.weather.history.severity,Severity
+hno,app.weather.history.status,Status
+hno,app.weather.history.status.acted,Acted on
+hno,app.weather.history.status.new,New
+hno,app.weather.history.status.seen,Seen
+hno,app.weather.history.viewAll,View full history
+hno,app.weather.historySubtitle,"Past recommendations for your farms, newest first."
+hno,app.weather.historyTitle,Advisory history
+hno,app.weather.pageTitle,Weather Advisory
+hno,app.weather.registerBody,"Add your crop, sowing date, and location to start getting personalised daily advice."
+hno,app.weather.registerCta,Register a farm
+hno,app.weather.registerForm.crop,Primary crop
+hno,app.weather.registerForm.error,Could not save your farm details. Please try again.
+hno,app.weather.registerForm.irrigation,Irrigation method
+hno,app.weather.registerForm.irrigationMethods,"Drip, sprinkler, flood, or rainfed"
+hno,app.weather.registerForm.save,Save and see my advisory
+hno,app.weather.registerForm.saving,Saving…
+hno,app.weather.registerForm.soil,Soil type
+hno,app.weather.registerForm.soilTypes,"Clay, loam, sandy, or silt"
+hno,app.weather.registerForm.sowing,Sowing date
+hno,app.weather.registerForm.success,Saved — here is your advisory
+hno,app.weather.registerTitle,Register your farm
+hno,app.weather.severity.critical,Critical
+hno,app.weather.severity.info,Info
+hno,app.weather.severity.warning,Warning
+hno,app.weather.source.cached,Last saved forecast
+hno,app.weather.source.demo,Sample forecast — add an API key for live data
+hno,app.weather.source.live,Live forecast · OpenWeather
+hno,app.weather.stages.flowering,Flowering
+hno,app.weather.stages.generic,General
+hno,app.weather.stages.harvestReady,Harvest ready
+hno,app.weather.stages.maturation,Maturation
+hno,app.weather.stages.seedling,Seedling
+hno,app.weather.stages.vegetative,Vegetative
+hno,app.weather.todayAdvisory,Today's advisory
+hno,app.weather.weatherUnavailable,Weather data unavailable
+hno,app.weather.weatherUnavailableBody,Showing your last saved advice. New advice appears when the forecast returns.
+hno,nav.dashboard,Dashboard
+pa,app.detect.addFarm,Add farm
+pa,app.detect.analyzing,Analyzing…
+pa,app.detect.caution,Always confirm treatment with your local agriculture office before spraying.
+pa,app.detect.chat.cancel,Cancel
+pa,app.detect.chat.closePreview,Close preview
+pa,app.detect.chat.deleteConfirm,Are you sure you want to delete this chat?
+pa,app.detect.chat.deleteSession,Delete session
+pa,app.detect.chat.emptyState,Ask a follow-up question about this detection.
+pa,app.detect.chat.imagePreview,View full image
+pa,app.detect.chat.newScan,New scan
+pa,app.detect.chat.noSessions,No detection chats yet.
+pa,app.detect.chat.placeholder,Ask about this detection...
+pa,app.detect.chat.send,Send
+pa,app.detect.chat.sessionsTitle,Detection chats
+pa,app.detect.chat.thinking,Thinking...
+pa,app.detect.confidence,Confidence {pct}%
+pa,app.detect.crop.apple,Apple
+pa,app.detect.crop.blueberry,Blueberry
+pa,app.detect.crop.cherry,Cherry
+pa,app.detect.crop.corn,Corn
+pa,app.detect.crop.grape,Grape
+pa,app.detect.crop.orange,Orange
+pa,app.detect.crop.peach,Peach
+pa,app.detect.crop.pepper,Pepper
+pa,app.detect.crop.potato,Potato
+pa,app.detect.crop.raspberry,Raspberry
+pa,app.detect.crop.soybean,Soybean
+pa,app.detect.crop.squash,Squash
+pa,app.detect.crop.strawberry,Strawberry
+pa,app.detect.crop.tomato,Tomato
+pa,app.detect.discussAdvisor,Discuss with advisor
+pa,app.detect.disease.apple_black_rot.causes,"A fungus (Botryosphaeria obtusa) attacks fruit and branches, favoured by wet, humid weather."
+pa,app.detect.disease.apple_black_rot.name,Apple black rot
+pa,app.detect.disease.apple_black_rot.steps.0,Prune out infected limbs well below visible lesions and burn them.
+pa,app.detect.disease.apple_black_rot.steps.1,Apply a protective fungicide at bloom and after petal fall.
+pa,app.detect.disease.apple_black_rot.steps.2,Keep the canopy open and mulch-free to reduce moisture retention.
+pa,app.detect.disease.apple_cedar_rust.causes,A rust fungus (Gymnosporangium) that alternates between apple trees and eastern red cedar in wet springs.
+pa,app.detect.disease.apple_cedar_rust.name,Cedar-apple rust
+pa,app.detect.disease.apple_cedar_rust.steps.0,Plant rust-resistant rootstocks or varieties where possible.
+pa,app.detect.disease.apple_cedar_rust.steps.1,Spray with a copper or myclobutanil fungicide at bud-break and again in early summer.
+pa,app.detect.disease.apple_cedar_rust.steps.2,Remove nearby red cedar hosts within 500 m.
+pa,app.detect.disease.apple_scab.causes,"Fungal spores (Venturia inaequalis) spread in cool, wet springs and infect young leaves and fruit."
+pa,app.detect.disease.apple_scab.name,Apple scab
+pa,app.detect.disease.apple_scab.steps.0,Rake and destroy infected fallen leaves in autumn to cut reinfection.
+pa,app.detect.disease.apple_scab.steps.1,"In spring, spray a horticultural oil or copper-based fungicide at bud-break."
+pa,app.detect.disease.apple_scab.steps.2,Prune for good air flow and avoid overhead irrigation.
+pa,app.detect.disease.cherry_powdery_mildew.causes,A fungal disease (Podosphaera leucotricha) that forms white powdery spots on leaves in warm days with cool nights.
+pa,app.detect.disease.cherry_powdery_mildew.name,Cherry powdery mildew
+pa,app.detect.disease.cherry_powdery_mildew.steps.0,Improve air circulation by thinning crowded branches.
+pa,app.detect.disease.cherry_powdery_mildew.steps.1,Spray with sulfur or a mildew-specific fungicide when first spots appear.
+pa,app.detect.disease.cherry_powdery_mildew.steps.2,Avoid nitrogen-heavy fertilizers that promote tender growth.
+pa,app.detect.disease.corn_common_rust.causes,"A fungal rust (Puccinia sorghi) that forms orange pustules on leaves, favoured by dew and moderate temperatures."
+pa,app.detect.disease.corn_common_rust.name,Corn common rust
+pa,app.detect.disease.corn_common_rust.steps.0,Plant rust-resistant hybrids where available.
+pa,app.detect.disease.corn_common_rust.steps.1,Apply a systemic fungicide at early tassel if infection is heavy.
+pa,app.detect.disease.corn_common_rust.steps.2,Avoid planting corn after corn to reduce inoculum build-up.
+pa,app.detect.disease.corn_gray_leaf_spot.causes,"A fungus (Cercospora zeae) that starts as small gray lesions with yellow halos and spreads in warm, humid conditions."
+pa,app.detect.disease.corn_gray_leaf_spot.name,Gray leaf spot
+pa,app.detect.disease.corn_gray_leaf_spot.steps.0,Use resistant hybrids and rotate crops away from corn residue.
+pa,app.detect.disease.corn_gray_leaf_spot.steps.1,Apply a triazole or strobilurin fungicide at tasseling if pressure is high.
+pa,app.detect.disease.corn_gray_leaf_spot.steps.2,Irrigate in the morning so foliage dries quickly.
+pa,app.detect.disease.corn_northern_leaf_blight.causes,"A fungus (Exserohilum turcicum) causing long grey-tan lesions, worse in cool, wet weather and high residue."
+pa,app.detect.disease.corn_northern_leaf_blight.name,Northern leaf blight
+pa,app.detect.disease.corn_northern_leaf_blight.steps.0,Rotate with soybeans or broadleaf crops and till under residue.
+pa,app.detect.disease.corn_northern_leaf_blight.steps.1,Use resistant hybrids and apply a fungicide at VT stage if needed.
+pa,app.detect.disease.corn_northern_leaf_blight.steps.2,Space plants for good air flow and avoid overcrowding.
+pa,app.detect.disease.grape_black_rot.causes,A fungus (Guignardia bidwellii) that creates black circular spots on berries and leaves in wet springs.
+pa,app.detect.disease.grape_black_rot.name,Grape black rot
+pa,app.detect.disease.grape_black_rot.steps.0,Prune out infected canes and remove mummified berries.
+pa,app.detect.disease.grape_black_rot.steps.1,Apply an effective fungicide (mancozeb or tebuconazole) at swell and bloom.
+pa,app.detect.disease.grape_black_rot.steps.2,Avoid overhead irrigation during bloom.
+pa,app.detect.disease.grape_esca.causes,A vascular fungal complex (Phaeoacremonium) that causes dark streaks on canes and wilting leaves.
+pa,app.detect.disease.grape_esca.name,Grape esca (black measles)
+pa,app.detect.disease.grape_esca.steps.0,Prune out and destroy infected wood in autumn.
+pa,app.detect.disease.grape_esca.steps.1,Apply a lime sulfur or copper spray at bud-break to reduce inoculum.
+pa,app.detect.disease.grape_esca.steps.2,Manage irrigation to avoid water stress which worsens symptoms.
+pa,app.detect.disease.grape_leaf_blight.causes,"A fungus causing small dark spots with yellow halos, most visible in humid conditions."
+pa,app.detect.disease.grape_leaf_blight.name,Grape leaf blight (Isariopsis)
+pa,app.detect.disease.grape_leaf_blight.steps.0,Remove and destroy infected leaves at the first sign.
+pa,app.detect.disease.grape_leaf_blight.steps.1,Apply a broad-spectrum fungicide (mancozeb or captan) during shoot growth.
+pa,app.detect.disease.grape_leaf_blight.steps.2,Improve canopy airflow by selective pruning.
+pa,app.detect.disease.orange_huanglongbing.causes,"A bacterial disease spread by psyllids, causing yellow mottling, misshapen fruit, and tree decline."
+pa,app.detect.disease.orange_huanglongbing.name,Citrus greening (Huanglongbing)
+pa,app.detect.disease.orange_huanglongbing.steps.0,Control the Asian citrus psyllid with coordinated insecticide sprays.
+pa,app.detect.disease.orange_huanglongbing.steps.1,Remove and destroy infected trees — there is no cure once established.
+pa,app.detect.disease.orange_huanglongbing.steps.2,Use certified disease-free nursery stock and screen for resistance.
+pa,app.detect.disease.peach_bacterial_spot.causes,"A bacterial pathogen (Xanthomonas) that causes dark spots on leaves and fruit, spread by rain splash."
+pa,app.detect.disease.peach_bacterial_spot.name,Peach bacterial spot
+pa,app.detect.disease.peach_bacterial_spot.steps.0,Prune in dry weather and sterilize tools between trees.
+pa,app.detect.disease.peach_bacterial_spot.steps.1,Apply a copper-based bactericide at bloom and after heavy rain.
+pa,app.detect.disease.peach_bacterial_spot.steps.2,Avoid overhead irrigation and choose resistant varieties.
+pa,app.detect.disease.pepper_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on peppers, spread in warm, wet weather."
+pa,app.detect.disease.pepper_bacterial_spot.name,Pepper bacterial spot
+pa,app.detect.disease.pepper_bacterial_spot.steps.0,Space plants for good air flow and avoid wetting foliage.
+pa,app.detect.disease.pepper_bacterial_spot.steps.1,Apply copper hydroxide at first sign of disease.
+pa,app.detect.disease.pepper_bacterial_spot.steps.2,Remove and destroy infected leaves promptly.
+pa,app.detect.disease.potato_early_blight.causes,"A fungus (Alternaria solani) causing brown target-like rings on lower leaves, worse in warm, humid conditions."
+pa,app.detect.disease.potato_early_blight.name,Potato early blight
+pa,app.detect.disease.potato_early_blight.steps.0,Plant certified seed and rotate away from potatoes and tomatoes.
+pa,app.detect.disease.potato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when first lesions appear.
+pa,app.detect.disease.potato_early_blight.steps.2,Hill soil onto stems and practice wide spacing to keep lower leaves dry.
+pa,app.detect.disease.potato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, water-soaked lesions — the cause of the Irish potato famine, spreads rapidly in cool, wet weather."
+pa,app.detect.disease.potato_late_blight.name,Potato late blight
+pa,app.detect.disease.potato_late_blight.steps.0,Remove and destroy infected tubers and haulm immediately — do NOT compost.
+pa,app.detect.disease.potato_late_blight.steps.1,"Apply a systemic fungicide (metalaxyl-based) at first sign, then every 5-7 days while wet."
+pa,app.detect.disease.potato_late_blight.steps.2,Plant resistant varieties and avoid irrigation during late afternoon.
+pa,app.detect.disease.squash_powdery_mildew.causes,A fungus (Podosphaera xanthii) forming white powdery spots on leaves in warm days with high humidity.
+pa,app.detect.disease.squash_powdery_mildew.name,Squash powdery mildew
+pa,app.detect.disease.squash_powdery_mildew.steps.0,Plant resistant varieties and space vines for good air flow.
+pa,app.detect.disease.squash_powdery_mildew.steps.1,Apply sulfur or potassium bicarbonate spray weekly once symptoms appear.
+pa,app.detect.disease.squash_powdery_mildew.steps.2,Water at the base to keep leaves dry in the morning.
+pa,app.detect.disease.strawberry_leaf_scorch.causes,"A fungus (Physophella salicis) causing reddish-purple spots that turn tan, common in wet spring weather."
+pa,app.detect.disease.strawberry_leaf_scorch.name,Strawberry leaf scorch
+pa,app.detect.disease.strawberry_leaf_scorch.steps.0,Avoid overhead irrigation and keep beds well-drained.
+pa,app.detect.disease.strawberry_leaf_scorch.steps.1,Apply a fungicide (captan or tebuconazole) at first sign of leaf spots.
+pa,app.detect.disease.strawberry_leaf_scorch.steps.2,Remove and destroy severely infected leaves.
+pa,app.detect.disease.tomato_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on leaves and fruit, spread by rain splash."
+pa,app.detect.disease.tomato_bacterial_spot.name,Tomato bacterial spot
+pa,app.detect.disease.tomato_bacterial_spot.steps.0,Use disease-free seed and trellis to keep foliage dry.
+pa,app.detect.disease.tomato_bacterial_spot.steps.1,Apply a copper-based bactericide at first sign and after heavy rain.
+pa,app.detect.disease.tomato_bacterial_spot.steps.2,Remove and destroy infected leaves and fruit.
+pa,app.detect.disease.tomato_early_blight.causes,"A fungus (Alternaria solani) causing dark concentric rings on lower leaves, starting from the soil up."
+pa,app.detect.disease.tomato_early_blight.name,Tomato early blight
+pa,app.detect.disease.tomato_early_blight.steps.0,Mulch and water at the base to avoid soil splash.
+pa,app.detect.disease.tomato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when lower leaves show spots.
+pa,app.detect.disease.tomato_early_blight.steps.2,Remove the lowest infected leaves and stake plants for airflow.
+pa,app.detect.disease.tomato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, fuzzy lesions on leaves and fruit — highly destructive in wet, cool weather."
+pa,app.detect.disease.tomato_late_blight.name,Tomato late blight
+pa,app.detect.disease.tomato_late_blight.steps.0,Remove and destroy infected foliage and fruit immediately; do NOT compost.
+pa,app.detect.disease.tomato_late_blight.steps.1,Apply a systemic fungicide (metalaxyl-based) at first sign and reapply after rain.
+pa,app.detect.disease.tomato_late_blight.steps.2,Plant late-blight-resistant varieties and avoid overhead watering.
+pa,app.detect.disease.tomato_leaf_mold.causes,"A fungus (Cladosporium fulvum) causing yellow patches on upper leaves and fuzzy brown undersides in humid, poorly ventilated conditions."
+pa,app.detect.disease.tomato_leaf_mold.name,Tomato leaf mold
+pa,app.detect.disease.tomato_leaf_mold.steps.0,Ventilate greenhouses and space plants for air flow.
+pa,app.detect.disease.tomato_leaf_mold.steps.1,Apply a fungicide (chlorothalonil) when yellowing appears.
+pa,app.detect.disease.tomato_leaf_mold.steps.2,Water at the base and keep foliage dry.
+pa,app.detect.disease.tomato_mosaic_virus.causes,"A virus that causes mottled, distorted leaves and poor fruit, spread on tools and hands."
+pa,app.detect.disease.tomato_mosaic_virus.name,Tomato mosaic virus
+pa,app.detect.disease.tomato_mosaic_virus.steps.0,Disinfect tools between plants with bleach or alcohol.
+pa,app.detect.disease.tomato_mosaic_virus.steps.1,Remove and destroy infected plants.
+pa,app.detect.disease.tomato_mosaic_virus.steps.2,Control aphid vectors and weeds.
+pa,app.detect.disease.tomato_septoria.causes,A fungus (Septoria lycopersici) causing small tan spots with dark borders on older leaves.
+pa,app.detect.disease.tomato_septoria.name,Tomato septoria leaf spot
+pa,app.detect.disease.tomato_septoria.steps.0,Rotate crops and mulch to prevent soil splash.
+pa,app.detect.disease.tomato_septoria.steps.1,Apply a fungicide (mancozeb or chlorothalonil) at first sign.
+pa,app.detect.disease.tomato_septoria.steps.2,Remove and destroy infected lower leaves.
+pa,app.detect.disease.tomato_spider_mites.causes,"Tiny spider-like mites (Tetranychus urticae) that suck leaf juices, leaving stippled, bronzed leaves and fine webbing."
+pa,app.detect.disease.tomato_spider_mites.name,Tomato spider mites
+pa,app.detect.disease.tomato_spider_mites.steps.0,Hose off mites with a strong spray of water early in the day.
+pa,app.detect.disease.tomato_spider_mites.steps.1,"Release beneficial insects (ladybugs, lacewings) or apply neem oil."
+pa,app.detect.disease.tomato_spider_mites.steps.2,Avoid broad-spectrum insecticides that kill natural predators.
+pa,app.detect.disease.tomato_target_spot.causes,"A fungus (Corynespora cassiicola) causing dark concentric 'target' spots on leaves, favoured by warm, humid weather."
+pa,app.detect.disease.tomato_target_spot.name,Tomato target spot
+pa,app.detect.disease.tomato_target_spot.steps.0,Improve air circulation by pruning lower leaves and staking plants.
+pa,app.detect.disease.tomato_target_spot.steps.1,Apply a fungicide (azoxystrobin or chlorothalonil) when spots first appear.
+pa,app.detect.disease.tomato_target_spot.steps.2,Water at the base early in the day.
+pa,app.detect.disease.tomato_ylcv.causes,"A virus spread by whiteflies, causing yellowing and curling of leaves and stunted growth."
+pa,app.detect.disease.tomato_ylcv.name,Tomato yellow leaf curl virus
+pa,app.detect.disease.tomato_ylcv.steps.0,Control whiteflies with reflective mulches and insecticides at transplant.
+pa,app.detect.disease.tomato_ylcv.steps.1,Remove and destroy infected plants — there is no cure.
+pa,app.detect.disease.tomato_ylcv.steps.2,Use resistant varieties and control weeds that host whiteflies.
+pa,app.detect.dismiss,I'll do this later
+pa,app.detect.dragDropPrompt,Drag an image here or click to browse
+pa,app.detect.dragDropPromptLine1,Drag an image here
+pa,app.detect.dragDropPromptLine2,or click to browse
+pa,app.detect.eyebrow,Crop doctor
+pa,app.detect.healthy.causes,No disease symptoms were detected on this leaf.
+pa,app.detect.healthy.name,Healthy
+pa,app.detect.healthy.steps.0,No treatment needed. Resume normal care and scouting.
+pa,app.detect.historyEmpty,No scans yet. Take a photo to begin.
+pa,app.detect.invalidFile,Please upload an image file.
+pa,app.detect.linkToFarm,Link to a farm
+pa,app.detect.loadMore,Load more
+pa,app.detect.noDiagnosis,Could not identify the disease — try a clearer photo of the affected area.
+pa,app.detect.noFarmsBody,Link your scans to a farm to build a full disease history.
+pa,app.detect.noFarmsTitle,Register a farm first
+pa,app.detect.notSaved,Not saved
+pa,app.detect.pastScans,Past scans
+pa,app.detect.readingLeaf,Reading the leaf…
+pa,app.detect.rescan.14,Scan again in 14 days
+pa,app.detect.rescan.21,Scan again in 21 days
+pa,app.detect.rescan.7,Scan again in 7 days
+pa,app.detect.retry,Retry
+pa,app.detect.sampleScan,No photo handy? Run a sample scan
+pa,app.detect.saveToFarm,Save to farm
+pa,app.detect.savedStatus,Saved to {farm}
+pa,app.detect.savedToFarm,Saved to {farm}
+pa,app.detect.scanAnother,Scan another leaf
+pa,app.detect.serviceUnavailable,Service temporarily unavailable. Please try again.
+pa,app.detect.severity.clear,Clear
+pa,app.detect.severity.treatNow,Treat Now
+pa,app.detect.severity.watch,Watch
+pa,app.detect.takePhoto,Take or choose a photo
+pa,app.detect.title,Spot disease before it spreads
+pa,app.detect.unsavedStatus,Not saved
+pa,app.detect.uploadPrompt,Photograph the sick leaf
+pa,app.detect.whatToDo,What to do now
+pa,app.farms.detail.noRecords,No records yet — start logging field events to build your farm's memory.
+pa,nav.dashboard,Dashboard
+ps,app.detect.addFarm,Add farm
+ps,app.detect.analyzing,Analyzing…
+ps,app.detect.caution,Always confirm treatment with your local agriculture office before spraying.
+ps,app.detect.chat.cancel,Cancel
+ps,app.detect.chat.closePreview,Close preview
+ps,app.detect.chat.deleteConfirm,Are you sure you want to delete this chat?
+ps,app.detect.chat.deleteSession,Delete session
+ps,app.detect.chat.emptyState,Ask a follow-up question about this detection.
+ps,app.detect.chat.imagePreview,View full image
+ps,app.detect.chat.newScan,New scan
+ps,app.detect.chat.noSessions,No detection chats yet.
+ps,app.detect.chat.placeholder,Ask about this detection...
+ps,app.detect.chat.send,Send
+ps,app.detect.chat.sessionsTitle,Detection chats
+ps,app.detect.chat.thinking,Thinking...
+ps,app.detect.confidence,Confidence {pct}%
+ps,app.detect.crop.apple,Apple
+ps,app.detect.crop.blueberry,Blueberry
+ps,app.detect.crop.cherry,Cherry
+ps,app.detect.crop.corn,Corn
+ps,app.detect.crop.grape,Grape
+ps,app.detect.crop.orange,Orange
+ps,app.detect.crop.peach,Peach
+ps,app.detect.crop.pepper,Pepper
+ps,app.detect.crop.potato,Potato
+ps,app.detect.crop.raspberry,Raspberry
+ps,app.detect.crop.soybean,Soybean
+ps,app.detect.crop.squash,Squash
+ps,app.detect.crop.strawberry,Strawberry
+ps,app.detect.crop.tomato,Tomato
+ps,app.detect.discussAdvisor,Discuss with advisor
+ps,app.detect.disease.apple_black_rot.causes,"A fungus (Botryosphaeria obtusa) attacks fruit and branches, favoured by wet, humid weather."
+ps,app.detect.disease.apple_black_rot.name,Apple black rot
+ps,app.detect.disease.apple_black_rot.steps.0,Prune out infected limbs well below visible lesions and burn them.
+ps,app.detect.disease.apple_black_rot.steps.1,Apply a protective fungicide at bloom and after petal fall.
+ps,app.detect.disease.apple_black_rot.steps.2,Keep the canopy open and mulch-free to reduce moisture retention.
+ps,app.detect.disease.apple_cedar_rust.causes,A rust fungus (Gymnosporangium) that alternates between apple trees and eastern red cedar in wet springs.
+ps,app.detect.disease.apple_cedar_rust.name,Cedar-apple rust
+ps,app.detect.disease.apple_cedar_rust.steps.0,Plant rust-resistant rootstocks or varieties where possible.
+ps,app.detect.disease.apple_cedar_rust.steps.1,Spray with a copper or myclobutanil fungicide at bud-break and again in early summer.
+ps,app.detect.disease.apple_cedar_rust.steps.2,Remove nearby red cedar hosts within 500 m.
+ps,app.detect.disease.apple_scab.causes,"Fungal spores (Venturia inaequalis) spread in cool, wet springs and infect young leaves and fruit."
+ps,app.detect.disease.apple_scab.name,Apple scab
+ps,app.detect.disease.apple_scab.steps.0,Rake and destroy infected fallen leaves in autumn to cut reinfection.
+ps,app.detect.disease.apple_scab.steps.1,"In spring, spray a horticultural oil or copper-based fungicide at bud-break."
+ps,app.detect.disease.apple_scab.steps.2,Prune for good air flow and avoid overhead irrigation.
+ps,app.detect.disease.cherry_powdery_mildew.causes,A fungal disease (Podosphaera leucotricha) that forms white powdery spots on leaves in warm days with cool nights.
+ps,app.detect.disease.cherry_powdery_mildew.name,Cherry powdery mildew
+ps,app.detect.disease.cherry_powdery_mildew.steps.0,Improve air circulation by thinning crowded branches.
+ps,app.detect.disease.cherry_powdery_mildew.steps.1,Spray with sulfur or a mildew-specific fungicide when first spots appear.
+ps,app.detect.disease.cherry_powdery_mildew.steps.2,Avoid nitrogen-heavy fertilizers that promote tender growth.
+ps,app.detect.disease.corn_common_rust.causes,"A fungal rust (Puccinia sorghi) that forms orange pustules on leaves, favoured by dew and moderate temperatures."
+ps,app.detect.disease.corn_common_rust.name,Corn common rust
+ps,app.detect.disease.corn_common_rust.steps.0,Plant rust-resistant hybrids where available.
+ps,app.detect.disease.corn_common_rust.steps.1,Apply a systemic fungicide at early tassel if infection is heavy.
+ps,app.detect.disease.corn_common_rust.steps.2,Avoid planting corn after corn to reduce inoculum build-up.
+ps,app.detect.disease.corn_gray_leaf_spot.causes,"A fungus (Cercospora zeae) that starts as small gray lesions with yellow halos and spreads in warm, humid conditions."
+ps,app.detect.disease.corn_gray_leaf_spot.name,Gray leaf spot
+ps,app.detect.disease.corn_gray_leaf_spot.steps.0,Use resistant hybrids and rotate crops away from corn residue.
+ps,app.detect.disease.corn_gray_leaf_spot.steps.1,Apply a triazole or strobilurin fungicide at tasseling if pressure is high.
+ps,app.detect.disease.corn_gray_leaf_spot.steps.2,Irrigate in the morning so foliage dries quickly.
+ps,app.detect.disease.corn_northern_leaf_blight.causes,"A fungus (Exserohilum turcicum) causing long grey-tan lesions, worse in cool, wet weather and high residue."
+ps,app.detect.disease.corn_northern_leaf_blight.name,Northern leaf blight
+ps,app.detect.disease.corn_northern_leaf_blight.steps.0,Rotate with soybeans or broadleaf crops and till under residue.
+ps,app.detect.disease.corn_northern_leaf_blight.steps.1,Use resistant hybrids and apply a fungicide at VT stage if needed.
+ps,app.detect.disease.corn_northern_leaf_blight.steps.2,Space plants for good air flow and avoid overcrowding.
+ps,app.detect.disease.grape_black_rot.causes,A fungus (Guignardia bidwellii) that creates black circular spots on berries and leaves in wet springs.
+ps,app.detect.disease.grape_black_rot.name,Grape black rot
+ps,app.detect.disease.grape_black_rot.steps.0,Prune out infected canes and remove mummified berries.
+ps,app.detect.disease.grape_black_rot.steps.1,Apply an effective fungicide (mancozeb or tebuconazole) at swell and bloom.
+ps,app.detect.disease.grape_black_rot.steps.2,Avoid overhead irrigation during bloom.
+ps,app.detect.disease.grape_esca.causes,A vascular fungal complex (Phaeoacremonium) that causes dark streaks on canes and wilting leaves.
+ps,app.detect.disease.grape_esca.name,Grape esca (black measles)
+ps,app.detect.disease.grape_esca.steps.0,Prune out and destroy infected wood in autumn.
+ps,app.detect.disease.grape_esca.steps.1,Apply a lime sulfur or copper spray at bud-break to reduce inoculum.
+ps,app.detect.disease.grape_esca.steps.2,Manage irrigation to avoid water stress which worsens symptoms.
+ps,app.detect.disease.grape_leaf_blight.causes,"A fungus causing small dark spots with yellow halos, most visible in humid conditions."
+ps,app.detect.disease.grape_leaf_blight.name,Grape leaf blight (Isariopsis)
+ps,app.detect.disease.grape_leaf_blight.steps.0,Remove and destroy infected leaves at the first sign.
+ps,app.detect.disease.grape_leaf_blight.steps.1,Apply a broad-spectrum fungicide (mancozeb or captan) during shoot growth.
+ps,app.detect.disease.grape_leaf_blight.steps.2,Improve canopy airflow by selective pruning.
+ps,app.detect.disease.orange_huanglongbing.causes,"A bacterial disease spread by psyllids, causing yellow mottling, misshapen fruit, and tree decline."
+ps,app.detect.disease.orange_huanglongbing.name,Citrus greening (Huanglongbing)
+ps,app.detect.disease.orange_huanglongbing.steps.0,Control the Asian citrus psyllid with coordinated insecticide sprays.
+ps,app.detect.disease.orange_huanglongbing.steps.1,Remove and destroy infected trees — there is no cure once established.
+ps,app.detect.disease.orange_huanglongbing.steps.2,Use certified disease-free nursery stock and screen for resistance.
+ps,app.detect.disease.peach_bacterial_spot.causes,"A bacterial pathogen (Xanthomonas) that causes dark spots on leaves and fruit, spread by rain splash."
+ps,app.detect.disease.peach_bacterial_spot.name,Peach bacterial spot
+ps,app.detect.disease.peach_bacterial_spot.steps.0,Prune in dry weather and sterilize tools between trees.
+ps,app.detect.disease.peach_bacterial_spot.steps.1,Apply a copper-based bactericide at bloom and after heavy rain.
+ps,app.detect.disease.peach_bacterial_spot.steps.2,Avoid overhead irrigation and choose resistant varieties.
+ps,app.detect.disease.pepper_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on peppers, spread in warm, wet weather."
+ps,app.detect.disease.pepper_bacterial_spot.name,Pepper bacterial spot
+ps,app.detect.disease.pepper_bacterial_spot.steps.0,Space plants for good air flow and avoid wetting foliage.
+ps,app.detect.disease.pepper_bacterial_spot.steps.1,Apply copper hydroxide at first sign of disease.
+ps,app.detect.disease.pepper_bacterial_spot.steps.2,Remove and destroy infected leaves promptly.
+ps,app.detect.disease.potato_early_blight.causes,"A fungus (Alternaria solani) causing brown target-like rings on lower leaves, worse in warm, humid conditions."
+ps,app.detect.disease.potato_early_blight.name,Potato early blight
+ps,app.detect.disease.potato_early_blight.steps.0,Plant certified seed and rotate away from potatoes and tomatoes.
+ps,app.detect.disease.potato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when first lesions appear.
+ps,app.detect.disease.potato_early_blight.steps.2,Hill soil onto stems and practice wide spacing to keep lower leaves dry.
+ps,app.detect.disease.potato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, water-soaked lesions — the cause of the Irish potato famine, spreads rapidly in cool, wet weather."
+ps,app.detect.disease.potato_late_blight.name,Potato late blight
+ps,app.detect.disease.potato_late_blight.steps.0,Remove and destroy infected tubers and haulm immediately — do NOT compost.
+ps,app.detect.disease.potato_late_blight.steps.1,"Apply a systemic fungicide (metalaxyl-based) at first sign, then every 5-7 days while wet."
+ps,app.detect.disease.potato_late_blight.steps.2,Plant resistant varieties and avoid irrigation during late afternoon.
+ps,app.detect.disease.squash_powdery_mildew.causes,A fungus (Podosphaera xanthii) forming white powdery spots on leaves in warm days with high humidity.
+ps,app.detect.disease.squash_powdery_mildew.name,Squash powdery mildew
+ps,app.detect.disease.squash_powdery_mildew.steps.0,Plant resistant varieties and space vines for good air flow.
+ps,app.detect.disease.squash_powdery_mildew.steps.1,Apply sulfur or potassium bicarbonate spray weekly once symptoms appear.
+ps,app.detect.disease.squash_powdery_mildew.steps.2,Water at the base to keep leaves dry in the morning.
+ps,app.detect.disease.strawberry_leaf_scorch.causes,"A fungus (Physophella salicis) causing reddish-purple spots that turn tan, common in wet spring weather."
+ps,app.detect.disease.strawberry_leaf_scorch.name,Strawberry leaf scorch
+ps,app.detect.disease.strawberry_leaf_scorch.steps.0,Avoid overhead irrigation and keep beds well-drained.
+ps,app.detect.disease.strawberry_leaf_scorch.steps.1,Apply a fungicide (captan or tebuconazole) at first sign of leaf spots.
+ps,app.detect.disease.strawberry_leaf_scorch.steps.2,Remove and destroy severely infected leaves.
+ps,app.detect.disease.tomato_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on leaves and fruit, spread by rain splash."
+ps,app.detect.disease.tomato_bacterial_spot.name,Tomato bacterial spot
+ps,app.detect.disease.tomato_bacterial_spot.steps.0,Use disease-free seed and trellis to keep foliage dry.
+ps,app.detect.disease.tomato_bacterial_spot.steps.1,Apply a copper-based bactericide at first sign and after heavy rain.
+ps,app.detect.disease.tomato_bacterial_spot.steps.2,Remove and destroy infected leaves and fruit.
+ps,app.detect.disease.tomato_early_blight.causes,"A fungus (Alternaria solani) causing dark concentric rings on lower leaves, starting from the soil up."
+ps,app.detect.disease.tomato_early_blight.name,Tomato early blight
+ps,app.detect.disease.tomato_early_blight.steps.0,Mulch and water at the base to avoid soil splash.
+ps,app.detect.disease.tomato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when lower leaves show spots.
+ps,app.detect.disease.tomato_early_blight.steps.2,Remove the lowest infected leaves and stake plants for airflow.
+ps,app.detect.disease.tomato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, fuzzy lesions on leaves and fruit — highly destructive in wet, cool weather."
+ps,app.detect.disease.tomato_late_blight.name,Tomato late blight
+ps,app.detect.disease.tomato_late_blight.steps.0,Remove and destroy infected foliage and fruit immediately; do NOT compost.
+ps,app.detect.disease.tomato_late_blight.steps.1,Apply a systemic fungicide (metalaxyl-based) at first sign and reapply after rain.
+ps,app.detect.disease.tomato_late_blight.steps.2,Plant late-blight-resistant varieties and avoid overhead watering.
+ps,app.detect.disease.tomato_leaf_mold.causes,"A fungus (Cladosporium fulvum) causing yellow patches on upper leaves and fuzzy brown undersides in humid, poorly ventilated conditions."
+ps,app.detect.disease.tomato_leaf_mold.name,Tomato leaf mold
+ps,app.detect.disease.tomato_leaf_mold.steps.0,Ventilate greenhouses and space plants for air flow.
+ps,app.detect.disease.tomato_leaf_mold.steps.1,Apply a fungicide (chlorothalonil) when yellowing appears.
+ps,app.detect.disease.tomato_leaf_mold.steps.2,Water at the base and keep foliage dry.
+ps,app.detect.disease.tomato_mosaic_virus.causes,"A virus that causes mottled, distorted leaves and poor fruit, spread on tools and hands."
+ps,app.detect.disease.tomato_mosaic_virus.name,Tomato mosaic virus
+ps,app.detect.disease.tomato_mosaic_virus.steps.0,Disinfect tools between plants with bleach or alcohol.
+ps,app.detect.disease.tomato_mosaic_virus.steps.1,Remove and destroy infected plants.
+ps,app.detect.disease.tomato_mosaic_virus.steps.2,Control aphid vectors and weeds.
+ps,app.detect.disease.tomato_septoria.causes,A fungus (Septoria lycopersici) causing small tan spots with dark borders on older leaves.
+ps,app.detect.disease.tomato_septoria.name,Tomato septoria leaf spot
+ps,app.detect.disease.tomato_septoria.steps.0,Rotate crops and mulch to prevent soil splash.
+ps,app.detect.disease.tomato_septoria.steps.1,Apply a fungicide (mancozeb or chlorothalonil) at first sign.
+ps,app.detect.disease.tomato_septoria.steps.2,Remove and destroy infected lower leaves.
+ps,app.detect.disease.tomato_spider_mites.causes,"Tiny spider-like mites (Tetranychus urticae) that suck leaf juices, leaving stippled, bronzed leaves and fine webbing."
+ps,app.detect.disease.tomato_spider_mites.name,Tomato spider mites
+ps,app.detect.disease.tomato_spider_mites.steps.0,Hose off mites with a strong spray of water early in the day.
+ps,app.detect.disease.tomato_spider_mites.steps.1,"Release beneficial insects (ladybugs, lacewings) or apply neem oil."
+ps,app.detect.disease.tomato_spider_mites.steps.2,Avoid broad-spectrum insecticides that kill natural predators.
+ps,app.detect.disease.tomato_target_spot.causes,"A fungus (Corynespora cassiicola) causing dark concentric 'target' spots on leaves, favoured by warm, humid weather."
+ps,app.detect.disease.tomato_target_spot.name,Tomato target spot
+ps,app.detect.disease.tomato_target_spot.steps.0,Improve air circulation by pruning lower leaves and staking plants.
+ps,app.detect.disease.tomato_target_spot.steps.1,Apply a fungicide (azoxystrobin or chlorothalonil) when spots first appear.
+ps,app.detect.disease.tomato_target_spot.steps.2,Water at the base early in the day.
+ps,app.detect.disease.tomato_ylcv.causes,"A virus spread by whiteflies, causing yellowing and curling of leaves and stunted growth."
+ps,app.detect.disease.tomato_ylcv.name,Tomato yellow leaf curl virus
+ps,app.detect.disease.tomato_ylcv.steps.0,Control whiteflies with reflective mulches and insecticides at transplant.
+ps,app.detect.disease.tomato_ylcv.steps.1,Remove and destroy infected plants — there is no cure.
+ps,app.detect.disease.tomato_ylcv.steps.2,Use resistant varieties and control weeds that host whiteflies.
+ps,app.detect.dismiss,I'll do this later
+ps,app.detect.dragDropPrompt,Drag an image here or click to browse
+ps,app.detect.dragDropPromptLine1,Drag an image here
+ps,app.detect.dragDropPromptLine2,or click to browse
+ps,app.detect.eyebrow,Crop doctor
+ps,app.detect.healthy.causes,No disease symptoms were detected on this leaf.
+ps,app.detect.healthy.name,Healthy
+ps,app.detect.healthy.steps.0,No treatment needed. Resume normal care and scouting.
+ps,app.detect.historyEmpty,No scans yet. Take a photo to begin.
+ps,app.detect.invalidFile,Please upload an image file.
+ps,app.detect.linkToFarm,Link to a farm
+ps,app.detect.loadMore,Load more
+ps,app.detect.noDiagnosis,Could not identify the disease — try a clearer photo of the affected area.
+ps,app.detect.noFarmsBody,Link your scans to a farm to build a full disease history.
+ps,app.detect.noFarmsTitle,Register a farm first
+ps,app.detect.notSaved,Not saved
+ps,app.detect.pastScans,Past scans
+ps,app.detect.readingLeaf,Reading the leaf…
+ps,app.detect.rescan.14,Scan again in 14 days
+ps,app.detect.rescan.21,Scan again in 21 days
+ps,app.detect.rescan.7,Scan again in 7 days
+ps,app.detect.retry,Retry
+ps,app.detect.sampleScan,No photo handy? Run a sample scan
+ps,app.detect.saveToFarm,Save to farm
+ps,app.detect.savedStatus,Saved to {farm}
+ps,app.detect.savedToFarm,Saved to {farm}
+ps,app.detect.scanAnother,Scan another leaf
+ps,app.detect.serviceUnavailable,Service temporarily unavailable. Please try again.
+ps,app.detect.severity.clear,Clear
+ps,app.detect.severity.treatNow,Treat Now
+ps,app.detect.severity.watch,Watch
+ps,app.detect.takePhoto,Take or choose a photo
+ps,app.detect.title,Spot disease before it spreads
+ps,app.detect.unsavedStatus,Not saved
+ps,app.detect.uploadPrompt,Photograph the sick leaf
+ps,app.detect.whatToDo,What to do now
+ps,app.farms.detail.noRecords,No records yet — start logging field events to build your farm's memory.
+ps,app.farms.new.fields.irrigationMethod,Irrigation method
+ps,app.farms.new.fields.primaryCrop,Primary crop
+ps,app.farms.new.fields.soilType,Soil type
+ps,app.farms.new.fields.sowingDate,Sowing date
+ps,app.farms.new.placeholders.soilType,"Clay, loam, sandy, or silt"
+ps,app.weather.advisory.recommendation.fertilize,Good window to apply fertiliser ahead of steady weather.
+ps,app.weather.advisory.recommendation.frostProtect,Frost risk tonight — cover young plants or irrigate to warm the soil.
+ps,app.weather.advisory.recommendation.generic,No special action today — keep an eye on the field and the forecast.
+ps,app.weather.advisory.recommendation.harvest,Crops near harvest — plan the harvest for a dry day and protect ripe produce from rain.
+ps,app.weather.advisory.recommendation.heatProtect,Extreme heat — increase irrigation and avoid field work midday.
+ps,app.weather.advisory.recommendation.irrigateNow,Irrigate in the cool hours (before 9 AM) — heat is building and the soil is drying.
+ps,app.weather.advisory.recommendation.irrigation,Skip irrigation today — rain is expected. Save water and avoid waterlogging.
+ps,app.weather.advisory.recommendation.plantCare,Steady growth stage — keep up regular irrigation and weeding.
+ps,app.weather.advisory.recommendation.sprayDisease,Humidity favours disease — apply preventive fungicide in the dry morning window.
+ps,app.weather.alerts.diseaseRisk,High humidity favours disease — apply preventive fungicide in the dry morning window.
+ps,app.weather.alerts.dismiss,Dismiss
+ps,app.weather.alerts.extremeHeat,Extreme heat — increase irrigation and avoid midday field work.
+ps,app.weather.alerts.frost,Frost risk — protect sensitive crops tonight.
+ps,app.weather.alerts.heavyRain,Heavy rain expected — delay irrigation and protect harvested crops.
+ps,app.weather.alerts.noAlerts,No active alerts right now.
+ps,app.weather.alerts.title,Active alerts
+ps,app.weather.alerts.viewAll,View all notifications
+ps,app.weather.buttons.refresh,Refresh
+ps,app.weather.buttons.register,Register farm
+ps,app.weather.description,"Daily farming advice for your crops, driven by the forecast and your crop's growth stage."
+ps,app.weather.detail.back,Back to history
+ps,app.weather.detail.markAcknowledged,Mark as seen
+ps,app.weather.detail.markActed,Mark as acted on
+ps,app.weather.detail.markedActed,Marked as acted on
+ps,app.weather.detail.markedSeen,Marked as seen
+ps,app.weather.detail.recommendation,Recommendation
+ps,app.weather.detail.weatherConditions,Weather conditions
+ps,app.weather.errors.generic,Something went wrong. Please try again.
+ps,app.weather.errors.noFarm,Select a farm to see its advisory.
+ps,app.weather.eyebrow,Weather
+ps,app.weather.farmSelectorLabel,Farm
+ps,app.weather.forecastSubtitle,Each day's weather with a farming recommendation for your crop.
+ps,app.weather.forecastTitle,7-day forecast
+ps,app.weather.growthStage,Growth stage
+ps,app.weather.history.date,Date
+ps,app.weather.history.empty,No past advisories yet.
+ps,app.weather.history.loadMore,Load more
+ps,app.weather.history.severity,Severity
+ps,app.weather.history.status,Status
+ps,app.weather.history.status.acted,Acted on
+ps,app.weather.history.status.new,New
+ps,app.weather.history.status.seen,Seen
+ps,app.weather.history.viewAll,View full history
+ps,app.weather.historySubtitle,"Past recommendations for your farms, newest first."
+ps,app.weather.historyTitle,Advisory history
+ps,app.weather.pageTitle,Weather Advisory
+ps,app.weather.registerBody,"Add your crop, sowing date, and location to start getting personalised daily advice."
+ps,app.weather.registerCta,Register a farm
+ps,app.weather.registerForm.crop,Primary crop
+ps,app.weather.registerForm.error,Could not save your farm details. Please try again.
+ps,app.weather.registerForm.irrigation,Irrigation method
+ps,app.weather.registerForm.irrigationMethods,"Drip, sprinkler, flood, or rainfed"
+ps,app.weather.registerForm.save,Save and see my advisory
+ps,app.weather.registerForm.saving,Saving…
+ps,app.weather.registerForm.soil,Soil type
+ps,app.weather.registerForm.soilTypes,"Clay, loam, sandy, or silt"
+ps,app.weather.registerForm.sowing,Sowing date
+ps,app.weather.registerForm.success,Saved — here is your advisory
+ps,app.weather.registerTitle,Register your farm
+ps,app.weather.severity.critical,Critical
+ps,app.weather.severity.info,Info
+ps,app.weather.severity.warning,Warning
+ps,app.weather.source.cached,Last saved forecast
+ps,app.weather.source.demo,Sample forecast — add an API key for live data
+ps,app.weather.source.live,Live forecast · OpenWeather
+ps,app.weather.stages.flowering,Flowering
+ps,app.weather.stages.generic,General
+ps,app.weather.stages.harvestReady,Harvest ready
+ps,app.weather.stages.maturation,Maturation
+ps,app.weather.stages.seedling,Seedling
+ps,app.weather.stages.vegetative,Vegetative
+ps,app.weather.todayAdvisory,Today's advisory
+ps,app.weather.weatherUnavailable,Weather data unavailable
+ps,app.weather.weatherUnavailableBody,Showing your last saved advice. New advice appears when the forecast returns.
+ps,nav.dashboard,Dashboard
+sd,app.detect.addFarm,Add farm
+sd,app.detect.analyzing,Analyzing…
+sd,app.detect.caution,Always confirm treatment with your local agriculture office before spraying.
+sd,app.detect.chat.cancel,Cancel
+sd,app.detect.chat.closePreview,Close preview
+sd,app.detect.chat.deleteConfirm,Are you sure you want to delete this chat?
+sd,app.detect.chat.deleteSession,Delete session
+sd,app.detect.chat.emptyState,Ask a follow-up question about this detection.
+sd,app.detect.chat.imagePreview,View full image
+sd,app.detect.chat.newScan,New scan
+sd,app.detect.chat.noSessions,No detection chats yet.
+sd,app.detect.chat.placeholder,Ask about this detection...
+sd,app.detect.chat.send,Send
+sd,app.detect.chat.sessionsTitle,Detection chats
+sd,app.detect.chat.thinking,Thinking...
+sd,app.detect.confidence,Confidence {pct}%
+sd,app.detect.crop.apple,Apple
+sd,app.detect.crop.blueberry,Blueberry
+sd,app.detect.crop.cherry,Cherry
+sd,app.detect.crop.corn,Corn
+sd,app.detect.crop.grape,Grape
+sd,app.detect.crop.orange,Orange
+sd,app.detect.crop.peach,Peach
+sd,app.detect.crop.pepper,Pepper
+sd,app.detect.crop.potato,Potato
+sd,app.detect.crop.raspberry,Raspberry
+sd,app.detect.crop.soybean,Soybean
+sd,app.detect.crop.squash,Squash
+sd,app.detect.crop.strawberry,Strawberry
+sd,app.detect.crop.tomato,Tomato
+sd,app.detect.discussAdvisor,Discuss with advisor
+sd,app.detect.disease.apple_black_rot.causes,"A fungus (Botryosphaeria obtusa) attacks fruit and branches, favoured by wet, humid weather."
+sd,app.detect.disease.apple_black_rot.name,Apple black rot
+sd,app.detect.disease.apple_black_rot.steps.0,Prune out infected limbs well below visible lesions and burn them.
+sd,app.detect.disease.apple_black_rot.steps.1,Apply a protective fungicide at bloom and after petal fall.
+sd,app.detect.disease.apple_black_rot.steps.2,Keep the canopy open and mulch-free to reduce moisture retention.
+sd,app.detect.disease.apple_cedar_rust.causes,A rust fungus (Gymnosporangium) that alternates between apple trees and eastern red cedar in wet springs.
+sd,app.detect.disease.apple_cedar_rust.name,Cedar-apple rust
+sd,app.detect.disease.apple_cedar_rust.steps.0,Plant rust-resistant rootstocks or varieties where possible.
+sd,app.detect.disease.apple_cedar_rust.steps.1,Spray with a copper or myclobutanil fungicide at bud-break and again in early summer.
+sd,app.detect.disease.apple_cedar_rust.steps.2,Remove nearby red cedar hosts within 500 m.
+sd,app.detect.disease.apple_scab.causes,"Fungal spores (Venturia inaequalis) spread in cool, wet springs and infect young leaves and fruit."
+sd,app.detect.disease.apple_scab.name,Apple scab
+sd,app.detect.disease.apple_scab.steps.0,Rake and destroy infected fallen leaves in autumn to cut reinfection.
+sd,app.detect.disease.apple_scab.steps.1,"In spring, spray a horticultural oil or copper-based fungicide at bud-break."
+sd,app.detect.disease.apple_scab.steps.2,Prune for good air flow and avoid overhead irrigation.
+sd,app.detect.disease.cherry_powdery_mildew.causes,A fungal disease (Podosphaera leucotricha) that forms white powdery spots on leaves in warm days with cool nights.
+sd,app.detect.disease.cherry_powdery_mildew.name,Cherry powdery mildew
+sd,app.detect.disease.cherry_powdery_mildew.steps.0,Improve air circulation by thinning crowded branches.
+sd,app.detect.disease.cherry_powdery_mildew.steps.1,Spray with sulfur or a mildew-specific fungicide when first spots appear.
+sd,app.detect.disease.cherry_powdery_mildew.steps.2,Avoid nitrogen-heavy fertilizers that promote tender growth.
+sd,app.detect.disease.corn_common_rust.causes,"A fungal rust (Puccinia sorghi) that forms orange pustules on leaves, favoured by dew and moderate temperatures."
+sd,app.detect.disease.corn_common_rust.name,Corn common rust
+sd,app.detect.disease.corn_common_rust.steps.0,Plant rust-resistant hybrids where available.
+sd,app.detect.disease.corn_common_rust.steps.1,Apply a systemic fungicide at early tassel if infection is heavy.
+sd,app.detect.disease.corn_common_rust.steps.2,Avoid planting corn after corn to reduce inoculum build-up.
+sd,app.detect.disease.corn_gray_leaf_spot.causes,"A fungus (Cercospora zeae) that starts as small gray lesions with yellow halos and spreads in warm, humid conditions."
+sd,app.detect.disease.corn_gray_leaf_spot.name,Gray leaf spot
+sd,app.detect.disease.corn_gray_leaf_spot.steps.0,Use resistant hybrids and rotate crops away from corn residue.
+sd,app.detect.disease.corn_gray_leaf_spot.steps.1,Apply a triazole or strobilurin fungicide at tasseling if pressure is high.
+sd,app.detect.disease.corn_gray_leaf_spot.steps.2,Irrigate in the morning so foliage dries quickly.
+sd,app.detect.disease.corn_northern_leaf_blight.causes,"A fungus (Exserohilum turcicum) causing long grey-tan lesions, worse in cool, wet weather and high residue."
+sd,app.detect.disease.corn_northern_leaf_blight.name,Northern leaf blight
+sd,app.detect.disease.corn_northern_leaf_blight.steps.0,Rotate with soybeans or broadleaf crops and till under residue.
+sd,app.detect.disease.corn_northern_leaf_blight.steps.1,Use resistant hybrids and apply a fungicide at VT stage if needed.
+sd,app.detect.disease.corn_northern_leaf_blight.steps.2,Space plants for good air flow and avoid overcrowding.
+sd,app.detect.disease.grape_black_rot.causes,A fungus (Guignardia bidwellii) that creates black circular spots on berries and leaves in wet springs.
+sd,app.detect.disease.grape_black_rot.name,Grape black rot
+sd,app.detect.disease.grape_black_rot.steps.0,Prune out infected canes and remove mummified berries.
+sd,app.detect.disease.grape_black_rot.steps.1,Apply an effective fungicide (mancozeb or tebuconazole) at swell and bloom.
+sd,app.detect.disease.grape_black_rot.steps.2,Avoid overhead irrigation during bloom.
+sd,app.detect.disease.grape_esca.causes,A vascular fungal complex (Phaeoacremonium) that causes dark streaks on canes and wilting leaves.
+sd,app.detect.disease.grape_esca.name,Grape esca (black measles)
+sd,app.detect.disease.grape_esca.steps.0,Prune out and destroy infected wood in autumn.
+sd,app.detect.disease.grape_esca.steps.1,Apply a lime sulfur or copper spray at bud-break to reduce inoculum.
+sd,app.detect.disease.grape_esca.steps.2,Manage irrigation to avoid water stress which worsens symptoms.
+sd,app.detect.disease.grape_leaf_blight.causes,"A fungus causing small dark spots with yellow halos, most visible in humid conditions."
+sd,app.detect.disease.grape_leaf_blight.name,Grape leaf blight (Isariopsis)
+sd,app.detect.disease.grape_leaf_blight.steps.0,Remove and destroy infected leaves at the first sign.
+sd,app.detect.disease.grape_leaf_blight.steps.1,Apply a broad-spectrum fungicide (mancozeb or captan) during shoot growth.
+sd,app.detect.disease.grape_leaf_blight.steps.2,Improve canopy airflow by selective pruning.
+sd,app.detect.disease.orange_huanglongbing.causes,"A bacterial disease spread by psyllids, causing yellow mottling, misshapen fruit, and tree decline."
+sd,app.detect.disease.orange_huanglongbing.name,Citrus greening (Huanglongbing)
+sd,app.detect.disease.orange_huanglongbing.steps.0,Control the Asian citrus psyllid with coordinated insecticide sprays.
+sd,app.detect.disease.orange_huanglongbing.steps.1,Remove and destroy infected trees — there is no cure once established.
+sd,app.detect.disease.orange_huanglongbing.steps.2,Use certified disease-free nursery stock and screen for resistance.
+sd,app.detect.disease.peach_bacterial_spot.causes,"A bacterial pathogen (Xanthomonas) that causes dark spots on leaves and fruit, spread by rain splash."
+sd,app.detect.disease.peach_bacterial_spot.name,Peach bacterial spot
+sd,app.detect.disease.peach_bacterial_spot.steps.0,Prune in dry weather and sterilize tools between trees.
+sd,app.detect.disease.peach_bacterial_spot.steps.1,Apply a copper-based bactericide at bloom and after heavy rain.
+sd,app.detect.disease.peach_bacterial_spot.steps.2,Avoid overhead irrigation and choose resistant varieties.
+sd,app.detect.disease.pepper_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on peppers, spread in warm, wet weather."
+sd,app.detect.disease.pepper_bacterial_spot.name,Pepper bacterial spot
+sd,app.detect.disease.pepper_bacterial_spot.steps.0,Space plants for good air flow and avoid wetting foliage.
+sd,app.detect.disease.pepper_bacterial_spot.steps.1,Apply copper hydroxide at first sign of disease.
+sd,app.detect.disease.pepper_bacterial_spot.steps.2,Remove and destroy infected leaves promptly.
+sd,app.detect.disease.potato_early_blight.causes,"A fungus (Alternaria solani) causing brown target-like rings on lower leaves, worse in warm, humid conditions."
+sd,app.detect.disease.potato_early_blight.name,Potato early blight
+sd,app.detect.disease.potato_early_blight.steps.0,Plant certified seed and rotate away from potatoes and tomatoes.
+sd,app.detect.disease.potato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when first lesions appear.
+sd,app.detect.disease.potato_early_blight.steps.2,Hill soil onto stems and practice wide spacing to keep lower leaves dry.
+sd,app.detect.disease.potato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, water-soaked lesions — the cause of the Irish potato famine, spreads rapidly in cool, wet weather."
+sd,app.detect.disease.potato_late_blight.name,Potato late blight
+sd,app.detect.disease.potato_late_blight.steps.0,Remove and destroy infected tubers and haulm immediately — do NOT compost.
+sd,app.detect.disease.potato_late_blight.steps.1,"Apply a systemic fungicide (metalaxyl-based) at first sign, then every 5-7 days while wet."
+sd,app.detect.disease.potato_late_blight.steps.2,Plant resistant varieties and avoid irrigation during late afternoon.
+sd,app.detect.disease.squash_powdery_mildew.causes,A fungus (Podosphaera xanthii) forming white powdery spots on leaves in warm days with high humidity.
+sd,app.detect.disease.squash_powdery_mildew.name,Squash powdery mildew
+sd,app.detect.disease.squash_powdery_mildew.steps.0,Plant resistant varieties and space vines for good air flow.
+sd,app.detect.disease.squash_powdery_mildew.steps.1,Apply sulfur or potassium bicarbonate spray weekly once symptoms appear.
+sd,app.detect.disease.squash_powdery_mildew.steps.2,Water at the base to keep leaves dry in the morning.
+sd,app.detect.disease.strawberry_leaf_scorch.causes,"A fungus (Physophella salicis) causing reddish-purple spots that turn tan, common in wet spring weather."
+sd,app.detect.disease.strawberry_leaf_scorch.name,Strawberry leaf scorch
+sd,app.detect.disease.strawberry_leaf_scorch.steps.0,Avoid overhead irrigation and keep beds well-drained.
+sd,app.detect.disease.strawberry_leaf_scorch.steps.1,Apply a fungicide (captan or tebuconazole) at first sign of leaf spots.
+sd,app.detect.disease.strawberry_leaf_scorch.steps.2,Remove and destroy severely infected leaves.
+sd,app.detect.disease.tomato_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on leaves and fruit, spread by rain splash."
+sd,app.detect.disease.tomato_bacterial_spot.name,Tomato bacterial spot
+sd,app.detect.disease.tomato_bacterial_spot.steps.0,Use disease-free seed and trellis to keep foliage dry.
+sd,app.detect.disease.tomato_bacterial_spot.steps.1,Apply a copper-based bactericide at first sign and after heavy rain.
+sd,app.detect.disease.tomato_bacterial_spot.steps.2,Remove and destroy infected leaves and fruit.
+sd,app.detect.disease.tomato_early_blight.causes,"A fungus (Alternaria solani) causing dark concentric rings on lower leaves, starting from the soil up."
+sd,app.detect.disease.tomato_early_blight.name,Tomato early blight
+sd,app.detect.disease.tomato_early_blight.steps.0,Mulch and water at the base to avoid soil splash.
+sd,app.detect.disease.tomato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when lower leaves show spots.
+sd,app.detect.disease.tomato_early_blight.steps.2,Remove the lowest infected leaves and stake plants for airflow.
+sd,app.detect.disease.tomato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, fuzzy lesions on leaves and fruit — highly destructive in wet, cool weather."
+sd,app.detect.disease.tomato_late_blight.name,Tomato late blight
+sd,app.detect.disease.tomato_late_blight.steps.0,Remove and destroy infected foliage and fruit immediately; do NOT compost.
+sd,app.detect.disease.tomato_late_blight.steps.1,Apply a systemic fungicide (metalaxyl-based) at first sign and reapply after rain.
+sd,app.detect.disease.tomato_late_blight.steps.2,Plant late-blight-resistant varieties and avoid overhead watering.
+sd,app.detect.disease.tomato_leaf_mold.causes,"A fungus (Cladosporium fulvum) causing yellow patches on upper leaves and fuzzy brown undersides in humid, poorly ventilated conditions."
+sd,app.detect.disease.tomato_leaf_mold.name,Tomato leaf mold
+sd,app.detect.disease.tomato_leaf_mold.steps.0,Ventilate greenhouses and space plants for air flow.
+sd,app.detect.disease.tomato_leaf_mold.steps.1,Apply a fungicide (chlorothalonil) when yellowing appears.
+sd,app.detect.disease.tomato_leaf_mold.steps.2,Water at the base and keep foliage dry.
+sd,app.detect.disease.tomato_mosaic_virus.causes,"A virus that causes mottled, distorted leaves and poor fruit, spread on tools and hands."
+sd,app.detect.disease.tomato_mosaic_virus.name,Tomato mosaic virus
+sd,app.detect.disease.tomato_mosaic_virus.steps.0,Disinfect tools between plants with bleach or alcohol.
+sd,app.detect.disease.tomato_mosaic_virus.steps.1,Remove and destroy infected plants.
+sd,app.detect.disease.tomato_mosaic_virus.steps.2,Control aphid vectors and weeds.
+sd,app.detect.disease.tomato_septoria.causes,A fungus (Septoria lycopersici) causing small tan spots with dark borders on older leaves.
+sd,app.detect.disease.tomato_septoria.name,Tomato septoria leaf spot
+sd,app.detect.disease.tomato_septoria.steps.0,Rotate crops and mulch to prevent soil splash.
+sd,app.detect.disease.tomato_septoria.steps.1,Apply a fungicide (mancozeb or chlorothalonil) at first sign.
+sd,app.detect.disease.tomato_septoria.steps.2,Remove and destroy infected lower leaves.
+sd,app.detect.disease.tomato_spider_mites.causes,"Tiny spider-like mites (Tetranychus urticae) that suck leaf juices, leaving stippled, bronzed leaves and fine webbing."
+sd,app.detect.disease.tomato_spider_mites.name,Tomato spider mites
+sd,app.detect.disease.tomato_spider_mites.steps.0,Hose off mites with a strong spray of water early in the day.
+sd,app.detect.disease.tomato_spider_mites.steps.1,"Release beneficial insects (ladybugs, lacewings) or apply neem oil."
+sd,app.detect.disease.tomato_spider_mites.steps.2,Avoid broad-spectrum insecticides that kill natural predators.
+sd,app.detect.disease.tomato_target_spot.causes,"A fungus (Corynespora cassiicola) causing dark concentric 'target' spots on leaves, favoured by warm, humid weather."
+sd,app.detect.disease.tomato_target_spot.name,Tomato target spot
+sd,app.detect.disease.tomato_target_spot.steps.0,Improve air circulation by pruning lower leaves and staking plants.
+sd,app.detect.disease.tomato_target_spot.steps.1,Apply a fungicide (azoxystrobin or chlorothalonil) when spots first appear.
+sd,app.detect.disease.tomato_target_spot.steps.2,Water at the base early in the day.
+sd,app.detect.disease.tomato_ylcv.causes,"A virus spread by whiteflies, causing yellowing and curling of leaves and stunted growth."
+sd,app.detect.disease.tomato_ylcv.name,Tomato yellow leaf curl virus
+sd,app.detect.disease.tomato_ylcv.steps.0,Control whiteflies with reflective mulches and insecticides at transplant.
+sd,app.detect.disease.tomato_ylcv.steps.1,Remove and destroy infected plants — there is no cure.
+sd,app.detect.disease.tomato_ylcv.steps.2,Use resistant varieties and control weeds that host whiteflies.
+sd,app.detect.dismiss,I'll do this later
+sd,app.detect.dragDropPrompt,Drag an image here or click to browse
+sd,app.detect.dragDropPromptLine1,Drag an image here
+sd,app.detect.dragDropPromptLine2,or click to browse
+sd,app.detect.eyebrow,Crop doctor
+sd,app.detect.healthy.causes,No disease symptoms were detected on this leaf.
+sd,app.detect.healthy.name,Healthy
+sd,app.detect.healthy.steps.0,No treatment needed. Resume normal care and scouting.
+sd,app.detect.historyEmpty,No scans yet. Take a photo to begin.
+sd,app.detect.invalidFile,Please upload an image file.
+sd,app.detect.linkToFarm,Link to a farm
+sd,app.detect.loadMore,Load more
+sd,app.detect.noDiagnosis,Could not identify the disease — try a clearer photo of the affected area.
+sd,app.detect.noFarmsBody,Link your scans to a farm to build a full disease history.
+sd,app.detect.noFarmsTitle,Register a farm first
+sd,app.detect.notSaved,Not saved
+sd,app.detect.pastScans,Past scans
+sd,app.detect.readingLeaf,Reading the leaf…
+sd,app.detect.rescan.14,Scan again in 14 days
+sd,app.detect.rescan.21,Scan again in 21 days
+sd,app.detect.rescan.7,Scan again in 7 days
+sd,app.detect.retry,Retry
+sd,app.detect.sampleScan,No photo handy? Run a sample scan
+sd,app.detect.saveToFarm,Save to farm
+sd,app.detect.savedStatus,Saved to {farm}
+sd,app.detect.savedToFarm,Saved to {farm}
+sd,app.detect.scanAnother,Scan another leaf
+sd,app.detect.serviceUnavailable,Service temporarily unavailable. Please try again.
+sd,app.detect.severity.clear,Clear
+sd,app.detect.severity.treatNow,Treat Now
+sd,app.detect.severity.watch,Watch
+sd,app.detect.takePhoto,Take or choose a photo
+sd,app.detect.title,Spot disease before it spreads
+sd,app.detect.unsavedStatus,Not saved
+sd,app.detect.uploadPrompt,Photograph the sick leaf
+sd,app.detect.whatToDo,What to do now
+sd,app.farms.detail.noRecords,No records yet — start logging field events to build your farm's memory.
+sd,app.farms.new.fields.irrigationMethod,Irrigation method
+sd,app.farms.new.fields.primaryCrop,Primary crop
+sd,app.farms.new.fields.soilType,Soil type
+sd,app.farms.new.fields.sowingDate,Sowing date
+sd,app.farms.new.placeholders.soilType,"Clay, loam, sandy, or silt"
+sd,app.weather.advisory.recommendation.fertilize,Good window to apply fertiliser ahead of steady weather.
+sd,app.weather.advisory.recommendation.frostProtect,Frost risk tonight — cover young plants or irrigate to warm the soil.
+sd,app.weather.advisory.recommendation.generic,No special action today — keep an eye on the field and the forecast.
+sd,app.weather.advisory.recommendation.harvest,Crops near harvest — plan the harvest for a dry day and protect ripe produce from rain.
+sd,app.weather.advisory.recommendation.heatProtect,Extreme heat — increase irrigation and avoid field work midday.
+sd,app.weather.advisory.recommendation.irrigateNow,Irrigate in the cool hours (before 9 AM) — heat is building and the soil is drying.
+sd,app.weather.advisory.recommendation.irrigation,Skip irrigation today — rain is expected. Save water and avoid waterlogging.
+sd,app.weather.advisory.recommendation.plantCare,Steady growth stage — keep up regular irrigation and weeding.
+sd,app.weather.advisory.recommendation.sprayDisease,Humidity favours disease — apply preventive fungicide in the dry morning window.
+sd,app.weather.alerts.diseaseRisk,High humidity favours disease — apply preventive fungicide in the dry morning window.
+sd,app.weather.alerts.dismiss,Dismiss
+sd,app.weather.alerts.extremeHeat,Extreme heat — increase irrigation and avoid midday field work.
+sd,app.weather.alerts.frost,Frost risk — protect sensitive crops tonight.
+sd,app.weather.alerts.heavyRain,Heavy rain expected — delay irrigation and protect harvested crops.
+sd,app.weather.alerts.noAlerts,No active alerts right now.
+sd,app.weather.alerts.title,Active alerts
+sd,app.weather.alerts.viewAll,View all notifications
+sd,app.weather.buttons.refresh,Refresh
+sd,app.weather.buttons.register,Register farm
+sd,app.weather.description,"Daily farming advice for your crops, driven by the forecast and your crop's growth stage."
+sd,app.weather.detail.back,Back to history
+sd,app.weather.detail.markAcknowledged,Mark as seen
+sd,app.weather.detail.markActed,Mark as acted on
+sd,app.weather.detail.markedActed,Marked as acted on
+sd,app.weather.detail.markedSeen,Marked as seen
+sd,app.weather.detail.recommendation,Recommendation
+sd,app.weather.detail.weatherConditions,Weather conditions
+sd,app.weather.errors.generic,Something went wrong. Please try again.
+sd,app.weather.errors.noFarm,Select a farm to see its advisory.
+sd,app.weather.eyebrow,Weather
+sd,app.weather.farmSelectorLabel,Farm
+sd,app.weather.forecastSubtitle,Each day's weather with a farming recommendation for your crop.
+sd,app.weather.forecastTitle,7-day forecast
+sd,app.weather.growthStage,Growth stage
+sd,app.weather.history.date,Date
+sd,app.weather.history.empty,No past advisories yet.
+sd,app.weather.history.loadMore,Load more
+sd,app.weather.history.severity,Severity
+sd,app.weather.history.status,Status
+sd,app.weather.history.status.acted,Acted on
+sd,app.weather.history.status.new,New
+sd,app.weather.history.status.seen,Seen
+sd,app.weather.history.viewAll,View full history
+sd,app.weather.historySubtitle,"Past recommendations for your farms, newest first."
+sd,app.weather.historyTitle,Advisory history
+sd,app.weather.pageTitle,Weather Advisory
+sd,app.weather.registerBody,"Add your crop, sowing date, and location to start getting personalised daily advice."
+sd,app.weather.registerCta,Register a farm
+sd,app.weather.registerForm.crop,Primary crop
+sd,app.weather.registerForm.error,Could not save your farm details. Please try again.
+sd,app.weather.registerForm.irrigation,Irrigation method
+sd,app.weather.registerForm.irrigationMethods,"Drip, sprinkler, flood, or rainfed"
+sd,app.weather.registerForm.save,Save and see my advisory
+sd,app.weather.registerForm.saving,Saving…
+sd,app.weather.registerForm.soil,Soil type
+sd,app.weather.registerForm.soilTypes,"Clay, loam, sandy, or silt"
+sd,app.weather.registerForm.sowing,Sowing date
+sd,app.weather.registerForm.success,Saved — here is your advisory
+sd,app.weather.registerTitle,Register your farm
+sd,app.weather.severity.critical,Critical
+sd,app.weather.severity.info,Info
+sd,app.weather.severity.warning,Warning
+sd,app.weather.source.cached,Last saved forecast
+sd,app.weather.source.demo,Sample forecast — add an API key for live data
+sd,app.weather.source.live,Live forecast · OpenWeather
+sd,app.weather.stages.flowering,Flowering
+sd,app.weather.stages.generic,General
+sd,app.weather.stages.harvestReady,Harvest ready
+sd,app.weather.stages.maturation,Maturation
+sd,app.weather.stages.seedling,Seedling
+sd,app.weather.stages.vegetative,Vegetative
+sd,app.weather.todayAdvisory,Today's advisory
+sd,app.weather.weatherUnavailable,Weather data unavailable
+sd,app.weather.weatherUnavailableBody,Showing your last saved advice. New advice appears when the forecast returns.
+sd,nav.dashboard,Dashboard
+skr,app.detect.addFarm,Add farm
+skr,app.detect.analyzing,Analyzing…
+skr,app.detect.caution,Always confirm treatment with your local agriculture office before spraying.
+skr,app.detect.chat.cancel,Cancel
+skr,app.detect.chat.closePreview,Close preview
+skr,app.detect.chat.deleteConfirm,Are you sure you want to delete this chat?
+skr,app.detect.chat.deleteSession,Delete session
+skr,app.detect.chat.emptyState,Ask a follow-up question about this detection.
+skr,app.detect.chat.imagePreview,View full image
+skr,app.detect.chat.newScan,New scan
+skr,app.detect.chat.noSessions,No detection chats yet.
+skr,app.detect.chat.placeholder,Ask about this detection...
+skr,app.detect.chat.send,Send
+skr,app.detect.chat.sessionsTitle,Detection chats
+skr,app.detect.chat.thinking,Thinking...
+skr,app.detect.confidence,Confidence {pct}%
+skr,app.detect.crop.apple,Apple
+skr,app.detect.crop.blueberry,Blueberry
+skr,app.detect.crop.cherry,Cherry
+skr,app.detect.crop.corn,Corn
+skr,app.detect.crop.grape,Grape
+skr,app.detect.crop.orange,Orange
+skr,app.detect.crop.peach,Peach
+skr,app.detect.crop.pepper,Pepper
+skr,app.detect.crop.potato,Potato
+skr,app.detect.crop.raspberry,Raspberry
+skr,app.detect.crop.soybean,Soybean
+skr,app.detect.crop.squash,Squash
+skr,app.detect.crop.strawberry,Strawberry
+skr,app.detect.crop.tomato,Tomato
+skr,app.detect.discussAdvisor,Discuss with advisor
+skr,app.detect.disease.apple_black_rot.causes,"A fungus (Botryosphaeria obtusa) attacks fruit and branches, favoured by wet, humid weather."
+skr,app.detect.disease.apple_black_rot.name,Apple black rot
+skr,app.detect.disease.apple_black_rot.steps.0,Prune out infected limbs well below visible lesions and burn them.
+skr,app.detect.disease.apple_black_rot.steps.1,Apply a protective fungicide at bloom and after petal fall.
+skr,app.detect.disease.apple_black_rot.steps.2,Keep the canopy open and mulch-free to reduce moisture retention.
+skr,app.detect.disease.apple_cedar_rust.causes,A rust fungus (Gymnosporangium) that alternates between apple trees and eastern red cedar in wet springs.
+skr,app.detect.disease.apple_cedar_rust.name,Cedar-apple rust
+skr,app.detect.disease.apple_cedar_rust.steps.0,Plant rust-resistant rootstocks or varieties where possible.
+skr,app.detect.disease.apple_cedar_rust.steps.1,Spray with a copper or myclobutanil fungicide at bud-break and again in early summer.
+skr,app.detect.disease.apple_cedar_rust.steps.2,Remove nearby red cedar hosts within 500 m.
+skr,app.detect.disease.apple_scab.causes,"Fungal spores (Venturia inaequalis) spread in cool, wet springs and infect young leaves and fruit."
+skr,app.detect.disease.apple_scab.name,Apple scab
+skr,app.detect.disease.apple_scab.steps.0,Rake and destroy infected fallen leaves in autumn to cut reinfection.
+skr,app.detect.disease.apple_scab.steps.1,"In spring, spray a horticultural oil or copper-based fungicide at bud-break."
+skr,app.detect.disease.apple_scab.steps.2,Prune for good air flow and avoid overhead irrigation.
+skr,app.detect.disease.cherry_powdery_mildew.causes,A fungal disease (Podosphaera leucotricha) that forms white powdery spots on leaves in warm days with cool nights.
+skr,app.detect.disease.cherry_powdery_mildew.name,Cherry powdery mildew
+skr,app.detect.disease.cherry_powdery_mildew.steps.0,Improve air circulation by thinning crowded branches.
+skr,app.detect.disease.cherry_powdery_mildew.steps.1,Spray with sulfur or a mildew-specific fungicide when first spots appear.
+skr,app.detect.disease.cherry_powdery_mildew.steps.2,Avoid nitrogen-heavy fertilizers that promote tender growth.
+skr,app.detect.disease.corn_common_rust.causes,"A fungal rust (Puccinia sorghi) that forms orange pustules on leaves, favoured by dew and moderate temperatures."
+skr,app.detect.disease.corn_common_rust.name,Corn common rust
+skr,app.detect.disease.corn_common_rust.steps.0,Plant rust-resistant hybrids where available.
+skr,app.detect.disease.corn_common_rust.steps.1,Apply a systemic fungicide at early tassel if infection is heavy.
+skr,app.detect.disease.corn_common_rust.steps.2,Avoid planting corn after corn to reduce inoculum build-up.
+skr,app.detect.disease.corn_gray_leaf_spot.causes,"A fungus (Cercospora zeae) that starts as small gray lesions with yellow halos and spreads in warm, humid conditions."
+skr,app.detect.disease.corn_gray_leaf_spot.name,Gray leaf spot
+skr,app.detect.disease.corn_gray_leaf_spot.steps.0,Use resistant hybrids and rotate crops away from corn residue.
+skr,app.detect.disease.corn_gray_leaf_spot.steps.1,Apply a triazole or strobilurin fungicide at tasseling if pressure is high.
+skr,app.detect.disease.corn_gray_leaf_spot.steps.2,Irrigate in the morning so foliage dries quickly.
+skr,app.detect.disease.corn_northern_leaf_blight.causes,"A fungus (Exserohilum turcicum) causing long grey-tan lesions, worse in cool, wet weather and high residue."
+skr,app.detect.disease.corn_northern_leaf_blight.name,Northern leaf blight
+skr,app.detect.disease.corn_northern_leaf_blight.steps.0,Rotate with soybeans or broadleaf crops and till under residue.
+skr,app.detect.disease.corn_northern_leaf_blight.steps.1,Use resistant hybrids and apply a fungicide at VT stage if needed.
+skr,app.detect.disease.corn_northern_leaf_blight.steps.2,Space plants for good air flow and avoid overcrowding.
+skr,app.detect.disease.grape_black_rot.causes,A fungus (Guignardia bidwellii) that creates black circular spots on berries and leaves in wet springs.
+skr,app.detect.disease.grape_black_rot.name,Grape black rot
+skr,app.detect.disease.grape_black_rot.steps.0,Prune out infected canes and remove mummified berries.
+skr,app.detect.disease.grape_black_rot.steps.1,Apply an effective fungicide (mancozeb or tebuconazole) at swell and bloom.
+skr,app.detect.disease.grape_black_rot.steps.2,Avoid overhead irrigation during bloom.
+skr,app.detect.disease.grape_esca.causes,A vascular fungal complex (Phaeoacremonium) that causes dark streaks on canes and wilting leaves.
+skr,app.detect.disease.grape_esca.name,Grape esca (black measles)
+skr,app.detect.disease.grape_esca.steps.0,Prune out and destroy infected wood in autumn.
+skr,app.detect.disease.grape_esca.steps.1,Apply a lime sulfur or copper spray at bud-break to reduce inoculum.
+skr,app.detect.disease.grape_esca.steps.2,Manage irrigation to avoid water stress which worsens symptoms.
+skr,app.detect.disease.grape_leaf_blight.causes,"A fungus causing small dark spots with yellow halos, most visible in humid conditions."
+skr,app.detect.disease.grape_leaf_blight.name,Grape leaf blight (Isariopsis)
+skr,app.detect.disease.grape_leaf_blight.steps.0,Remove and destroy infected leaves at the first sign.
+skr,app.detect.disease.grape_leaf_blight.steps.1,Apply a broad-spectrum fungicide (mancozeb or captan) during shoot growth.
+skr,app.detect.disease.grape_leaf_blight.steps.2,Improve canopy airflow by selective pruning.
+skr,app.detect.disease.orange_huanglongbing.causes,"A bacterial disease spread by psyllids, causing yellow mottling, misshapen fruit, and tree decline."
+skr,app.detect.disease.orange_huanglongbing.name,Citrus greening (Huanglongbing)
+skr,app.detect.disease.orange_huanglongbing.steps.0,Control the Asian citrus psyllid with coordinated insecticide sprays.
+skr,app.detect.disease.orange_huanglongbing.steps.1,Remove and destroy infected trees — there is no cure once established.
+skr,app.detect.disease.orange_huanglongbing.steps.2,Use certified disease-free nursery stock and screen for resistance.
+skr,app.detect.disease.peach_bacterial_spot.causes,"A bacterial pathogen (Xanthomonas) that causes dark spots on leaves and fruit, spread by rain splash."
+skr,app.detect.disease.peach_bacterial_spot.name,Peach bacterial spot
+skr,app.detect.disease.peach_bacterial_spot.steps.0,Prune in dry weather and sterilize tools between trees.
+skr,app.detect.disease.peach_bacterial_spot.steps.1,Apply a copper-based bactericide at bloom and after heavy rain.
+skr,app.detect.disease.peach_bacterial_spot.steps.2,Avoid overhead irrigation and choose resistant varieties.
+skr,app.detect.disease.pepper_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on peppers, spread in warm, wet weather."
+skr,app.detect.disease.pepper_bacterial_spot.name,Pepper bacterial spot
+skr,app.detect.disease.pepper_bacterial_spot.steps.0,Space plants for good air flow and avoid wetting foliage.
+skr,app.detect.disease.pepper_bacterial_spot.steps.1,Apply copper hydroxide at first sign of disease.
+skr,app.detect.disease.pepper_bacterial_spot.steps.2,Remove and destroy infected leaves promptly.
+skr,app.detect.disease.potato_early_blight.causes,"A fungus (Alternaria solani) causing brown target-like rings on lower leaves, worse in warm, humid conditions."
+skr,app.detect.disease.potato_early_blight.name,Potato early blight
+skr,app.detect.disease.potato_early_blight.steps.0,Plant certified seed and rotate away from potatoes and tomatoes.
+skr,app.detect.disease.potato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when first lesions appear.
+skr,app.detect.disease.potato_early_blight.steps.2,Hill soil onto stems and practice wide spacing to keep lower leaves dry.
+skr,app.detect.disease.potato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, water-soaked lesions — the cause of the Irish potato famine, spreads rapidly in cool, wet weather."
+skr,app.detect.disease.potato_late_blight.name,Potato late blight
+skr,app.detect.disease.potato_late_blight.steps.0,Remove and destroy infected tubers and haulm immediately — do NOT compost.
+skr,app.detect.disease.potato_late_blight.steps.1,"Apply a systemic fungicide (metalaxyl-based) at first sign, then every 5-7 days while wet."
+skr,app.detect.disease.potato_late_blight.steps.2,Plant resistant varieties and avoid irrigation during late afternoon.
+skr,app.detect.disease.squash_powdery_mildew.causes,A fungus (Podosphaera xanthii) forming white powdery spots on leaves in warm days with high humidity.
+skr,app.detect.disease.squash_powdery_mildew.name,Squash powdery mildew
+skr,app.detect.disease.squash_powdery_mildew.steps.0,Plant resistant varieties and space vines for good air flow.
+skr,app.detect.disease.squash_powdery_mildew.steps.1,Apply sulfur or potassium bicarbonate spray weekly once symptoms appear.
+skr,app.detect.disease.squash_powdery_mildew.steps.2,Water at the base to keep leaves dry in the morning.
+skr,app.detect.disease.strawberry_leaf_scorch.causes,"A fungus (Physophella salicis) causing reddish-purple spots that turn tan, common in wet spring weather."
+skr,app.detect.disease.strawberry_leaf_scorch.name,Strawberry leaf scorch
+skr,app.detect.disease.strawberry_leaf_scorch.steps.0,Avoid overhead irrigation and keep beds well-drained.
+skr,app.detect.disease.strawberry_leaf_scorch.steps.1,Apply a fungicide (captan or tebuconazole) at first sign of leaf spots.
+skr,app.detect.disease.strawberry_leaf_scorch.steps.2,Remove and destroy severely infected leaves.
+skr,app.detect.disease.tomato_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on leaves and fruit, spread by rain splash."
+skr,app.detect.disease.tomato_bacterial_spot.name,Tomato bacterial spot
+skr,app.detect.disease.tomato_bacterial_spot.steps.0,Use disease-free seed and trellis to keep foliage dry.
+skr,app.detect.disease.tomato_bacterial_spot.steps.1,Apply a copper-based bactericide at first sign and after heavy rain.
+skr,app.detect.disease.tomato_bacterial_spot.steps.2,Remove and destroy infected leaves and fruit.
+skr,app.detect.disease.tomato_early_blight.causes,"A fungus (Alternaria solani) causing dark concentric rings on lower leaves, starting from the soil up."
+skr,app.detect.disease.tomato_early_blight.name,Tomato early blight
+skr,app.detect.disease.tomato_early_blight.steps.0,Mulch and water at the base to avoid soil splash.
+skr,app.detect.disease.tomato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when lower leaves show spots.
+skr,app.detect.disease.tomato_early_blight.steps.2,Remove the lowest infected leaves and stake plants for airflow.
+skr,app.detect.disease.tomato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, fuzzy lesions on leaves and fruit — highly destructive in wet, cool weather."
+skr,app.detect.disease.tomato_late_blight.name,Tomato late blight
+skr,app.detect.disease.tomato_late_blight.steps.0,Remove and destroy infected foliage and fruit immediately; do NOT compost.
+skr,app.detect.disease.tomato_late_blight.steps.1,Apply a systemic fungicide (metalaxyl-based) at first sign and reapply after rain.
+skr,app.detect.disease.tomato_late_blight.steps.2,Plant late-blight-resistant varieties and avoid overhead watering.
+skr,app.detect.disease.tomato_leaf_mold.causes,"A fungus (Cladosporium fulvum) causing yellow patches on upper leaves and fuzzy brown undersides in humid, poorly ventilated conditions."
+skr,app.detect.disease.tomato_leaf_mold.name,Tomato leaf mold
+skr,app.detect.disease.tomato_leaf_mold.steps.0,Ventilate greenhouses and space plants for air flow.
+skr,app.detect.disease.tomato_leaf_mold.steps.1,Apply a fungicide (chlorothalonil) when yellowing appears.
+skr,app.detect.disease.tomato_leaf_mold.steps.2,Water at the base and keep foliage dry.
+skr,app.detect.disease.tomato_mosaic_virus.causes,"A virus that causes mottled, distorted leaves and poor fruit, spread on tools and hands."
+skr,app.detect.disease.tomato_mosaic_virus.name,Tomato mosaic virus
+skr,app.detect.disease.tomato_mosaic_virus.steps.0,Disinfect tools between plants with bleach or alcohol.
+skr,app.detect.disease.tomato_mosaic_virus.steps.1,Remove and destroy infected plants.
+skr,app.detect.disease.tomato_mosaic_virus.steps.2,Control aphid vectors and weeds.
+skr,app.detect.disease.tomato_septoria.causes,A fungus (Septoria lycopersici) causing small tan spots with dark borders on older leaves.
+skr,app.detect.disease.tomato_septoria.name,Tomato septoria leaf spot
+skr,app.detect.disease.tomato_septoria.steps.0,Rotate crops and mulch to prevent soil splash.
+skr,app.detect.disease.tomato_septoria.steps.1,Apply a fungicide (mancozeb or chlorothalonil) at first sign.
+skr,app.detect.disease.tomato_septoria.steps.2,Remove and destroy infected lower leaves.
+skr,app.detect.disease.tomato_spider_mites.causes,"Tiny spider-like mites (Tetranychus urticae) that suck leaf juices, leaving stippled, bronzed leaves and fine webbing."
+skr,app.detect.disease.tomato_spider_mites.name,Tomato spider mites
+skr,app.detect.disease.tomato_spider_mites.steps.0,Hose off mites with a strong spray of water early in the day.
+skr,app.detect.disease.tomato_spider_mites.steps.1,"Release beneficial insects (ladybugs, lacewings) or apply neem oil."
+skr,app.detect.disease.tomato_spider_mites.steps.2,Avoid broad-spectrum insecticides that kill natural predators.
+skr,app.detect.disease.tomato_target_spot.causes,"A fungus (Corynespora cassiicola) causing dark concentric 'target' spots on leaves, favoured by warm, humid weather."
+skr,app.detect.disease.tomato_target_spot.name,Tomato target spot
+skr,app.detect.disease.tomato_target_spot.steps.0,Improve air circulation by pruning lower leaves and staking plants.
+skr,app.detect.disease.tomato_target_spot.steps.1,Apply a fungicide (azoxystrobin or chlorothalonil) when spots first appear.
+skr,app.detect.disease.tomato_target_spot.steps.2,Water at the base early in the day.
+skr,app.detect.disease.tomato_ylcv.causes,"A virus spread by whiteflies, causing yellowing and curling of leaves and stunted growth."
+skr,app.detect.disease.tomato_ylcv.name,Tomato yellow leaf curl virus
+skr,app.detect.disease.tomato_ylcv.steps.0,Control whiteflies with reflective mulches and insecticides at transplant.
+skr,app.detect.disease.tomato_ylcv.steps.1,Remove and destroy infected plants — there is no cure.
+skr,app.detect.disease.tomato_ylcv.steps.2,Use resistant varieties and control weeds that host whiteflies.
+skr,app.detect.dismiss,I'll do this later
+skr,app.detect.dragDropPrompt,Drag an image here or click to browse
+skr,app.detect.dragDropPromptLine1,Drag an image here
+skr,app.detect.dragDropPromptLine2,or click to browse
+skr,app.detect.eyebrow,Crop doctor
+skr,app.detect.healthy.causes,No disease symptoms were detected on this leaf.
+skr,app.detect.healthy.name,Healthy
+skr,app.detect.healthy.steps.0,No treatment needed. Resume normal care and scouting.
+skr,app.detect.historyEmpty,No scans yet. Take a photo to begin.
+skr,app.detect.invalidFile,Please upload an image file.
+skr,app.detect.linkToFarm,Link to a farm
+skr,app.detect.loadMore,Load more
+skr,app.detect.noDiagnosis,Could not identify the disease — try a clearer photo of the affected area.
+skr,app.detect.noFarmsBody,Link your scans to a farm to build a full disease history.
+skr,app.detect.noFarmsTitle,Register a farm first
+skr,app.detect.notSaved,Not saved
+skr,app.detect.pastScans,Past scans
+skr,app.detect.readingLeaf,Reading the leaf…
+skr,app.detect.rescan.14,Scan again in 14 days
+skr,app.detect.rescan.21,Scan again in 21 days
+skr,app.detect.rescan.7,Scan again in 7 days
+skr,app.detect.retry,Retry
+skr,app.detect.sampleScan,No photo handy? Run a sample scan
+skr,app.detect.saveToFarm,Save to farm
+skr,app.detect.savedStatus,Saved to {farm}
+skr,app.detect.savedToFarm,Saved to {farm}
+skr,app.detect.scanAnother,Scan another leaf
+skr,app.detect.serviceUnavailable,Service temporarily unavailable. Please try again.
+skr,app.detect.severity.clear,Clear
+skr,app.detect.severity.treatNow,Treat Now
+skr,app.detect.severity.watch,Watch
+skr,app.detect.takePhoto,Take or choose a photo
+skr,app.detect.title,Spot disease before it spreads
+skr,app.detect.unsavedStatus,Not saved
+skr,app.detect.uploadPrompt,Photograph the sick leaf
+skr,app.detect.whatToDo,What to do now
+skr,app.farms.detail.noRecords,No records yet — start logging field events to build your farm's memory.
+skr,app.farms.new.fields.irrigationMethod,Irrigation method
+skr,app.farms.new.fields.primaryCrop,Primary crop
+skr,app.farms.new.fields.soilType,Soil type
+skr,app.farms.new.fields.sowingDate,Sowing date
+skr,app.farms.new.placeholders.soilType,"Clay, loam, sandy, or silt"
+skr,app.weather.advisory.recommendation.fertilize,Good window to apply fertiliser ahead of steady weather.
+skr,app.weather.advisory.recommendation.frostProtect,Frost risk tonight — cover young plants or irrigate to warm the soil.
+skr,app.weather.advisory.recommendation.generic,No special action today — keep an eye on the field and the forecast.
+skr,app.weather.advisory.recommendation.harvest,Crops near harvest — plan the harvest for a dry day and protect ripe produce from rain.
+skr,app.weather.advisory.recommendation.heatProtect,Extreme heat — increase irrigation and avoid field work midday.
+skr,app.weather.advisory.recommendation.irrigateNow,Irrigate in the cool hours (before 9 AM) — heat is building and the soil is drying.
+skr,app.weather.advisory.recommendation.irrigation,Skip irrigation today — rain is expected. Save water and avoid waterlogging.
+skr,app.weather.advisory.recommendation.plantCare,Steady growth stage — keep up regular irrigation and weeding.
+skr,app.weather.advisory.recommendation.sprayDisease,Humidity favours disease — apply preventive fungicide in the dry morning window.
+skr,app.weather.alerts.diseaseRisk,High humidity favours disease — apply preventive fungicide in the dry morning window.
+skr,app.weather.alerts.dismiss,Dismiss
+skr,app.weather.alerts.extremeHeat,Extreme heat — increase irrigation and avoid midday field work.
+skr,app.weather.alerts.frost,Frost risk — protect sensitive crops tonight.
+skr,app.weather.alerts.heavyRain,Heavy rain expected — delay irrigation and protect harvested crops.
+skr,app.weather.alerts.noAlerts,No active alerts right now.
+skr,app.weather.alerts.title,Active alerts
+skr,app.weather.alerts.viewAll,View all notifications
+skr,app.weather.buttons.refresh,Refresh
+skr,app.weather.buttons.register,Register farm
+skr,app.weather.description,"Daily farming advice for your crops, driven by the forecast and your crop's growth stage."
+skr,app.weather.detail.back,Back to history
+skr,app.weather.detail.markAcknowledged,Mark as seen
+skr,app.weather.detail.markActed,Mark as acted on
+skr,app.weather.detail.markedActed,Marked as acted on
+skr,app.weather.detail.markedSeen,Marked as seen
+skr,app.weather.detail.recommendation,Recommendation
+skr,app.weather.detail.weatherConditions,Weather conditions
+skr,app.weather.errors.generic,Something went wrong. Please try again.
+skr,app.weather.errors.noFarm,Select a farm to see its advisory.
+skr,app.weather.eyebrow,Weather
+skr,app.weather.farmSelectorLabel,Farm
+skr,app.weather.forecastSubtitle,Each day's weather with a farming recommendation for your crop.
+skr,app.weather.forecastTitle,7-day forecast
+skr,app.weather.growthStage,Growth stage
+skr,app.weather.history.date,Date
+skr,app.weather.history.empty,No past advisories yet.
+skr,app.weather.history.loadMore,Load more
+skr,app.weather.history.severity,Severity
+skr,app.weather.history.status,Status
+skr,app.weather.history.status.acted,Acted on
+skr,app.weather.history.status.new,New
+skr,app.weather.history.status.seen,Seen
+skr,app.weather.history.viewAll,View full history
+skr,app.weather.historySubtitle,"Past recommendations for your farms, newest first."
+skr,app.weather.historyTitle,Advisory history
+skr,app.weather.pageTitle,Weather Advisory
+skr,app.weather.registerBody,"Add your crop, sowing date, and location to start getting personalised daily advice."
+skr,app.weather.registerCta,Register a farm
+skr,app.weather.registerForm.crop,Primary crop
+skr,app.weather.registerForm.error,Could not save your farm details. Please try again.
+skr,app.weather.registerForm.irrigation,Irrigation method
+skr,app.weather.registerForm.irrigationMethods,"Drip, sprinkler, flood, or rainfed"
+skr,app.weather.registerForm.save,Save and see my advisory
+skr,app.weather.registerForm.saving,Saving…
+skr,app.weather.registerForm.soil,Soil type
+skr,app.weather.registerForm.soilTypes,"Clay, loam, sandy, or silt"
+skr,app.weather.registerForm.sowing,Sowing date
+skr,app.weather.registerForm.success,Saved — here is your advisory
+skr,app.weather.registerTitle,Register your farm
+skr,app.weather.severity.critical,Critical
+skr,app.weather.severity.info,Info
+skr,app.weather.severity.warning,Warning
+skr,app.weather.source.cached,Last saved forecast
+skr,app.weather.source.demo,Sample forecast — add an API key for live data
+skr,app.weather.source.live,Live forecast · OpenWeather
+skr,app.weather.stages.flowering,Flowering
+skr,app.weather.stages.generic,General
+skr,app.weather.stages.harvestReady,Harvest ready
+skr,app.weather.stages.maturation,Maturation
+skr,app.weather.stages.seedling,Seedling
+skr,app.weather.stages.vegetative,Vegetative
+skr,app.weather.todayAdvisory,Today's advisory
+skr,app.weather.weatherUnavailable,Weather data unavailable
+skr,app.weather.weatherUnavailableBody,Showing your last saved advice. New advice appears when the forecast returns.
+skr,nav.dashboard,Dashboard
+ur,app.detect.chat.cancel,Cancel
+ur,app.detect.chat.closePreview,Close preview
+ur,app.detect.chat.deleteConfirm,Are you sure you want to delete this chat?
+ur,app.detect.chat.deleteSession,Delete session
+ur,app.detect.chat.emptyState,Ask a follow-up question about this detection.
+ur,app.detect.chat.imagePreview,View full image
+ur,app.detect.chat.newScan,New scan
+ur,app.detect.chat.noSessions,No detection chats yet.
+ur,app.detect.chat.placeholder,Ask about this detection...
+ur,app.detect.chat.send,Send
+ur,app.detect.chat.sessionsTitle,Detection chats
+ur,app.detect.chat.thinking,Thinking...
+ur,app.detect.disease.apple_black_rot.causes,"A fungus (Botryosphaeria obtusa) attacks fruit and branches, favoured by wet, humid weather."
+ur,app.detect.disease.apple_black_rot.name,Apple black rot
+ur,app.detect.disease.apple_black_rot.steps.0,Prune out infected limbs well below visible lesions and burn them.
+ur,app.detect.disease.apple_black_rot.steps.1,Apply a protective fungicide at bloom and after petal fall.
+ur,app.detect.disease.apple_black_rot.steps.2,Keep the canopy open and mulch-free to reduce moisture retention.
+ur,app.detect.disease.apple_cedar_rust.causes,A rust fungus (Gymnosporangium) that alternates between apple trees and eastern red cedar in wet springs.
+ur,app.detect.disease.apple_cedar_rust.name,Cedar-apple rust
+ur,app.detect.disease.apple_cedar_rust.steps.0,Plant rust-resistant rootstocks or varieties where possible.
+ur,app.detect.disease.apple_cedar_rust.steps.1,Spray with a copper or myclobutanil fungicide at bud-break and again in early summer.
+ur,app.detect.disease.apple_cedar_rust.steps.2,Remove nearby red cedar hosts within 500 m.
+ur,app.detect.disease.apple_scab.causes,"Fungal spores (Venturia inaequalis) spread in cool, wet springs and infect young leaves and fruit."
+ur,app.detect.disease.apple_scab.name,Apple scab
+ur,app.detect.disease.apple_scab.steps.0,Rake and destroy infected fallen leaves in autumn to cut reinfection.
+ur,app.detect.disease.apple_scab.steps.1,"In spring, spray a horticultural oil or copper-based fungicide at bud-break."
+ur,app.detect.disease.apple_scab.steps.2,Prune for good air flow and avoid overhead irrigation.
+ur,app.detect.disease.cherry_powdery_mildew.causes,A fungal disease (Podosphaera leucotricha) that forms white powdery spots on leaves in warm days with cool nights.
+ur,app.detect.disease.cherry_powdery_mildew.name,Cherry powdery mildew
+ur,app.detect.disease.cherry_powdery_mildew.steps.0,Improve air circulation by thinning crowded branches.
+ur,app.detect.disease.cherry_powdery_mildew.steps.1,Spray with sulfur or a mildew-specific fungicide when first spots appear.
+ur,app.detect.disease.cherry_powdery_mildew.steps.2,Avoid nitrogen-heavy fertilizers that promote tender growth.
+ur,app.detect.disease.corn_common_rust.causes,"A fungal rust (Puccinia sorghi) that forms orange pustules on leaves, favoured by dew and moderate temperatures."
+ur,app.detect.disease.corn_common_rust.name,Corn common rust
+ur,app.detect.disease.corn_common_rust.steps.0,Plant rust-resistant hybrids where available.
+ur,app.detect.disease.corn_common_rust.steps.1,Apply a systemic fungicide at early tassel if infection is heavy.
+ur,app.detect.disease.corn_common_rust.steps.2,Avoid planting corn after corn to reduce inoculum build-up.
+ur,app.detect.disease.corn_gray_leaf_spot.causes,"A fungus (Cercospora zeae) that starts as small gray lesions with yellow halos and spreads in warm, humid conditions."
+ur,app.detect.disease.corn_gray_leaf_spot.name,Gray leaf spot
+ur,app.detect.disease.corn_gray_leaf_spot.steps.0,Use resistant hybrids and rotate crops away from corn residue.
+ur,app.detect.disease.corn_gray_leaf_spot.steps.1,Apply a triazole or strobilurin fungicide at tasseling if pressure is high.
+ur,app.detect.disease.corn_gray_leaf_spot.steps.2,Irrigate in the morning so foliage dries quickly.
+ur,app.detect.disease.corn_northern_leaf_blight.causes,"A fungus (Exserohilum turcicum) causing long grey-tan lesions, worse in cool, wet weather and high residue."
+ur,app.detect.disease.corn_northern_leaf_blight.name,Northern leaf blight
+ur,app.detect.disease.corn_northern_leaf_blight.steps.0,Rotate with soybeans or broadleaf crops and till under residue.
+ur,app.detect.disease.corn_northern_leaf_blight.steps.1,Use resistant hybrids and apply a fungicide at VT stage if needed.
+ur,app.detect.disease.corn_northern_leaf_blight.steps.2,Space plants for good air flow and avoid overcrowding.
+ur,app.detect.disease.grape_black_rot.causes,A fungus (Guignardia bidwellii) that creates black circular spots on berries and leaves in wet springs.
+ur,app.detect.disease.grape_black_rot.name,Grape black rot
+ur,app.detect.disease.grape_black_rot.steps.0,Prune out infected canes and remove mummified berries.
+ur,app.detect.disease.grape_black_rot.steps.1,Apply an effective fungicide (mancozeb or tebuconazole) at swell and bloom.
+ur,app.detect.disease.grape_black_rot.steps.2,Avoid overhead irrigation during bloom.
+ur,app.detect.disease.grape_esca.causes,A vascular fungal complex (Phaeoacremonium) that causes dark streaks on canes and wilting leaves.
+ur,app.detect.disease.grape_esca.name,Grape esca (black measles)
+ur,app.detect.disease.grape_esca.steps.0,Prune out and destroy infected wood in autumn.
+ur,app.detect.disease.grape_esca.steps.1,Apply a lime sulfur or copper spray at bud-break to reduce inoculum.
+ur,app.detect.disease.grape_esca.steps.2,Manage irrigation to avoid water stress which worsens symptoms.
+ur,app.detect.disease.grape_leaf_blight.causes,"A fungus causing small dark spots with yellow halos, most visible in humid conditions."
+ur,app.detect.disease.grape_leaf_blight.name,Grape leaf blight (Isariopsis)
+ur,app.detect.disease.grape_leaf_blight.steps.0,Remove and destroy infected leaves at the first sign.
+ur,app.detect.disease.grape_leaf_blight.steps.1,Apply a broad-spectrum fungicide (mancozeb or captan) during shoot growth.
+ur,app.detect.disease.grape_leaf_blight.steps.2,Improve canopy airflow by selective pruning.
+ur,app.detect.disease.orange_huanglongbing.causes,"A bacterial disease spread by psyllids, causing yellow mottling, misshapen fruit, and tree decline."
+ur,app.detect.disease.orange_huanglongbing.name,Citrus greening (Huanglongbing)
+ur,app.detect.disease.orange_huanglongbing.steps.0,Control the Asian citrus psyllid with coordinated insecticide sprays.
+ur,app.detect.disease.orange_huanglongbing.steps.1,Remove and destroy infected trees — there is no cure once established.
+ur,app.detect.disease.orange_huanglongbing.steps.2,Use certified disease-free nursery stock and screen for resistance.
+ur,app.detect.disease.peach_bacterial_spot.causes,"A bacterial pathogen (Xanthomonas) that causes dark spots on leaves and fruit, spread by rain splash."
+ur,app.detect.disease.peach_bacterial_spot.name,Peach bacterial spot
+ur,app.detect.disease.peach_bacterial_spot.steps.0,Prune in dry weather and sterilize tools between trees.
+ur,app.detect.disease.peach_bacterial_spot.steps.1,Apply a copper-based bactericide at bloom and after heavy rain.
+ur,app.detect.disease.peach_bacterial_spot.steps.2,Avoid overhead irrigation and choose resistant varieties.
+ur,app.detect.disease.pepper_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on peppers, spread in warm, wet weather."
+ur,app.detect.disease.pepper_bacterial_spot.name,Pepper bacterial spot
+ur,app.detect.disease.pepper_bacterial_spot.steps.0,Space plants for good air flow and avoid wetting foliage.
+ur,app.detect.disease.pepper_bacterial_spot.steps.1,Apply copper hydroxide at first sign of disease.
+ur,app.detect.disease.pepper_bacterial_spot.steps.2,Remove and destroy infected leaves promptly.
+ur,app.detect.disease.potato_early_blight.causes,"A fungus (Alternaria solani) causing brown target-like rings on lower leaves, worse in warm, humid conditions."
+ur,app.detect.disease.potato_early_blight.name,Potato early blight
+ur,app.detect.disease.potato_early_blight.steps.0,Plant certified seed and rotate away from potatoes and tomatoes.
+ur,app.detect.disease.potato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when first lesions appear.
+ur,app.detect.disease.potato_early_blight.steps.2,Hill soil onto stems and practice wide spacing to keep lower leaves dry.
+ur,app.detect.disease.potato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, water-soaked lesions — the cause of the Irish potato famine, spreads rapidly in cool, wet weather."
+ur,app.detect.disease.potato_late_blight.name,Potato late blight
+ur,app.detect.disease.potato_late_blight.steps.0,Remove and destroy infected tubers and haulm immediately — do NOT compost.
+ur,app.detect.disease.potato_late_blight.steps.1,"Apply a systemic fungicide (metalaxyl-based) at first sign, then every 5-7 days while wet."
+ur,app.detect.disease.potato_late_blight.steps.2,Plant resistant varieties and avoid irrigation during late afternoon.
+ur,app.detect.disease.squash_powdery_mildew.causes,A fungus (Podosphaera xanthii) forming white powdery spots on leaves in warm days with high humidity.
+ur,app.detect.disease.squash_powdery_mildew.name,Squash powdery mildew
+ur,app.detect.disease.squash_powdery_mildew.steps.0,Plant resistant varieties and space vines for good air flow.
+ur,app.detect.disease.squash_powdery_mildew.steps.1,Apply sulfur or potassium bicarbonate spray weekly once symptoms appear.
+ur,app.detect.disease.squash_powdery_mildew.steps.2,Water at the base to keep leaves dry in the morning.
+ur,app.detect.disease.strawberry_leaf_scorch.causes,"A fungus (Physophella salicis) causing reddish-purple spots that turn tan, common in wet spring weather."
+ur,app.detect.disease.strawberry_leaf_scorch.name,Strawberry leaf scorch
+ur,app.detect.disease.strawberry_leaf_scorch.steps.0,Avoid overhead irrigation and keep beds well-drained.
+ur,app.detect.disease.strawberry_leaf_scorch.steps.1,Apply a fungicide (captan or tebuconazole) at first sign of leaf spots.
+ur,app.detect.disease.strawberry_leaf_scorch.steps.2,Remove and destroy severely infected leaves.
+ur,app.detect.disease.tomato_bacterial_spot.causes,"A bacterial infection (Xanthomonas) causing dark, greasy spots on leaves and fruit, spread by rain splash."
+ur,app.detect.disease.tomato_bacterial_spot.name,Tomato bacterial spot
+ur,app.detect.disease.tomato_bacterial_spot.steps.0,Use disease-free seed and trellis to keep foliage dry.
+ur,app.detect.disease.tomato_bacterial_spot.steps.1,Apply a copper-based bactericide at first sign and after heavy rain.
+ur,app.detect.disease.tomato_bacterial_spot.steps.2,Remove and destroy infected leaves and fruit.
+ur,app.detect.disease.tomato_early_blight.causes,"A fungus (Alternaria solani) causing dark concentric rings on lower leaves, starting from the soil up."
+ur,app.detect.disease.tomato_early_blight.name,Tomato early blight
+ur,app.detect.disease.tomato_early_blight.steps.0,Mulch and water at the base to avoid soil splash.
+ur,app.detect.disease.tomato_early_blight.steps.1,Apply a fungicide (chlorothalonil or mancozeb) when lower leaves show spots.
+ur,app.detect.disease.tomato_early_blight.steps.2,Remove the lowest infected leaves and stake plants for airflow.
+ur,app.detect.disease.tomato_late_blight.causes,"A water mold (Phytophthora infestans) causing dark, fuzzy lesions on leaves and fruit — highly destructive in wet, cool weather."
+ur,app.detect.disease.tomato_late_blight.name,Tomato late blight
+ur,app.detect.disease.tomato_late_blight.steps.0,Remove and destroy infected foliage and fruit immediately; do NOT compost.
+ur,app.detect.disease.tomato_late_blight.steps.1,Apply a systemic fungicide (metalaxyl-based) at first sign and reapply after rain.
+ur,app.detect.disease.tomato_late_blight.steps.2,Plant late-blight-resistant varieties and avoid overhead watering.
+ur,app.detect.disease.tomato_leaf_mold.causes,"A fungus (Cladosporium fulvum) causing yellow patches on upper leaves and fuzzy brown undersides in humid, poorly ventilated conditions."
+ur,app.detect.disease.tomato_leaf_mold.name,Tomato leaf mold
+ur,app.detect.disease.tomato_leaf_mold.steps.0,Ventilate greenhouses and space plants for air flow.
+ur,app.detect.disease.tomato_leaf_mold.steps.1,Apply a fungicide (chlorothalonil) when yellowing appears.
+ur,app.detect.disease.tomato_leaf_mold.steps.2,Water at the base and keep foliage dry.
+ur,app.detect.disease.tomato_mosaic_virus.causes,"A virus that causes mottled, distorted leaves and poor fruit, spread on tools and hands."
+ur,app.detect.disease.tomato_mosaic_virus.name,Tomato mosaic virus
+ur,app.detect.disease.tomato_mosaic_virus.steps.0,Disinfect tools between plants with bleach or alcohol.
+ur,app.detect.disease.tomato_mosaic_virus.steps.1,Remove and destroy infected plants.
+ur,app.detect.disease.tomato_mosaic_virus.steps.2,Control aphid vectors and weeds.
+ur,app.detect.disease.tomato_septoria.causes,A fungus (Septoria lycopersici) causing small tan spots with dark borders on older leaves.
+ur,app.detect.disease.tomato_septoria.name,Tomato septoria leaf spot
+ur,app.detect.disease.tomato_septoria.steps.0,Rotate crops and mulch to prevent soil splash.
+ur,app.detect.disease.tomato_septoria.steps.1,Apply a fungicide (mancozeb or chlorothalonil) at first sign.
+ur,app.detect.disease.tomato_septoria.steps.2,Remove and destroy infected lower leaves.
+ur,app.detect.disease.tomato_spider_mites.causes,"Tiny spider-like mites (Tetranychus urticae) that suck leaf juices, leaving stippled, bronzed leaves and fine webbing."
+ur,app.detect.disease.tomato_spider_mites.name,Tomato spider mites
+ur,app.detect.disease.tomato_spider_mites.steps.0,Hose off mites with a strong spray of water early in the day.
+ur,app.detect.disease.tomato_spider_mites.steps.1,"Release beneficial insects (ladybugs, lacewings) or apply neem oil."
+ur,app.detect.disease.tomato_spider_mites.steps.2,Avoid broad-spectrum insecticides that kill natural predators.
+ur,app.detect.disease.tomato_target_spot.causes,"A fungus (Corynespora cassiicola) causing dark concentric 'target' spots on leaves, favoured by warm, humid weather."
+ur,app.detect.disease.tomato_target_spot.name,Tomato target spot
+ur,app.detect.disease.tomato_target_spot.steps.0,Improve air circulation by pruning lower leaves and staking plants.
+ur,app.detect.disease.tomato_target_spot.steps.1,Apply a fungicide (azoxystrobin or chlorothalonil) when spots first appear.
+ur,app.detect.disease.tomato_target_spot.steps.2,Water at the base early in the day.
+ur,app.detect.disease.tomato_ylcv.causes,"A virus spread by whiteflies, causing yellowing and curling of leaves and stunted growth."
+ur,app.detect.disease.tomato_ylcv.name,Tomato yellow leaf curl virus
+ur,app.detect.disease.tomato_ylcv.steps.0,Control whiteflies with reflective mulches and insecticides at transplant.
+ur,app.detect.disease.tomato_ylcv.steps.1,Remove and destroy infected plants — there is no cure.
+ur,app.detect.disease.tomato_ylcv.steps.2,Use resistant varieties and control weeds that host whiteflies.
+ur,app.farms.detail.noRecords,No records yet — start logging field events to build your farm's memory.
+ur,nav.dashboard,Dashboard
+>>>>>>> b42257a (Merge branch '002-mandi-price-tracker' into main — resolve 19 conflicts)
