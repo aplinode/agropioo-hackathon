@@ -87,7 +87,7 @@ export async function POST(request: Request): Promise<Response> {
       await query(
         `insert into scraper_runs (source_code, status, rows_written, rows_rejected, caller_ip)
          values ($1, 'unauthorized', 0, 0, $2)`,
-        [parsed.success ? parsed.data.source_code : "amis_pk", ip],
+        ["amis_pk", ip],
       );
     } catch {
       /* audit table may not exist on first run; swallow */

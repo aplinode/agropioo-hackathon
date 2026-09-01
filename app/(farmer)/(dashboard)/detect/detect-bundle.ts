@@ -58,4 +58,12 @@ export type DetectBundle = {
     deleteConfirm: string;
     cancel: string;
   };
+  sidebar: {
+    title: string;
+    newScan: string;
+    closeSidebar: string;
+    noHistory: string;
+    scansTitle: string;
+    chatsTitle: string;
+  };
 };

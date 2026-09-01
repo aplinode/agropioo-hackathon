@@ -527,6 +527,14 @@ export async function getDetectBundle(): Promise<DetectBundle> {
       deleteConfirm: t("app.detect.chat.deleteConfirm").text,
       cancel: t("app.detect.chat.cancel").text,
     },
+    sidebar: {
+      title: t("app.detect.sidebar.title").text,
+      newScan: t("app.detect.sidebar.newScan").text,
+      closeSidebar: t("app.detect.sidebar.closeSidebar").text,
+      noHistory: t("app.detect.sidebar.noHistory").text,
+      scansTitle: t("app.detect.sidebar.scansTitle").text,
+      chatsTitle: t("app.detect.sidebar.chatsTitle").text,
+    },
   };
 }
 

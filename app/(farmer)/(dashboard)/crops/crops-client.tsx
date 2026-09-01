@@ -633,7 +633,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.yearLabel}</label>
               <input
                 type="number"
-                {...register("targetYear")}
+                {...register("targetYear", { valueAsNumber: true })}
                 className="mt-1 h-11 w-full rounded-lg border border-agro-sprout bg-white px-3 text-sm text-agro-ink"
               />
             </div>
