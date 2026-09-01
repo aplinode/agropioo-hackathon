@@ -3,22 +3,19 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { query, queryOne, withTransaction } from "@/lib/db";
 import { getForecast } from "@/lib/weather/openweather";
-import { requireSessionApi } from "@/lib/auth/guards";
 import {
   getCropsBySeasonAndBudget,
   getCompatibilityByCrop,
 } from "@/lib/crops/catalogue";
 import { resolveSoilType } from "@/lib/crops/soil-profiles";
-import { rankCandidates, ScoreContext, WEIGHTS, type ScoredCrop } from "@/lib/crops/scoring";
+import { rankCandidates, type ScoreContext } from "@/lib/crops/scoring";
 import { pickReason } from "@/lib/crops/reasons";
-import { buildRotation } from "@/lib/crops/rotation";
 import type {
   CropCategory,
   CropRecommendation,
   CropRecommendationRequest,
   CropSummary,
   RecommendCropsInput,
-  RotationSuggestion,
   SoilType,
   Season,
 } from "./api-types";
@@ -127,11 +124,8 @@ function computeLowestViableBracket(
     catalogue.some((c) => c.capitalRequirementPerAcrePkr <= cap),
   );
   if (viable.length === 0) return "very_high";
-  const inputIdx = caps.findIndex((x) => x.b === budget);
-  const best = viable.find((x) => x.b === budget)
-    ? budget
-    : viable[0].b;
-  return best;
+  const best = viable.find((x) => x.b === budget) ?? viable[0];
+  return best.b;
 }
 
 export async function recommendCrops(

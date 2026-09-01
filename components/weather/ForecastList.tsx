@@ -15,6 +15,7 @@ export type ForecastDayView = {
   growth_stage: GrowthStage;
   advice_text: string;
   severity: Severity;
+  label?: string;
 };
 
 const severityChip: Record<Severity, string> = {
@@ -80,7 +81,7 @@ export default function ForecastList({
                 className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[0.7rem] font-semibold ${severityChip[day.severity]}`}
               >
                 <LeafIcon size={11} aria-hidden="true" />
-                {stageLabels[day.growth_stage]}
+                {day.label ?? stageLabels[day.growth_stage]}
               </span>
               <p className="text-xs leading-snug text-agro-ink">{day.advice_text}</p>
             </div>

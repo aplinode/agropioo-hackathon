@@ -1,6 +1,6 @@
 import type { CropSummary } from "@/lib/crops/api-types";
 import { describe, expect, it } from "vitest";
-import { rankCandidates, WEIGHTS } from "@/lib/crops/scoring";
+import { rankCandidates } from "@/lib/crops/scoring";
 import type { ScoreContext } from "@/lib/crops/scoring";
 
 function makeCrop(partial: Partial<CropSummary> & { id: string; nameEn: string }): CropSummary {
