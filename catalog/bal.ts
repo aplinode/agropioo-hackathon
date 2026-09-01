@@ -760,7 +760,6 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "app.dashboard.checklistProgress": "{total} ئے {done} مکمل",
   "app.dashboard.aria.dismissChecklist": "سیٹ اپ چیک لسٹ بند کنئ",
   "app.dashboard.aria.setupProgress": "سیٹ اپ ئی ترقی",
-  "app.dashboard.demoFooter": "ڈیمو بلڈ \u00b7 صرف نمونہ ڈیٹا",
   /* ── ڈیش بورڈ ڈیمو ڈیٹا ──────────────────────────── */
   "app.dashboard.demo.todayLabel": "اتوار، ۲۳ اگست",
   "app.dashboard.demo.location": "ملتان، پنجاب",

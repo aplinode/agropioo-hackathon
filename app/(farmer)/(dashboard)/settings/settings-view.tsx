@@ -173,9 +173,6 @@ export default function SettingsView() {
             </li>
           ))}
         </ul>
-        <p className="mt-2 font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
-          Demo build · choices last for this visit only
-        </p>
       </section>
 
       {/* Sign out */}

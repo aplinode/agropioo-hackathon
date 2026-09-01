@@ -761,7 +761,6 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.dashboard.checklistProgress": "{done} میں سے {total} مکمل",
   "app.dashboard.aria.dismissChecklist": "سیٹ اپ چیک لسٹ بند کریں",
   "app.dashboard.aria.setupProgress": "سیٹ اپ کی پیشرفت",
-  "app.dashboard.demoFooter": "ڈیمو بلڈ \u00b7 صرف نمونہ ڈیٹا",
 
   /* ── ڈیش بورڈ ڈیمو ڈیٹا ──────────────────────────── */
   "app.dashboard.demo.todayLabel": "اتوار، 23 اگست",

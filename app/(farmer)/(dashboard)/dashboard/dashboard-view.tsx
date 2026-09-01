@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore, useState, type ReactNode } from "react";
+import { useSyncExternalStore, useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { FurrowMotif } from "@/components/FurrowMotif";
 import {
@@ -171,7 +171,19 @@ export default function DashboardView({
   );
 
   const [showProfile, setShowProfile] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
   const { farmer, advisory, seasonTip, weather, alerts: demoAlerts, farms: demoFarms, checklistItems, quickActions } = getDemoData(bundle);
+
+  useEffect(() => {
+    if (!showProfile) return;
+    function handleClick(e: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setShowProfile(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [showProfile]);
   const advisory_ = isEmpty ? seasonTip : advisory;
   const topAlerts = demoAlerts.slice(0, 3);
 
@@ -226,37 +238,34 @@ export default function DashboardView({
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <div
-            onClick={() => setShowProfile(!showProfile)}
-            role="button"
-            aria-label={bundle.profileMenu}
-            className={`relative inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-canopy font-semibold text-white transition-colors ${showProfile ? "border-2 border-agro-sprout" : ""} hover:bg-agro-forest`}
-          >
-            <span style={{ fontWeight: "bold", color: "white" }}>
-              {latin(displayUser.initials)}
-            </span>
-          </div>
-          {showProfile && (
+          <div ref={profileRef} className="relative">
             <div
-              className="absolute end-0 mt-2 w-48 rounded-md bg-white py-2 shadow-lg border border-agro-sprout/20 z-50 min-w-[160px]"
+              onClick={() => setShowProfile(!showProfile)}
+              role="button"
+              aria-label={bundle.profileMenu}
+              className={`inline-flex h-11 w-11 items-center justify-center rounded-full bg-agro-canopy font-semibold text-white transition-colors ${showProfile ? "ring-2 ring-agro-sprout" : ""} hover:bg-agro-forest`}
             >
-              <div className="px-4 py-3 text-sm text-agro-forest">
-                <div className="font-medium">{latin(<>{displayUser.firstName} {displayUser.lastName}</>)}</div>
-                <div className="text-agro-slate text-xs">
-                  {latin(displayUser.email)}
-                </div>
-              </div>
+              <span style={{ fontWeight: "bold", color: "white" }}>
+                {latin(displayUser.initials)}
+              </span>
             </div>
-          )}
-<button
-  type="button"
-  onClick={() => signOut()}
-  aria-label={bundle.signOut}
-  className="inline-flex h-11 items-center gap-1.5 rounded-full border border-agro-sprout bg-white px-3 font-mono text-sm font-semibold text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
->
-            <LogOutIcon size={12} className="h-4 w-4 shrink-0" />
-            {bundle.signOut}
-          </button>
+            {showProfile && (
+              <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-xl border border-agro-sprout/20 bg-white py-2 shadow-lg">
+                <div className="border-b border-agro-sprout/20 px-4 py-3">
+                  <div className="font-semibold text-sm text-agro-forest">{latin(<>{displayUser.firstName} {displayUser.lastName}</>)}</div>
+                  <div className="mt-0.5 text-xs text-agro-slate truncate">{latin(displayUser.email)}</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => signOut()}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-forest"
+                >
+                  <LogOutIcon size={14} />
+                  {bundle.signOut}
+                </button>
+              </div>
+            )}
+          </div>
           <LanguageSwitcher label={bundle.languageLabel} currentLocale={appLocale} />
         </div>
       </header>
@@ -706,9 +715,6 @@ export default function DashboardView({
         </section>
       )}
 
-      <p className="pb-2 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
-        {bundle.demoFooter}
-      </p>
     </div>
   );
 }

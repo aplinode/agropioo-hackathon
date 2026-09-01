@@ -220,7 +220,6 @@ export async function getDashboardBundle(): Promise<DashboardBundle> {
     checklistProgress: t("app.dashboard.checklistProgress").text,
     dismissChecklist: t("app.dashboard.aria.dismissChecklist").text,
     setupProgress: t("app.dashboard.aria.setupProgress").text,
-    demoFooter: t("app.dashboard.demoFooter").text,
     languageLabel: t("app.dashboard.languageLabel").text,
     signOut: t("app.shell.signOut").text,
     demo: {

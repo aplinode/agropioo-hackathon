@@ -766,7 +766,6 @@ export const en = {
   "app.dashboard.checklistProgress": "{done} of {total} complete",
   "app.dashboard.aria.dismissChecklist": "Dismiss setup checklist",
   "app.dashboard.aria.setupProgress": "Setup progress",
-  "app.dashboard.demoFooter": "Demo build \u00b7 sample data only",
 
   /* ── Dashboard demo data ───────────────────────────── */
   "app.dashboard.demo.todayLabel": "Sunday, 23 Aug",

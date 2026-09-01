@@ -760,7 +760,6 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.dashboard.checklistProgress": "{total} نه {done} بشپړ شوې",
   "app.dashboard.aria.dismissChecklist": "سیټ اپ چیک لیست بند کړئ",
   "app.dashboard.aria.setupProgress": "د سیټ اپ پرمختګ",
-  "app.dashboard.demoFooter": "ډیمو بلډ \u00b7 یوازې نمونه ډیټا",
   /* ── ډیشبورډ ډیمو ډیټا ──────────────────────────── */
   "app.dashboard.demo.todayLabel": "اتوار، ۲۳ اگست",
   "app.dashboard.demo.location": "ملتان، پنجاب",
