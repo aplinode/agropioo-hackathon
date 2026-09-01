@@ -1,4 +1,4 @@
-name: Mandi Price Tracker — Nightly Cron
+name: Mandi Price Tracker — Nightly Scraper
 
 on:
   schedule:
@@ -6,32 +6,50 @@ on:
   workflow_dispatch:
 
 jobs:
-  ingest-and-predict:
+  scrape-and-ingest:
     runs-on: ubuntu-latest
+    env:
+      APP_URL: ${{ secrets.APP_URL }}
+      PRICES_CRON_SECRET: ${{ secrets.PRICES_CRON_SECRET }}
     steps:
-      - name: Trigger price ingestion and alert evaluation
-        env:
-          APP_URL: ${{ secrets.APP_URL }}
-          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+      - name: Skip when secrets are missing
+        if: ${{ env.APP_URL == '' || env.PRICES_CRON_SECRET == '' }}
         run: |
-          if [ -z "$APP_URL" ]; then
-            echo "APP_URL secret is not set. Skipping."
-            exit 0
-          fi
-          curl -sS -X POST "$APP_URL/api/prices/ingest" \
-            -H "Authorization: Bearer $CRON_SECRET" \
-            -H "Content-Type: application/json" \
-            -w "\ningest_status=%{http_code}\n"
+          echo "APP_URL or PRICES_CRON_SECRET is not set. Skipping."
+          exit 0
+
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Run mandi price scraper
+        run: npm run scrape:prices
 
       - name: Trigger nightly price predictions
+        if: success()
         env:
-          APP_URL: ${{ secrets.APP_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          if [ -z "$APP_URL" ]; then
-            echo "APP_URL secret is not set. Skipping."
-            exit 0
-          fi
           curl -sS -X POST "$APP_URL/api/cron/predict-prices" \
             -H "Authorization: Bearer $CRON_SECRET" \
             -H "Content-Type: application/json" \
