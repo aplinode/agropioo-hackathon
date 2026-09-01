@@ -18,11 +18,11 @@
 
 **Purpose**: Branch + dependency additions for the scraper-only path.
 
-- [ ] T001 Create feature branch `feat/002-scraper` from `main` and push it (per AGENTS.md hybrid branching — multi-file feature)
-- [ ] T002 [P] Add `playwright` to `devDependencies` in `package.json` (scoped to scraper; **requires founder approval per Constitution new-dependency rule**)
-- [ ] T003 [P] Add `xlsx` to `devDependencies` in `package.json` (PBS SPI parsing; **requires founder approval**)
-- [ ] T004 [P] Add `npm` script `scrape:prices` in `package.json` that runs `node --experimental-strip-types --env-file-if-exists=.env scripts/scrape-prices/index.ts`
-- [ ] T005 [P] Add `PRICES_CRON_SECRET` placeholder to `.env.example` with a comment marking it required for the cron job
+- [x] T001 Create feature branch `feat/002-scraper` from `main` and push it (per AGENTS.md hybrid branching — multi-file feature)
+- [x] T002 [P] Add `playwright` to `devDependencies` in `package.json` (scoped to scraper; **requires founder approval per Constitution new-dependency rule**)
+- [x] T003 [P] Add `xlsx` to `devDependencies` in `package.json` (PBS SPI parsing; **requires founder approval**)
+- [x] T004 [P] Add `npm` script `scrape:prices` in `package.json` that runs `node --experimental-strip-types --env-file-if-exists=.env scripts/scrape-prices/index.ts`
+- [x] T005 [P] Add `PRICES_CRON_SECRET` placeholder to `.env.example` with a comment marking it required for the cron job
 
 **Checkpoint**: Branch up; deps approved and installed.
 
@@ -34,25 +34,25 @@
 
 **⚠️ CRITICAL**: No user story work begins until this phase is complete.
 
-- [ ] T006 Create migration `db/migrations/0009_scraper_audit_and_holidays.sql` that:
+- [x] T006 Create migration `db/migrations/0010_scraper_audit_and_holidays.sql` that:
   - drops the `('govt_api','admin_manual')` CHECK on `mandi_prices.source`,
   - alters `mandi_prices` to add `source_code VARCHAR(32) NOT NULL` with the new CHECK enum,
   - adds index `(source_code, date DESC)` on `mandi_prices`,
   - creates `scraper_runs` table (id, received_at, source_code, status, rows_written, rows_rejected, caller_ip INET, request_id UUID) with the 7-day retention column set,
   - creates `mandi_holidays` table (id, mandi_id, province, date, label, source_code) with the `UNIQUE(mandi_id, date)` constraint
-- [ ] T007 [P] Extend `scripts/seed-mandi-prices.ts` to backfill `mandi_prices.source_code = 'seed_pk_initial'` for any existing seed rows
-- [ ] T008 [P] Extend `scripts/seed-mandi-prices.ts` to seed `mandi_holidays` with all Sundays for the next 12 months and the official Pakistan federal holidays for the current year
-- [ ] T009 [P] Update `data-model.md` to reflect the migration (already done in plan; this task verifies the schema matches the docs)
-- [ ] T010 Extend `app/api/prices/ingest/route.ts` to:
+- [x] T007 [P] Extend `scripts/seed-mandi-prices.ts` to backfill `mandi_prices.source_code = 'seed_pk_initial'` for any existing seed rows
+- [x] T008 [P] Extend `scripts/seed-mandi-prices.ts` to seed `mandi_holidays` with all Sundays for the next 12 months and the official Pakistan federal holidays for the current year
+- [x] T009 [P] Update `data-model.md` to reflect the migration (already done in plan; this task verifies the schema matches the docs)
+- [x] T010 Extend `app/api/prices/ingest/route.ts` to:
   - require `Authorization: Bearer ${PRICES_CRON_SECRET}` (return 401 `unauthorized` on mismatch),
   - apply per-IP rate limit of 10 req/min (return 429 `rate_limited` on exceed),
   - validate the new `ingestBatchSchema` from `contracts/api-contracts.md`,
   - upsert into `mandi_prices` with `source='govt_api'` + `source_code` echoed from body,
   - write an audit row to `scraper_runs` for every accepted request,
   - on success return `{ success, request_id, rows_written, rows_rejected, ingested_at }`
-- [ ] T011 [P] Implement `GET /api/prices/health` in `app/api/prices/health/route.ts` returning per-source `last_success`, `rows`, and `status` from `scraper_runs` (no auth, no PII)
-- [ ] T012 [P] Add a Vitest unit test `app/api/prices/ingest/route.test.ts` covering: missing bearer → 401, bad bearer → 401, rate-limit → 429, valid bearer + valid body → 200 + audit row, malformed row in body → that row skipped + `rows_rejected` incremented
-- [ ] T013 [P] Add a Vitest unit test for `app/api/prices/health/route.ts` asserting the per-source shape from `contracts/api-contracts.md` §6
+- [x] T011 [P] Implement `GET /api/prices/health` in `app/api/prices/health/route.ts` returning per-source `last_success`, `rows`, and `status` from `scraper_runs` (no auth, no PII)
+- [x] T012 [P] Add a Vitest unit test `app/api/prices/ingest/route.test.ts` covering: missing bearer → 401, bad bearer → 401, rate-limit → 429, valid bearer + valid body → 200 + audit row, malformed row in body → that row skipped + `rows_rejected` incremented
+- [x] T013 [P] Add a Vitest unit test for `app/api/prices/health/route.ts` asserting the per-source shape from `contracts/api-contracts.md` §6
 
 **Checkpoint**: Migration applies cleanly on a fresh DB; ingest endpoint hardened and tested; no app UI work has begun.
 

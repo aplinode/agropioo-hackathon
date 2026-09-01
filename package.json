@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "sync:translations": "node --experimental-strip-types --env-file-if-exists=.env scripts/sync-translations.mts",
-    "seed:knowledge": "node --experimental-strip-types --env-file-if-exists=.env scripts/seed-knowledge.ts"
+    "seed:knowledge": "node --experimental-strip-types --env-file-if-exists=.env scripts/seed-knowledge.ts",
+    "scrape:prices": "node --experimental-strip-types --env-file-if-exists=.env scripts/scrape-prices/index.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -40,8 +41,10 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.2",
+    "playwright": "^1.49.0",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "xlsx": "^0.18.5"
   }
 }

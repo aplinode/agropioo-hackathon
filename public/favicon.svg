@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="mainGrad" x1="30%" y1="0%" x2="70%" y2="100%">
+      <stop offset="0%" stop-color="#4A9E42"/>
+      <stop offset="50%" stop-color="#2D7A30"/>
+      <stop offset="100%" stop-color="#013B1F"/>
+    </linearGradient>
+    <linearGradient id="sproutGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4A9E42"/>
+      <stop offset="100%" stop-color="#1C6428"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Main teardrop/leaf shape -->
+  <path d="M256 48C256 48 420 140 420 270C420 390 340 470 256 488C172 470 92 390 92 270C92 140 256 48 256 48Z" fill="url(#mainGrad)"/>
+  
+  <!-- Left circuit traces extending outside the leaf -->
+  <g fill="#1C6428">
+    <!-- Top circuit branch -->
+    <path d="M136 170L100 170L100 150L80 150" stroke="#1C6428" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="80" cy="150" r="8"/>
+    
+    <!-- Second circuit branch -->
+    <path d="M120 210L84 210L84 190L64 190" stroke="#1C6428" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="64" cy="190" r="8"/>
+    
+    <!-- Third circuit branch -->
+    <path d="M108 250L72 250L72 230L52 230" stroke="#1C6428" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="52" cy="230" r="8"/>
+    
+    <!-- Fourth circuit branch -->
+    <path d="M100 290L64 290L64 270L44 270" stroke="#1C6428" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="44" cy="270" r="8"/>
+    
+    <!-- Fifth circuit branch -->
+    <path d="M96 330L60 330L60 310L40 310" stroke="#1C6428" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="40" cy="310" r="8"/>
+    
+    <!-- Bottom circuit branch -->
+    <path d="M100 370L64 370L64 350L44 350" stroke="#1C6428" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="44" cy="350" r="8"/>
+  </g>
+  
+  <!-- Inner white triangular area -->
+  <path d="M256 90L380 350L132 350Z" fill="#FFFFFF" opacity="0.95"/>
+  
+  <!-- Sprout/plant in center -->
+  <g transform="translate(256,280)">
+    <!-- Stem -->
+    <path d="M0 50L0 -10" stroke="#1C6428" stroke-width="7" stroke-linecap="round" fill="none"/>
+    
+    <!-- Left leaf -->
+    <path d="M0 -5C-8 -15-35 -35-45 -55C-45 -55-25 -65-5 -45C-5 -45 0 -5 0 -5Z" fill="url(#sproutGrad)"/>
+    
+    <!-- Right leaf -->
+    <path d="M0 -5C8 -15 35 -35 45 -55C45 -55 25 -65 5 -45C5 -45 0 -5 0 -5Z" fill="url(#sproutGrad)"/>
+  </g>
+  
+  <!-- Field furrows at bottom -->
+  <g stroke="#FFFFFF" stroke-width="10" fill="none" stroke-linecap="round">
+    <path d="M150 380C190 360 310 360 350 380" opacity="0.9"/>
+    <path d="M130 410C180 390 320 390 370 410" opacity="0.85"/>
+    <path d="M115 440C175 420 325 420 385 440" opacity="0.8"/>
+  </g>
+</svg>
