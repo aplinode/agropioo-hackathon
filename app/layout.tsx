@@ -68,6 +68,13 @@ export const metadata: Metadata = {
   title: "Agropioo — AI-Powered Farm Intelligence Platform",
   description:
     "Agropioo unites an AI advisor, satellite field monitoring, market price intelligence, and digital farm records on one platform. Built for Pakistan. A product of Aplinode.",
+  icons: {
+    icon: [
+      { url: "/favicon.png", type: "image/png", sizes: "512x512" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: "/favicon.png",
+  },
 };
 
 export const viewport: Viewport = {

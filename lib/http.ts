@@ -64,3 +64,43 @@ export function fieldErrorsFrom(issues: ZodIssueLike[]): Record<string, string> 
   }
   return out;
 }
+
+/**
+ * Per-key fixed-window rate limiter (e.g. per IP per route).
+ * In-memory, single-process — fine for Vercel serverless where each
+ * instance handles a small slice of traffic. Returns ok=true if the
+ * request is within the limit, ok=false if it should be rejected with 429.
+ */
+type RateLimitBucket = number;
+const rateLimitBuckets: Map<string, RateLimitBucket> = new Map();
+const RATE_LIMIT_MAX_KEYS = 5000;
+
+export function rateLimit(
+  key: string,
+  limit: number,
+  windowMs: number,
+  now: number = Date.now(),
+): { ok: true; remaining: number } | { ok: false; retryAfterSec: number } {
+  const bucketStart = Math.floor(now / windowMs) * windowMs;
+  const fullKey = `${key}:${bucketStart}`;
+  const entry = (rateLimitBuckets.get(fullKey) ?? 0) + 1;
+  rateLimitBuckets.set(fullKey, entry);
+  if (entry > limit) {
+    const retryAfterSec = Math.ceil((bucketStart + windowMs - now) / 1000);
+    return { ok: false, retryAfterSec };
+  }
+  if (rateLimitBuckets.size > RATE_LIMIT_MAX_KEYS) {
+    const cutoff = now - 2 * windowMs;
+    for (const k of rateLimitBuckets.keys()) {
+      const ts = Number(k.split(":").pop());
+      if (!Number.isFinite(ts) || ts < cutoff) rateLimitBuckets.delete(k);
+    }
+  }
+  return { ok: true, remaining: Math.max(0, limit - entry) };
+}
+
+/** Test-only escape hatch to clear the in-memory rate-limit buckets between
+ *  test cases. Not exported from any production module. */
+export function __resetRateLimitBucketsForTests(): void {
+  rateLimitBuckets.clear();
+}
