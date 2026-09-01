@@ -55,9 +55,8 @@ export async function POST(request: Request) {
     if (err instanceof WeatherUnavailableError) {
       return errorResponse(err.code, err.message, err.status);
     }
-    const message = err instanceof Error ? err.message : "Unknown error";
-    const status = (err as { status?: number } | null)?.status ?? 500;
-    return errorResponse("server_error", message, status);
+    console.error("crops recommendation failed:", err);
+    return errorResponse("server_error", "Something went wrong. Please try again.", 500);
   }
 }
 

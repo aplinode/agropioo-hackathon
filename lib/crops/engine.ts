@@ -143,13 +143,16 @@ export async function recommendCrops(
   if (farm.account_id !== accountId)
     throw new Error("Farm does not belong to the account.");
 
-  if (!withinPakistan(farm.lat, farm.lng)) {
+  const lat = Number(farm.lat);
+  const lng = Number(farm.lng);
+
+  if (!withinPakistan(lat, lng)) {
     throw new OutsidePakistanError();
   }
 
   const resolved = await resolveSoilType(input.soilType, farm.district ?? "");
 
-  const forecast = await getForecast(farm.lat!, farm.lng!);
+  const forecast = await getForecast(lat, lng);
   if (!forecast) throw new WeatherUnavailableError();
   const weatherAvailable = true;
 

@@ -18,7 +18,7 @@ import type { CropsBundle } from "./crops-bundle";
 const formSchema = z.object({
   farmId: z.string().uuid().optional().nullable(),
   targetSeason: z.enum(["summer", "winter", "autumn", "spring", "rainy", "windy"]),
-  targetYear: z.number().int().min(2020).max(2035),
+  targetYear: z.number().int().min(new Date().getFullYear()).max(2035),
   soilType: z.enum([
     "sandy",
     "sandy_loam",
@@ -631,11 +631,14 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
 
             <div>
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.yearLabel}</label>
-              <input
-                type="number"
+              <select
                 {...register("targetYear", { valueAsNumber: true })}
                 className="mt-1 h-11 w-full rounded-lg border border-agro-sprout bg-white px-3 text-sm text-agro-ink"
-              />
+              >
+                {Array.from({ length: 2035 - currentYear + 1 }, (_, i) => currentYear + i).map((year) => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
             </div>
 
             <div>

@@ -41,12 +41,12 @@ function currentYear(): number {
   return new Date().getFullYear();
 }
 
-/** target_year: current year − 1 .. current year + 2 (forward- and previous-season). */
+/** target_year: current year .. 2035 */
 export const targetYearSchema = z.coerce
   .number()
   .int()
-  .min(currentYear() - 1)
-  .max(currentYear() + 2);
+  .min(currentYear())
+  .max(2035);
 
 export const createCropRecommendationSchema = z.object({
   farm_id: z.string().uuid("farm_id must be a valid uuid"),
