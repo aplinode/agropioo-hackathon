@@ -89,8 +89,8 @@
 
 ### Implementation for US-S2
 
-- [ ] T024 Extend `.github/workflows/mandi-cron.yml` to: install `playwright` + `xlsx` from devDependencies, `actions/cache` the Playwright browsers path, `npm ci`, `npm run scrape:prices`, set the exit code from the runner
-- [ ] T025 [P] Add a second manual-trigger job to `.github/workflows/mandi-cron.yml` (`workflow_dispatch`) that runs `npm run scrape:prices -- --dry-run` for operator debugging without writing to the DB
+- [x] T024 Extend `.github/workflows/mandi-cron.yml` to: install `playwright` + `xlsx` from devDependencies, `actions/cache` the Playwright browsers path, `npm ci`, `npm run scrape:prices`, set the exit code from the runner
+- [x] T025 [P] Add a second manual-trigger job to `.github/workflows/mandi-cron.yml` (`workflow_dispatch`) that runs `npm run scrape:prices -- --dry-run` for operator debugging without writing to the DB
 - [ ] T026 [P] Add `PRICES_CRON_SECRET` to the GitHub repo secrets list in `docs/runbook.md` (or new `docs/cron-secrets.md`) with rotation instructions
 
 **Checkpoint**: A maintainer can run the workflow manually, and the scheduled run produces green ticks on success and red on zero-row.
