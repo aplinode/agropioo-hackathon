@@ -67,11 +67,19 @@
 ### Implementation for US-S1
 
 - [x] T014 [P] Create `scripts/scrape-prices/selectors.ts` exporting a single object keyed by `source_code` with each portal's CSS selectors, the base URL, and the date-extraction strategy (single file so drift is auditable)
+<<<<<<< HEAD
 - [x] T015 [P] Create `scripts/scrape-prices/sources/amis.ts` (Punjab AMIS) — Playwright opens `ViewPrices.aspx`, walks per-commodity + per-mandi, returns `IngestRow[]` (≥3 historical rows per active mandi to satisfy the FR-008 prediction bar of ≥3 rows / ≤7d)
 - [x] T016 [P] Create `scripts/scrape-prices/sources/samis.ts` (Sindh SAMIS) — Playwright navigates the React frontend at `new-theme.staging-amis.com/market_price`, applies district/market/commodity filters via URL, returns `IngestRow[]`
 - [x] T017 [P] Create `scripts/scrape-prices/sources/fmis-kp.ts` (KP FMIS) — Playwright loads `fmis.kp.gov.pk/kp_essential_commodities_price`, iterates the datatable rows, returns `IngestRow[]` (the built-in CSV export endpoint is the preferred happy path; fall back to table scrape if needed)
 - [x] T018 [P] Create `scripts/scrape-prices/sources/bmis.ts` (Balochistan BMIS + balochistankissan fallback) — Playwright visits `amisbalochistan.org/prices/` and `balochistankissan.gob.pk/pages/market-rates`, picks district from the dropdown, returns `IngestRow[]`
 - [x] T019 [P] Create `scripts/scrape-prices/sources/pbs-spi.ts` (PBS Weekly SPI XLSX) — uses `xlsx` to parse the latest weekly XLSX from `pbs.gov.pk/price-statistics/`, returns `IngestRow[]` (federal cross-check; sparse is expected)
+=======
+- [ ] T015 [P] Create `scripts/scrape-prices/sources/amis.ts` (Punjab AMIS) — Playwright opens `ViewPrices.aspx`, walks per-commodity + per-mandi, returns `IngestRow[]` (≥3 historical rows per active mandi to satisfy the FR-008 prediction bar of ≥3 rows / ≤7d)
+- [ ] T016 [P] Create `scripts/scrape-prices/sources/samis.ts` (Sindh SAMIS) — Playwright navigates the React frontend at `new-theme.staging-amis.com/market_price`, applies district/market/commodity filters via URL, returns `IngestRow[]`
+- [ ] T017 [P] Create `scripts/scrape-prices/sources/fmis-kp.ts` (KP FMIS) — Playwright loads `fmis.kp.gov.pk/kp_essential_commodities_price`, iterates the datatable rows, returns `IngestRow[]` (the built-in CSV export endpoint is the preferred happy path; fall back to table scrape if needed)
+- [ ] T018 [P] Create `scripts/scrape-prices/sources/bmis.ts` (Balochistan BMIS + balochistankissan fallback) — Playwright visits `amisbalochistan.org/prices/` and `balochistankissan.gob.pk/pages/market-rates`, picks district from the dropdown, returns `IngestRow[]`
+- [ ] T019 [P] Create `scripts/scrape-prices/sources/pbs-spi.ts` (PBS Weekly SPI XLSX) — uses `xlsx` to parse the latest weekly XLSX from `pbs.gov.pk/price-statistics/`, returns `IngestRow[]` (federal cross-check; sparse is expected)
+>>>>>>> c84d8bc (feat(002-scraper): per-portal CSS selectors (single source of truth))
 - [ ] T020 [P] Create `scripts/scrape-prices/holiday-check.ts` — `isHoliday(mandiId, date)` returns `true` if a row exists in `mandi_holidays`; used to set `is_holiday=true` so the UI shows the badge and the drift detector doesn't false-positive
 - [ ] T021 [P] Create `scripts/scrape-prices/drift-detector.ts` — `detectDrift(source_code, rows)` returns `status='drift_suspected'` if rows=0 AND that source had historical rows for the same weekday; otherwise `status='ok'`
 - [ ] T022 Create `scripts/scrape-prices/post.ts` — `postBatch(source_code, rows, secret)` splits rows into ≤5000-row batches, signs each with the bearer, POSTs to `/api/prices/ingest`, retries once on 5xx with backoff, returns aggregated counts
