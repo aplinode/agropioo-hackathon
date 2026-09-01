@@ -326,7 +326,7 @@ function LocationSearch({
     lat: string;
     lon: string;
   }) => {
-    const placeName = item.display_name.split(",")[0];
+    const placeName = item.display_name;
     onChange(placeName);
     onLocationPick(parseFloat(item.lat), parseFloat(item.lon));
     setOpen(false);
@@ -669,7 +669,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
           addr.city_district ||
           addr.city ||
           addr.county ||
-          data.display_name?.split(",")[0] ||
+          data.display_name ||
           "Selected Location";
 
         const fullName = data.display_name || placeName;

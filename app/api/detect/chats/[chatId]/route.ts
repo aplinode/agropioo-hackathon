@@ -1,4 +1,4 @@
-import { queryOne } from "@/lib/db";
+import { query, queryOne } from "@/lib/db";
 import { requireSessionApi } from "@/lib/auth/guards";
 import { errorResponse, jsonResponse } from "@/lib/http";
 
@@ -70,4 +70,27 @@ export async function GET(
         }
       : null,
   });
+}
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ chatId: string }> },
+) {
+  const session = await requireSessionApi();
+  if (!session) return errorResponse("unauthorized", "Sign in to delete chats.", 401);
+
+  const { chatId } = await params;
+
+  const chatRow = await queryOne<{ id: string }>(
+    `SELECT id FROM detect_chats WHERE id = $1 AND account_id = $2`,
+    [chatId, session.accountId],
+  );
+
+  if (!chatRow) {
+    return errorResponse("not_found", "Chat not found.", 404);
+  }
+
+  await query(`DELETE FROM detect_chats WHERE id = $1`, [chatId]);
+
+  return jsonResponse({ deleted: true });
 }

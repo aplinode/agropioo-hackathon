@@ -47,7 +47,7 @@ export default function DetectChat({
   // Reset local chat state when the active chat changes so the
   // composer and message list do not retain stale data from a previous session.
   /* eslint-disable react-hooks/set-state-in-effect -- required to sync local chat state with prop changes */
-  /* eslint-disable react-hooks/exhaustive-deps -- intentional: reset only when chatId changes */
+  /* eslint-disable react-hooks/exhaustive-deps -- intentional: reset when chatId or initialMessages change */
   useEffect(() => {
     setMessages(initialMessages);
     setDraft(initialDraft ?? "");
@@ -55,7 +55,7 @@ export default function DetectChat({
     setStreamingText("");
     setThinking(false);
     setPreviewOpen(false);
-  }, [chatId]);
+  }, [chatId, initialMessages]);
   /* eslint-enable react-hooks/exhaustive-deps */
   /* eslint-enable react-hooks/set-state-in-effect */
 
