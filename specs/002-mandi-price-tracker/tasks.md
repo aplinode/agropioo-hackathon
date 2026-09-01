@@ -75,7 +75,7 @@
 - [ ] T020 [P] Create `scripts/scrape-prices/holiday-check.ts` — `isHoliday(mandiId, date)` returns `true` if a row exists in `mandi_holidays`; used to set `is_holiday=true` so the UI shows the badge and the drift detector doesn't false-positive
 - [ ] T021 [P] Create `scripts/scrape-prices/drift-detector.ts` — `detectDrift(source_code, rows)` returns `status='drift_suspected'` if rows=0 AND that source had historical rows for the same weekday; otherwise `status='ok'`
 - [ ] T022 Create `scripts/scrape-prices/post.ts` — `postBatch(source_code, rows, secret)` splits rows into ≤5000-row batches, signs each with the bearer, POSTs to `/api/prices/ingest`, retries once on 5xx with backoff, returns aggregated counts
-- [ ] T023 Create `scripts/scrape-prices/index.ts` — the runner: loads env, instantiates a single Playwright browser, calls each `sources/*.ts` in its own try/catch (one failure cannot block others), runs `holiday-check` and `drift-detector` per source, posts each batch via `post.ts`, exits 0 if any source wrote rows, exits 1 if zero rows across all sources (per spec §Q1)
+- [x] T023 Create `scripts/scrape-prices/index.ts` — the runner: loads env, instantiates a single Playwright browser, calls each `sources/*.ts` in its own try/catch (one failure cannot block others), runs `holiday-check` and `drift-detector` per source, posts each batch via `post.ts`, exits 0 if any source wrote rows, exits 1 if zero rows across all sources (per spec §Q1)
 
 **Checkpoint**: Locally, `npm run scrape:prices` ingests real prices for at least Punjab AMIS into the dev DB. The runner never imports the Next.js app.
 
