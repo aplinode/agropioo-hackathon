@@ -35,7 +35,17 @@ export default function DetectChat({
   onNewScan,
 }: DetectChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
-  const [draft, setDraft] = useState(initialDraft ?? "");
+  const [draft, setDraft] = useState(() => {
+    if (chatId) {
+      try {
+        const saved = localStorage.getItem(`detect-draft-${chatId}`);
+        if (saved) return saved;
+      } catch {
+        // localStorage not available
+      }
+    }
+    return initialDraft ?? "";
+  });
   const [thinking, setThinking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [streamingText, setStreamingText] = useState("");
@@ -50,7 +60,18 @@ export default function DetectChat({
   /* eslint-disable react-hooks/exhaustive-deps -- intentional: reset when chatId or initialMessages change */
   useEffect(() => {
     setMessages(initialMessages);
-    setDraft(initialDraft ?? "");
+
+    if (chatId) {
+      try {
+        const saved = localStorage.getItem(`detect-draft-${chatId}`);
+        setDraft(saved ?? initialDraft ?? "");
+      } catch {
+        setDraft(initialDraft ?? "");
+      }
+    } else {
+      setDraft("");
+    }
+
     setError(null);
     setStreamingText("");
     setThinking(false);
@@ -58,6 +79,19 @@ export default function DetectChat({
   }, [chatId, initialMessages]);
   /* eslint-enable react-hooks/exhaustive-deps */
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  useEffect(() => {
+    if (!chatId) return;
+    try {
+      if (draft) {
+        localStorage.setItem(`detect-draft-${chatId}`, draft);
+      } else {
+        localStorage.removeItem(`detect-draft-${chatId}`);
+      }
+    } catch {
+      // localStorage not available
+    }
+  }, [chatId, draft]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "nearest" });
