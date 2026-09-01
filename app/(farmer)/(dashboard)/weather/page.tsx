@@ -13,10 +13,11 @@ import { generateAIAdviceBatch } from "@/lib/weather/ai-advisory";
 import FarmSelector from "@/components/weather/FarmSelector";
 import AdvisoryCard from "@/components/weather/AdvisoryCard";
 import ForecastList from "@/components/weather/ForecastList";
-import AlertBanner from "@/components/weather/AlertBanner";
+import AlertBanner, { type AlertItem } from "@/components/weather/AlertBanner";
 import RegisterFarmForm from "@/components/weather/RegisterFarmForm";
 import WeatherDashboard from "@/components/weather/WeatherDashboard";
 import { CROPS } from "@/lib/farms/constants";
+import { scanAlertConditions, type AlertCondition } from "@/lib/weather/alerts";
 
 export const metadata: Metadata = { title: "Weather ΓÇö Agropioo" };
 
@@ -180,6 +181,8 @@ export default async function WeatherPage({
     getForecast(Number(selected.lat), Number(selected.lng)),
   ]);
 
+  const staticAlertConditions: AlertCondition[] = forecast ? scanAlertConditions(forecast) : [];
+
   let todayAdvice: { growth_stage: GrowthStage; advice_text: string; severity: Severity } | null = null;
   let forecastDays: Parameters<typeof ForecastList>[0]["days"] = [];
   let dataSourceLabel = bundle.source.demo;
@@ -270,7 +273,7 @@ export default async function WeatherPage({
     }
   }
 
-  const alerts = await query<{
+  const dbAlerts = await query<{
     id: string;
     name: string;
     alert_type: string;
@@ -278,11 +281,30 @@ export default async function WeatherPage({
     severity: string;
   }>(
     `SELECT wa.id, f.name, wa.alert_type, wa.recommendation, wa.severity
-      FROM weather_alerts wa JOIN farms f ON f.id = wa.farm_id
-      WHERE wa.account_id = $1 AND wa.read_at IS NULL AND wa.dismissed_at IS NULL
-      ORDER BY wa.created_at DESC`,
+       FROM weather_alerts wa JOIN farms f ON f.id = wa.farm_id
+       WHERE wa.account_id = $1 AND wa.read_at IS NULL AND wa.dismissed_at IS NULL
+       ORDER BY wa.created_at DESC`,
     [session.accountId],
   );
+
+  const staticAlerts: AlertItem[] = staticAlertConditions.map((c, i) => ({
+    id: `static-${c.type}-${i}`,
+    farmName: selected.name,
+    severity: c.severity,
+    recommendation: t(c.recommendationKey as CatalogKey).text,
+    alertType: c.type,
+  }));
+
+  const combinedAlerts: AlertItem[] = [
+    ...staticAlerts,
+    ...(dbAlerts ?? []).map((a) => ({
+      id: a.id,
+      farmName: a.name,
+      severity: a.severity as Severity,
+      recommendation: a.recommendation,
+      alertType: a.alert_type,
+    })),
+  ];
 
   const recentRecords = recordList.slice(0, 5);
   const recordTypeLabels: Record<string, string> = {
@@ -357,13 +379,7 @@ export default async function WeatherPage({
       )}
 
       <AlertBanner
-        alerts={(alerts ?? []).map((a) => ({
-          id: a.id,
-          farmName: a.name,
-          severity: a.severity as Severity,
-          recommendation: a.recommendation,
-          alertType: a.alert_type,
-        }))}
+        alerts={combinedAlerts}
         title={bundle.alerts.title}
         dismissLabel={bundle.alerts.dismiss}
         noAlertsLabel={bundle.alerts.noAlerts}
