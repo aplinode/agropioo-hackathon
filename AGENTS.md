@@ -72,7 +72,7 @@ Password hashing `bcryptjs` · JWT sessions `jose` · email `nodemailer` + SMTP 
 ### Design system & accessibility
 
 - Light mode only; `--agro-night` reserved for future dark mode.
-- Colors come only from `--color-agro-*` tokens (`docs/brand-colors.md`) — never inline hex; missing values get added to `@theme` first. Greens dominate; exactly ONE harvest-gold (`--agro-wheat`) conversion moment per page, with dark forest text on it (white fails contrast).
+- **Brand color lockdown.** Every color in the UI must come exclusively from the `--color-agro-*` tokens defined in `docs/brand-colors.md`, which are themselves extracted from the Agropioo logo (`references/logo.png`). No off-palette colors — no inline hex, no Tailwind color utilities outside the `agro-*` namespace, no "close enough" greens or browns invented on the spot. If a color is missing, add it to the `@theme` block first and document its logo origin. Shades and variants (hover states, disabled states, gradients) must be derived only from the existing brand palette; never introduce a new hue or saturation that is not already present in the logo or the token table. Greens dominate; exactly ONE harvest-gold (`--agro-wheat`) conversion moment per page, with dark forest text on it (white fails contrast).
 - Typography: Playfair Display sparingly (one–two display moments/page), DM Sans body, IBM Plex Mono/JetBrains Mono for data. Headings roman, sentence case.
 - Icons from the shared SVG set (`components/icons.tsx`); no emoji as icons.
 - UI honesty: no invented metrics, testimonials, logos, or fabricated stats anywhere. Aspirational projections are never rendered as proven results.

@@ -22,7 +22,7 @@ This plan layers Playwright + xlsx on top of the existing Next.js + Postgres sta
 - **Primary Dependencies (new, scoped to scraper only)**:
   - `playwright` (full Chromium) — **requires founder approval per Constitution's new-dependency rule.** Used only inside `scripts/scrape-prices/` and `.github/workflows/mandi-cron.yml`; never imported by the Next.js app or listed in the runtime app deps.
   - `xlsx` (SheetJS) — same constraint. Used only to parse the PBS Weekly SPI XLSX in the scraper runner.
-- **Storage**: Neon Lakebase Postgres. Schema changes are append-only migrations: `0008_mandi_prices.sql` already exists; we add `0009_scraper_audit_and_holidays.sql` introducing `scraper_runs` and `mandi_holidays`, and amending `mandi_prices` (drop the `('govt_api','admin_manual')` source CHECK, add `source_code` column, add the new index).
+- **Storage**: Neon Lakebase Postgres. Schema changes are append-only migrations: `0008_mandi_prices.sql` already exists; we add `0010_scraper_audit_and_holidays.sql` introducing `scraper_runs` and `mandi_holidays`, and amending `mandi_prices` (drop the `('govt_api','admin_manual')` source CHECK, add `source_code` column, add the new index).
 - **Testing**: Vitest for Zod schemas and route handlers (existing); manual acceptance run-through for UI (existing per Constitution §Testing Policy). Scraper code is small enough to validate with a one-off `--dry-run` against the live portals + golden output diff in CI; no live-network tests committed to the test suite (per Constitution security rules — never log secrets, never run flaky browser tests on CI).
 - **Target Platform**: Server: Vercel (Next.js), unchanged. Cron: GitHub Actions Ubuntu `ubuntu-latest` runner. Farmer UI: outdoor-mobile web, unchanged.
 - **Project Type**: full-stack Next.js web app + standalone Node scraper that POSTs to a Route Handler.
@@ -111,7 +111,7 @@ scripts/scrape-prices/
 app/api/prices/ingest/route.ts         # EXTENDED — bearer + rate limit + audit row
 app/api/prices/health/route.ts         # NEW — last successful scrape age for alerts
 
-db/migrations/0009_scraper_audit_and_holidays.sql
+db/migrations/0010_scraper_audit_and_holidays.sql
   # ALTER mandi_prices: drop old source CHECK, add source_code VARCHAR(32) NOT NULL,
   #   add CHECK (source_code IN ('amis_pk','samis_pk','fmis_kp','bmis_balochistan','pbs_spi','seed_pk_initial')),
   #   add index on (source_code, date DESC).
@@ -147,7 +147,7 @@ package.json                              # EXTENDED — `scrape:prices` script;
 After this plan is approved, `/speckit-tasks` will produce a `tasks.md` grouped by:
 
 1. **Phase 0 — Setup**: branch `feat/002-scraper`, install `playwright` + `xlsx` in devDeps only.
-2. **Phase 1 — Migration**: `0009_scraper_audit_and_holidays.sql`, update `data-model.md`, seed `mandi_holidays`.
+2. **Phase 1 — Migration**: `0010_scraper_audit_and_holidays.sql`, update `data-model.md`, seed `mandi_holidays`.
 3. **Phase 2 — Ingest hardening**: extend `POST /api/prices/ingest` with bearer + rate-limit + audit; new `GET /api/prices/health`.
 4. **Phase 3 — Scraper runner**: implement `scripts/scrape-prices/` (sources, selectors, post, drift detector, holiday check).
 5. **Phase 4 — Workflow**: extend `.github/workflows/mandi-cron.yml`; add Playwright cache; document `PRICES_CRON_SECRET` in `.env.example`.
