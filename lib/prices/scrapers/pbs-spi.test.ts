@@ -173,8 +173,16 @@ describe("scrapeSpi", () => {
       readWorkbook: (data) => {
         const wb2 = XLSX.read(data, { type: "array" });
         const first = wb2.SheetNames[0];
-        const rows = XLSX.utils.sheet_to_json<SpiSheetRow>(wb2.Sheets[first], { defval: "" });
-        return rows;
+        const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(wb2.Sheets[first], { defval: "" });
+        return rows.map((row) => ({
+          mandi: row["Mandi"],
+          district: row["District"],
+          commodity: row["Commodity"],
+          unit: row["Unit"],
+          minPrice: row["Min"],
+          modalPrice: row["Modal"],
+          maxPrice: row["Max"],
+        }));
       },
     });
     expect(out).toHaveLength(2);
