@@ -27,7 +27,7 @@ This plan layers Playwright + xlsx on top of the existing Next.js + Postgres sta
 - **Target Platform**: Server: Vercel (Next.js), unchanged. Cron: GitHub Actions Ubuntu `ubuntu-latest` runner. Farmer UI: outdoor-mobile web, unchanged.
 - **Project Type**: full-stack Next.js web app + standalone Node scraper that POSTs to a Route Handler.
 - **Performance Goals**:
-  - GET `/api/prices` unchanged (sub-second Postgres read).
+  - `GET /api/prices` p95 < 200ms at the Vercel edge for an authenticated farmer with district + bordering districts (SC-013, measured via Vercel Analytics on a 14-day rolling window).
   - `/api/prices/ingest` accepts a batch up to 5,000 rows in a single POST under 30s.
   - Cron run completes within 15 min (SC-011).
 - **Constraints**:
