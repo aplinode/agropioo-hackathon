@@ -92,41 +92,6 @@ type FarmPlanEntry = {
   rotationSuggestions: RotationSuggestion[];
 };
 
-const seasonOptions = [
-  { value: "summer", label: "" },
-  { value: "winter", label: "" },
-  { value: "autumn", label: "" },
-  { value: "spring", label: "" },
-  { value: "rainy", label: "" },
-  { value: "windy", label: "" },
-];
-
-const soilOptions = [
-  { value: "sandy", label: "" },
-  { value: "sandy_loam", label: "" },
-  { value: "loamy", label: "" },
-  { value: "clay_loam", label: "" },
-  { value: "clay", label: "" },
-  { value: "silty", label: "" },
-  { value: "saline", label: "" },
-  { value: "rocky", label: "" },
-  { value: "other", label: "" },
-];
-
-const irrigationOptions = [
-  { value: "rainfed", label: "" },
-  { value: "canal", label: "" },
-  { value: "tubewell", label: "" },
-  { value: "mixed", label: "" },
-];
-
-const budgetOptions = [
-  { value: "low", label: "" },
-  { value: "medium", label: "" },
-  { value: "high", label: "" },
-  { value: "very_high", label: "" },
-];
-
 const riskLabelMap: Record<string, string> = {
   price_volatility: "Price volatility",
   pest_pressure: "Pest pressure",
@@ -496,15 +461,11 @@ type CropsClientProps = {
   bundle: CropsBundle;
   farms: Array<{ id: string; name: string; location: string }>;
   initialRecommendations?: CropRecommendation[];
-  initialRequestId?: string;
 };
 
-export default function CropsClient({ bundle, farms, initialRecommendations = [], initialRequestId }: CropsClientProps) {
+export default function CropsClient({ bundle, farms, initialRecommendations = [] }: CropsClientProps) {
   const [recommendations, setRecommendations] = useState<CropRecommendation[]>(initialRecommendations);
   const [existingRequest, setExistingRequest] = useState<CropRecommendationRequest | null>(null);
-  const [currentRequest, setCurrentRequest] = useState<CropRecommendationRequest | null>(
-    initialRequestId ? { id: initialRequestId, farmId: "", targetSeason: "", targetYear: 0, createdAt: "" } : null
-  );
   const [rotationPlan, setRotationPlan] = useState<FarmPlanEntry | null>(null);
   const [showCompare, setShowCompare] = useState(false);
   const [compareSelectedId, setCompareSelectedId] = useState<string | null>(null);
@@ -542,7 +503,6 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
     setNoCandidates(false);
     setExistingRequest(null);
     setRecommendations([]);
-    setCurrentRequest(null);
     setRotationPlan(null);
 
     try {
@@ -575,7 +535,6 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
       }
 
       setRecommendations(data.recommendations ?? []);
-      setCurrentRequest(data.request);
       if (data.recommendations?.length === 0) setNoCandidates(true);
     } catch {
       setError(bundle.errors.generic);
@@ -595,7 +554,6 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
       }
       const data = await res.json();
       setRecommendations(data.recommendations ?? []);
-      setCurrentRequest(data.request);
       setExistingRequest(null);
       if (data.recommendations?.length === 0) setNoCandidates(true);
     } catch {

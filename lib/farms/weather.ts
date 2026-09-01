@@ -2,6 +2,7 @@ export type WeatherSnapshot = {
   condition: string | null;
   temp_c: number | null;
   humidity: number | null;
+  wind_kph: number | null;
   fetched_at: string | null;
 };
 
@@ -9,6 +10,7 @@ const DEFAULT_SNAPSHOT: WeatherSnapshot = {
   condition: null,
   temp_c: null,
   humidity: null,
+  wind_kph: null,
   fetched_at: null,
 };
 
@@ -33,6 +35,7 @@ export async function fetchCurrentWeather(lat: number, lng: number, date?: strin
       condition: data.weather?.[0]?.main ?? null,
       temp_c: data.main?.temp ?? null,
       humidity: data.main?.humidity ?? null,
+      wind_kph: data.wind?.speed != null ? Math.round(data.wind.speed * 3.6) : null,
       fetched_at: new Date().toISOString(),
     };
   } catch {
