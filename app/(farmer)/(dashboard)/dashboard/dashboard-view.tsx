@@ -491,7 +491,7 @@ export default function DashboardView({
       {/* Quick actions */}
       <section aria-labelledby="actions-heading">
         <SectionHead id="actions-heading" title={bundle.quickActionsHeading} />
-        <ul className="mt-3 grid grid-cols-4 gap-2 sm:gap-3">
+        <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
           {quickActions.map((action) => {
             const ActionIcon = quickActionIcon[action.icon];
             return (

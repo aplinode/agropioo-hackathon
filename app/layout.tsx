@@ -1,40 +1,59 @@
 import type { Metadata, Viewport } from "next";
-import {
-  Playfair_Display,
-  DM_Sans,
-  Geist_Mono,
-  Noto_Nastaliq_Urdu,
-  Noto_Sans_Arabic,
-} from "next/font/google";
+import localFont from "next/font/local";
 import { LOCALES } from "@/lib/i18n/config";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
+const playfair = localFont({
+  src: [
+    { path: "./fonts/PlayfairDisplay-400.ttf", weight: "400" },
+    { path: "./fonts/PlayfairDisplay-500.ttf", weight: "500" },
+    { path: "./fonts/PlayfairDisplay-600.ttf", weight: "600" },
+    { path: "./fonts/PlayfairDisplay-700.ttf", weight: "700" },
+  ],
   variable: "--font-playfair",
   display: "swap",
 });
 
-const dmSans = DM_Sans({
-  subsets: ["latin"],
+const dmSans = localFont({
+  src: [
+    { path: "./fonts/DM-Sans-400.ttf", weight: "400" },
+    { path: "./fonts/DM-Sans-500.ttf", weight: "500" },
+    { path: "./fonts/DM-Sans-600.ttf", weight: "600" },
+    { path: "./fonts/DM-Sans-700.ttf", weight: "700" },
+  ],
   variable: "--font-dm-sans",
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
+const geistMono = localFont({
+  src: [
+    { path: "./fonts/GeistMono-400.ttf", weight: "400" },
+    { path: "./fonts/GeistMono-500.ttf", weight: "500" },
+    { path: "./fonts/GeistMono-600.ttf", weight: "600" },
+    { path: "./fonts/GeistMono-700.ttf", weight: "700" },
+  ],
   variable: "--font-geist-mono",
   display: "swap",
 });
 
-const nastaliq = Noto_Nastaliq_Urdu({
-  subsets: ["arabic"],
+const nastaliq = localFont({
+  src: [
+    { path: "./fonts/NastaliqUrdu-400.ttf", weight: "400" },
+    { path: "./fonts/NastaliqUrdu-500.ttf", weight: "500" },
+    { path: "./fonts/NastaliqUrdu-600.ttf", weight: "600" },
+    { path: "./fonts/NastaliqUrdu-700.ttf", weight: "700" },
+  ],
   variable: "--font-nastaliq",
   display: "swap",
 });
 
-const arabicUi = Noto_Sans_Arabic({
-  subsets: ["arabic"],
+const arabicUi = localFont({
+  src: [
+    { path: "./fonts/NotoSansArabic-400.ttf", weight: "400" },
+    { path: "./fonts/NotoSansArabic-500.ttf", weight: "500" },
+    { path: "./fonts/NotoSansArabic-600.ttf", weight: "600" },
+    { path: "./fonts/NotoSansArabic-700.ttf", weight: "700" },
+  ],
   variable: "--font-arabic-ui",
   display: "swap",
 });

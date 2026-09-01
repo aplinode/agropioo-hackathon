@@ -109,7 +109,7 @@ export default function SiteHeader({
             />
           </Link>
 
-          <nav className="hidden items-center gap-9 md:flex" aria-label="Main">
+          <nav className="hidden items-center gap-6 xl:gap-9 lg:flex" aria-label="Main">
             {navLinks.map((link) => (
               <Link
                 key={link.label}
@@ -126,7 +126,7 @@ export default function SiteHeader({
             ))}
           </nav>
 
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-2 xl:gap-4 lg:flex">
             <LanguageSwitcher label={strings.languageSwitcher} />
             {session ? (
               <Link
@@ -162,7 +162,7 @@ export default function SiteHeader({
             )}
           </div>
 
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <LanguageSwitcher label={strings.languageSwitcher} />
             <button
               type="button"
@@ -193,7 +193,7 @@ export default function SiteHeader({
 
       {/* Mobile sidebar */}
       <div
-        className={`fixed inset-0 z-[60] md:hidden ${
+        className={`fixed inset-0 z-[60] lg:hidden ${
           mobileMenuOpen ? "" : "pointer-events-none"
         }`}
         aria-hidden={!mobileMenuOpen}
