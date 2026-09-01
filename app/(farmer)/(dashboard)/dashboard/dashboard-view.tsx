@@ -148,16 +148,16 @@ type DashboardViewProps = {
 };
 
 const CHECKLIST_ITEMS = [
-  { id: "checklist-farm", label: "Add your first farm", href: "/farms/new" },
-  { id: "checklist-advisor", label: "Ask the advisor once", href: "/advisor" },
-  { id: "checklist-detect", label: "Run your first detection", href: "/detect" },
+  { id: "checklist-farm", labelKey: "addFirstFarm", href: "/farms/new" },
+  { id: "checklist-advisor", labelKey: "demo.checklistAdvisor", href: "/advisor" },
+  { id: "checklist-detect", labelKey: "demo.checklistDetect", href: "/detect" },
 ] as const;
 
 const QUICK_ACTIONS = [
-  { id: "action-record", label: "Add record", href: "/records/new", icon: "clipboard" as const },
-  { id: "action-advisor", label: "Ask advisor", href: "/advisor", icon: "chat" as const },
-  { id: "action-scan", label: "Scan crop", href: "/detect", icon: "camera" as const },
-  { id: "action-prices", label: "Check prices", href: "/prices", icon: "tag" as const },
+  { id: "action-record", labelKey: "demo.actionRecord", href: "/records/new", icon: "clipboard" as const },
+  { id: "action-advisor", labelKey: "demo.actionAdvisor", href: "/advisor", icon: "chat" as const },
+  { id: "action-scan", labelKey: "demo.actionScan", href: "/detect", icon: "camera" as const },
+  { id: "action-prices", labelKey: "demo.actionPrices", href: "/prices", icon: "tag" as const },
 ] as const;
 
 export default function DashboardView({
@@ -366,12 +366,12 @@ export default function DashboardView({
             <>
               <div className="flex items-baseline justify-between gap-3">
                 <h2 className="shrink-0 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate">
-                  {bundle.weatherTitle.replace("{location}", "Your area")}
+                  {bundle.weatherTitle.replace("{location}", bundle.weatherYourArea)}
                 </h2>
                 <CloudRainIcon className="h-5 w-5 shrink-0 text-agro-canopy" aria-hidden="true" />
               </div>
               <p className="mt-4 text-sm text-agro-slate">
-                Weather data will appear here once your farm location is set.
+                {bundle.weatherNoLocation}
               </p>
             </>
           ) : (
@@ -492,7 +492,9 @@ export default function DashboardView({
                     <ActionIcon className="h-5 w-5" />
                   </span>
                   <span className="text-xs font-medium leading-tight text-agro-ink">
-                    {action.label}
+                    {action.labelKey.startsWith("demo.")
+                      ? (bundle.demo[action.labelKey.slice(5) as keyof typeof bundle.demo] as string)
+                      : (bundle[action.labelKey as keyof DashboardBundle] as string)}
                   </span>
                 </Link>
               </li>
@@ -683,7 +685,9 @@ export default function DashboardView({
                     <span
                       className={`flex-1 text-sm ${done ? "text-agro-slate line-through" : "font-medium text-agro-ink"}`}
                     >
-                      {item.label}
+                      {item.labelKey.startsWith("demo.")
+                        ? (bundle.demo[item.labelKey.slice(5) as keyof typeof bundle.demo] as string)
+                        : (bundle[item.labelKey as keyof DashboardBundle] as string)}
                     </span>
                     <ChevronRightIcon
                       className="h-4 w-4 shrink-0 text-agro-slate transition-colors group-hover:text-agro-canopy"
