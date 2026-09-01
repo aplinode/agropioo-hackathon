@@ -157,8 +157,8 @@
 
 ### Implementation for US-S4
 
-- [ ] T037 [P] [US-S4] Vitest integration test for `scripts/scrape-prices/drift-detector.ts` — given a stub source with rows=[] and same-weekday history, returns `drift_suspected`; given rows=[] but a matching `mandi_holidays` row, returns `ok` with `is_holiday=true`
-- [ ] T038 [US-S4] Document the operator runbook for drift in `specs/002-mandi-price-tracker/runbook.md` (how to read the health endpoint, where to fix selectors, how to manually trigger the workflow)
+- [x] T037 [P] [US-S4] Vitest integration test for `scripts/scrape-prices/drift-detector.ts` — given a stub source with rows=[] and same-weekday history, returns `drift_suspected`; given rows=[] but a matching `mandi_holidays` row, returns `ok` with `is_holiday=true`
+- [x] T038 [US-S4] Document the operator runbook for drift in `specs/002-mandi-price-tracker/runbook.md` (how to read the health endpoint, where to fix selectors, how to manually trigger the workflow)
 
 **Checkpoint**: Drift is visible and actionable.
 
