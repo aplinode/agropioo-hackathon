@@ -70,7 +70,7 @@ Stores daily market price entries per crop per market.
 
 ---
 
-### 3a. `scraper_runs` *(new — migration 0009)*
+### 3a. `scraper_runs` *(new — migration 0010)*
 
 Audit log for every `POST /api/prices/ingest` call. Retained 7 days, then pruned by a nightly maintenance job.
 
@@ -89,7 +89,7 @@ Audit log for every `POST /api/prices/ingest` call. Retained 7 days, then pruned
 
 ---
 
-### 3b. `mandi_holidays` *(new — migration 0009)*
+### 3b. `mandi_holidays` *(new — migration 0010)*
 
 Pre-flagged public holidays and weekly closures so the scraper's drift detector does not mistake a holiday for a portal-schema break.
 
