@@ -1,0 +1,1130 @@
+
+ ✻ Conversation compacted
+
+ ▪ Looking at the current state of tasks.md and the codebase to resume from
+   T032.
+
+ ▪ Bash(grep -n "T03[2-6]\|T04" /home/sheikh-mohammad/Documents/hackathons/agr
+   opioo/specs/002-mandi-price-tracker/tasks.md | head -40)
+   └ 149:- [ ] T032 [P] Create dashboard summary widget
+     components/prices/dashboard-prices-widget.tsx rendering top 3 tracked
+     crops with 7-day mini-sparklines
+     150:- [ ] T033 Integrate summary widget into main farmer dashboard in
+     app/(farmer)/(dashboard)/page.tsx
+     151:- [ ] T034 [P] Create offline price list and history caching hook
+     hooks/use-offline-prices.ts storing data in browser localStorage
+     152:- [ ] T035 Create scheduled nightly prediction background cron Route
+     Handler POST /api/cron/predict-prices in
+     app/api/cron/predict-prices/route.ts
+     153:- [ ] T036 Create free GitHub Actions scheduled workflow configuration
+      .github/workflows/mandi-cron.yml triggering daily price ingestion and
+     predictions
+     164:- [ ] T040 Run npx vitest run to verify all automated test suites pass
+     165:- [ ] T041 Run npm run lint and npm run build to confirm zero
+     TypeScript compilation or linting errors
+     166:- [ ] T042 Verify all 36 items in
+     specs/002-mandi-price-tracker/checklists/quality-gate.md pass
+
+ ▪ Bash(ls 
+   /home/sheikh-mohammad/Documents/hackathons/agropioo/components/prices/)
+   └ global-mandi-search.tsx
+     mandi-price-card.tsx
+     market-comparison-table.tsx
+     prediction-chart.tsx
+     price-alert-modal.tsx
+     price-history-chart.tsx
+     recommendation-badge.tsx
+
+ ▪ Bash(cat /home/sheikh-mohammad/Documents/hackathons/agropioo/app/\(farmer\)
+   /\(dashboard\)/dashboard/dashboard-bundle.ts | tail -20)
+   └ quickActionsHeading: string;
+       cropDoctor: string;
+       detectTitle: string;
+       detectBody: string;
+       myFarms: string;
+       addFarm: string;
+       viewAllFarms: string;
+       healthGood: string;
+       healthWatch: string;
+       setupChecklist: string;
+       checklistProgress: string;
+       dismissChecklist: string;
+       setupProgress: string;
+       languageLabel: string;
+       signOut: string;
+       pricesWidgetTitle: string;
+       pricesWidgetView: string;
+       pricesWidgetPerMaund: string;
+       pricesWidgetNoTracked: string;
+     };
+
+ ▪ Bash(grep -n "pricesWidget\|user_crop" 
+   /home/sheikh-mohammad/Documents/hackathons/agropioo/lib/i18n/server.ts)
+   └ 200:    pricesWidgetTitle: t("app.dashboard.pricesWidgetTitle").text,
+     201:    pricesWidgetView: t("app.dashboard.pricesWidgetView").text,
+     202:    pricesWidgetPerMaund:
+     t("app.dashboard.pricesWidgetPerMaund").text,
+     203:    pricesWidgetNoTracked:
+     t("app.dashboard.pricesWidgetNoTracked").text,
+
+ ▪ Bash(cat /home/sheikh-mohammad/Documents/hackathons/agropioo/components/pri
+   ces/mandi-price-card.tsx)
+   └ "use client";
+
+     import { MapPinIcon, TrendingUpIcon, TrendingDownIcon, InfoIcon } from
+     "@/components/icons";
+     import type { PricesBundle } from
+     "@/app/(farmer)/(dashboard)/prices/prices-bundle";
+     import type { EnrichedPrice } from "@/lib/prices/api-types";
+
+     export type MandiPrice = EnrichedPrice;
+
+     function formatNumber(n: number): string {
+       return n.toLocaleString("en-PK");
+     }
+
+     function changeTone(change_pct: number): "up" | "down" | "flat" {
+       if (change_pct > 0.05) return "up";
+       if (change_pct < -0.05) return "down";
+       return "flat";
+     }
+
+     export default function MandiPriceCard({
+       price,
+       bundle,
+     }: {
+       price: MandiPrice;
+       bundle: PricesBundle;
+     }) {
+       const tone = changeTone(price.change_pct);
+       const toneClass =
+         tone === "up"
+           ? "bg-agro-mint text-agro-canopy"
+           : tone === "down"
+             ? "bg-agro-wheat/20 text-agro-earth"
+             : "bg-agro-stone text-agro-slate";
+
+       const updatedText =
+         price.updated_days_ago <= 0
+           ? bundle.updatedToday
+           : bundle.updatedDaysAgo.replace("{days}",
+     String(price.updated_days_ago));
+
+       return (
+         <article
+           className="relative flex flex-col overflow-hidden rounded-3xl border
+      border-agro-sprout bg-white p-5 shadow-sm"
+           aria-label={${price.mandi_name} — ${price.crop_name}}
+         >
+           {price.is_best_price ? (
+
+               {bundle.bestPrice}
+
+           ) : null}
+        <div className="flex items-start gap-3 pr-20">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center 
+      rounded-full bg-agro-mint">
+            <MapPinIcon size={20} className="text-agro-canopy" />
+          </div>
+          <div>
+            <h3 className="display-heading font-display text-lg font-bold 
+      text-agro-forest">
+              {price.mandi_name}
+            </h3>
+            <p className="text-sm capitalize 
+      text-agro-slate">{price.district}</p>
+          </div>
+        </div>
+
+        <div className="mt-5 flex items-baseline gap-2">
+          <span className="font-display text-4xl font-bold text-agro-forest">
+            {formatNumber(price.modal_price)}
+          </span>
+          <span className="text-sm font-medium 
+      text-agro-slate">{bundle.perMaund}</span>
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1
+       text-xs font-semibold ${toneClass}`}
+          >
+            {tone === "up" ? (
+              <TrendingUpIcon size={14} />
+            ) : tone === "down" ? (
+              <TrendingDownIcon size={14} />
+            ) : (
+              <InfoIcon size={14} />
+            )}
+            {price.change_pct > 0 ? "+" : ""}
+            {price.change_pct}% ({price.change_pkr > 0 ? "+" : ""}
+            {formatNumber(price.change_pkr)} PKR)
+          </span>
+
+          {price.distance_km !== null ? (
+            <span className="inline-flex items-center gap-1 rounded-full 
+      bg-agro-stone px-2.5 py-1 text-xs font-medium text-agro-slate">
+              <MapPinIcon size={14} />
+              {bundle.distanceKm.replace("{km}", 
+      String(Math.round(price.distance_km)))}
+            </span>
+          ) : null}
+        </div>
+
+        <div className="mt-4 flex items-center justify-between border-t 
+      border-agro-sprout pt-4 text-xs text-agro-slate">
+          <span>
+            {formatNumber(price.min_price)}–{formatNumber(price.max_price)} PKR
+          </span>
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 
+      font-medium ${
+              price.updated_days_ago > 0 || price.is_holiday
+                ? "bg-agro-wheat/20 text-agro-earth"
+                : "bg-agro-mint text-agro-canopy"
+            }`}
+          >
+            {price.is_holiday ? bundle.marketHoliday : updatedText}
+          </span>
+        </div>
+      </article>
+       );
+     }
+
+ ▪ Bash(grep -n "user_crop_preferences\|mandi_prices" /home/sheikh-mohammad/Do
+   cuments/hackathons/agropioo/app/\(farmer\)/\(dashboard\)/prices/page.tsx | 
+   head -20)
+   └ (no output)
+
+ ▪ Bash(grep -n "user_crop_preferences\|mandi_prices\|getUserId\|session" 
+   /home/sheikh-mohammad/Documents/hackathons/agropioo/app/\(farmer\)/\(dashbo
+   ard\)/prices/page.tsx | head -30)
+   └ (no output)
+
+ ▪ Bash(head -80 /home/sheikh-mohammad/Documents/hackathons/agropioo/app/\(far
+   mer\)/\(dashboard\)/prices/page.tsx)
+   └ import type { Metadata } from "next";
+     import { requireSessionPage } from "@/lib/auth/guards";
+     import { getPricesBundle } from "@/lib/i18n/server";
+     import { query } from "@/lib/db";
+     import { GET as getPricesApi } from "@/app/api/prices/route";
+     import PricesClient from "./prices-client";
+
+     export const metadata: Metadata = {
+       title: "Mandi Prices — Agropioo",
+     };
+
+     type CropOption = { id: string; name_en: string };
+     type MandiOption = { id: string; name_en: string };
+
+     export default async function PricesPage() {
+       await requireSessionPage();
+
+       const [bundle, crops, mandis, initialRes] = await Promise.all([
+         getPricesBundle(),
+         query(select id, name_en from crops order by name_en),
+         query(select id, name_en from mandis order by name_en),
+         getPricesApi(new Request("http://localhost/api/prices")),
+       ]);
+
+       const initial = await initialRes.json();
+
+       return (
+
+
+             <PricesClient bundle={bundle} crops={crops ?? []} mandis={mandis
+     ?? []} initial={initial} />
+
+
+       );
+     }
+
+ ▪ Bash(cat /home/sheikh-mohammad/Documents/hackathons/agropioo/app/\(farmer\)
+   /\(dashboard\)/dashboard/page.tsx)
+   └ import type { Metadata } from "next";
+     import { getAppLocale, getDashboardBundle } from "@/lib/i18n/server";
+     import DashboardView from "./dashboard-view";
+     import { requireSessionPage } from "@/lib/auth/guards";
+     import { query, queryOne } from "@/lib/db";
+     import { computeFarmHealth } from "@/lib/farms/health";
+
+     export const metadata: Metadata = {
+       title: "Dashboard — Agropioo",
+       description:
+         "Today's advisory, weather, alerts, and every Agropioo tool — one
+     screen that answers kya karoon aaj?",
+     };
+
+     export default async function DashboardPage({
+       searchParams,
+     }: {
+       searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+     }) {
+       const params = await searchParams;
+       const emptyView = params.view === "empty";
+       const weatherOff = params.weather === "off";
+       const appLocale = await getAppLocale();
+       const bundle = await getDashboardBundle();
+
+       const session = await requireSessionPage();
+       let farms: Array<Record<string, unknown>> = [];
+
+       const userRow = await queryOne<{ full_name: string }>(
+         SELECT full_name FROM users WHERE id = $1,
+         [session.accountId],
+       );
+       const user = {
+         fullName: userRow?.full_name ?? "Farmer",
+         email: session.email,
+       };
+
+       try {
+         const rawFarms = await query<Record<string, unknown>>(
+           SELECT * FROM farms WHERE account_id = $1 AND archived_at IS NULL 
+     ORDER BY created_at DESC LIMIT 4,
+           [session.accountId]
+         );
+      farms = await Promise.all(
+        rawFarms.map(async (farm) => {
+          const recent = await query<{ type: string; event_date: string }>(
+            `SELECT type, event_date FROM records WHERE farm_id = $1 ORDER BY 
+      event_date DESC LIMIT 5`,
+            [farm.id]
+          );
+
+          return {
+            ...farm,
+            health: computeFarmHealth(farm.growth_stages as Record<string, 
+      string>, recent),
+          };
+        })
+      );
+       } catch (err) {
+         console.error("Error fetching farms for dashboard:", err);
+       }
+
+       return (
+         <DashboardView
+           variant={emptyView ? "empty" : "default"}
+           weatherAvailable={!weatherOff}
+           appLocale={appLocale}
+           bundle={bundle}
+           farms={farms}
+           user={user}
+         />
+       );
+     }
+
+ ▪ Now I'll create the dashboard prices widget. It needs to accept pre-fetched
+   price data and render sparklines as inline SVG.
+
+ ▪ Bash(grep -n "TrendingUpIcon\|TrendingDownIcon\|ArrowRightIcon" 
+   /home/sheikh-mohammad/Documents/hackathons/agropioo/components/icons.tsx | 
+   head -10)
+   └ 71:export function ArrowRightIcon(props: IconProps) {
+     266:export function TrendingUpIcon(props: IconProps) {
+     349:export function TrendingDownIcon(props: IconProps) {
+
+ ▪ Write(/ho/.../dashboard-prices-widget.tsx)
+   └ Accepted dashboard-prices-widget.tsx
+
+        1 import Link from "next/link";
+        2 import { TrendingUpIcon, TrendingDownIcon, ArrowRightIcon } from "@/
+          components/icons";
+        3 import type { DashboardBundle } from "@/app/(farmer)/(dashboard)/das
+          hboard/dashboard-bundle";
+        4 
+        5 export type WidgetCropPrice = {
+        6   crop_id: string;
+        7   crop_name: string;
+        8   modal_price: number;
+        9   change_pct: number;
+       10   sparkline: number[]; // 7 values, oldest → newest
+       11 };
+       12 
+       13 function Sparkline({ values, tone }: { values: number[]; tone: "up" 
+          | "down" | "flat" }) {
+       14   if (values.length < 2) return null;
+       15 
+       16   const min = Math.min(...values);
+       17   const max = Math.max(...values);
+       18   const range = max - min || 1;
+       19   const W = 56;
+       20   const H = 24;
+       21   const step = W / (values.length - 1);
+       22 
+       23   const points = values
+       24     .map((v, i) => {
+       25       const x = i * step;
+       26       const y = H - ((v - min) / range) * H;
+       27       return `${x},${y}`;
+       28     })
+       29     .join(" ");
+       30 
+       31   const strokeColor =
+       32     tone === "up" ? "#16a34a" : tone === "down" ? "#b45309" : "#6b72
+          80";
+       33 
+       34   return (
+       35     <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} aria-hidden=
+          "true">
+       36       <polyline
+       37         points={points}
+       38         fill="none"
+       39         stroke={strokeColor}
+       40         strokeWidth="2"
+       41         strokeLinejoin="round"
+       42         strokeLinecap="round"
+       43       />
+       44     </svg>
+       45   );
+       46 }
+       47 
+       48 function changeTone(pct: number): "up" | "down" | "flat" {
+       49   if (pct > 0.05) return "up";
+       50   if (pct < -0.05) return "down";
+       51   return "flat";
+       52 }
+       53 
+       54 export default function DashboardPricesWidget({
+       55   prices,
+       56   bundle,
+       57 }: {
+       58   prices: WidgetCropPrice[];
+       59   bundle: DashboardBundle;
+       60 }) {
+       61   return (
+       62     <section
+       63       className="rounded-3xl border border-agro-sprout bg-white p-5 
+          shadow-sm"
+       64       aria-label={bundle.pricesWidgetTitle}
+       65     >
+       66       <div className="mb-4 flex items-center justify-between">
+       67         <h2 className="font-display text-base font-semibold text-agr
+          o-forest">
+       68           {bundle.pricesWidgetTitle}
+       69         </h2>
+       70         <Link
+       71           href="/prices"
+       72           className="inline-flex items-center gap-1 text-xs font-med
+          ium text-agro-canopy hover:underline"
+       73         >
+       74           {bundle.pricesWidgetView}
+       75           <ArrowRightIcon size={12} />
+       76         </Link>
+       77       </div>
+       78 
+       79       {prices.length === 0 ? (
+       80         <p className="text-sm text-agro-slate">{bundle.pricesWidgetN
+          oTracked}</p>
+       81       ) : (
+       82         <ul className="space-y-3" role="list">
+       83           {prices.map((p) => {
+       84             const tone = changeTone(p.change_pct);
+       85             const changeLabel = `${p.change_pct > 0 ? "+" : ""}${p.c
+          hange_pct.toFixed(1)}%`;
+       86             const toneClass =
+       87               tone === "up"
+       88                 ? "text-agro-canopy"
+       89                 : tone === "down"
+       90                   ? "text-agro-earth"
+       91                   : "text-agro-slate";
+       92 
+       93             return (
+       94               <li key={p.crop_id} className="flex items-center justi
+          fy-between gap-3">
+       95                 <div className="min-w-0">
+       96                   <p className="truncate text-sm font-medium capital
+          ize text-agro-forest">
+       97                     {p.crop_name}
+       98                   </p>
+       99                   <p className="flex items-center gap-1 text-xs text
+          -agro-slate">
+      100                     <span className="font-semibold text-agro-forest"
+          >
+      101                       {p.modal_price.toLocaleString("en-PK")}
+      102                     </span>
+      103                     {bundle.pricesWidgetPerMaund}
+      104                     <span className={`inline-flex items-center gap-0
+          .5 font-semibold ${toneClass}`}>
+      105                       {tone === "up" ? (
+      106                         <TrendingUpIcon size={11} />
+      107                       ) : tone === "down" ? (
+      108                         <TrendingDownIcon size={11} />
+      109                       ) : null}
+      110                       {changeLabel}
+      111                     </span>
+      112                   </p>
+      113                 </div>
+      114                 <Sparkline values={p.sparkline} tone={tone} />
+      115               </li>
+      116             );
+      117           })}
+      118         </ul>
+      119       )}
+      120     </section>
+      121   );
+      122 }
+
+
+ ▪ Now integrate the widget into the dashboard page — fetch top 3 tracked crops
+   + 7-day sparklines server-side.
+
+ ▪ Read(/home/.../dashboard-view.tsx)
+   └ Read 658 lines
+
+ ▪ Now I'll update the dashboard page to fetch price data server-side, and
+   update the view to accept and render the widget.
+
+ ▪ Edit(/home/.../dashboard/page.tsx)
+   └ Accepted page.tsx
+
+       3  import DashboardView from "./dashboard-view";
+       4  import { requireSessionPage } from "@/lib/auth/guards";
+       5  import { query, queryOne } from "@/lib/db";
+       6  import { computeFarmHealth } from "@/lib/farms/health";
+       7 +import type { WidgetCropPrice } from "@/components/prices/dashboard-
+         +prices-widget";                                                     
+       8  
+       9  export const metadata: Metadata = {
+      10    title: "Dashboard — Agropioo",
+      11    description:
+
+
+ ▪ Now add the prices fetch logic and pass data to DashboardView:
+
+ ▪ Edit(/home/.../dashboard/page.tsx)
+   └ Accepted page.tsx
+
+       57    } catch (err) {
+       58      console.error("Error fetching farms for dashboard:", err);
+       59    }
+       60  
+       61 +  let widgetPrices: WidgetCropPrice[] = [];                        
+       62 +  try {                                                            
+       63 +    // Get user's tracked crops, fallback to first 3 crops by name 
+       64 +    const trackedRows = await query<{ crop_id: string }>(          
+       65 +      `SELECT crop_id FROM user_crop_preferences WHERE account_id =
+          + $1 ORDER BY created_at LIMIT 3`,                                  
+       66 +      [session.accountId],                                         
+       67 +    );                                                             
+       68 +    let cropIds: string[] = trackedRows.map((r) => r.crop_id);     
+       69 +    if (cropIds.length === 0) {                                    
+       70 +      const fallback = await query<{ id: string }>(                
+       71 +        `SELECT id FROM crops ORDER BY name_en LIMIT 3`,           
+       72 +      );                                                           
+       73 +      cropIds = fallback.map((r) => r.id);                         
+       74 +    }                                                              
+       75 +                                                                   
+       76 +    widgetPrices = await Promise.all(                              
+       77 +      cropIds.map(async (cropId) => {                              
+       78 +        const nameRow = await queryOne<{ name_en: string }>(       
+       79 +          `SELECT name_en FROM crops WHERE id = $1`,               
+       80 +          [cropId],                                                
+       81 +        );                                                         
+       82 +                                                                   
+       83 +        // 7 most recent daily modal prices (any mandi, average)   
+       84 +        const histRows = await query<{ price_date: string; avg_moda
+          +l: number }>(                                                      
+       85 +          `SELECT price_date::text,                                
+       86 +                  ROUND(AVG(modal_price))::int AS avg_modal        
+       87 +           FROM mandi_prices                                       
+       88 +           WHERE crop_id = $1                                      
+       89 +           GROUP BY price_date                                     
+       90 +           ORDER BY price_date DESC                                
+       91 +           LIMIT 7`,                                               
+       92 +          [cropId],                                                
+       93 +        );                                                         
+       94 +                                                                   
+       95 +        const sorted = [...histRows].reverse();                    
+       96 +        const sparkline = sorted.map((r) => Number(r.avg_modal));  
+       97 +        const latest = sparkline[sparkline.length - 1] ?? 0;       
+       98 +        const prev = sparkline[sparkline.length - 2] ?? latest;    
+       99 +        const changePct = prev === 0 ? 0 : Math.round(((latest - pr
+          +ev) / prev) * 1000) / 10;                                          
+      100 +                                                                   
+      101 +        return {                                                   
+      102 +          crop_id: cropId,                                         
+      103 +          crop_name: nameRow?.name_en ?? cropId,                   
+      104 +          modal_price: latest,                                     
+      105 +          change_pct: changePct,                                   
+      106 +          sparkline,                                               
+      107 +        } satisfies WidgetCropPrice;                               
+      108 +      }),                                                          
+      109 +    );                                                             
+      110 +  } catch (err) {                                                  
+      111 +    console.error("Error fetching dashboard prices widget data:", e
+          +rr);                                                               
+      112 +  }                                                                
+      113 +                                                                   
+      114    return (
+      115      <DashboardView
+      116        variant={emptyView ? "empty" : "default"}
+      117        weatherAvailable={!weatherOff}
+
+
+ ▪ Now pass widgetPrices to DashboardView:
+
+ ▪ Read(/home/.../dashboard/page.tsx · from line 91)
+   └ Read lines 90-125 of 125
+
+ ▪ Edit(/home/.../dashboard/page.tsx)
+   └ Accepted page.tsx
+
+      118        appLocale={appLocale}
+      119        bundle={bundle}
+      120        farms={farms}
+      121        user={user}
+      122 +      widgetPrices={widgetPrices}                                  
+      123      />
+      124    );
+      125  }
+
+
+ ▪ Now update DashboardView to accept and render the widget. It's a client
+   component, so I'll import the widget and add the prop:
+
+ ▪ Edit(/home/.../dashboard-view.tsx)
+   └ Accepted dashboard-view.tsx
+
+      23  import { LanguageSwitcher } from "@/components/language-switcher";
+      24  import { LatinInline } from "@/components/latin-inline";
+      25  import type { Locale } from "@/lib/i18n/config";
+      26  import type { DashboardBundle } from "./dashboard-bundle";
+      27 +import DashboardPricesWidget, { type WidgetCropPrice } from "@/compo
+         +nents/prices/dashboard-prices-widget";                              
+      28  
+      29  const CHECKLIST_DISMISS_KEY = "agropioo-checklist-dismissed";
+      30  
+      31  const topAlerts: Array<{
+
+
+ ▪ Now add widgetPrices to the props type and render the widget in the view:
+
+ ▪ Edit(/home/.../dashboard-view.tsx)
+   └ Accepted dashboard-view.tsx
+
+      141    appLocale?: Locale;
+      142    bundle: DashboardBundle;
+      143    farms?: Array<Record<string, unknown>>;
+      144    user?: { fullName: string; email: string };
+      145 +  widgetPrices?: WidgetCropPrice[];                                
+      146  };
+      147  
+      148  const CHECKLIST_ITEMS = [
+      149    { id: "checklist-farm", label: "Add your first farm", href: "/far
+           ms/new" },
+
+
+ ▪ Edit(/home/.../dashboard-view.tsx)
+   └ Accepted dashboard-view.tsx
+
+      164    appLocale,
+      165    bundle,
+      166    farms: realFarms,
+      167    user: realUser,
+      168 +  widgetPrices = [],                                               
+      169  }: DashboardViewProps) {
+      170    const isEmpty = variant === "empty";
+      171    const completedCount = isEmpty ? 0 : 1;
+      172    const checklistDismissed = useSyncExternalStore(
+
+
+ ▪ Now render the widget in the JSX — place it between quick actions and the
+   detect CTA:
+
+ ▪ Edit(/home/.../dashboard-view.tsx)
+   └ Accepted dashboard-view.tsx
+
+      489            })}
+      490          </ul>
+      491        </section>
+      492  
+      493 +      {/* Mandi prices summary widget */}                          
+      494 +      <DashboardPricesWidget prices={widgetPrices} bundle={bundle} 
+          +/>                                                                 
+      495 +                                                                   
+      496        {/* Detect CTA — the page's single high-emphasis surface (dee
+           p green) */}
+      497        <Link
+      498          href="/detect"
+      499          className="group relative block overflow-hidden rounded-3xl
+            bg-gradient-to-br from-agro-canopy to-agro-forest p-6 text-white s
+           hadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:s
+           hadow-lg sm:p-7"
+
+
+ ▪ Now let's verify the build compiles cleanly:
+
+ x Bash(cd /home/sheikh-mohammad/Documents/hackathons/agropioo && npx tsc 
+   --noEmit 2>&1 | head -50)
+   └ Error: Auto mode could not determine whether Bash is safe right now,
+     because the classifier is temporarily unavailable. This is not a judgement
+      about the action. Wait a moment and try the same action again. If it
+     keeps failing, continue with other work that does not depend on it and
+     come back later. Reading files and searching code do not need the
+     classifier and still work.
+
+ x Network attempt failed at unknown
+
+ > continue                                                                     
+
+ ▪ Bash(cd /home/sheikh-mohammad/Documents/hackathons/agropioo && npx tsc 
+   --noEmit 2>&1 | head -60)
+   └ (no output)
+
+ ▪ Type check passes. Now run lint:
+
+ ▪ Bash(cd /home/sheikh-mohammad/Documents/hackathons/agropioo && npm run lint
+    2>&1 | tail -30)
+   └ 49:24  warning  Compilation Skipped: Use of incompatible library
+
+     This API returns functions which cannot be memoized without leading to
+     stale UI. To prevent this, by default React Compiler will skip memoizing
+     this component/hook. However, you may see issues if values from this API
+     are passed to other components/hooks that are memoized.
+
+     /home/sheikh-mohammad/Documents/hackathons/agropioo/app/(farmer)/(dashboar
+     d)/records/new/record-form.tsx:49:24
+       47 |   });
+       48 |
+     │ 49 |   const selectedType = watch('type');
+     │  |                        ^^^^^ React Hook Form's useForm() API returns 
+     a watch() function which cannot be memoized safely.
+     │   50 |   const isHarvest = selectedType === 'harvest';
+     │   51 |
+     │   52 |   useEffect(() => {  react-hooks/incompatible-library
+
+     /home/sheikh-mohammad/Documents/hackathons/agropioo/app/(site)/[locale]/si
+     gnup/signup-form.tsx
+       125:20  warning  Compilation Skipped: Use of incompatible library
+
+     This API returns functions which cannot be memoized without leading to
+     stale UI. To prevent this, by default React Compiler will skip memoizing
+     this component/hook. However, you may see issues if values from this API
+     are passed to other components/hooks that are memoized.
+
+     /home/sheikh-mohammad/Documents/hackathons/agropioo/app/(site)/[locale]/si
+     gnup/signup-form.tsx:125:20
+       123 |   });
+       124 |
+     │ 125 |   const password = watch("password");
+     │   |                    ^^^^^ React Hook Form's useForm() API returns a 
+     watch() function which cannot be memoized safely.
+     │   126 |   const strength = useMemo(() => strengthOf(password ?? ""), 
+     [password]);
+     │   127 |
+     │   128 |   const errorText = (message?: string) =>  
+     react-hooks/incompatible-library
+
+     ✖ 15 problems (0 errors, 15 warnings)
+       0 errors and 3 warnings potentially fixable with the --fix option.
+ ▪ Only pre-existing warnings (React Hook Form compatibility), zero errors. T033
+    is done.
+
+ ▪ Now T034 — the offline price caching hook:
+
+ ▪ Bash(ls /home/sheikh-mohammad/Documents/hackathons/agropioo/hooks/ 
+   2>/dev/null || echo "no hooks dir")
+   └ no hooks dir
+
+ ▪ Bash(cat /home/sheikh-mohammad/Documents/hackathons/agropioo/app/\(farmer\)
+   /\(dashboard\)/prices/prices-client.tsx | head -60)
+   └ "use client";
+
+     import { useEffect, useState, useTransition } from "react";
+     import Link from "next/link";
+     import MandiPriceCard, { type MandiPrice } from
+     "@/components/prices/mandi-price-card";
+     import MarketComparisonTable from
+     "@/components/prices/market-comparison-table";
+     import PredictionChart from "@/components/prices/prediction-chart";
+     import RecommendationBadge from
+     "@/components/prices/recommendation-badge";
+     import PriceAlertModal, { type AlertFormData, type SavedAlert } from
+     "@/components/prices/price-alert-modal";
+     import PriceHistoryChart, { type HistoryPoint } from
+     "@/components/prices/price-history-chart";
+     import { SearchIcon } from "@/components/icons";
+     import type { PricesBundle } from "./prices-bundle";
+     import type { ForecastPoint } from "@/lib/prices/forecast";
+
+     type CropOption = { id: string; name_en: string };
+     type MandiOption = { id: string; name_en: string };
+
+     type PricesResponse = {
+       district: string | null;
+       is_fallback_hub: boolean;
+       prices: MandiPrice[];
+     };
+
+     type PredictionResponse = {
+       predictions: ForecastPoint[];
+       recommendation: "SELL" | "HOLD";
+       recommendation_reason: string;
+       volatility_warning: boolean;
+       model_confidence: number;
+     };
+
+     type HistoryResponse = {
+       history: HistoryPoint[];
+       range: "1M" | "3M" | "6M" | "12M";
+     };
+
+     interface PricesClientProps {
+       bundle: PricesBundle;
+       crops: CropOption[];
+       mandis: MandiOption[];
+       initial: PricesResponse;
+     }
+
+     export default function PricesClient({ bundle, crops, mandis, initial }:
+     PricesClientProps) {
+       const [selectedCrop, setSelectedCrop] = useState("");
+       const [searchQuery, setSearchQuery] = useState("");
+       const [prices, setPrices] = useState(initial);
+       const [isPending, startTransition] = useTransition();
+       const [prediction, setPrediction] = useState<PredictionResponse |
+     null>(null);
+       const [predictionPending, setPredictionPending] = useState(false);
+       const [history, setHistory] = useState<HistoryResponse | null>(null);
+       const [historyRange, setHistoryRange] = useState<"1M" | "3M" | "6M" |
+     "12M">("3M");
+       const [historyPending, setHistoryPending] = useState(false);
+       const [alerts, setAlerts] = useState<SavedAlert[]>([]);
+       const [alertsPending, setAlertsPending] = useState(false);
+       const [modalOpen, setModalOpen] = useState(false);
+       const [editingAlert, setEditingAlert] = useState<SavedAlert |
+     null>(null);
+       const [alertActionPending, setAlertActionPending] = useState(false);
+
+       async function loadPrices(params: { crop_id?: string; query?: string })
+     {
+
+ ▪ Bash(mkdir -p /home/sheikh-mohammad/Documents/hackathons/agropioo/hooks)
+   └ (no output)
+
+ ▪ Write(/home/.../use-offline-prices.ts)
+   └ Accepted use-offline-prices.ts
+
+       1 "use client";
+       2 
+       3 import { useEffect, useCallback } from "react";
+       4 
+       5 const STORAGE_PREFIX = "agropioo:prices:";
+       6 const TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+       7 
+       8 type CacheEntry<T> = {
+       9   ts: number;
+      10   data: T;
+      11 };
+      12 
+      13 function cacheKey(key: string): string {
+      14   return `${STORAGE_PREFIX}${key}`;
+      15 }
+      16 
+      17 function readCache<T>(key: string): T | null {
+      18   if (typeof window === "undefined") return null;
+      19   try {
+      20     const raw = window.localStorage.getItem(cacheKey(key));
+      21     if (!raw) return null;
+      22     const entry: CacheEntry<T> = JSON.parse(raw) as CacheEntry<T>;
+      23     if (Date.now() - entry.ts > TTL_MS) {
+      24       window.localStorage.removeItem(cacheKey(key));
+      25       return null;
+      26     }
+      27     return entry.data;
+      28   } catch {
+      29     return null;
+      30   }
+      31 }
+      32 
+      33 function writeCache<T>(key: string, data: T): void {
+      34   if (typeof window === "undefined") return;
+      35   try {
+      36     const entry: CacheEntry<T> = { ts: Date.now(), data };
+      37     window.localStorage.setItem(cacheKey(key), JSON.stringify(entry))
+         ;
+      38   } catch {
+      39     // localStorage full or unavailable — silently skip.
+      40   }
+      41 }
+      42 
+      43 function evictExpired(): void {
+      44   if (typeof window === "undefined") return;
+      45   try {
+      46     const toRemove: string[] = [];
+      47     for (let i = 0; i < window.localStorage.length; i++) {
+      48       const k = window.localStorage.key(i);
+      49       if (!k?.startsWith(STORAGE_PREFIX)) continue;
+      50       const raw = window.localStorage.getItem(k);
+      51       if (!raw) continue;
+      52       try {
+      53         const entry = JSON.parse(raw) as CacheEntry<unknown>;
+      54         if (Date.now() - entry.ts > TTL_MS) toRemove.push(k);
+      55       } catch {
+      56         toRemove.push(k);
+      57       }
+      58     }
+      59     for (const k of toRemove) window.localStorage.removeItem(k);
+      60   } catch {
+      61     // Storage unavailable.
+      62   }
+      63 }
+      64 
+      65 /**
+      66  * Read + write wrapper for offline price caching.
+      67  *
+      68  * Usage:
+      69  *   const { read, write } = useOfflinePrices();
+      70  *   const cached = read<MandiPrice[]>("prices:wheat");
+      71  *   write("prices:wheat", freshData);
+      72  *
+      73  * Keys are arbitrary strings; the hook prefixes them automatically.
+      74  * Stale entries (>6 h) are evicted on mount.
+      75  */
+      76 export function useOfflinePrices() {
+      77   // Evict expired entries once on mount.
+      78   useEffect(() => {
+      79     evictExpired();
+      80   }, []);
+      81 
+      82   const read = useCallback(<T>(key: string): T | null => readCache<T>
+         (key), []);
+      83   const write = useCallback(<T>(key: string, data: T): void => writeC
+         ache(key, data), []);
+      84 
+      85   return { read, write };
+      86 }
+
+
+ ▪ Now T035 — nightly prediction cron route:
+
+ ▪ Bash(cat 
+   /home/sheikh-mohammad/Documents/hackathons/agropioo/lib/prices/forecast.ts 
+   | head -40)
+   └ /**
+     - Statistical price forecasting engine for the Mandi Price Tracker.
+     - Implements Holt-Winters triple exponential smoothing and a linear-trend
+     - fallback. Returns 14 daily forecast points with 95% confidence bands.
+      */
+
+     export interface ForecastPoint {
+       date: string;
+       predicted_price: number;
+       lower_bound: number;
+       upper_bound: number;
+     }
+
+     export interface ForecastResult {
+       predictions: ForecastPoint[];
+       recommendation: "SELL" | "HOLD";
+       recommendation_reason: string;
+       volatility_warning: boolean;
+       model_confidence: number;
+     }
+
+     function toISODate(date: Date): string {
+       return date.toISOString().split("T")[0];
+     }
+
+     function mean(values: number[]): number {
+       return values.reduce((a, b) => a + b, 0) / values.length;
+     }
+
+     function stdDev(values: number[]): number {
+       if (values.length < 2) return 0;
+       const m = mean(values);
+       const variance = mean(values.map((v) => (v - m) ** 2));
+       return Math.sqrt(variance);
+     }
+
+     /**
+     - Holt-Winters additive trend smoothing. Lightweight and dependency-free.
+     - Returns level, trend, and forecast for the next horizon steps.
+      */
+
+ ▪ Bash(ls /home/sheikh-mohammad/Documents/hackathons/agropioo/app/api/cron/ 
+   2>/dev/null || echo "no cron dir")
+   └ no cron dir
+
+ ▪ Bash(grep -n "^export function\|^export async function" 
+   /home/sheikh-mohammad/Documents/hackathons/agropioo/lib/prices/forecast.ts)
+   └ 74:export function forecastPrices(
+     164:export function recommendationFromForecast(
+
+ ▪ Bash(sed -n '74,100p' 
+   /home/sheikh-mohammad/Documents/hackathons/agropioo/lib/prices/forecast.ts)
+   └ export function forecastPrices(
+       historicalPrices: { date: string; modal_price: number }[],
+       horizon = 14
+     ): ForecastResult {
+       const sorted = [...historicalPrices].sort(
+         (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+       );
+       const values = sorted.map((p) => Number(p.modal_price));
+
+       const dataPoints = values.length;
+       const volatility = dataPoints > 1 ? stdDev(values) : 0;
+       const avg = dataPoints > 0 ? mean(values) : 0;
+       const coefficientOfVariation = avg > 0 ? volatility / avg : 0;
+
+       const volatilityWarning =
+         dataPoints < 14 || coefficientOfVariation > 0.15;
+
+       const modelConfidence = Math.max(
+         0,
+         Math.min(1, dataPoints / 30 - coefficientOfVariation)
+       );
+
+       const { forecasts, trend } = holtWintersForecast(values, horizon);
+       const standardError = dataPoints > 1 ? volatility : avg * 0.05;
+       const margin = 1.96 * standardError;
+
+       const lastDate = sorted.length > 0 ? new Date(sorted[sorted.length -
+     1].date) : new Date();
+
+ ▪ Bash(mkdir -p /home/sheikh-mohammad/Documents/hackathons/agropioo/app/api/c
+   ron/predict-prices)
+   └ (no output)
+
+ ▪ Bash(grep -n "CRON_SECRET" /home/sheikh-mohammad/Documents/hackathons/agrop
+   ioo/app/api/satellite/cron/refresh/route.ts 2>/dev/null | head -5 || grep 
+   -rn "CRON_SECRET" 
+   /home/sheikh-mohammad/Documents/hackathons/agropioo/app/api/ 2>/dev/null | 
+   head -5)
+   └ (no output)
+
+ ▪ Bash(grep -rn "CRON_SECRET\|x-cron-secret" 
+   /home/sheikh-mohammad/Documents/hackathons/agropioo/ --include="*.ts" 
+   --include="*.tsx" | grep -v "node_modules\|\.env\|example" | head -10)
+   └ (no output)
+
+ ▪ No existing cron routes — I'll follow the same pattern as the satellite spec
+   references (bearer token via Authorization header):
+
+ ▪ Write(/home/.../predict-prices/route.ts)
+   └ Accepted route.ts
+
+       1 import { NextResponse } from "next/server";
+       2 import { query } from "@/lib/db";
+       3 import { forecastPrices } from "@/lib/prices/forecast";
+       4 
+       5 // Maximum crops to process per run — keeps cold-start time bounded.
+       6 const CROP_LIMIT = 20;
+       7 
+       8 export async function POST(request: Request) {
+       9   const secret = process.env.CRON_SECRET;
+      10   if (!secret) {
+      11     return NextResponse.json({ error: { code: "MISCONFIGURED", messag
+         e: "CRON_SECRET not set" } }, { status: 500 });
+      12   }
+      13 
+      14   const auth = request.headers.get("authorization") ?? "";
+      15   if (auth !== `Bearer ${secret}`) {
+      16     return NextResponse.json({ error: { code: "UNAUTHORIZED", message
+         : "Invalid cron secret" } }, { status: 401 });
+      17   }
+      18 
+      19   const crops = await query<{ id: string; name_en: string }>(
+      20     `SELECT id, name_en FROM crops ORDER BY name_en LIMIT $1`,
+      21     [CROP_LIMIT],
+      22   );
+      23 
+      24   if (!crops || crops.length === 0) {
+      25     return NextResponse.json({ ok: true, processed: 0 });
+      26   }
+      27 
+      28   let processed = 0;
+      29   const errors: string[] = [];
+      30 
+      31   for (const crop of crops) {
+      32     try {
+      33       // Pull 90 days of daily average modal prices for this crop.
+      34       const rows = await query<{ price_date: string; modal_price: num
+         ber }>(
+      35         `SELECT price_date::text AS price_date,
+      36                 ROUND(AVG(modal_price))::int AS modal_price
+      37          FROM mandi_prices
+      38          WHERE crop_id = $1
+      39            AND price_date >= CURRENT_DATE - INTERVAL '90 days'
+      40          GROUP BY price_date
+      41          ORDER BY price_date`,
+      42         [crop.id],
+      43       );
+      44 
+      45       if (!rows || rows.length < 7) continue;
+      46 
+      47       const result = forecastPrices(
+      48         rows.map((r) => ({ date: r.price_date, modal_price: Number(r.
+         modal_price) })),
+      49       );
+      50 
+      51       // Upsert 14-day forecast into price_predictions table.
+      52       for (const pt of result.predictions) {
+      53         await query(
+      54           `INSERT INTO price_predictions
+      55              (crop_id, prediction_date, predicted_price, lower_bound,
+          upper_bound,
+      56               recommendation, recommendation_reason, volatility_warni
+         ng, model_confidence,
+      57               generated_at)
+      58            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
+      59            ON CONFLICT (crop_id, prediction_date)
+      60            DO UPDATE SET
+      61              predicted_price      = EXCLUDED.predicted_price,
+      62              lower_bound          = EXCLUDED.lower_bound,
+      63              upper_bound          = EXCLUDED.upper_bound,
+      64              recommendation       = EXCLUDED.recommendation,
+      65              recommendation_reason = EXCLUDED.recommendation_reason,
+      66              volatility_warning   = EXCLUDED.volatility_warning,
+      67              model_confidence     = EXCLUDED.model_confidence,
+      68              generated_at         = EXCLUDED.generated_at`,
+      69           [
+      70             crop.id,
+      71             pt.date,
+      72             pt.predicted_price,
+      73             pt.lower_bound,
+      74             pt.upper_bound,
+      75             result.recommendation,
+      76             result.recommendation_reason,
+      77             result.volatility_warning,
+      78             result.model_confidence,
+      79           ],
+      80         );
+      81       }
+      82 
+      83       processed++;
+      84     } catch (err) {
+      85       errors.push(`${crop.name_en}: ${err instanceof Error ? err.mess
+         age : String(err)}`);
+      86     }
+      87   }
+      88 
+      89   return NextResponse.json({ ok: true, processed, errors: errors.leng
+         th > 0 ? errors : undefined });
+      90 }
+
+
+ ▪ Now check if a price_predictions table exists or if I need to account for the
+    actual table name:
+
+ ▪ Bash(grep -rn "price_predictions\|CREATE TABLE.*predict" 
+   /home/sheikh-mohammad/Documents/hackathons/agropioo/db/ 2>/dev/null | head 
+   -10)
+   └ /home/sheikh-mohammad/Documents/hackathons/agropioo/db/migrations/0008_man
+     di_prices.sql:57:create table if not exists public.price_predictions (
+     /home/sheikh-mohammad/Documents/hackathons/agropioo/db/migrations/0008_man
+     di_prices.sql:70:create index if not exists
+     idx_price_predictions_crop_mandi_calculated
+     /home/sheikh-mohammad/Documents/hackathons/agropioo/db/migrations/0008_man
+     di_prices.sql:71:  on public.price_predictions (crop_id, mandi_id,
+     calculated_at desc);
+
+ x You've reached your credit usage limit. Please upgrade your subscription plan
+    to get more resources. Report Issue (input /feedback)
+
+ > continue                                                                     
+
+ x You've reached your credit usage limit. Please upgrade your subscription plan
+    to get more resources. Report Issue (input /feedback)

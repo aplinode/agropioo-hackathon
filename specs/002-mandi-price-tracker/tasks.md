@@ -159,9 +159,9 @@
 **Purpose**: 8-locale Neon translation database population, Vitest automated testing, and release gate verification
 
 - [ ] T037 Sync all Mandi Price Tracker UI string keys and translations across all 8 Pakistan locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) into Neon `translations` database table using `scripts/sync-translations.mts`
-- [ ] T038 [P] Create Zod schema and Route Handler unit tests in `app/api/prices/prices-api.test.ts`
-- [ ] T039 [P] Create statistical forecasting unit tests in `lib/prices/forecast.test.ts`
-- [ ] T040 Run `npx vitest run` to verify all automated test suites pass
+- [X] T038 [P] Create Zod schema and Route Handler unit tests in `app/api/prices/prices-api.test.ts`
+- [X] T039 [P] Create statistical forecasting unit tests in `lib/prices/forecast.test.ts`
+- [X] T040 Run `npx vitest run` to verify all automated test suites pass
 - [ ] T041 Run `npm run lint` and `npm run build` to confirm zero TypeScript compilation or linting errors
 - [ ] T042 Verify all 36 items in `specs/002-mandi-price-tracker/checklists/quality-gate.md` pass
 
