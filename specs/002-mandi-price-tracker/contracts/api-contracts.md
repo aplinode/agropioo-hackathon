@@ -148,17 +148,70 @@ export const updatePriceAlertSchema = z.object({
 
 ---
 
-## 5. Daily Price Ingestion & Prediction Trigger (Cron / Admin)
+## 5. Daily Price Ingestion (Scraper → DB)
 
-**Endpoint**: `POST /api/prices/ingest` (Protected by secret `CRON_SECRET` header or admin session)
+**Endpoint**: `POST /api/prices/ingest`
+**Authentication**: `Authorization: Bearer ${PRICES_CRON_SECRET}` (required, 401 on mismatch)
+**Rate limit**: 10 requests/minute/IP (429 on exceed; resets each calendar minute)
+
+### Request Body (Zod-validated)
+
+```ts
+export const ingestBatchSchema = z.object({
+  source_code: z.enum(['amis_pk','samis_pk','fmis_kp','bmis_balochistan','pbs_spi']),
+  scraped_at: z.string().datetime(), // ISO 8601 UTC
+  rows: z.array(z.object({
+    mandi_external_id: z.string().min(1),
+    crop_external_id: z.string().min(1),
+    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    modal_price: z.number().positive(),
+    min_price: z.number().positive(),
+    max_price: z.number().positive(),
+    unit: z.literal('Maund'),
+    is_holiday: z.boolean().default(false),
+  })).min(1).max(5000),
+});
+```
+
+The handler looks up `mandis` and `crops` by external ID (mapped via `scripts/seed-mandi-prices.ts`) and upserts into `mandi_prices` with `source='govt_api'` and `source_code` echoed from the body. Every accepted request also writes an audit row to `scraper_runs` regardless of row count.
 
 ### Response `200 OK`
 ```json
 {
   "success": true,
-  "records_ingested": 142,
-  "alerts_evaluated": 38,
-  "alerts_triggered": 5,
+  "request_id": "0d7e1d12-...-...",
+  "rows_written": 142,
+  "rows_rejected": 0,
   "ingested_at": "2026-08-30T06:00:00Z"
+}
+```
+
+### Response — Errors
+| Status | Code | When |
+|---|---|---|
+| 401 | `unauthorized` | Bearer missing or wrong |
+| 429 | `rate_limited` | >10 req/min from same IP |
+| 400 | `validation_error` | Body fails Zod |
+| 500 | `server_error` | DB write failed; rollback returns row counts from before attempt |
+
+---
+
+## 6. Scraper Health (Operator-Facing)
+
+**Endpoint**: `GET /api/prices/health`
+**Authentication**: None (public, no PII)
+
+### Response `200 OK`
+```json
+{
+  "last_successful_run": "2026-08-30T05:42:11Z",
+  "last_run_age_hours": 14.2,
+  "sources": {
+    "amis_pk":         { "status": "ok",   "last_success": "2026-08-30T05:42:11Z", "rows": 84 },
+    "samis_pk":        { "status": "ok",   "last_success": "2026-08-30T05:43:01Z", "rows": 27 },
+    "fmis_kp":         { "status": "drift_suspected", "last_success": "2026-08-29T05:50:01Z", "rows": 31 },
+    "bmis_balochistan":{ "status": "ok",   "last_success": "2026-08-30T05:55:00Z", "rows": 11 },
+    "pbs_spi":         { "status": "ok",   "last_success": "2026-08-26T05:30:00Z", "rows": 50 }
+  }
 }
 ```

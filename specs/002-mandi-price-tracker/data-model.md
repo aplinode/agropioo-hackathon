@@ -62,10 +62,48 @@ Stores daily market price entries per crop per market.
 | `max_price` | `NUMERIC(10,2)` | NOT NULL | Maximum traded price (PKR/Maund) |
 | `unit` | `VARCHAR(16)` | DEFAULT 'Maund' | Price measurement unit |
 | `is_holiday` | `BOOLEAN` | DEFAULT FALSE | True if Mandi closed / market holiday |
-| `source` | `VARCHAR(64)` | NOT NULL | Ingestion source (`govt_api`, `admin_manual`) |
+| `source` | `VARCHAR(16)` | NOT NULL DEFAULT 'govt_api' | Ingestion source — single value `govt_api` (admin_manual is intentionally not supported in this build) |
+| `source_code` | `VARCHAR(32)` | NOT NULL, CHECK (`source_code IN ('amis_pk','samis_pk','fmis_kp','bmis_balochistan','pbs_spi','seed_pk_initial')`) | Which portal produced the row |
 | `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() | Insertion timestamp |
 
-*Indexes*: `(mandi_id, crop_id, date DESC)`, `(crop_id, date DESC)`
+*Indexes*: `(mandi_id, crop_id, date DESC)`, `(crop_id, date DESC)`, `(source_code, date DESC)`.
+
+---
+
+### 3a. `scraper_runs` *(new — migration 0009)*
+
+Audit log for every `POST /api/prices/ingest` call. Retained 7 days, then pruned by a nightly maintenance job.
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| `id` | `BIGSERIAL` | PRIMARY KEY | Auto-incrementing primary key |
+| `received_at` | `TIMESTAMPTZ` | DEFAULT NOW() | When the request landed |
+| `source_code` | `VARCHAR(32)` | NOT NULL | Which portal reported |
+| `status` | `VARCHAR(32)` | NOT NULL, CHECK (`status IN ('ok','partial','drift_suspected','rate_limited','unauthorized','server_error')`) | Outcome |
+| `rows_written` | `INT` | NOT NULL DEFAULT 0 | Rows inserted/updated |
+| `rows_rejected` | `INT` | NOT NULL DEFAULT 0 | Rows that failed Zod |
+| `caller_ip` | `INET` | NULLABLE | Reverse-DNS-friendly IP of the GitHub Actions runner |
+| `request_id` | `UUID` | NOT NULL DEFAULT gen_random_uuid() | Idempotency / de-dup key |
+
+*Indexes*: `(received_at DESC)`, `(source_code, received_at DESC)`. Pruned via `DELETE FROM scraper_runs WHERE received_at < NOW() - INTERVAL '7 days';` in the nightly maintenance job.
+
+---
+
+### 3b. `mandi_holidays` *(new — migration 0009)*
+
+Pre-flagged public holidays and weekly closures so the scraper's drift detector does not mistake a holiday for a portal-schema break.
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| `id` | `BIGSERIAL` | PRIMARY KEY | Auto-incrementing primary key |
+| `mandi_id` | `VARCHAR(64)` | REFERENCES `mandis(id)`, NULLABLE | Specific mandi (NULL = applies to all mandis in a province) |
+| `province` | `VARCHAR(32)` | NULLABLE | Province scope when `mandi_id` is NULL |
+| `date` | `DATE` | NOT NULL | Holiday date |
+| `label` | `TEXT` | NOT NULL | Human-readable reason (e.g. `Sunday`, `Eid-ul-Fitr`, `Independence Day`) |
+| `source_code` | `VARCHAR(32)` | NOT NULL | Which scraper pre-flagged this row |
+| UNIQUE | `(mandi_id, date)` | | Idempotent insert |
+
+*Seeded* with all Sundays for the next 12 months and the official Pakistan federal holidays for the current year via `scripts/seed-mandi-prices.ts` extension.
 
 ---
 

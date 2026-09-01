@@ -2,21 +2,34 @@
 
 **Feature Branch**: `002-mandi-price-tracker`  
 **Created**: 2026-08-30  
-**Status**: Draft  
-**Input**: User description: "Now lets start building this feature Mandi Price Tracker & Predictor
+**Updated**: 2026-09-01 (Playwright whole-Pakistan scraper; admin panel removed)  
+**Status**: Draft — awaiting founder sign-off before clarify/plan
 
 **Problem:** Farmers sell crops at low prices due to lack of market intelligence and price volatility.
 
-**Solution:** Real-time mandi prices displayed for nearby markets + ML model predicts price trends for next 7-14 days → alerts farmer when to sell for maximum profit.
+**Solution:** Daily mandi prices scraped from official government portals for every province of Pakistan, displayed for nearby markets, plus a 7–14 day forecast that powers sell/hold guidance and target-price alerts.
 
 **How It Works (No Hardware):**
-- System scrapes/fetches daily mandi prices from government APIs
-- Prices displayed on dashboard with market-wise comparison
-- LSTM or Facebook Prophet model trained on historical price data
-- Price trend shown as chart with buy/sell/hold recommendation
-- SMS/app alerts when price crosses farmer's target threshold"
+- Playwright-based daily scraper pulls wholesale mandi prices from four provincial portals (Punjab AMIS, Sindh SAMIS, KP FMIS, Balochistan BMIS) plus a federal cross-check (PBS Weekly SPI XLSX).
+- Scraped rows are POSTed to a single authenticated Route Handler that writes to the existing `mandi_prices` table (`source = 'govt_api'`).
+- Prices are displayed in PKR per Maund (40 kg) with 7–14 day Holt-Winters forecasts and confidence bands.
+- Sell/hold recommendation + email/in-app alerts fire when the market price reaches the farmer's target.
 
 ## Clarifications
+
+### Session 2026-09-01 (Playwright whole-Pakistan; admin panel removed)
+
+- Q: How should we source daily mandi prices for every district of Pakistan for free? → A: Scrape four provincial official portals (Punjab AMIS, Sindh SAMIS, KP FMIS, Balochistan BMIS) with Playwright on the existing free GitHub Actions cron; use PBS Weekly SPI XLSX as a federal cross-check; existing seed data covers any remaining gaps.
+- Q: Should there be an admin web panel for manual price entry/correction? → A: No admin panel in this build. The data path is scraper-only; out-of-scope manual overrides and `admin_manual` source rows are not built.
+- Q: Where does the scraper run? → A: Inside the existing free `.github/workflows/mandi-cron.yml` GitHub Actions schedule (Ubuntu runner), invoking Playwright with full Chromium. The scraper is never imported by the Next.js app.
+- Q: How do we keep the schema honest now that `admin_manual` is removed? → A: `mandi_prices.source` is constrained to a single value (`'govt_api'`); scraper rows additionally carry a `source_code` (e.g. `amis_pk`, `samis_pk`, `fmis_kp`, `bmis_balochistan`, `pbs_spi`) so we can debug or de-list a portal without losing the rest of the data.
+- Q: How should we harden `POST /api/prices/ingest` beyond the bearer secret? → A: Layered — (1) bearer token `PRICES_CRON_SECRET` required on every request, (2) per-IP rate limit of 10 requests/minute with HTTP 429 on exceed, (3) every request writes an audit row to a `scraper_runs` log table (timestamp, source_code, rows_written, status, caller_ip) retained for 7 days for debugging and abuse review.
+- Q: When every provincial scraper fails on the same cron run, what should the system do? → A: The cron run exits non-zero so GitHub sends the default workflow-failure notification to repo maintainers; no silent green-light when nothing was ingested. Per-source partial success is still acceptable — exit non-zero only when zero rows are written across all sources.
+- Q: What happens if a provincial portal is down on a given day? → A: The scraper skips the affected source, logs the failure, and leaves the market's last known price in place; the UI shows the prominent `"Updated X days ago"` badge. No partial-merge writes.
+- Q: What is the minimum freshness + history bar before the Holt-Winters forecaster is allowed to emit a prediction? → A: At least 3 historical rows for that crop AND the most recent row within the last 7 days; otherwise the prediction chart shows a clear "Not enough data" state and no forecast points are rendered (US3 acceptance #3/#4 still hold).
+- Q: Is the existing seed still part of the build? → A: Yes. The seed (`scripts/seed-mandi-prices.ts`) provides the initial dataset on first deploy so the UI is non-empty before the first cron run; it is treated as `source = 'govt_api'` from `seed_pk_initial`.
+- Q: In what order do we wire the four provincial scrapers into the cron? → A: All four are wired in a single deliverable. Each source runs in its own try/catch so one failure does not block the others; per-source success/failure is recorded in `scraper_runs`; only an across-the-board zero-row run fails the cron (Q1 rule). Rollout is gated by a runbook, not by feature flags.
+- Q: When a portal's HTML changes and a scraper returns 0 rows, how should we detect schema drift? → A: Each portal's selectors live in a single file (`lib/prices/scrapers/selectors.ts`) keyed by `source_code`. If a scraper returns 0 rows AND that source has historical rows for the same weekday, the run is marked as failed (drift suspected), the source is logged with `status = 'drift_suspected'` in the `scraper_runs` audit table, and the cron exits non-zero. Public holidays must be pre-flagged in `mandi_holidays` to avoid false positives.
 
 ### Session 2026-08-30
 
@@ -45,7 +58,7 @@
 - Q: How should farmers search for markets outside their nearby district? → A: Allow farmers to search and select any mandi or crop across all districts of Pakistan via a global search bar
 - Q: How should Mandi Price Tracker be integrated into the main AgriPioo dashboard (/dashboard)? → A: Display top 3 favorite/tracked crop prices with 7-day trend mini-sparklines in a dashboard summary widget
 - Q: How should price alert notifications be presented in the in-app notification center? → A: Highlight price target alert notifications with a distinct green badge and pin at the top of the in-app notification feed
-- Q: How should mandi price data ingestion be handled behind the scenes? → A: Automated daily scraper from government APIs, plus an admin web panel for manual price entry/correction
+- Q: How should mandi price data ingestion be handled behind the scenes? → A: Automated daily Playwright scraper from the four free official provincial portals plus PBS Weekly SPI cross-check (replaces prior "admin web panel" answer — admin panel removed from this build)
 - Q: What action link should be included in price alert email notifications? → A: Direct "View Mandi Prices" deep-link button linking to /prices?crop=X&mandi=Y in the email
 - Q: How should the price tracker behave when the farmer is offline / low connectivity? → A: Cache last viewed price list and history charts in browser local storage for offline viewing
 - Q: When should price alert evaluations and email/in-app dispatches be executed? → A: Evaluate all active price alerts immediately after the daily price ingestion pipeline completes
@@ -55,9 +68,10 @@
 
 - **SMS notifications**: Price target alerts are delivered via in-app notifications and email (nodemailer SMTP); SMS alerts remain out of scope for this release.
 - **Trader / Buyer purchasing mode**: The feature remains strictly farmer-focused with sell/hold recommendations. Buy orders or trader trading modes are excluded.
-- **Hardware sensors or manual field price reporting**: Data is sourced via API/scraping integration only.
+- **Admin web panel for manual price entry/correction**: Intentionally excluded from this build. The data path is scraper-only; there is no `admin_manual` source channel.
 - **Voice input/output**: Text UI and visual charts only (voice interaction is handled under separate future specs).
 - **CSV / PDF Data Export**: Downloading raw price spreadsheets or PDF exports is excluded for launch; viewing and interactive charts only.
+- **Paid commercial data sources**: Zarai Mandi subscription and PAR Daily Commodity Prices are not integrated; only free official portals are used.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -181,6 +195,9 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 - What happens when a farmer sets alerts for multiple crops and all trigger simultaneously?
 - How does the system handle crops with very little historical data for predictions?
 - What happens when the prediction model's confidence is very low?
+- What happens when one of the scraper's source portals is down on a given day?
+- What happens when the GitHub Actions cron fails before POSTing any rows to `/api/prices/ingest`?
+- What happens when the cron partial-succeeds (one source scraped, another failed)?
 
 ## Requirements *(mandatory)*
 
@@ -193,7 +210,7 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 
 - **FR-001**: System MUST display current crop prices for markets within the farmer's registered district and immediately bordering districts (or default to the nearest regional provincial market hub with a setup banner if no farm location is registered), standardized in PKR per Maund (40 kg).
 - **FR-002**: System MUST show prices for at least 5 nearby markets for each crop view.
-- **FR-003**: System MUST update displayed prices at least once per trading day via an automated daily scraper from government APIs (with admin web panel fallback for manual data entry/corrections), executing alert evaluations immediately post-ingestion and displaying a distinct "Mandi Closed / Market Holiday" status badge on Sundays and market holidays.
+- **FR-003**: System MUST refresh displayed prices at least once per trading day by scraping four official Pakistani provincial portals — Punjab AMIS (`amis.pk`), Sindh SAMIS (`new-theme.staging-amis.com`), KP FMIS (`fmis.kp.gov.pk`), and Balochistan BMIS (`amisbalochistan.org`) — plus a federal PBS Weekly SPI XLSX cross-check; runs on the existing free GitHub Actions cron; each scrape batch authenticates to `POST /api/prices/ingest` with a bearer token, and the Route Handler is the single write path into `mandi_prices`. Sundays and official market holidays render a distinct `"Mandi Closed / Market Holiday"` status badge. If a source is down, the market's last known price is kept and a prominent `"Updated X days ago"` badge is shown; no partial writes.
 - **FR-004**: System MUST allow farmers to select which crop they want to view prices for, displaying crop names strictly according to the user's active UI language setting.
 - **FR-005**: System MUST sort market prices from highest to lowest, highlighting the best available price and displaying daily price changes as both percentage and absolute PKR difference (e.g., "+3.2% (+150 PKR/Maund)").
 - **FR-006**: System MUST display historical price data defaulting to a 3-month view for each crop, supporting custom date range selector toggles (1M, 3M, 6M, 12M up to 12 months).
@@ -215,6 +232,7 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 - **FR-022**: System MUST render a summary widget on the main dashboard (`/dashboard`) displaying top 3 tracked/favorite crops with 7-day price trend mini-sparklines.
 - **FR-023**: System MUST cache the last viewed price list and history charts in browser local storage to enable offline viewing when connectivity is lost.
 - **FR-024**: System MUST ensure that every new or updated user interface string (including page headers, button labels, badge texts, alert notifications, chart legend labels, and search placeholders) has corresponding translation keys and translated strings inserted into the Neon database `translations` table across all 8 supported Pakistan locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) using Neon MCP or `scripts/sync-translations.mts` before the feature is marked complete.
+- **FR-025**: System MUST mark every `mandi_prices` row with `source = 'govt_api'` and additionally tag the originating portal via `source_code` (`amis_pk` | `samis_pk` | `fmis_kp` | `bmis_balochistan` | `pbs_spi` | `seed_pk_initial`); `admin_manual` is intentionally NOT supported in this build.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -223,6 +241,7 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 - **Price Prediction**: A forecast of future prices for a crop, generated from historical data via a scheduled nightly background cron job and cached in Postgres. Includes predicted values per Maund, confidence bounds, prediction date range, and confidence status indicator.
 - **Price Alert**: A farmer's target price setting for a specific crop. Includes target price in PKR per Maund, crop ID, target condition (`>= target`), creation date, active/paused status, and trigger history.
 - **Farmer Crop Preference**: The set of crops a farmer is interested in tracking, used to personalize the price tracker experience.
+- **Price Source**: One of the official portals the scraper knows how to talk to — Punjab AMIS, Sindh SAMIS, KP FMIS, Balochistan BMIS, or PBS Weekly SPI XLSX. Each has a stable `source_code` used for logging, debugging, and per-source enable/disable toggles.
 
 ## Success Criteria *(mandatory)*
 
@@ -234,12 +253,14 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 ### Measurable Outcomes
 
 - **SC-001**: Farmers can view current prices for their selected crop across nearby markets within 3 taps from the dashboard.
-- **SC-002**: Prices displayed on the tracker are no older than 24 hours at the time of viewing.
+- **SC-002**: For every market that reported on the most recent trading day, the price shown is from that day; if no fresh row exists, the UI shows the last known price plus a visible "Updated X days ago" badge. (The freshness contract is bounded by the daily cron, not by 24h SLA — see SC-011.)
 - **SC-003**: Farmers can identify the best nearby market to sell at within 10 seconds of opening the price comparison view.
 - **SC-004**: Price predictions cover a 14-day forward horizon with visible confidence ranges on the chart.
 - **SC-005**: A farmer can set a price alert in under 30 seconds.
-- **SC-006**: Price alerts are delivered in the app within 2 hours of the market price crossing the target threshold.
+- **SC-006**: Price alerts are dispatched (in-app + email) within the same daily cron run that ingests the price row that crossed the target.
 - **SC-007**: The price tracker supports at least 10 major crop types commonly grown in Pakistan.
 - **SC-008**: 90% of farmers can find the price they need and understand the recommendation without assistance.
-- **SC-009**: Price data is available for markets in every district of Pakistan at launch.
+- **SC-009**: Price data is available for markets in every district of Pakistan at launch — initially from the seed for provinces whose portals are not yet wired into the cron, and from the scraper once the corresponding source is enabled.
 - **SC-010**: Historical price charts display data spanning at least 3 months for each supported crop.
+- **SC-011**: The free GitHub Actions cron successfully ingests prices from at least the Punjab AMIS source daily; the run completes in under 15 minutes and POSTs all collected rows to `/api/prices/ingest` in a single authenticated batch.
+- **SC-012**: When a provincial portal (e.g. SAMIS) is unreachable, the cron logs the failure, leaves the existing rows untouched, and no user-visible price is wiped or set to zero.
