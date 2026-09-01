@@ -10,7 +10,6 @@ import AuthShell from "@/components/auth/auth-shell";
 import Stepper from "@/components/auth/stepper";
 import { AlertTriangleIcon, ArrowRightIcon } from "@/components/icons";
 import { forgotSchema } from "@/lib/validation/auth";
-import { stashDemoCode } from "@/lib/auth/demo-code";
 
 type ForgotValues = z.output<typeof forgotSchema>;
 
@@ -20,9 +19,6 @@ const brandPoints = [
   "Plain-language steps throughout",
 ];
 
-/* Step 1 of password recovery ONLY (plan): posts the real API, shows the
-   byte-stable generic confirmation, then hands off to the shared OTP route.
-   Steps 2 and 3 live on /verify and /reset-password now. */
 export default function ForgotPasswordFlow() {
   const router = useRouter();
   const [phase, setPhase] = useState<"email" | "sent">("email");
@@ -37,8 +33,6 @@ export default function ForgotPasswordFlow() {
     defaultValues: { email: "" },
   });
 
-  // Generic confirmation auto-advances to the shared verification screen —
-  // the same neutral copy for every well-formed email (FR23).
   useEffect(() => {
     if (phase !== "sent") return;
     const timer = setTimeout(() => router.replace("/verify"), 2200);
@@ -54,12 +48,10 @@ export default function ForgotPasswordFlow() {
     });
     const payload = (await response.json().catch(() => ({}))) as {
       ok?: boolean;
-      demoCode?: string;
       error?: { code?: string; message?: string };
     };
 
     if (response.ok && payload.ok) {
-      stashDemoCode(payload.demoCode);
       setSubmittedEmail(values.email.trim());
       setPhase("sent");
       return;

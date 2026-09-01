@@ -157,5 +157,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-specs/002-mandi-price-tracker/plan.md
+at `specs/satellite-monitoring/plan.md`.
 <!-- SPECKIT END -->

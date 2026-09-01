@@ -8,6 +8,11 @@ export interface PricesBundle {
   description: string;
   selectCrop: string;
   searchPlaceholder: string;
+  globalSearchPlaceholder: string;
+  globalSearchCrops: string;
+  globalSearchMandis: string;
+  globalSearchNoResults: string;
+  globalSearchViewPrices: string;
   noData: string;
   updatedToday: string;
   updatedDaysAgo: string;

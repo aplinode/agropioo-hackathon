@@ -1,7 +1,4 @@
-/* nodemailer singleton (plan: Library parameters). The transporter reports
-   itself unconfigured when any SMTP variable is missing; codes are only
-   revealed as a demo banner when SMTP is unconfigured AND DEMO_MODE=true
-   (FR17) — either condition missing means codes NEVER render anywhere. */
+/* nodemailer singleton (plan: Library parameters). */
 
 import nodemailer, { type Transporter } from "nodemailer";
 import { EMAIL_TEMPLATE } from "@/lib/auth/copy";
@@ -36,27 +33,15 @@ function getTransporter(): Transporter | null {
   return transporter;
 }
 
-export type SendCodeResult = { delivered: boolean; demoCode?: string };
+export type SendCodeResult = { delivered: boolean };
 
-/**
- * Sends the 6-digit code by email.
- * - SMTP configured → real send; never returns demoCode.
- * - SMTP missing + DEMO_MODE=true → nothing sent; demoCode echoed for the
- *   clearly-labelled banner (FR17).
- * - SMTP missing without DEMO_MODE → delivery failure; caller shows the
- *   neutral retry message and renders nothing (FR16).
- */
 export async function sendCode(
   purpose: CodePurpose,
   email: string,
   code: string,
 ): Promise<SendCodeResult> {
   const configured = smtpConfigured();
-  const demoMode = process.env.DEMO_MODE === "true";
 
-  if (!configured && demoMode) {
-    return { delivered: false, demoCode: code };
-  }
   if (!configured) {
     return { delivered: false };
   }
@@ -77,7 +62,6 @@ export async function sendCode(
     });
     return { delivered: true };
   } catch (error) {
-    // Log the failure server-side only; responses stay neutral (FR16/FR31).
     console.error("[mailer] send failed:", error instanceof Error ? error.message : error);
     return { delivered: false };
   }

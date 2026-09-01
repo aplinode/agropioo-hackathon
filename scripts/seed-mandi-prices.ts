@@ -147,98 +147,41 @@ async function seedMandis(): Promise<void> {
 
 async function seedSamplePrices(): Promise<void> {
   const today = new Date();
-  const mandis = await query<{ id: string; district: string }>(`select id, district from mandis`);
-  const cropIds = CROPS.map((c) => c.id);
+  const dayCount = 90;
 
-  let inserted = 0;
+  await query(`truncate table mandi_prices restart identity`);
+
   await withTransaction(async (client) => {
-    for (let dayOffset = 90; dayOffset >= 0; dayOffset--) {
+    for (let dayOffset = dayCount; dayOffset >= 0; dayOffset--) {
       const date = new Date(today);
       date.setDate(date.getDate() - dayOffset);
       const dateStr = date.toISOString().split("T")[0];
-      const isSunday = date.getDay() === 0;
 
-      for (const mandi of mandis) {
-        for (const cropId of cropIds) {
-          const base = 2000 + Math.round(Math.random() * 4000);
-          const modal = base + Math.round((Math.random() - 0.5) * 400);
-          const min = modal - Math.round(Math.random() * 200);
-          const max = modal + Math.round(Math.random() * 200);
-          await client.query(
-            `insert into mandi_prices (mandi_id, crop_id, date, modal_price, min_price, max_price, source, source_code, is_holiday)
-             values ($1,$2,$3,$4,$5,$6,'govt_api','seed_pk_initial',$7)
-             on conflict (mandi_id, crop_id, date) do update set
-               modal_price=excluded.modal_price, min_price=excluded.min_price,
-               max_price=excluded.max_price, is_holiday=excluded.is_holiday,
-               source_code='seed_pk_initial'`,
-            [mandi.id, cropId, dateStr, modal, min, max, isSunday]
-          );
-          inserted++;
-        }
-      }
+      await client.query(
+        `insert into mandi_prices (mandi_id, crop_id, date, modal_price, min_price, max_price, source, is_holiday)
+         select m.id, c.id, $1::date,
+           floor(((2000 + random() * 4000)::numeric) * 100) / 100,
+           floor(((2000 + random() * 4000 - random() * 200)::numeric) * 100) / 100,
+           floor(((2000 + random() * 4000 + random() * 200)::numeric) * 100) / 100,
+           'govt_api', extract(dow from $1::date) = 0
+         from mandis m
+         cross join crops c
+         on conflict (mandi_id, crop_id, date) do update set
+           modal_price=excluded.modal_price, min_price=excluded.min_price,
+           max_price=excluded.max_price, is_holiday=excluded.is_holiday`,
+        [dateStr]
+      );
     }
   });
-  console.log(`Seeded ${inserted} sample price rows.`);
-}
 
-const PAKISTAN_FEDERAL_HOLIDAYS_2026: { date: string; label: string }[] = [
-  { date: "2026-02-05", label: "Kashmir Day" },
-  { date: "2026-03-23", label: "Pakistan Day" },
-  { date: "2026-05-01", label: "Labour Day" },
-  { date: "2026-08-14", label: "Independence Day" },
-  { date: "2026-11-09", label: "Iqbal Day" },
-  { date: "2026-12-25", label: "Quaid-e-Azam Day / Christmas" },
-];
-
-async function seedMandiHolidays(): Promise<void> {
-  const start = new Date();
-  start.setHours(0, 0, 0, 0);
-
-  const provinces: { code: string; source: string }[] = [
-    { code: "punjab", source: "amis_pk" },
-    { code: "sindh", source: "samis_pk" },
-    { code: "khyber_pakhtunkhwa", source: "fmis_kp" },
-    { code: "balochistan", source: "bmis_balochistan" },
-  ];
-
-  let inserted = 0;
-  await withTransaction(async (client) => {
-    for (let dayOffset = 0; dayOffset < 365; dayOffset++) {
-      const date = new Date(start);
-      date.setDate(date.getDate() + dayOffset);
-      if (date.getDay() !== 0) continue;
-      const dateStr = date.toISOString().split("T")[0];
-      for (const p of provinces) {
-        await client.query(
-          `insert into mandi_holidays (province, date, label, source_code)
-           values ($1,$2,'Sunday',$3)
-           on conflict do nothing`,
-          [p.code, dateStr, p.source]
-        );
-        inserted++;
-      }
-    }
-
-    for (const h of PAKISTAN_FEDERAL_HOLIDAYS_2026) {
-      for (const p of provinces) {
-        await client.query(
-          `insert into mandi_holidays (province, date, label, source_code)
-           values ($1,$2,$3,$4)
-           on conflict do nothing`,
-          [p.code, h.date, h.label, p.source]
-        );
-        inserted++;
-      }
-    }
-  });
-  console.log(`Seeded ${inserted} mandi_holidays rows.`);
+  const [{ count }] = await query<{ count: string }>(`select count(*)::text as count from mandi_prices`);
+  console.log(`Seeded ${count} sample price rows.`);
 }
 
 async function main(): Promise<void> {
   await seedCrops();
   await seedMandis();
   await seedSamplePrices();
-  await seedMandiHolidays();
   console.log("Mandi Price Tracker seed complete.");
   process.exit(0);
 }

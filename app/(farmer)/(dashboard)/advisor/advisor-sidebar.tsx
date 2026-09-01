@@ -3,7 +3,13 @@
 import { useState } from "react";
 import type { AdvisorBundle } from "./advisor-bundle";
 import ConfirmDialog from "./confirm-dialog";
-import { CloseIcon, PencilIcon, PlusIcon, XIcon } from "@/components/icons";
+import {
+  CloseIcon,
+  PencilIcon,
+  PlusIcon,
+  SproutIcon,
+  XIcon,
+} from "@/components/icons";
 
 export type ConversationMeta = {
   id: string;
@@ -65,10 +71,15 @@ export default function AdvisorSidebar({
           open ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-agro-sprout px-4 py-3">
-          <h2 className="text-sm font-semibold text-agro-ink">
-            {bundle.sidebar.title}
-          </h2>
+        <div className="flex items-center justify-between gap-2 border-b border-agro-sprout bg-gradient-to-br from-agro-mint via-white to-agro-stone px-4 py-3">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-agro-leaf to-agro-forest text-white">
+              <SproutIcon className="h-4 w-4" />
+            </span>
+            <h2 className="text-sm font-semibold text-agro-ink">
+              {bundle.sidebar.title}
+            </h2>
+          </div>
           <button
             type="button"
             onClick={onClose}
@@ -83,7 +94,7 @@ export default function AdvisorSidebar({
           <button
             type="button"
             onClick={() => { onNew(); onClose(); }}
-            className="flex w-full items-center gap-2 rounded-xl bg-agro-canopy px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-agro-forest"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-agro-canopy to-agro-forest px-3 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:brightness-110"
           >
             <PlusIcon className="h-4 w-4" />
             {bundle.sidebar.newConversation}
@@ -124,8 +135,8 @@ export default function AdvisorSidebar({
                     <div
                       className={`group flex items-center gap-1 rounded-xl px-2 py-2 transition-colors ${
                         activeId === conv.id
-                          ? "bg-agro-mint/60 text-agro-ink"
-                          : "text-agro-slate hover:bg-agro-mint/30"
+                          ? "bg-agro-leaf/15 text-agro-ink ring-1 ring-inset ring-agro-leaf/30"
+                          : "text-agro-slate hover:bg-agro-mint/40"
                       }`}
                     >
                       <button

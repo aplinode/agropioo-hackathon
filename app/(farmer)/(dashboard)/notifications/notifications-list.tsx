@@ -5,11 +5,9 @@ import {
   BugIcon,
   CloudRainIcon,
   TrendingUpIcon,
+  CheckIcon,
 } from "@/components/icons";
-import {
-  demoNotifications,
-  type AlertKind,
-} from "./demo-data";
+import type { AlertKind } from "./notifications-bundle";
 
 const severityChip = {
   critical: "bg-agro-forest text-white",
@@ -29,9 +27,6 @@ const kindIcon: Record<AlertKind, typeof BugIcon> = {
   price: TrendingUpIcon,
 };
 
-/* Alerts center: every notification with severity styling that matches the
-   dashboard's green-intensity ladder. Marking all read is session-only
-   (no backend is wired). */
 export default function NotificationsList() {
   const [allRead, setAllRead] = useState(false);
 
@@ -39,7 +34,7 @@ export default function NotificationsList() {
     <div>
       <div className="flex items-center justify-between gap-3">
         <p className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate">
-          {allRead ? "All caught up" : `${demoNotifications.length} unread`}
+          {allRead ? "All caught up" : "0 unread"}
           <span className="sr-only"> notifications</span>
         </p>
         <button
@@ -52,46 +47,14 @@ export default function NotificationsList() {
         </button>
       </div>
 
-      <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
-        {demoNotifications.map((item) => {
-          const KindIcon = kindIcon[item.kind];
-          const read = allRead;
-          return (
-            <li
-              key={item.id}
-              className={`flex items-center gap-3 p-4 transition-opacity ${
-                read ? "opacity-55" : ""
-              }`}
-            >
-              {!read && (
-                <span className="h-2 w-2 shrink-0 rounded-full bg-agro-canopy" aria-hidden="true" />
-              )}
-              <span
-                aria-hidden="true"
-                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${severityChip[item.severity]} ${!read ? "" : ""}`}
-              >
-                <KindIcon size={17} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <span className={`sr-only`}>{severityWord[item.severity]} alert. </span>
-                <p
-                  className={`text-sm leading-snug text-agro-ink ${
-                    read ? "font-normal" : "font-medium"
-                  }`}
-                >
-                  {item.message}
-                </p>
-              </div>
-              <span className="hidden shrink-0 font-mono text-xs text-agro-slate sm:block">
-                {item.relativeTime}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
-
-      <p className="mt-6 rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
-        DEMO · marking read lasts for this visit only
+      <p className="mt-3 flex items-center gap-3 rounded-2xl border border-agro-sprout bg-agro-mint p-4 text-sm text-agro-slate">
+        <span
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-agro-canopy"
+          aria-hidden="true"
+        >
+          <CheckIcon className="h-5 w-5" />
+        </span>
+        {"No alerts yet"}
       </p>
     </div>
   );

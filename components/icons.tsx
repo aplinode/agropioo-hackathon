@@ -409,3 +409,21 @@ export function WheatIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function SendIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M4.5 13.5 19 5l-3.9 12.9-3.6-5.4-6.9-.8" />
+      <path d="m3 20 9-5" />
+    </svg>
+  );
+}
+
+export function SparklesIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3Z" />
+      <path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z" />
+    </svg>
+  );
+}

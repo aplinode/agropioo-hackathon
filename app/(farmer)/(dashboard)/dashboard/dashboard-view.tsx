@@ -21,13 +21,21 @@ import {
   LogOutIcon,
   SproutIcon,
 } from "@/components/icons";
-import { getDemoData } from "./demo-data";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { LatinInline } from "@/components/latin-inline";
 import type { Locale } from "@/lib/i18n/config";
 import type { DashboardBundle } from "./dashboard-bundle";
+import DashboardPricesWidget, { type WidgetCropPrice } from "@/components/prices/dashboard-prices-widget";
 
 const CHECKLIST_DISMISS_KEY = "agropioo-checklist-dismissed";
+
+const topAlerts: Array<{
+  id: string;
+  kind: "pest" | "weather" | "price";
+  severity: "critical" | "warning" | "info";
+  message: string;
+  relativeTime: string;
+}> = [];
 
 export { LatinInline };
 
@@ -36,8 +44,6 @@ const latin = (
   className?: string
 ): ReactNode => <LatinInline className={className}>{children}</LatinInline>;
 
-/* Session-scoped store so checklist dismissal survives navigation
-   without per-component state syncing effects. */
 const checklistStore = {
   listeners: new Set<() => void>(),
   subscribe(listener: () => void) {
@@ -82,8 +88,6 @@ async function signOut() {
   window.location.href = "/login";
 }
 
-/* Severity expressed as a green-intensity ladder + icon + word — never a
-   second hue (this build is greens + whites/neutrals only). */
 const severityChip = {
   critical: "bg-agro-forest text-white",
   warning: "bg-agro-canopy/10 text-agro-canopy",
@@ -104,8 +108,6 @@ const quickActionIcon = {
   sprout: SproutIcon,
 } as const;
 
-/* Section marker: mono field label on a furrow hairline running off to the
-   right — the scan order of the farmer's day, read top to bottom. */
 function SectionHead({
   id,
   title,
@@ -137,23 +139,27 @@ function SectionHead({
 
 type DashboardViewProps = {
   variant: "default" | "empty";
-  /** Demo toggle (?weather=off) so the unavailable-weather fallback can be shown. */
   weatherAvailable?: boolean;
-  /** Cookie-resolved locale threaded from the server page (ADR 0004 / FR-3). */
   appLocale?: Locale;
-  /** Server-resolved translation bundle (all dashboard strings). */
   bundle: DashboardBundle;
-  /** Real farms fetched from the database (server-passed). */
   farms?: Array<Record<string, unknown>>;
-  /** Real user profile from the database. */
   user?: { fullName: string; email: string };
+  widgetPrices?: WidgetCropPrice[];
 };
 
-/* Farmer home screen — answers "kya karoon aaj?" in one scan.
-   UI-only demo build; all content comes from typed mock data.
-   Field-ledger visual language: dark forest panels carrying furrow motifs,
-   a punched-ticket advisory pass, mono section markers, greens +
-   whites/neutrals only. DOM order follows specs/dashboard/spec.md FR1–FR10. */
+const CHECKLIST_ITEMS = [
+  { id: "checklist-farm", label: "Add your first farm", href: "/farms/new" },
+  { id: "checklist-advisor", label: "Ask the advisor once", href: "/advisor" },
+  { id: "checklist-detect", label: "Run your first detection", href: "/detect" },
+] as const;
+
+const QUICK_ACTIONS = [
+  { id: "action-record", label: "Add record", href: "/records/new", icon: "clipboard" as const },
+  { id: "action-advisor", label: "Ask advisor", href: "/advisor", icon: "chat" as const },
+  { id: "action-scan", label: "Scan crop", href: "/detect", icon: "camera" as const },
+  { id: "action-prices", label: "Check prices", href: "/prices", icon: "tag" as const },
+] as const;
+
 export default function DashboardView({
   variant,
   weatherAvailable = true,
@@ -161,6 +167,7 @@ export default function DashboardView({
   bundle,
   farms: realFarms,
   user: realUser,
+  widgetPrices = [],
 }: DashboardViewProps) {
   const isEmpty = variant === "empty";
   const completedCount = isEmpty ? 0 : 1;
@@ -171,23 +178,18 @@ export default function DashboardView({
   );
 
   const [showProfile, setShowProfile] = useState(false);
-  const { farmer, advisory, seasonTip, weather, alerts: demoAlerts, farms: demoFarms, checklistItems, quickActions } = getDemoData(bundle);
-  const advisory_ = isEmpty ? seasonTip : advisory;
-  const topAlerts = demoAlerts.slice(0, 3);
 
-  const displayFarms = realFarms && realFarms.length > 0
-    ? realFarms.map((f: Record<string, unknown>) => ({
-        id: f.id as string,
-        name: f.name as string,
-        location: f.location as string,
-        acres: f.acres as number,
-        crops: Array.isArray(f.crops) ? (f.crops as string[]).join(', ') : String(f.crops),
-        stage: f.growth_stages && typeof f.growth_stages === 'object'
-          ? Object.values(f.growth_stages as Record<string, string>).filter(Boolean).join(', ') || 'Active'
-          : 'Active',
-        health: (f.health as 'good' | 'watch') || 'good',
-      }))
-    : demoFarms;
+  const displayFarms = (realFarms ?? []).map((f: Record<string, unknown>) => ({
+    id: f.id as string,
+    name: f.name as string,
+    location: f.location as string,
+    acres: f.acres as number,
+    crops: Array.isArray(f.crops) ? (f.crops as string[]).join(', ') : String(f.crops),
+    stage: f.growth_stages && typeof f.growth_stages === 'object'
+      ? Object.values(f.growth_stages as Record<string, string>).filter(Boolean).join(', ') || 'Active'
+      : 'Active',
+    health: (f.health as 'good' | 'watch') || 'good',
+  }));
 
   const displayUser = realUser
     ? {
@@ -197,10 +199,10 @@ export default function DashboardView({
         email: realUser.email,
       }
     : {
-        firstName: farmer.firstName,
-        lastName: farmer.lastName,
-        initials: farmer.initials,
-        email: farmer.email,
+        firstName: "Farmer",
+        lastName: "",
+        initials: "F",
+        email: "",
       };
 
   const severityWord = {
@@ -209,21 +211,29 @@ export default function DashboardView({
     info: bundle.severityInfo,
   } as const;
 
+  const todayLabel = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+  });
+
   return (
     <div className="space-y-9 pt-1">
       {/* Header */}
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-canopy">
-            {latin(farmer.todayLabel)}
+            {latin(todayLabel)}
           </p>
           <h1 className="display-heading mt-2 font-display text-[1.75rem] font-semibold leading-tight tracking-tight text-agro-forest sm:text-4xl">
             {bundle.greeting.replace("{name}", displayUser.firstName)}
           </h1>
-          <p className="mt-2 flex items-center gap-1.5 text-sm text-agro-slate">
-            <MapPinIcon size={16} className="shrink-0 text-agro-canopy" />
-            {latin(farmer.location)}
-          </p>
+          {!isEmpty && realUser && (
+            <p className="mt-2 flex items-center gap-1.5 text-sm text-agro-slate">
+              <MapPinIcon size={16} className="shrink-0 text-agro-canopy" />
+              {latin(realUser.email)}
+            </p>
+          )}
         </div>
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <div
@@ -248,12 +258,12 @@ export default function DashboardView({
               </div>
             </div>
           )}
-<button
-  type="button"
-  onClick={() => signOut()}
-  aria-label={bundle.signOut}
-  className="inline-flex h-11 items-center gap-1.5 rounded-full border border-agro-sprout bg-white px-3 font-mono text-sm font-semibold text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
->
+          <button
+            type="button"
+            onClick={() => signOut()}
+            aria-label={bundle.signOut}
+            className="inline-flex h-11 items-center gap-1.5 rounded-full border border-agro-sprout bg-white px-3 font-mono text-sm font-semibold text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
+          >
             <LogOutIcon size={12} className="h-4 w-4 shrink-0" />
             {bundle.signOut}
           </button>
@@ -303,10 +313,7 @@ export default function DashboardView({
             <div className="p-6 pb-7 sm:p-8">
               <div className="flex flex-wrap items-center gap-2 pe-16 sm:pe-24">
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-agro-sprout">
-                  {advisory.crop}
-                </span>
-                <span className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-white/75">
-                  {advisory.stage}
+                  {bundle.seasonTipBadge}
                 </span>
               </div>
               <span className="absolute end-6 top-6 font-mono text-xs uppercase tracking-wide text-agro-sprout/80 sm:end-8 sm:top-8">
@@ -316,13 +323,12 @@ export default function DashboardView({
                 {bundle.advisoryTitle}
               </h2>
               <p className="display-heading mt-5 max-w-lg font-display text-[1.55rem] font-semibold leading-snug sm:text-[1.85rem]">
-                {advisory_.action}.
+                {bundle.carryToField}.
               </p>
               <p className="mt-2.5 max-w-lg text-sm leading-relaxed text-white/80">
-                {advisory_.why}
+                {bundle.askAdvisor}
               </p>
             </div>
-            {/* Perforation + tear-off stub: the advisor rides along to the field */}
             <div
               aria-hidden="true"
               className="absolute inset-x-0 bottom-16 border-t border-dashed border-white/25"
@@ -351,45 +357,18 @@ export default function DashboardView({
             <>
               <div className="flex items-baseline justify-between gap-3">
                 <h2 className="shrink-0 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate">
-                  {bundle.weatherTitle.replace("{location}", weather.location)}
+                  {bundle.weatherTitle.replace("{location}", "Your area")}
                 </h2>
                 <CloudRainIcon className="h-5 w-5 shrink-0 text-agro-canopy" aria-hidden="true" />
               </div>
-              <div className="mt-4 flex items-end justify-between gap-3">
-                <p className="text-sm font-medium leading-snug text-agro-ink">
-                  {latin(weather.condition)}
-                </p>
-                <p
-                  className="font-mono text-[2.75rem] font-bold leading-none tracking-tight text-agro-forest"
-                  aria-label={bundle.degreesCelsius.replace("{n}", String(weather.temperatureC))}
-                >
-                  {latin(<>{weather.temperatureC}°</>)}
-                </p>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                <span className="rounded-md bg-agro-mint px-2 py-1 font-mono text-xs text-agro-slate">
-                  {latin(<>H {weather.highC}°</>)}
-                </span>
-                <span className="rounded-md bg-agro-mint px-2 py-1 font-mono text-xs text-agro-slate">
-                  {latin(<>L {weather.lowC}°</>)}
-                </span>
-              </div>
-              <p className="mt-3 rounded-xl bg-agro-mint px-3 py-2.5 text-xs leading-relaxed text-agro-slate">
-                {weather.rainNote}
+              <p className="mt-4 text-sm text-agro-slate">
+                Weather data will appear here once your farm location is set.
               </p>
-              <Link
-                href="/weather"
-                className="mt-auto inline-flex min-h-11 items-center gap-1 pt-3 text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline"
-              >
-                {bundle.fullForecast}
-                <ChevronRightIcon className="h-4 w-4" />
-              </Link>
             </>
           ) : (
-            /* Explanatory fallback, not an error dump (spec FR10c). */
             <>
               <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate">
-                {bundle.weatherTitle.replace("{location}", weather.location)}
+                {bundle.weatherTitle.replace("{location}", "Your area")}
               </h2>
               <p className="mt-4 flex items-start gap-3 text-sm leading-relaxed text-agro-slate">
                 <CloudRainIcon className="mt-0.5 h-5 w-5 shrink-0 text-agro-slate" aria-hidden="true" />
@@ -417,10 +396,10 @@ export default function DashboardView({
               id="season-tip-heading"
               className="display-heading mt-3 font-display text-lg font-bold leading-snug text-agro-forest sm:text-xl"
             >
-              {seasonTip.action}.
+              {bundle.welcomeTitle}
             </h2>
             <p className="mt-1.5 max-w-lg text-sm leading-relaxed text-agro-slate">
-              {seasonTip.why}
+              {bundle.welcomeBody}
             </p>
           </div>
         </section>
@@ -431,7 +410,7 @@ export default function DashboardView({
         <SectionHead
           id="alerts-heading"
           title={bundle.alertsHeading}
-          meta={isEmpty ? undefined : bundle.newCount.replace("{n}", String(farmer.unreadCount))}
+          meta={isEmpty ? undefined : bundle.newCount.replace("{n}", "0")}
           action={
             !isEmpty ? (
               <Link
@@ -443,7 +422,7 @@ export default function DashboardView({
             ) : undefined
           }
         />
-        {isEmpty ? (
+        {topAlerts.length === 0 ? (
           <p className="mt-3 flex items-center gap-3 rounded-2xl border border-agro-sprout bg-agro-mint p-4 text-sm text-agro-slate">
             <span
               className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-agro-canopy"
@@ -492,7 +471,7 @@ export default function DashboardView({
       <section aria-labelledby="actions-heading">
         <SectionHead id="actions-heading" title={bundle.quickActionsHeading} />
         <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
-          {quickActions.map((action) => {
+          {QUICK_ACTIONS.map((action) => {
             const ActionIcon = quickActionIcon[action.icon];
             return (
               <li key={action.id}>
@@ -512,6 +491,9 @@ export default function DashboardView({
           })}
         </ul>
       </section>
+
+      {/* Mandi prices summary widget */}
+      <DashboardPricesWidget prices={widgetPrices} bundle={bundle} />
 
       {/* Detect CTA — the page's single high-emphasis surface (deep green) */}
       <Link
@@ -656,24 +638,24 @@ export default function DashboardView({
               {bundle.setupChecklist}
             </h2>
             <span className="font-mono text-xs text-agro-slate">
-              {bundle.checklistProgress.replace("{done}", String(completedCount)).replace("{total}", String(checklistItems.length))}
+              {bundle.checklistProgress.replace("{done}", String(completedCount)).replace("{total}", String(CHECKLIST_ITEMS.length))}
             </span>
           </div>
           <div
             className="mt-3 h-1.5 overflow-hidden rounded-full bg-white"
             role="progressbar"
             aria-valuemin={0}
-            aria-valuemax={checklistItems.length}
+            aria-valuemax={CHECKLIST_ITEMS.length}
             aria-valuenow={completedCount}
             aria-label={bundle.setupProgress}
           >
             <div
               className="h-full rounded-full bg-agro-canopy transition-[width] duration-300"
-              style={{ width: `${(completedCount / checklistItems.length) * 100}%` }}
+              style={{ width: `${(completedCount / CHECKLIST_ITEMS.length) * 100}%` }}
             />
           </div>
           <ul className="mt-4 space-y-1">
-            {checklistItems.map((item, index) => {
+            {CHECKLIST_ITEMS.map((item, index) => {
               const done = index < completedCount;
               return (
                 <li key={item.id}>
@@ -705,10 +687,6 @@ export default function DashboardView({
           </ul>
         </section>
       )}
-
-      <p className="pb-2 text-center font-mono text-[0.65rem] uppercase tracking-[0.18em] text-agro-slate">
-        {bundle.demoFooter}
-      </p>
     </div>
   );
 }

@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import AuthShell from "@/components/auth/auth-shell";
 import OtpVerify from "@/components/auth/otp-verify";
 import { COPY } from "@/lib/auth/copy";
-import { peekDemoCode, stashDemoCode } from "@/lib/auth/demo-code";
 
 const brandPoints = [
   "One 6-digit code — that's all",
@@ -21,13 +20,9 @@ type VerifyScreenProps = {
   maskedEmail: string;
 };
 
-/* Thin client wrapper around the shared OTP component (plan file map):
-   owns the real API calls, the success hand-off per purpose, and the
-   neutral ejection path for dead/forged/consumed passes. */
 export default function VerifyScreen({ context, maskedEmail }: VerifyScreenProps) {
   const router = useRouter();
   const [verified, setVerified] = useState(false);
-  const [demoCode] = useState<string | undefined>(() => peekDemoCode());
 
   function eject() {
     router.replace(context === "reset" ? "/forgot-password" : "/login");
@@ -52,7 +47,6 @@ export default function VerifyScreen({ context, maskedEmail }: VerifyScreenProps
     if (response.ok && payload.error === undefined) return null;
     const error = payload.error as { code?: string; message?: string } | undefined;
     const message = error?.message ?? COPY.SERVER_ERROR;
-    // Pass-gate failures eject; code problems stay retryable.
     return message === COPY.UNAUTHORIZED_GENERIC ? "eject" : "retry";
   }
 
@@ -76,9 +70,7 @@ export default function VerifyScreen({ context, maskedEmail }: VerifyScreenProps
       context === "signup" ? "/api/auth/signup/resend" : "/api/auth/reset/resend";
     const { response, payload } = await postJson(url);
     if (response.ok) {
-      const demo = typeof payload.demoCode === "string" ? payload.demoCode : undefined;
-      stashDemoCode(demo);
-      return { status: "ok" as const, demoCode: demo };
+      return { status: "ok" as const };
     }
     if (classify(response, payload) === "eject") {
       eject();
@@ -149,8 +141,6 @@ export default function VerifyScreen({ context, maskedEmail }: VerifyScreenProps
       )}
 
       {verified ? (
-        /* Spec scenario 2: single path forward — Sign in. (Reset context
-           never lands here: onVerified navigates straight to /reset-password.) */
         <div className="flex flex-1 flex-col justify-center py-10" role="status">
           <span
             className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-canopy text-white"
@@ -180,7 +170,8 @@ export default function VerifyScreen({ context, maskedEmail }: VerifyScreenProps
             email={maskedEmail}
             submitCode={submitCode}
             resendCode={resendCode}
-            demoCode={demoCode}
+            escapeLabel={context === "reset" ? "Back to login" : "Use a different account"}
+            onEscape={() => router.replace(context === "reset" ? "/login" : "/signup")}
             onVerified={() => {
               if (context === "reset") {
                 router.replace("/reset-password");
@@ -188,12 +179,8 @@ export default function VerifyScreen({ context, maskedEmail }: VerifyScreenProps
                 setVerified(true);
               }
             }}
-            escapeLabel={context === "reset" ? "Back" : "Use a different account"}
-            onEscape={() => {
-              router.replace(context === "reset" ? "/forgot-password" : "/login");
-            }}
           />
-        )}
+      )}
     </AuthShell>
   );
 }

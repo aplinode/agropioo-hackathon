@@ -14,7 +14,6 @@ import {
 } from "@/components/icons";
 import FarmSelector from "./farm-selector";
 import ScanHistory from "./scan-history";
-import DetectChatHistory, { type DetectChatMeta } from "./chat-history";
 import DiagnosisCard from "./diagnosis-card";
 import DetectChat from "./detect-chat";
 import type { DetectBundle } from "./detect-bundle";
@@ -28,17 +27,13 @@ interface DetectUploadProps {
   farms: FarmOption[];
   initialScans: ScanHistoryItem[];
   nextCursor: string | null;
-  initialChats: DetectChatMeta[];
 }
-
-const SAMPLE_LEAF_URL = "/assets/sample-leaf.jpg";
 
 export default function DetectUpload({
   bundle,
   farms,
   initialScans,
   nextCursor,
-  initialChats,
 }: DetectUploadProps) {
   const [stage, setStage] = useState<Stage>("idle");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -50,16 +45,11 @@ export default function DetectUpload({
   const [saveState, setSaveState] = useState<"idle" | "saved" | "saving">("idle");
   const [savedFarmName, setSavedFarmName] = useState("");
   const [analyzingError, setAnalyzingError] = useState<string | null>(null);
-  const [analyzingErrorKind, setAnalyzingErrorKind] = useState<
-    "service" | "nod" | "image"
-  >("service");
 
   const [chatId, setChatId] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<
     { id: string; role: "farmer" | "detect"; content: string }[]
   >([]);
-
-  const [activeChatId, setActiveChatId] = useState<string | null>(null);
 
   const objectUrlRef = useRef<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -78,11 +68,6 @@ export default function DetectUpload({
     objectUrlRef.current = null;
   }
 
-  function buildAutoPrompt(diagnosis: DiagnosisResult): string {
-    const { diseaseName, crop } = diagnosis;
-    return `I scanned my ${crop} leaf and the AI detected ${diseaseName}. Why is this happening and what should I do?`;
-  }
-
   function resetToIdle() {
     revokePreview();
     setPreviewUrl(null);
@@ -95,8 +80,7 @@ export default function DetectUpload({
     setChatMessages([]);
   }
 
-  function showError(kind: "service" | "nod" | "image", message: string) {
-    setAnalyzingErrorKind(kind);
+  function showError(_kind: "service" | "nod" | "image", message: string) {
     setAnalyzingError(message);
     setStage("error");
   }
@@ -122,58 +106,8 @@ export default function DetectUpload({
     setChatMessages(data.messages ?? []);
   }
 
-  async function loadChatFromHistory(chat: DetectChatMeta) {
-    abortRef.current?.abort();
-    setAnalyzingError(null);
-    setAnalyzingErrorKind("service");
-    setSaveState("idle");
-    setSavedFarmName("");
-    setPreviewUrl(null);
-    setFileName("");
-
-    const [chatRes, messagesRes] = await Promise.all([
-      fetch(`/api/detect/chats/${chat.id}`, { credentials: "same-origin" }),
-      fetch(`/api/detect/messages/${chat.id}`, { credentials: "same-origin" }),
-    ]);
-
-    if (!chatRes.ok || !messagesRes.ok) {
-      setAnalyzingErrorKind("service");
-      setAnalyzingError("Failed to load chat.");
-      setStage("error");
-      return;
-    }
-
-    const chatData = await chatRes.json();
-    const messagesData = await messagesRes.json();
-
-    const scan = chatData.scan;
-    if (scan) {
-      const diagnosis: DiagnosisResult = {
-        scanId: scan.id,
-        diseaseName: scan.diseaseName,
-        confidence: scan.confidence,
-        severity: scan.severity,
-        crop: scan.crop,
-        causes: scan.causes,
-        steps: scan.steps,
-        rescanTiming: scan.rescanTiming,
-        caution: scan.caution,
-        imageUrl: scan.imageUrl,
-        saveStatus: "not_saved",
-      };
-      setResult(diagnosis);
-    } else {
-      setResult(null);
-    }
-
-    setChatId(chat.id);
-    setChatMessages(messagesData.messages ?? []);
-    setActiveChatId(chat.id);
-    setStage("chat");
-  }
-
   async function enterChatMode(scan: DiagnosisResult | ScanHistoryItem) {
-    const diagnosis: DiagnosisResult = "id" in scan && "createdAt" in scan
+    const diagnosis: DiagnosisResult = "saveStatus" in scan && "saveStatus" in scan && scan.saveStatus !== undefined
       ? toDiagnosis(scan as ScanHistoryItem)
       : scan as DiagnosisResult;
     const cId = diagnosis.scanId
@@ -289,18 +223,6 @@ export default function DetectUpload({
       await runAnalysis(blob, file.name);
     } catch {
       showError("image", bundle.invalidFile);
-    }
-  }
-
-  async function handleSample() {
-    try {
-      const res = await fetch(SAMPLE_LEAF_URL);
-      if (!res.ok) throw new Error("sample not found");
-      const blob = await res.blob();
-      const file = new File([blob], "sample-leaf.jpg", { type: "image/jpeg" });
-      await handleFile(file);
-    } catch {
-      showError("service", bundle.serviceUnavailable);
     }
   }
 
@@ -432,209 +354,168 @@ export default function DetectUpload({
   );
 
   return (
-    <div className="flex h-full w-full flex-col">
-      <div className="mx-auto w-full max-w-3xl">
-        {farms.length > 0 && (
-          <FarmSelector
-            farms={farms}
-            bundle={bundle}
-            selected={selectedFarm}
-            onSelect={setSelectedFarm}
-          />
-        )}
+    <div className="flex h-full flex-col">
+      {farms.length > 0 && (
+        <FarmSelector
+          farms={farms}
+          bundle={bundle}
+          selected={selectedFarm}
+          onSelect={setSelectedFarm}
+        />
+      )}
 
-        {stage === "idle" && (
-          <div className="mt-5 flex flex-1 flex-col">
-            <label
-              htmlFor="detect-photo"
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              className="group relative flex min-h-64 flex-1 cursor-pointer flex-col items-center justify-center gap-4 overflow-hidden rounded-3xl border-2 border-dashed border-agro-leaf/50 bg-white p-6 text-center transition-colors hover:border-agro-canopy hover:bg-agro-mint"
-            >
-              <FurrowMotif
-                tone="ghost"
-                className="pointer-events-none absolute inset-x-0 bottom-0 w-full text-agro-sprout/40"
-              />
-              <span className="relative inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout transition-all duration-200 group-hover:bg-agro-canopy group-hover:text-white">
-                <CameraIcon size={28} />
-              </span>
-              <span className="relative my-1 text-xs text-agro-slate">
-                {bundle.dragDropPrompt}
-              </span>
-              <span className="relative max-w-xs font-display text-xl font-bold leading-snug text-agro-forest">
-                {bundle.uploadPrompt}
-              </span>
-              <span className="relative inline-flex min-h-11 items-center gap-2 rounded-xl bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 group-hover:bg-agro-forest group-hover:shadow-md">
-                <CameraIcon size={16} />
-                {bundle.takePhoto}
-              </span>
-              <input
-                id="detect-photo"
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) handleFile(f);
-                }}
-                className="sr-only"
-              />
-            </label>
-
-            <button
-              type="button"
-              onClick={handleSample}
-              className="mt-3 inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-agro-canopy/30 bg-white px-4 text-sm font-semibold text-agro-forest transition-colors hover:border-agro-canopy hover:bg-agro-mint sm:w-auto sm:self-start sm:px-6"
-            >
-              {bundle.sampleScan}
-            </button>
-          </div>
-        )}
-
-        {stage === "analyzing" && (
-          <div
-            className="mt-5 flex flex-1 flex-col items-center justify-center gap-4 rounded-3xl border border-agro-sprout bg-white p-8 text-center"
-            role="status"
+      {stage === "idle" && (
+        <div className="mt-5 flex flex-1 flex-col">
+          <label
+            htmlFor="detect-photo"
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            className="group relative flex min-h-64 flex-1 cursor-pointer flex-col items-center justify-center gap-4 overflow-hidden rounded-3xl border-2 border-dashed border-agro-leaf/50 bg-white p-6 text-center transition-colors hover:border-agro-canopy hover:bg-agro-mint"
           >
-            {previewUrl ? (
-              <img
-                src={previewUrl}
-                alt={`Photo being analyzed: ${fileName}`}
-                className="h-44 w-full max-w-sm rounded-2xl border border-agro-sprout object-cover"
-              />
-            ) : (
-              <span
-                className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout"
-                aria-hidden="true"
-              >
-                <CameraIcon size={28} />
-              </span>
-            )}
-            <svg
-              className="h-5 w-5 animate-spin text-agro-canopy"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25" />
-              <path
-                fill="currentColor"
-                opacity="0.75"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-              />
-            </svg>
-            <p className="font-mono text-xs uppercase tracking-[0.18em] text-agro-slate">
-              {bundle.readingLeaf}
-            </p>
-          </div>
-        )}
+            <FurrowMotif
+              tone="ghost"
+              className="pointer-events-none absolute inset-x-0 bottom-0 w-full text-agro-sprout/40"
+            />
+            <span className="relative inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout transition-all duration-200 group-hover:-translate-y-0.5 group-hover:bg-agro-canopy group-hover:text-white">
+              <CameraIcon size={28} />
+            </span>
+            <span className="relative max-w-xs font-display text-xl font-bold leading-snug text-agro-forest">
+              {bundle.uploadPrompt}
+            </span>
+            <span className="relative inline-flex min-h-11 items-center gap-2 rounded-xl bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 group-hover:bg-agro-forest group-hover:shadow-md">
+              <CameraIcon size={16} />
+              {bundle.takePhoto}
+            </span>
+            <input
+              id="detect-photo"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleFile(f);
+              }}
+              className="sr-only"
+            />
+            <span className="absolute inset-0 flex items-center justify-center text-xs text-agro-slate opacity-0 group-hover:opacity-100">
+              {bundle.dragDropPrompt}
+            </span>
+          </label>
+        </div>
+      )}
 
-        {stage === "result" && displayedScan && (
-          <DiagnosisCard
-            result={displayedScan}
-            bundle={bundle}
-            actionBar={
-              <div className="flex flex-col gap-3 sm:flex-row">
-                {viewingScan ? (
-                  <button
-                    type="button"
-                    onClick={resetToIdle}
-                    className="inline-flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest hover:border-agro-canopy hover:bg-agro-mint"
-                  >
-                    {bundle.scanAnother}
-                  </button>
-                ) : (
-                  diagnosisActions
-                )}
-              </div>
-            }
-          />
-        )}
-
-        {stage === "error" && (
-          <div className="mt-5 flex flex-1 flex-col items-center justify-center gap-4 rounded-3xl border border-agro-sprout bg-white p-8 text-center">
+      {stage === "analyzing" && (
+        <div
+          className="mt-5 flex flex-1 flex-col items-center justify-center gap-4 rounded-3xl border border-agro-sprout bg-white p-8 text-center"
+          role="status"
+        >
+          {previewUrl ? (
+            <img
+              src={previewUrl}
+              alt={`Photo being analyzed: ${fileName}`}
+              className="h-44 w-full max-w-sm rounded-2xl border border-agro-sprout object-cover"
+            />
+          ) : (
             <span
               className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout"
               aria-hidden="true"
             >
-              <AlertTriangleIcon size={28} />
+              <CameraIcon size={28} />
             </span>
-            <p className="max-w-sm text-sm leading-relaxed text-agro-slate">
-              {analyzingError}
-            </p>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={resetToIdle}
-                className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white hover:bg-agro-forest"
-              >
-                {bundle.retry}
-              </button>
-              {analyzingErrorKind !== "nod" && analyzingErrorKind !== "image" && (
+          )}
+          <svg
+            className="h-5 w-5 animate-spin text-agro-canopy"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25" />
+            <path
+              fill="currentColor"
+              opacity="0.75"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            />
+          </svg>
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-agro-slate">
+            {bundle.readingLeaf}
+          </p>
+        </div>
+      )}
+
+      {stage === "result" && displayedScan && (
+        <DiagnosisCard
+          result={displayedScan}
+          bundle={bundle}
+          actionBar={
+            <div className="flex flex-col gap-3 sm:flex-row">
+              {viewingScan ? (
                 <button
                   type="button"
-                  onClick={() => {
-                    if (previewUrl) handleSample();
-                  }}
-                  className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest hover:border-agro-canopy hover:bg-agro-mint"
+                  onClick={resetToIdle}
+                  className="inline-flex min-h-12 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest hover:border-agro-canopy hover:bg-agro-mint"
                 >
-                  {bundle.sampleScan}
+                  {bundle.scanAnother}
                 </button>
+              ) : (
+                diagnosisActions
               )}
             </div>
+          }
+        />
+      )}
+
+      {stage === "chat" && result && chatId && (
+        <DetectChat
+          key={chatId}
+          bundle={bundle}
+          chatId={chatId}
+          initialMessages={chatMessages}
+          diagnosis={result}
+          onNewScan={resetToIdle}
+        />
+      )}
+
+      {stage === "error" && (
+        <div className="mt-5 flex flex-1 flex-col items-center justify-center gap-4 rounded-3xl border border-agro-sprout bg-white p-8 text-center">
+          <span
+            className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-agro-mint text-agro-canopy ring-1 ring-agro-sprout"
+            aria-hidden="true"
+          >
+            <AlertTriangleIcon size={28} />
+          </span>
+          <p className="max-w-sm text-sm leading-relaxed text-agro-slate">
+            {analyzingError}
+          </p>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={resetToIdle}
+              className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white hover:bg-agro-forest"
+            >
+              {bundle.retry}
+            </button>
           </div>
-        )}
-
-        {stage !== "chat" && initialScans.length > 0 && (
-          <section aria-labelledby="history-heading" className="mt-8">
-            <h2
-              id="history-heading"
-              className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate"
-            >
-              {bundle.pastScans}
-            </h2>
-            <ScanHistory
-              initialScans={initialScans}
-              nextCursor={nextCursor}
-              bundle={bundle}
-              onScanSelect={(scan) => enterChatMode(scan)}
-            />
-          </section>
-        )}
-
-        {stage !== "chat" && initialChats.length > 0 && (
-          <section aria-labelledby="chat-history-heading" className="mt-8">
-            <h2
-              id="chat-history-heading"
-              className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate"
-            >
-              {bundle.chat.sessionsTitle}
-            </h2>
-            <DetectChatHistory
-              bundle={bundle}
-              initialChats={initialChats}
-              onSelectChat={loadChatFromHistory}
-              activeChatId={activeChatId}
-            />
-          </section>
-        )}
-      </div>
-
-      {stage === "chat" && chatId && (
-        <div className="mt-5 w-full flex-1">
-          <DetectChat
-            key={chatId}
-            bundle={bundle}
-            chatId={chatId}
-            initialMessages={chatMessages}
-            initialDraft={result ? buildAutoPrompt(result) : ""}
-            diagnosis={result ?? { scanId: null, diseaseName: "", confidence: 0, severity: "watch", crop: "", causes: "", steps: [], rescanTiming: "", caution: "", imageUrl: "", saveStatus: "not_saved" }}
-            onNewScan={resetToIdle}
-          />
         </div>
       )}
 
       {NoFarmsModal}
+
+      {stage !== "chat" && initialScans.length > 0 && (
+        <section aria-labelledby="history-heading" className="mt-8">
+          <h2
+            id="history-heading"
+            className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate"
+          >
+            {bundle.pastScans}
+          </h2>
+          <ScanHistory
+            initialScans={initialScans}
+            nextCursor={nextCursor}
+            bundle={bundle}
+            onScanSelect={(scan) => enterChatMode(scan)}
+          />
+        </section>
+      )}
     </div>
   );
 }

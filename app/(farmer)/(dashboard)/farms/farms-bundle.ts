@@ -74,9 +74,7 @@ export type FarmsBundle = {
       saving: string;
       save: string;
     };
-    demoNotice: string;
     success: {
-      heading: string;
       description: string;
       goToFarms: string;
       backToDashboard: string;
@@ -113,7 +111,6 @@ export type FarmsBundle = {
       pageTitle: string;
       heading: string;
       description: string;
-      demoNotice: string;
     };
     new: {
       pageTitle: string;
@@ -137,9 +134,7 @@ export type FarmsBundle = {
         saving: string;
         save: string;
       };
-      demoNotice: string;
       success: {
-        heading: string;
         description: string;
         backToDashboard: string;
         viewFarms: string;

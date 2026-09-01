@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Notifications — Agropioo",
 };
 
-export default function NotificationsPage() {
+export default async function NotificationsPage() {
   return (
     <div className="pt-1">
       <PageHeader
@@ -20,3 +20,4 @@ export default function NotificationsPage() {
     </div>
   );
 }
+

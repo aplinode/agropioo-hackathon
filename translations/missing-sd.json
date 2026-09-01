@@ -1,0 +1,1397 @@
+{
+  "locale": "sd",
+  "total_missing": 278,
+  "exported_at": "2026-08-31T15:15:00+05:00",
+  "translations": [
+    {
+      "key": "app.detect.addFarm",
+      "english": "Add farm",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.analyzing",
+      "english": "Analyzing…",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.caution",
+      "english": "Always confirm treatment with your local agriculture office before spraying.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.cancel",
+      "english": "Cancel",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.closePreview",
+      "english": "Close preview",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.deleteConfirm",
+      "english": "Are you sure you want to delete this chat?",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.deleteSession",
+      "english": "Delete session",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.emptyState",
+      "english": "Ask a follow-up question about this detection.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.imagePreview",
+      "english": "View full image",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.newScan",
+      "english": "New scan",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.noSessions",
+      "english": "No detection chats yet.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.placeholder",
+      "english": "Ask about this detection...",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.send",
+      "english": "Send",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.sessionsTitle",
+      "english": "Detection chats",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.chat.thinking",
+      "english": "Thinking...",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.confidence",
+      "english": "Confidence {pct}%",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.apple",
+      "english": "Apple",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.blueberry",
+      "english": "Blueberry",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.cherry",
+      "english": "Cherry",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.corn",
+      "english": "Corn",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.grape",
+      "english": "Grape",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.orange",
+      "english": "Orange",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.peach",
+      "english": "Peach",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.pepper",
+      "english": "Pepper",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.potato",
+      "english": "Potato",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.raspberry",
+      "english": "Raspberry",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.soybean",
+      "english": "Soybean",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.squash",
+      "english": "Squash",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.strawberry",
+      "english": "Strawberry",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.crop.tomato",
+      "english": "Tomato",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.discussAdvisor",
+      "english": "Discuss with advisor",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_black_rot.causes",
+      "english": "A fungus (Botryosphaeria obtusa) attacks fruit and branches, favoured by wet, humid weather.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_black_rot.name",
+      "english": "Apple black rot",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_black_rot.steps.0",
+      "english": "Prune out infected limbs well below visible lesions and burn them.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_black_rot.steps.1",
+      "english": "Apply a protective fungicide at bloom and after petal fall.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_black_rot.steps.2",
+      "english": "Keep the canopy open and mulch-free to reduce moisture retention.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_cedar_rust.causes",
+      "english": "A rust fungus (Gymnosporangium) that alternates between apple trees and eastern red cedar in wet springs.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_cedar_rust.name",
+      "english": "Cedar-apple rust",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_cedar_rust.steps.0",
+      "english": "Plant rust-resistant rootstocks or varieties where possible.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_cedar_rust.steps.1",
+      "english": "Spray with a copper or myclobutanil fungicide at bud-break and again in early summer.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_cedar_rust.steps.2",
+      "english": "Remove nearby red cedar hosts within 500 m.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_scab.causes",
+      "english": "Fungal spores (Venturia inaequalis) spread in cool, wet springs and infect young leaves and fruit.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_scab.name",
+      "english": "Apple scab",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_scab.steps.0",
+      "english": "Rake and destroy infected fallen leaves in autumn to cut reinfection.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_scab.steps.1",
+      "english": "In spring, spray a horticultural oil or copper-based fungicide at bud-break.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.apple_scab.steps.2",
+      "english": "Prune for good air flow and avoid overhead irrigation.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.cherry_powdery_mildew.causes",
+      "english": "A fungal disease (Podosphaera leucotricha) that forms white powdery spots on leaves in warm days with cool nights.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.cherry_powdery_mildew.name",
+      "english": "Cherry powdery mildew",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.cherry_powdery_mildew.steps.0",
+      "english": "Improve air circulation by thinning crowded branches.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.cherry_powdery_mildew.steps.1",
+      "english": "Spray with sulfur or a mildew-specific fungicide when first spots appear.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.cherry_powdery_mildew.steps.2",
+      "english": "Avoid nitrogen-heavy fertilizers that promote tender growth.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_common_rust.causes",
+      "english": "A fungal rust (Puccinia sorghi) that forms orange pustules on leaves, favoured by dew and moderate temperatures.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_common_rust.name",
+      "english": "Corn common rust",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_common_rust.steps.0",
+      "english": "Plant rust-resistant hybrids where available.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_common_rust.steps.1",
+      "english": "Apply a systemic fungicide at early tassel if infection is heavy.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_common_rust.steps.2",
+      "english": "Avoid planting corn after corn to reduce inoculum build-up.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_gray_leaf_spot.causes",
+      "english": "A fungus (Cercospora zeae) that starts as small gray lesions with yellow halos and spreads in warm, humid conditions.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_gray_leaf_spot.name",
+      "english": "Gray leaf spot",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_gray_leaf_spot.steps.0",
+      "english": "Use resistant hybrids and rotate crops away from corn residue.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_gray_leaf_spot.steps.1",
+      "english": "Apply a triazole or strobilurin fungicide at tasseling if pressure is high.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_gray_leaf_spot.steps.2",
+      "english": "Irrigate in the morning so foliage dries quickly.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_northern_leaf_blight.causes",
+      "english": "A fungus (Exserohilum turcicum) causing long grey-tan lesions, worse in cool, wet weather and high residue.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_northern_leaf_blight.name",
+      "english": "Northern leaf blight",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_northern_leaf_blight.steps.0",
+      "english": "Rotate with soybeans or broadleaf crops and till under residue.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_northern_leaf_blight.steps.1",
+      "english": "Use resistant hybrids and apply a fungicide at VT stage if needed.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.corn_northern_leaf_blight.steps.2",
+      "english": "Space plants for good air flow and avoid overcrowding.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_black_rot.causes",
+      "english": "A fungus (Guignardia bidwellii) that creates black circular spots on berries and leaves in wet springs.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_black_rot.name",
+      "english": "Grape black rot",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_black_rot.steps.0",
+      "english": "Prune out infected canes and remove mummified berries.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_black_rot.steps.1",
+      "english": "Apply an effective fungicide (mancozeb or tebuconazole) at swell and bloom.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_black_rot.steps.2",
+      "english": "Avoid overhead irrigation during bloom.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_esca.causes",
+      "english": "A vascular fungal complex (Phaeoacremonium) that causes dark streaks on canes and wilting leaves.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_esca.name",
+      "english": "Grape esca (black measles)",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_esca.steps.0",
+      "english": "Prune out and destroy infected wood in autumn.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_esca.steps.1",
+      "english": "Apply a lime sulfur or copper spray at bud-break to reduce inoculum.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_esca.steps.2",
+      "english": "Manage irrigation to avoid water stress which worsens symptoms.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_leaf_blight.causes",
+      "english": "A fungus causing small dark spots with yellow halos, most visible in humid conditions.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_leaf_blight.name",
+      "english": "Grape leaf blight (Isariopsis)",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_leaf_blight.steps.0",
+      "english": "Remove and destroy infected leaves at the first sign.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_leaf_blight.steps.1",
+      "english": "Apply a broad-spectrum fungicide (mancozeb or captan) during shoot growth.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.grape_leaf_blight.steps.2",
+      "english": "Improve canopy airflow by selective pruning.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.orange_huanglongbing.causes",
+      "english": "A bacterial disease spread by psyllids, causing yellow mottling, misshapen fruit, and tree decline.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.orange_huanglongbing.name",
+      "english": "Citrus greening (Huanglongbing)",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.orange_huanglongbing.steps.0",
+      "english": "Control the Asian citrus psyllid with coordinated insecticide sprays.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.orange_huanglongbing.steps.1",
+      "english": "Remove and destroy infected trees — there is no cure once established.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.orange_huanglongbing.steps.2",
+      "english": "Use certified disease-free nursery stock and screen for resistance.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.peach_bacterial_spot.causes",
+      "english": "A bacterial pathogen (Xanthomonas) that causes dark spots on leaves and fruit, spread by rain splash.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.peach_bacterial_spot.name",
+      "english": "Peach bacterial spot",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.peach_bacterial_spot.steps.0",
+      "english": "Prune in dry weather and sterilize tools between trees.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.peach_bacterial_spot.steps.1",
+      "english": "Apply a copper-based bactericide at bloom and after heavy rain.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.peach_bacterial_spot.steps.2",
+      "english": "Avoid overhead irrigation and choose resistant varieties.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.pepper_bacterial_spot.causes",
+      "english": "A bacterial infection (Xanthomonas) causing dark, greasy spots on peppers, spread in warm, wet weather.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.pepper_bacterial_spot.name",
+      "english": "Pepper bacterial spot",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.pepper_bacterial_spot.steps.0",
+      "english": "Space plants for good air flow and avoid wetting foliage.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.pepper_bacterial_spot.steps.1",
+      "english": "Apply copper hydroxide at first sign of disease.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.pepper_bacterial_spot.steps.2",
+      "english": "Remove and destroy infected leaves promptly.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.potato_early_blight.causes",
+      "english": "A fungus (Alternaria solani) causing brown target-like rings on lower leaves, worse in warm, humid conditions.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.potato_early_blight.name",
+      "english": "Potato early blight",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.potato_early_blight.steps.0",
+      "english": "Plant certified seed and rotate away from potatoes and tomatoes.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.potato_early_blight.steps.1",
+      "english": "Apply a fungicide (chlorothalonil or mancozeb) when first lesions appear.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.potato_early_blight.steps.2",
+      "english": "Hill soil onto stems and practice wide spacing to keep lower leaves dry.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.potato_late_blight.causes",
+      "english": "A water mold (Phytophthora infestans) causing dark, water-soaked lesions — the cause of the Irish potato famine, spreads rapidly in cool, wet weather.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.potato_late_blight.name",
+      "english": "Potato late blight",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.potato_late_blight.steps.0",
+      "english": "Remove and destroy infected tubers and haulm immediately — do NOT compost.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.potato_late_blight.steps.1",
+      "english": "Apply a systemic fungicide (metalaxyl-based) at first sign, then every 5-7 days while wet.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.potato_late_blight.steps.2",
+      "english": "Plant resistant varieties and avoid irrigation during late afternoon.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.squash_powdery_mildew.causes",
+      "english": "A fungus (Podosphaera xanthii) forming white powdery spots on leaves in warm days with high humidity.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.squash_powdery_mildew.name",
+      "english": "Squash powdery mildew",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.squash_powdery_mildew.steps.0",
+      "english": "Plant resistant varieties and space vines for good air flow.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.squash_powdery_mildew.steps.1",
+      "english": "Apply sulfur or potassium bicarbonate spray weekly once symptoms appear.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.squash_powdery_mildew.steps.2",
+      "english": "Water at the base to keep leaves dry in the morning.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.strawberry_leaf_scorch.causes",
+      "english": "A fungus (Physophella salicis) causing reddish-purple spots that turn tan, common in wet spring weather.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.strawberry_leaf_scorch.name",
+      "english": "Strawberry leaf scorch",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.strawberry_leaf_scorch.steps.0",
+      "english": "Avoid overhead irrigation and keep beds well-drained.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.strawberry_leaf_scorch.steps.1",
+      "english": "Apply a fungicide (captan or tebuconazole) at first sign of leaf spots.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.strawberry_leaf_scorch.steps.2",
+      "english": "Remove and destroy severely infected leaves.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_bacterial_spot.causes",
+      "english": "A bacterial infection (Xanthomonas) causing dark, greasy spots on leaves and fruit, spread by rain splash.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_bacterial_spot.name",
+      "english": "Tomato bacterial spot",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_bacterial_spot.steps.0",
+      "english": "Use disease-free seed and trellis to keep foliage dry.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_bacterial_spot.steps.1",
+      "english": "Apply a copper-based bactericide at first sign and after heavy rain.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_bacterial_spot.steps.2",
+      "english": "Remove and destroy infected leaves and fruit.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_early_blight.causes",
+      "english": "A fungus (Alternaria solani) causing dark concentric rings on lower leaves, starting from the soil up.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_early_blight.name",
+      "english": "Tomato early blight",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_early_blight.steps.0",
+      "english": "Mulch and water at the base to avoid soil splash.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_early_blight.steps.1",
+      "english": "Apply a fungicide (chlorothalonil or mancozeb) when lower leaves show spots.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_early_blight.steps.2",
+      "english": "Remove the lowest infected leaves and stake plants for airflow.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_late_blight.causes",
+      "english": "A water mold (Phytophthora infestans) causing dark, fuzzy lesions on leaves and fruit — highly destructive in wet, cool weather.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_late_blight.name",
+      "english": "Tomato late blight",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_late_blight.steps.0",
+      "english": "Remove and destroy infected foliage and fruit immediately; do NOT compost.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_late_blight.steps.1",
+      "english": "Apply a systemic fungicide (metalaxyl-based) at first sign and reapply after rain.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_late_blight.steps.2",
+      "english": "Plant late-blight-resistant varieties and avoid overhead watering.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_leaf_mold.causes",
+      "english": "A fungus (Cladosporium fulvum) causing yellow patches on upper leaves and fuzzy brown undersides in humid, poorly ventilated conditions.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_leaf_mold.name",
+      "english": "Tomato leaf mold",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_leaf_mold.steps.0",
+      "english": "Ventilate greenhouses and space plants for air flow.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_leaf_mold.steps.1",
+      "english": "Apply a fungicide (chlorothalonil) when yellowing appears.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_leaf_mold.steps.2",
+      "english": "Water at the base and keep foliage dry.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_mosaic_virus.causes",
+      "english": "A virus that causes mottled, distorted leaves and poor fruit, spread on tools and hands.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_mosaic_virus.name",
+      "english": "Tomato mosaic virus",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_mosaic_virus.steps.0",
+      "english": "Disinfect tools between plants with bleach or alcohol.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_mosaic_virus.steps.1",
+      "english": "Remove and destroy infected plants.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_mosaic_virus.steps.2",
+      "english": "Control aphid vectors and weeds.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_septoria.causes",
+      "english": "A fungus (Septoria lycopersici) causing small tan spots with dark borders on older leaves.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_septoria.name",
+      "english": "Tomato septoria leaf spot",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_septoria.steps.0",
+      "english": "Rotate crops and mulch to prevent soil splash.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_septoria.steps.1",
+      "english": "Apply a fungicide (mancozeb or chlorothalonil) at first sign.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_septoria.steps.2",
+      "english": "Remove and destroy infected lower leaves.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_spider_mites.causes",
+      "english": "Tiny spider-like mites (Tetranychus urticae) that suck leaf juices, leaving stippled, bronzed leaves and fine webbing.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_spider_mites.name",
+      "english": "Tomato spider mites",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_spider_mites.steps.0",
+      "english": "Hose off mites with a strong spray of water early in the day.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_spider_mites.steps.1",
+      "english": "Release beneficial insects (ladybugs, lacewings) or apply neem oil.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_spider_mites.steps.2",
+      "english": "Avoid broad-spectrum insecticides that kill natural predators.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_target_spot.causes",
+      "english": "A fungus (Corynespora cassiicola) causing dark concentric 'target' spots on leaves, favoured by warm, humid weather.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_target_spot.name",
+      "english": "Tomato target spot",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_target_spot.steps.0",
+      "english": "Improve air circulation by pruning lower leaves and staking plants.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_target_spot.steps.1",
+      "english": "Apply a fungicide (azoxystrobin or chlorothalonil) when spots first appear.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_target_spot.steps.2",
+      "english": "Water at the base early in the day.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_ylcv.causes",
+      "english": "A virus spread by whiteflies, causing yellowing and curling of leaves and stunted growth.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_ylcv.name",
+      "english": "Tomato yellow leaf curl virus",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_ylcv.steps.0",
+      "english": "Control whiteflies with reflective mulches and insecticides at transplant.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_ylcv.steps.1",
+      "english": "Remove and destroy infected plants — there is no cure.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.disease.tomato_ylcv.steps.2",
+      "english": "Use resistant varieties and control weeds that host whiteflies.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.dismiss",
+      "english": "I'll do this later",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.dragDropPrompt",
+      "english": "Drag an image here or click to browse",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.dragDropPromptLine1",
+      "english": "Drag an image here",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.dragDropPromptLine2",
+      "english": "or click to browse",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.eyebrow",
+      "english": "Crop doctor",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.healthy.causes",
+      "english": "No disease symptoms were detected on this leaf.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.healthy.name",
+      "english": "Healthy",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.healthy.steps.0",
+      "english": "No treatment needed. Resume normal care and scouting.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.historyEmpty",
+      "english": "No scans yet. Take a photo to begin.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.invalidFile",
+      "english": "Please upload an image file.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.linkToFarm",
+      "english": "Link to a farm",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.loadMore",
+      "english": "Load more",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.noDiagnosis",
+      "english": "Could not identify the disease — try a clearer photo of the affected area.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.noFarmsBody",
+      "english": "Link your scans to a farm to build a full disease history.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.noFarmsTitle",
+      "english": "Register a farm first",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.notSaved",
+      "english": "Not saved",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.pastScans",
+      "english": "Past scans",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.readingLeaf",
+      "english": "Reading the leaf…",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.rescan.14",
+      "english": "Scan again in 14 days",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.rescan.21",
+      "english": "Scan again in 21 days",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.rescan.7",
+      "english": "Scan again in 7 days",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.retry",
+      "english": "Retry",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.sampleScan",
+      "english": "No photo handy? Run a sample scan",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.saveToFarm",
+      "english": "Save to farm",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.savedStatus",
+      "english": "Saved to {farm}",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.savedToFarm",
+      "english": "Saved to {farm}",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.scanAnother",
+      "english": "Scan another leaf",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.serviceUnavailable",
+      "english": "Service temporarily unavailable. Please try again.",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.severity.clear",
+      "english": "Clear",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.severity.treatNow",
+      "english": "Treat Now",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.severity.watch",
+      "english": "Watch",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.takePhoto",
+      "english": "Take or choose a photo",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.title",
+      "english": "Spot disease before it spreads",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.unsavedStatus",
+      "english": "Not saved",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.uploadPrompt",
+      "english": "Photograph the sick leaf",
+      "translated": ""
+    },
+    {
+      "key": "app.detect.whatToDo",
+      "english": "What to do now",
+      "translated": ""
+    },
+    {
+      "key": "app.farms.detail.noRecords",
+      "english": "No records yet — start logging field events to build your farm's memory.",
+      "translated": ""
+    },
+    {
+      "key": "app.farms.new.fields.irrigationMethod",
+      "english": "Irrigation method",
+      "translated": ""
+    },
+    {
+      "key": "app.farms.new.fields.primaryCrop",
+      "english": "Primary crop",
+      "translated": ""
+    },
+    {
+      "key": "app.farms.new.fields.soilType",
+      "english": "Soil type",
+      "translated": ""
+    },
+    {
+      "key": "app.farms.new.fields.sowingDate",
+      "english": "Sowing date",
+      "translated": ""
+    },
+    {
+      "key": "app.farms.new.placeholders.soilType",
+      "english": "Clay, loam, sandy, or silt",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.advisory.recommendation.fertilize",
+      "english": "Good window to apply fertiliser ahead of steady weather.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.advisory.recommendation.frostProtect",
+      "english": "Frost risk tonight — cover young plants or irrigate to warm the soil.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.advisory.recommendation.generic",
+      "english": "No special action today — keep an eye on the field and the forecast.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.advisory.recommendation.harvest",
+      "english": "Crops near harvest — plan the harvest for a dry day and protect ripe produce from rain.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.advisory.recommendation.heatProtect",
+      "english": "Extreme heat — increase irrigation and avoid field work midday.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.advisory.recommendation.irrigateNow",
+      "english": "Irrigate in the cool hours (before 9 AM) — heat is building and the soil is drying.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.advisory.recommendation.irrigation",
+      "english": "Skip irrigation today — rain is expected. Save water and avoid waterlogging.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.advisory.recommendation.plantCare",
+      "english": "Steady growth stage — keep up regular irrigation and weeding.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.advisory.recommendation.sprayDisease",
+      "english": "Humidity favours disease — apply preventive fungicide in the dry morning window.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.alerts.diseaseRisk",
+      "english": "High humidity favours disease — apply preventive fungicide in the dry morning window.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.alerts.dismiss",
+      "english": "Dismiss",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.alerts.extremeHeat",
+      "english": "Extreme heat — increase irrigation and avoid midday field work.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.alerts.frost",
+      "english": "Frost risk — protect sensitive crops tonight.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.alerts.heavyRain",
+      "english": "Heavy rain expected — delay irrigation and protect harvested crops.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.alerts.noAlerts",
+      "english": "No active alerts right now.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.alerts.title",
+      "english": "Active alerts",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.alerts.viewAll",
+      "english": "View all notifications",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.buttons.refresh",
+      "english": "Refresh",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.buttons.register",
+      "english": "Register farm",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.description",
+      "english": "Daily farming advice for your crops, driven by the forecast and your crop's growth stage.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.detail.back",
+      "english": "Back to history",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.detail.markAcknowledged",
+      "english": "Mark as seen",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.detail.markActed",
+      "english": "Mark as acted on",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.detail.markedActed",
+      "english": "Marked as acted on",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.detail.markedSeen",
+      "english": "Marked as seen",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.detail.recommendation",
+      "english": "Recommendation",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.detail.weatherConditions",
+      "english": "Weather conditions",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.errors.generic",
+      "english": "Something went wrong. Please try again.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.errors.noFarm",
+      "english": "Select a farm to see its advisory.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.eyebrow",
+      "english": "Weather",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.farmSelectorLabel",
+      "english": "Farm",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.forecastSubtitle",
+      "english": "Each day's weather with a farming recommendation for your crop.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.forecastTitle",
+      "english": "7-day forecast",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.growthStage",
+      "english": "Growth stage",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.history.date",
+      "english": "Date",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.history.empty",
+      "english": "No past advisories yet.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.history.loadMore",
+      "english": "Load more",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.history.severity",
+      "english": "Severity",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.history.status",
+      "english": "Status",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.history.status.acted",
+      "english": "Acted on",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.history.status.new",
+      "english": "New",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.history.status.seen",
+      "english": "Seen",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.history.viewAll",
+      "english": "View full history",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.historySubtitle",
+      "english": "Past recommendations for your farms, newest first.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.historyTitle",
+      "english": "Advisory history",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.pageTitle",
+      "english": "Weather Advisory",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerBody",
+      "english": "Add your crop, sowing date, and location to start getting personalised daily advice.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerCta",
+      "english": "Register a farm",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerForm.crop",
+      "english": "Primary crop",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerForm.error",
+      "english": "Could not save your farm details. Please try again.",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerForm.irrigation",
+      "english": "Irrigation method",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerForm.irrigationMethods",
+      "english": "Drip, sprinkler, flood, or rainfed",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerForm.save",
+      "english": "Save and see my advisory",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerForm.saving",
+      "english": "Saving…",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerForm.soil",
+      "english": "Soil type",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerForm.soilTypes",
+      "english": "Clay, loam, sandy, or silt",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerForm.sowing",
+      "english": "Sowing date",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerForm.success",
+      "english": "Saved — here is your advisory",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.registerTitle",
+      "english": "Register your farm",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.severity.critical",
+      "english": "Critical",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.severity.info",
+      "english": "Info",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.severity.warning",
+      "english": "Warning",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.source.cached",
+      "english": "Last saved forecast",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.source.demo",
+      "english": "Sample forecast — add an API key for live data",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.source.live",
+      "english": "Live forecast · OpenWeather",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.stages.flowering",
+      "english": "Flowering",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.stages.generic",
+      "english": "General",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.stages.harvestReady",
+      "english": "Harvest ready",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.stages.maturation",
+      "english": "Maturation",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.stages.seedling",
+      "english": "Seedling",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.stages.vegetative",
+      "english": "Vegetative",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.todayAdvisory",
+      "english": "Today's advisory",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.weatherUnavailable",
+      "english": "Weather data unavailable",
+      "translated": ""
+    },
+    {
+      "key": "app.weather.weatherUnavailableBody",
+      "english": "Showing your last saved advice. New advice appears when the forecast returns.",
+      "translated": ""
+    },
+    {
+      "key": "nav.dashboard",
+      "english": "Dashboard",
+      "translated": ""
+    }
+  ]
+}
