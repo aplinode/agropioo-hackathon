@@ -208,16 +208,23 @@ function LocationSearch({
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (query.length < 2) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setResults([]);
-      return;
+    if (!district) {
+      const timeout = window.setTimeout(() => {
+        setResults([]);
+        setOpen(false);
+      }, 0);
+      return () => clearTimeout(timeout);
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (query.length < 2) {
+      const timeout = window.setTimeout(() => {
+        setResults([]);
+      }, 0);
+      return () => clearTimeout(timeout);
+    }
     setLoading(true);
     debounceRef.current = window.setTimeout(async () => {
       try {
-        const searchQuery = `${query}, ${district || ""}, Pakistan`;
+        const searchQuery = `${query}, ${district}, Pakistan`;
         const res = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=pk&limit=6&addressdetails=1`
         );
@@ -228,7 +235,7 @@ function LocationSearch({
           address?: Record<string, string>;
         }>;
 
-        if (data.length === 0 && district) {
+        if (data.length === 0) {
           const fallbackRes = await fetch(
             `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ", Pakistan")}&countrycodes=pk&limit=6&addressdetails=1`
           );
@@ -240,9 +247,7 @@ function LocationSearch({
           }>;
         }
 
-        const filtered = district
-          ? data.filter((item) => isWithinDistrict(item.address || {}, district))
-          : data;
+        const filtered = data.filter((item) => isWithinDistrict(item.address || {}, district));
 
         setResults(filtered);
         setOpen(filtered.length > 0);
@@ -335,14 +340,17 @@ function LocationSearch({
             setQuery(e.target.value);
             onChange(e.target.value);
           }}
-          placeholder={`Type village or area in ${district || "your district"}...`}
+          placeholder={district ? `Type village or area in ${district}...` : "Select district or city first"}
+          disabled={!district}
           className={`focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 pe-10 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
-            error
-              ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
-              : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
+            !district
+              ? "border-agro-sprout/60 bg-agro-mint/20 text-agro-slate cursor-not-allowed"
+              : error
+                ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
+                : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
           }`}
         />
-        {loading && (
+        {loading && district && (
           <div className="absolute end-3 top-1/2 mt-1">
             <svg
               className="h-4 w-4 animate-spin text-agro-slate"
@@ -368,7 +376,13 @@ function LocationSearch({
         )}
       </div>
 
-      {open && (
+      {!district && (
+        <p className="mt-1.5 text-xs font-medium text-agro-slate">
+          Please select a district or city above first
+        </p>
+      )}
+
+      {district && open && (
         <div className="absolute left-0 right-0 z-[9999] mt-1 max-h-64 overflow-auto rounded-xl border border-agro-sprout bg-white shadow-xl">
           {results.length > 0 ? (
             results.map((item, idx) => (
