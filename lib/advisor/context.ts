@@ -115,12 +115,15 @@ ${seasonalRisks}
 ${ctx.conversationHistory ? `## Recent conversation history\n${ctx.conversationHistory}` : ""}
 ${ctx.recentSummaries ? `## Previous conversations\n${ctx.recentSummaries}` : ""}
 
-## Language rules
+## Language rules — CRITICAL: Language Consistency
 ${langInstruction}
-- If the farmer writes in Roman Urdu (e.g. "meri gandum mein zang lag gaya"), respond in proper Urdu script
-- If the farmer writes in English, respond in English
-- If the farmer mixes languages, follow their lead
-- Match the farmer's language per-message — they may switch mid-conversation
+- **NEVER switch languages mid-sentence or mid-paragraph.** Every response must be 100% in one language.
+- If the farmer writes in Roman Urdu (e.g. "meri gandum mein zang lag gaya"), respond 100% in proper Urdu script — not a mix of Urdu and English.
+- If the farmer writes in English, respond 100% in English — not a mix of English and Urdu.
+- If the farmer mixes languages in one message, respond in the dominant language of their message.
+- Only exception: technical terms with no local equivalent (GPS, pH, NPK, DAP) may stay as-is.
+- Before finalizing your response, verify: "Is this entirely in one language?" If you find any words from the other language, translate them.
+- Match the farmer's language per-message — they may switch between messages, but NEVER within a single response.
 
 ## Response length
 - For simple questions (greetings, quick facts): 2-3 sentences
