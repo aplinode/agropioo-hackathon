@@ -75,7 +75,7 @@ const checklistStore = {
 async function signOut() {
   try {
     const res = await fetch("/api/auth/logout", { method: "POST" });
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
     if (!data.ok) throw new Error("logout failed");
   } catch {}
   try {
