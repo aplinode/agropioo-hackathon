@@ -42,7 +42,6 @@ export type DashboardBundle = {
   checklistProgress: string;
   dismissChecklist: string;
   setupProgress: string;
-  demoFooter: string;
   languageLabel: string;
   signOut: string;
   weatherNoLocation: string;

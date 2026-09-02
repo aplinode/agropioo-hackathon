@@ -21,6 +21,7 @@ export type SourceCode =
 export type CssSelector = string;
 
 export interface PortalSelectors {
+<<<<<<< HEAD
   readonly sourceCode: SourceCode;
   readonly displayName: string;
   readonly province: "punjab" | "sindh" | "khyber_pakhtunkhwa" | "balochistan" | "federal";
@@ -28,6 +29,23 @@ export interface PortalSelectors {
   readonly priceListPath: string;
   readonly priceTable: CssSelector;
   readonly priceRow: CssSelector;
+=======
+  /** Stable identifier echoed in every audit row + response. */
+  readonly sourceCode: SourceCode;
+  /** Human-readable portal name for logs. */
+  readonly displayName: string;
+  /** Province this portal covers (pbs_spi is federal). */
+  readonly province: "punjab" | "sindh" | "khyber_pakhtunkhwa" | "balochistan" | "federal";
+  /** Root URL — Playwright launches `chromium` here. */
+  readonly baseUrl: string;
+  /** How to land on a per-mandi price list page. */
+  readonly priceListPath: string;
+  /** CSS selector for the table that holds per-crop rows for a given mandi. */
+  readonly priceTable: CssSelector;
+  /** CSS selector for a single row in `priceTable`. */
+  readonly priceRow: CssSelector;
+  /** Column extractors, in order: commodity name, modal, min, max, unit. */
+>>>>>>> c84d8bc (feat(002-scraper): per-portal CSS selectors (single source of truth))
   readonly columns: {
     commodityName: CssSelector;
     modalPrice: CssSelector;
@@ -35,8 +53,18 @@ export interface PortalSelectors {
     maxPrice: CssSelector;
     unit: CssSelector;
   };
+<<<<<<< HEAD
   readonly dateFormat: "iso" | "dd-mm-yyyy" | "dd-mmm-yyyy";
   readonly csvExportPath?: string;
+=======
+  /** Date format the portal renders. Used to extract `date` from the page. */
+  readonly dateFormat: "iso" | "dd-mm-yyyy" | "dd-mmm-yyyy";
+  /** When the portal exposes a CSV export URL, use this path instead of the
+   *  table scrape. KP FMIS exposes a server-side CSV export. */
+  readonly csvExportPath?: string;
+  /** Optional. If the portal requires a dropdown to be selected first,
+   *  give Playwright a selector + value to wait for. */
+>>>>>>> c84d8bc (feat(002-scraper): per-portal CSS selectors (single source of truth))
   readonly waitFor?: { selector: CssSelector; timeoutMs: number };
 }
 

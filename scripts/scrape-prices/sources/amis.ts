@@ -94,23 +94,24 @@ export function parseAmisRow(input: {
   };
 }
 
-export function toIngestRows(parsed: ParsedAmisRow[], sourceCode: SourceCode = AMIS_SOURCE_CODE): IngestRow[] {
+function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+export function toIngestRows(parsed: ParsedAmisRow[], sourceCode: SourceCode = AMIS_SOURCE_CODE, isHoliday = false): IngestRow[] {
   const rows: IngestRow[] = [];
   for (const entry of parsed) {
     if (!entry.mandi.trim() || !entry.district.trim()) continue;
     for (const cell of entry.cells) {
       rows.push({
-        source_code: sourceCode,
-        mandi_name: entry.mandi,
-        district: entry.district,
-        province: AMIS_PROVINCE,
-        crop: cell.commodity,
-        unit: cell.unit === PKR_PER_MAUND ? PKR_PER_MAUND : "per_maund_40kg",
-        min_price_pkr: cell.minPricePkr,
-        modal_price_pkr: cell.modalPricePkr,
-        max_price_pkr: cell.maxPricePkr,
-        observed_date: entry.observedDate,
-        source_url: `${SELECTORS[sourceCode].baseUrl}${SELECTORS[sourceCode].priceListPath}`,
+        mandi_external_id: `${sourceCode}-${slugify(entry.mandi)}`,
+        crop_external_id: slugify(cell.commodity),
+        date: entry.observedDate,
+        modal_price: cell.modalPricePkr,
+        min_price: cell.minPricePkr,
+        max_price: cell.maxPricePkr,
+        unit: "Maund",
+        is_holiday: isHoliday,
       });
     }
   }

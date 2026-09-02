@@ -67,15 +67,30 @@
 ### Implementation for US-S1
 
 - [x] T014 [P] Create `scripts/scrape-prices/selectors.ts` exporting a single object keyed by `source_code` with each portal's CSS selectors, the base URL, and the date-extraction strategy (single file so drift is auditable)
+<<<<<<< HEAD
 - [x] T015 [P] Create `scripts/scrape-prices/sources/amis.ts` (Punjab AMIS) — Playwright opens `ViewPrices.aspx`, walks per-commodity + per-mandi, returns `IngestRow[]` (≥3 historical rows per active mandi to satisfy the FR-008 prediction bar of ≥3 rows / ≤7d)
 - [x] T016 [P] Create `scripts/scrape-prices/sources/samis.ts` (Sindh SAMIS) — Playwright navigates the React frontend at `new-theme.staging-amis.com/market_price`, applies district/market/commodity filters via URL, returns `IngestRow[]`
 - [x] T017 [P] Create `scripts/scrape-prices/sources/fmis-kp.ts` (KP FMIS) — Playwright loads `fmis.kp.gov.pk/kp_essential_commodities_price`, iterates the datatable rows, returns `IngestRow[]` (the built-in CSV export endpoint is the preferred happy path; fall back to table scrape if needed)
 - [x] T018 [P] Create `scripts/scrape-prices/sources/bmis.ts` (Balochistan BMIS + balochistankissan fallback) — Playwright visits `amisbalochistan.org/prices/` and `balochistankissan.gob.pk/pages/market-rates`, picks district from the dropdown, returns `IngestRow[]`
 - [x] T019 [P] Create `scripts/scrape-prices/sources/pbs-spi.ts` (PBS Weekly SPI XLSX) — uses `xlsx` to parse the latest weekly XLSX from `pbs.gov.pk/price-statistics/`, returns `IngestRow[]` (federal cross-check; sparse is expected)
+=======
+- [ ] T015 [P] Create `scripts/scrape-prices/sources/amis.ts` (Punjab AMIS) — Playwright opens `ViewPrices.aspx`, walks per-commodity + per-mandi, returns `IngestRow[]` (≥3 historical rows per active mandi to satisfy the FR-008 prediction bar of ≥3 rows / ≤7d)
+- [ ] T016 [P] Create `scripts/scrape-prices/sources/samis.ts` (Sindh SAMIS) — Playwright navigates the React frontend at `new-theme.staging-amis.com/market_price`, applies district/market/commodity filters via URL, returns `IngestRow[]`
+- [ ] T017 [P] Create `scripts/scrape-prices/sources/fmis-kp.ts` (KP FMIS) — Playwright loads `fmis.kp.gov.pk/kp_essential_commodities_price`, iterates the datatable rows, returns `IngestRow[]` (the built-in CSV export endpoint is the preferred happy path; fall back to table scrape if needed)
+- [ ] T018 [P] Create `scripts/scrape-prices/sources/bmis.ts` (Balochistan BMIS + balochistankissan fallback) — Playwright visits `amisbalochistan.org/prices/` and `balochistankissan.gob.pk/pages/market-rates`, picks district from the dropdown, returns `IngestRow[]`
+- [ ] T019 [P] Create `scripts/scrape-prices/sources/pbs-spi.ts` (PBS Weekly SPI XLSX) — uses `xlsx` to parse the latest weekly XLSX from `pbs.gov.pk/price-statistics/`, returns `IngestRow[]` (federal cross-check; sparse is expected)
+<<<<<<< HEAD
+>>>>>>> c84d8bc (feat(002-scraper): per-portal CSS selectors (single source of truth))
 - [ ] T020 [P] Create `scripts/scrape-prices/holiday-check.ts` — `isHoliday(mandiId, date)` returns `true` if a row exists in `mandi_holidays`; used to set `is_holiday=true` so the UI shows the badge and the drift detector doesn't false-positive
 - [ ] T021 [P] Create `scripts/scrape-prices/drift-detector.ts` — `detectDrift(source_code, rows)` returns `status='drift_suspected'` if rows=0 AND that source had historical rows for the same weekday; otherwise `status='ok'`
 - [ ] T022 Create `scripts/scrape-prices/post.ts` — `postBatch(source_code, rows, secret)` splits rows into ≤5000-row batches, signs each with the bearer, POSTs to `/api/prices/ingest`, retries once on 5xx with backoff, returns aggregated counts
 - [x] T023 Create `scripts/scrape-prices/index.ts` — the runner: loads env, instantiates a single Playwright browser, calls each `sources/*.ts` in its own try/catch (one failure cannot block others), runs `holiday-check` and `drift-detector` per source, posts each batch via `post.ts`, exits 0 if any source wrote rows, exits 1 if zero rows across all sources (per spec §Q1)
+=======
+- [x] T020 [P] Create `scripts/scrape-prices/holiday-check.ts` — `isHoliday(mandiId, date)` returns `true` if a row exists in `mandi_holidays`; used to set `is_holiday=true` so the UI shows the badge and the drift detector doesn't false-positive
+- [x] T021 [P] Create `scripts/scrape-prices/drift-detector.ts` — `detectDrift(source_code, rows)` returns `status='drift_suspected'` if rows=0 AND that source had historical rows for the same weekday; otherwise `status='ok'`
+- [x] T022 Create `scripts/scrape-prices/post.ts` — `postBatch(source_code, rows, secret)` splits rows into ≤5000-row batches, signs each with the bearer, POSTs to `/api/prices/ingest`, retries once on 5xx with backoff, returns aggregated counts
+- [ ] T023 Create `scripts/scrape-prices/index.ts` — the runner: loads env, instantiates a single Playwright browser, calls each `sources/*.ts` in its own try/catch (one failure cannot block others), runs `holiday-check` and `drift-detector` per source, posts each batch via `post.ts`, exits 0 if any source wrote rows, exits 1 if zero rows across all sources (per spec §Q1)
+>>>>>>> b42257a (Merge branch '002-mandi-price-tracker' into main — resolve 19 conflicts)
 
 **Checkpoint**: Locally, `npm run scrape:prices` ingests real prices for at least Punjab AMIS into the dev DB. The runner never imports the Next.js app.
 
@@ -157,8 +172,16 @@
 
 ### Implementation for US-S4
 
+<<<<<<< HEAD
 - [x] T037 [P] [US-S4] Vitest integration test for `scripts/scrape-prices/drift-detector.ts` — given a stub source with rows=[] and same-weekday history, returns `drift_suspected`; given rows=[] but a matching `mandi_holidays` row, returns `ok` with `is_holiday=true`
 - [x] T038 [US-S4] Document the operator runbook for drift in `specs/002-mandi-price-tracker/runbook.md` (how to read the health endpoint, where to fix selectors, how to manually trigger the workflow)
+=======
+- [ ] T037 [P] [US-S4] Vitest integration test for `scripts/scrape-prices/drift-detector.ts` — given a stub source with rows=[] and same-weekday history, returns `drift_suspected`; given rows=[] but a matching `mandi_holidays` row, returns `ok` with `is_holiday=true`
+- [ ] T038 [US-S4] Document the operator runbook for drift in `specs/002-mandi-price-tracker/runbook.md` (how to read the health endpoint, where to fix selectors, how to manually trigger the workflow)
+- [X] T028 [P] [US6] Implement `GET /api/prices/history` Route Handler accepting date range parameters (`1M`, `3M`, `6M`, `12M`) in `app/api/prices/history/route.ts`
+- [X] T029 [P] [US6] Create interactive price history chart component `components/prices/price-history-chart.tsx` with date range selector toggles
+- [X] T030 [US6] Integrate price history chart into `app/(farmer)/prices/page.tsx`
+>>>>>>> b42257a (Merge branch '002-mandi-price-tracker' into main — resolve 19 conflicts)
 
 **Checkpoint**: Drift is visible and actionable.
 
@@ -175,6 +198,25 @@
 - [ ] T043 [P] Append a short ADR to `adrs/0018-playwright-scraper.md` recording the decision to add Playwright + xlsx scoped to the scraper, the rejected alternatives, and the constitution-violation justification (per AGENTS.md "Significant architecture decisions")
 - [ ] T044 Commit + push per atomic-commit rule (one task = one commit where the unit stands alone; multi-file coherent change = one commit; e.g. T010/T011/T012/T013 can be one commit; T024/T025/T026 can be one commit)
 - [ ] T045 Open PR from `feat/002-scraper` to `main` with the spec + plan + research linked; per Constitution, solo founder review is the gate
+- [X] T031 [P] Create Pakistan-wide global crop and mandi search bar component `components/prices/global-mandi-search.tsx`
+- [X] T032 [P] Create dashboard summary widget `components/prices/dashboard-prices-widget.tsx` rendering top 3 tracked crops with 7-day mini-sparklines
+- [X] T033 Integrate summary widget into main farmer dashboard in `app/(farmer)/(dashboard)/dashboard/page.tsx`
+- [X] T034 [P] Create offline price list and history caching hook `hooks/use-offline-prices.ts` storing data in browser `localStorage`
+- [X] T035 Create scheduled nightly prediction background cron Route Handler `POST /api/cron/predict-prices` in `app/api/cron/predict-prices/route.ts`
+- [ ] T036 Create free GitHub Actions scheduled workflow configuration `.github/workflows/mandi-cron.yml` triggering daily price ingestion and predictions
+
+---
+
+## Phase 10: Polish & Quality Gates
+
+**Purpose**: 8-locale Neon translation database population, Vitest automated testing, and release gate verification
+
+- [ ] T037 Sync all Mandi Price Tracker UI string keys and translations across all 8 Pakistan locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) into Neon `translations` database table using `scripts/sync-translations.mts`
+- [X] T038 [P] Create Zod schema and Route Handler unit tests in `app/api/prices/prices-api.test.ts`
+- [X] T039 [P] Create statistical forecasting unit tests in `lib/prices/forecast.test.ts`
+- [X] T040 Run `npx vitest run` to verify all automated test suites pass
+- [ ] T041 Run `npm run lint` and `npm run build` to confirm zero TypeScript compilation or linting errors
+- [ ] T042 Verify all 36 items in `specs/002-mandi-price-tracker/checklists/quality-gate.md` pass
 
 ---
 
