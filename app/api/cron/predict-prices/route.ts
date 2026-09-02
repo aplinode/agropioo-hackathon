@@ -48,37 +48,29 @@ export async function POST(request: Request) {
         rows.map((r) => ({ date: r.date, modal_price: Number(r.modal_price) })),
       );
 
-      // Upsert 14-day forecast into price_predictions table.
-      for (const pt of result.predictions) {
-        await query(
-          `INSERT INTO price_predictions
-             (crop_id, prediction_date, predicted_price, lower_bound, upper_bound,
-              recommendation, recommendation_reason, volatility_warning, model_confidence,
-              generated_at)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
-           ON CONFLICT (crop_id, prediction_date)
-           DO UPDATE SET
-             predicted_price      = EXCLUDED.predicted_price,
-             lower_bound          = EXCLUDED.lower_bound,
-             upper_bound          = EXCLUDED.upper_bound,
-             recommendation       = EXCLUDED.recommendation,
-             recommendation_reason = EXCLUDED.recommendation_reason,
-             volatility_warning   = EXCLUDED.volatility_warning,
-             model_confidence     = EXCLUDED.model_confidence,
-             generated_at         = EXCLUDED.generated_at`,
-          [
-            crop.id,
-            pt.date,
-            pt.predicted_price,
-            pt.lower_bound,
-            pt.upper_bound,
-            result.recommendation,
-            result.recommendation_reason,
-            result.volatility_warning,
-            result.model_confidence,
-          ],
-        );
-      }
+      // Upsert crop-level 14-day forecast into price_predictions table.
+      // The full forecast series is stored as JSONB (data-model.md §4).
+      await query(
+        `INSERT INTO price_predictions
+           (crop_id, mandi_id, calculated_at, forecast_json,
+            recommendation, recommendation_reason, volatility_warning, model_confidence)
+         VALUES ($1, NULL, NOW(), $2::jsonb, $3, $4, $5, $6)
+         ON CONFLICT (crop_id) DO UPDATE SET
+           calculated_at         = NOW(),
+           forecast_json         = EXCLUDED.forecast_json,
+           recommendation        = EXCLUDED.recommendation,
+           recommendation_reason = EXCLUDED.recommendation_reason,
+           volatility_warning    = EXCLUDED.volatility_warning,
+           model_confidence      = EXCLUDED.model_confidence`,
+        [
+          crop.id,
+          JSON.stringify(result.predictions),
+          result.recommendation,
+          result.recommendation_reason,
+          result.volatility_warning,
+          result.model_confidence,
+        ],
+      );
 
       processed++;
     } catch (err) {

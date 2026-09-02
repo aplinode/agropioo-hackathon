@@ -24,6 +24,12 @@ const NOOP_HOLIDAY: HolidayLookup = {
   },
 };
 
+const NOOP_DRIFT = vi.fn(async () => ({
+  status: "ok" as const,
+  historicalCount: 0,
+  reason: "mocked",
+}));
+
 describe("executeRun", () => {
   it("exits 0 and reports total rows when at least one source writes rows", async () => {
     const mockPostBatch = vi.fn(async () => ({
@@ -42,12 +48,13 @@ describe("executeRun", () => {
         { code: "amis_pk", rows: [makeRow("amis_pk", 1), makeRow("amis_pk", 2)], durationMs: 100 },
         { code: "samis_pk", rows: [], durationMs: 50 },
       ],
-      ingest: { baseUrl: "https://api.example.test", secret: "secret" },
-      postBatchFn: mockPostBatch,
-    });
+       ingest: { baseUrl: "https://api.example.test", secret: "secret" },
+       postBatchFn: mockPostBatch,
+       detectDriftFn: NOOP_DRIFT,
+     });
 
-    expect(out.exitCode).toBe(0);
-    expect(out.totalRowsWritten).toBe(2);
+     expect(out.exitCode).toBe(0);
+     expect(out.totalRowsWritten).toBe(2);
     expect(out.sourceRuns).toHaveLength(2);
     expect(out.sourceRuns[0].rowsWritten).toBe(2);
     expect(out.sourceRuns[0].status).toBe("ok");
@@ -65,6 +72,7 @@ describe("executeRun", () => {
         { code: "samis_pk", rows: [], durationMs: 50 },
       ],
       ingest: { baseUrl: "https://api.example.test", secret: "secret" },
+      detectDriftFn: NOOP_DRIFT,
     });
     expect(out.exitCode).toBe(1);
     expect(out.totalRowsWritten).toBe(0);
@@ -90,6 +98,7 @@ describe("executeRun", () => {
       ],
       ingest: { baseUrl: "https://api.example.test", secret: "secret" },
       postBatchFn: mockPostBatch,
+      detectDriftFn: NOOP_DRIFT,
     });
     expect(out.exitCode).toBe(0);
     expect(out.totalRowsWritten).toBe(1);
@@ -117,6 +126,7 @@ describe("executeRun", () => {
       ],
       ingest: { baseUrl: "https://api.example.test", secret: "secret" },
       postBatchFn: mockPostBatch,
+      detectDriftFn: NOOP_DRIFT,
     });
     expect(out.exitCode).toBe(1);
     expect(out.sourceRuns[0].status).toBe("failed");
@@ -133,6 +143,7 @@ describe("executeRun", () => {
         { code: "pbs_spi", rows: [], durationMs: 50 },
       ],
       ingest: { baseUrl: "https://api.example.test", secret: "secret" },
+      detectDriftFn: NOOP_DRIFT,
     });
     for (const sr of out.sourceRuns) {
       expect(sr.drift).toBeDefined();
