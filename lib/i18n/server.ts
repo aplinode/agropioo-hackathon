@@ -370,6 +370,7 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
       viewAllRecords: t("app.farms.detail.viewAllRecords").text,
       logFieldEvent: t("app.farms.detail.logFieldEvent").text,
       scanCrop: t("app.farms.detail.scanCrop").text,
+      noRecords: t("app.farms.detail.noRecords").text,
     },
     records: {
       eyebrow: t("app.records.eyebrow").text,

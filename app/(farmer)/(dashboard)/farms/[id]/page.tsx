@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import {
   CloudRainIcon,
-  LeafIcon,
-  ArrowRightIcon,
-  MapPinIcon,
 } from "@/components/icons";
 import { getFarmsBundle } from "@/lib/i18n/server";
 import { requireSessionPage } from "@/lib/auth/guards";
 import { query } from "@/lib/db";
 import { computeFarmHealth } from "@/lib/farms/health";
-import FarmDetailRecordItem from "./farm-detail-record-item";
+import FarmRecordsSection from "./farm-records-section";
 
 export const metadata: Metadata = {
   title: "Farm details — Agropioo",
@@ -21,24 +17,6 @@ const healthChip = {
   good: "bg-agro-mint text-agro-canopy",
   watch: "border border-white/30 bg-white/10 text-white",
 } as const;
-
-const stageTrackByCrop: Record<string, string[]> = {
-  wheat: ['sowing', 'tillering', 'vegetative', 'grainFilling', 'ready'],
-  cotton: ['sowing', 'squaring', 'flowering', 'bollFilling', 'ready'],
-  sugarcane: ['sowing', 'tillering', 'grandGrowth', 'ripening', 'harvest'],
-  maize: ['sowing', 'vegetative', 'tasselling', 'grainFilling', 'ready'],
-  rice: ['sowing', 'tillering', 'panicleinitiation', 'grainFilling', 'ready'],
-};
-
-type StageKey = 'sowing' | 'tillering' | 'vegetative' | 'grainFilling' | 'ready' | 'squaring' | 'flowering' | 'bollFilling' | 'grandGrowth' | 'ripening' | 'harvest' | 'panicleinitiation';
-
-function stageTrackFor(crops: string[]): StageKey[] {
-  for (const c of crops) {
-    const found = stageTrackByCrop[c.toLowerCase()];
-    if (found) return found as unknown as StageKey[];
-  }
-  return stageTrackByCrop.wheat as unknown as StageKey[];
-}
 
 export default async function FarmDetailPage({
   params,
@@ -56,7 +34,7 @@ export default async function FarmDetailPage({
     const data = rows[0] ?? null;
 
     if (data) {
-      const recentRecords = await query<{ type: string; event_date: string }>(
+      const recentRecords = await query<Record<string, unknown>>(
         `SELECT * FROM records WHERE farm_id = $1 ORDER BY event_date DESC, created_at DESC LIMIT 6`,
         [id]
       );
@@ -75,39 +53,15 @@ export default async function FarmDetailPage({
   if (!farm) notFound();
 
   const bundle = await getFarmsBundle();
-  const crops = Array.isArray(farm.crops) ? (farm.crops as unknown as string[]) : [];
-  const track = stageTrackFor(crops);
-  const currentCrop = crops[0]?.toLowerCase() || 'wheat';
-  const currentStage = ((farm.growth_stages as Record<string, string>)?.[currentCrop] as string) || 'Sowing';
-  const stageKey = currentStage.toLowerCase().replace(/\s+/g, '');
-  const currentStepIndex = Math.max(0, track.findIndex((s) => s === stageKey || s.includes(stageKey)));
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const f = farm as any;
-
-  const stageLabel: Record<string, string> = {
-    sowing: bundle.stages.sowing,
-    tillering: bundle.stages.tillering,
-    vegetative: bundle.stages.vegetative,
-    grainfilling: bundle.stages.grainFilling,
-    ready: bundle.stages.ready,
-    squaring: bundle.stages.squaring,
-    flowering: bundle.stages.flowering,
-    bollfilling: bundle.stages.bollFilling,
-    grandgrowth: bundle.stages.grandGrowth,
-    ripening: bundle.stages.ripening,
-    harvest: bundle.stages.harvest,
-    panicleinitiation: bundle.stages.panicleInitiation || 'Panicle initiation',
-  };
+  const f = farm as Record<string, unknown>;
 
   let weather: { temp_c: number | null; condition: string | null } | null = null;
-  if ((farm.lat as number) != null && (farm.lng as number) != null) {
+  if ((f.lat as number) != null && (f.lng as number) != null) {
     try {
-      const weatherRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/weather/current?lat=${farm.lat}&lng=${farm.lng}`, { cache: 'no-store' });
+      const weatherRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/weather/current?lat=${f.lat}&lng=${f.lng}`, { cache: 'no-store' });
       if (weatherRes.ok) weather = await weatherRes.json();
     } catch {}
   }
-
-  const recentRecords = farm.recent_records || [];
 
   return (
     <div className="space-y-8 pt-1">
@@ -119,7 +73,7 @@ export default async function FarmDetailPage({
           {bundle.detail.heroEyebrow}
         </p>
         <h1 className="display-heading relative mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-          {f.name}
+          {f.name as string}
         </h1>
         <div className="relative mt-4 flex flex-wrap items-center gap-2">
           <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.7rem] font-medium ${f.health === 'good' ? healthChip.good : healthChip.watch}`}>
@@ -127,73 +81,30 @@ export default async function FarmDetailPage({
             {f.health === 'good' ? bundle.detail.goodHealth : bundle.detail.needsWatching}
           </span>
           <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-agro-sprout">
-            {Array.isArray(f.crops) ? f.crops.join(', ') : String(f.crops)}
+            {Array.isArray(f.crops) ? (f.crops as string[]).join(', ') : String(f.crops)}
           </span>
           <span className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-white/75">
             {f.acres} {bundle.unitsAcres}
           </span>
           <span className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-white/75">
-            {f.district}
+            {f.district as string}
           </span>
+          <span className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-white/75">
+            {f.location as string}
+          </span>
+          {weather && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-white/75">
+              <CloudRainIcon size={14} /> {weather.temp_c != null ? `${Math.round(weather.temp_c)}°C` : ''} {weather.condition || ''}
+            </span>
+          )}
         </div>
       </header>
 
-      <section aria-labelledby="season-heading" className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 id="season-heading" className="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate">
-            {bundle.detail.seasonHeading}
-          </h2>
-          <ol className="mt-3 flex flex-wrap gap-1.5">
-            {track.map((step, index) => {
-              const done = index < currentStepIndex;
-              const current = index === currentStepIndex;
-              const label = stageLabel[step] || step;
-              return (
-                <li key={step}>
-                  <span className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-medium ${current ? 'bg-agro-canopy font-semibold text-white' : done ? 'bg-agro-mint text-agro-canopy' : 'border border-agro-sprout bg-white text-agro-slate'}`} {...(current ? { 'aria-current': 'step' as const } : {})}>
-                    {done && <LeafIcon size={14} aria-hidden="true" />}
-                    {label}
-                  </span>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
-        {weather && (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-white/75">
-            <CloudRainIcon size={14} /> {weather.temp_c != null ? `${Math.round(weather.temp_c)}°C` : ''} {weather.condition || ''}
-          </span>
-        )}
-      </section>
-
-      <section aria-labelledby="activity-heading">
-        <div className="flex items-center justify-between gap-3">
-          <h2 id="activity-heading" className="shrink-0 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate">
-            {bundle.detail.activityHeading}
-          </h2>
-          <Link href={`/farms/${f.id}/records`} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline">
-            {bundle.detail.viewAllRecords}
-          </Link>
-        </div>
-        <ul className="mt-3 divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
-          {(recentRecords as Record<string, unknown>[]).map((record) => (
-            <FarmDetailRecordItem key={record.id as string} record={record} />
-          ))}
-        </ul>
-      </section>
-
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Link href={`/records/new?farm=${f.id}`} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md active:translate-y-0 sm:w-auto">
-          {bundle.detail.logFieldEvent}
-          <ArrowRightIcon size={16} />
-        </Link>
-        <form action={`/api/farms/${f.id}/archive`} method="POST">
-          <button type="submit" className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-agro-canopy/30 bg-white px-5 text-sm font-semibold text-agro-forest transition-colors duration-200 hover:border-agro-canopy hover:bg-agro-mint sm:w-auto">
-            <MapPinIcon size={16} className="text-agro-canopy" />
-            Archive farm
-          </button>
-        </form>
-      </div>
+      <FarmRecordsSection
+        farmId={f.id as string}
+        records={(f.recent_records as Record<string, unknown>[]) || []}
+        bundle={bundle}
+      />
     </div>
   );
 }
