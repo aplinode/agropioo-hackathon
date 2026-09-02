@@ -831,7 +831,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.farmLabel}</label>
-              <input type="hidden" {...register("farmId")} value={watchedFarmId ?? ""} />
+              <input type="hidden" {...register("farmId")} />
               <div className="mt-1">
                 <FarmSelect bundle={bundle} farms={farms} value={watchedFarmId} onChange={(v) => setValue("farmId", v)} isOpen={activeDropdown === "farm"} onOpen={(key) => setActiveDropdown(key)} inputRef={farmRef} />
               </div>
@@ -840,7 +840,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
 
             <div>
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.seasonLabel}</label>
-              <input type="hidden" {...register("targetSeason")} value={watchedSeason} />
+              <input type="hidden" {...register("targetSeason")} />
               <div className="mt-1">
                 <SeasonSelect bundle={bundle} value={watchedSeason} onChange={(v) => setValue("targetSeason", v as FormValues["targetSeason"])} isOpen={activeDropdown === "season"} onOpen={(key) => setActiveDropdown(key)} inputRef={seasonRef} />
               </div>
@@ -849,7 +849,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
 
             <div>
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.yearLabel}</label>
-              <input type="hidden" {...register("targetYear", { valueAsNumber: true })} value={watchedYear ?? ""} />
+              <input type="hidden" {...register("targetYear", { valueAsNumber: true })} />
               <div className="mt-1">
                 <YearSelect minYear={currentYear} value={watchedYear ?? null} onChange={(v) => setValue("targetYear", v)} isOpen={activeDropdown === "year"} onOpen={(key) => setActiveDropdown(key)} inputRef={yearRef} />
               </div>
@@ -858,7 +858,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
 
             <div>
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.soilLabel}</label>
-              <input type="hidden" {...register("soilType")} value={watch("soilType")} />
+              <input type="hidden" {...register("soilType")} />
               <div className="mt-1">
                 <SoilSelect bundle={bundle} value={watch("soilType")} onChange={(v) => setValue("soilType", v as FormValues["soilType"])} isOpen={activeDropdown === "soil"} onOpen={(key) => setActiveDropdown(key)} inputRef={soilRef} />
               </div>
@@ -867,7 +867,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
 
             <div>
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.irrigationLabel}</label>
-              <input type="hidden" {...register("irrigationType")} value={watch("irrigationType")} />
+              <input type="hidden" {...register("irrigationType")} />
               <div className="mt-1">
                 <IrrigationSelect bundle={bundle} value={watch("irrigationType")} onChange={(v) => setValue("irrigationType", v as FormValues["irrigationType"])} isOpen={activeDropdown === "irrigation"} onOpen={(key) => setActiveDropdown(key)} inputRef={irrigationRef} />
               </div>
@@ -876,7 +876,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
 
             <div>
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.budgetLabel}</label>
-              <input type="hidden" {...register("budgetBracket")} value={watchedBudget} />
+              <input type="hidden" {...register("budgetBracket")} />
               <div className="mt-1">
                 <BudgetSelect bundle={bundle} value={watchedBudget} onChange={(v) => setValue("budgetBracket", v as FormValues["budgetBracket"])} isOpen={activeDropdown === "budget"} onOpen={(key) => setActiveDropdown(key)} inputRef={budgetRef} />
               </div>
