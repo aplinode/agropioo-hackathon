@@ -49,7 +49,8 @@ export async function GET(
   );
 
   const recommendations = (recs ?? []).map((r) => ({
-    ...r,
+    id: r.id,
+    rank: r.rank,
     crop: {
       id: r.crop_id,
       nameEn: r.name_en,
@@ -63,6 +64,21 @@ export async function GET(
       capitalRequirementPerAcrePkr: Number(r.capital_requirement_per_acre_pkr),
       marketRiskBaseline: r.market_risk_baseline,
     },
+    expectedRevenuePerAcrePkr: Number(r.expected_revenue_per_acre_pkr),
+    revenueConfidence: r.revenue_confidence,
+    reasonKey: r.reason_key,
+    riskFactors: r.risk_factors,
+    waterRequirementLevel: r.water_requirement_level,
+    scores: {
+      suitability: Number(r.suitability_score),
+      weatherFit: Number(r.weather_fit_score),
+      profitability: Number(r.profitability_score),
+      risk: Number(r.risk_score),
+      sustainability: Number(r.sustainability_score),
+      final: Number(r.final_score),
+    },
+    dataSourcesUsed: r.data_sources_used,
+    dataFreshnessSeconds: r.data_fresheness_seconds,
   }));
 
   return jsonResponse({ request: req, recommendations });
