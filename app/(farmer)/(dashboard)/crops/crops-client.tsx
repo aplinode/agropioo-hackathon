@@ -17,21 +17,11 @@ import type { CropsBundle } from "./crops-bundle";
 
 const formSchema = z.object({
   farmId: z.string().uuid("Please select a farm"),
-  targetSeason: z.enum(["summer", "winter", "autumn", "spring", "rainy", "windy"]),
-  targetYear: z.number().int().min(new Date().getFullYear()).max(2035),
-  soilType: z.enum([
-    "sandy",
-    "sandy_loam",
-    "loamy",
-    "clay_loam",
-    "clay",
-    "silty",
-    "saline",
-    "rocky",
-    "other",
-  ]),
-  irrigationType: z.enum(["rainfed", "canal", "tubewell", "mixed"]),
-  budgetBracket: z.enum(["low", "medium", "high", "very_high"]),
+  targetSeason: z.enum(["summer", "winter", "autumn", "spring", "rainy", "windy"], { errorMap: () => ({ message: "Please select a season" }) }),
+  targetYear: z.coerce.number().int("Please select a year").min(new Date().getFullYear(), { message: "Please select a valid year" }).max(2035, { message: "Please select a valid year" }),
+  soilType: z.enum(["sandy", "sandy_loam", "loamy", "clay_loam", "clay", "silty", "saline", "rocky", "other"], { errorMap: () => ({ message: "Please select a soil type" }) }),
+  irrigationType: z.enum(["rainfed", "canal", "tubewell", "mixed"], { errorMap: () => ({ message: "Please select an irrigation type" }) }),
+  budgetBracket: z.enum(["low", "medium", "high", "very_high"], { errorMap: () => ({ message: "Please select a budget" }) }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -690,6 +680,13 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema) as any,
+    defaultValues: {
+      targetSeason: "winter",
+      targetYear: currentYear + 1,
+      soilType: "loamy",
+      irrigationType: "canal",
+      budgetBracket: "medium",
+    },
   });
 
   const watchedFarmId = watch("farmId");
