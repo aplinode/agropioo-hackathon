@@ -440,81 +440,81 @@ function RecommendationCard({
   const isTop = recommendation.rank === 1;
 
   return (
-    <div className={`relative rounded-2xl border bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${isTop ? "border-agro-canopy shadow-sm" : "border-agro-sprout"}`}>
+    <div className={`relative rounded-2xl border bg-white p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg sm:p-6 ${isTop ? "border-agro-canopy shadow-md" : "border-agro-sprout"}`}>
       {isTop && (
-        <span className="absolute -top-2.5 left-4 rounded-full bg-agro-canopy px-2.5 py-0.5 font-mono text-[0.65rem] font-bold uppercase tracking-wider text-white">
+        <span className="absolute -top-3 left-4 rounded-full bg-agro-canopy px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-white sm:-top-3.5 sm:left-5">
           Top pick
         </span>
       )}
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-agro-mint font-mono text-sm font-bold text-agro-forest">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-agro-mint font-mono text-base font-bold text-agro-forest sm:h-11 sm:w-11 sm:text-lg">
             {recommendation.rank}
           </span>
           <div>
-            <h3 className="font-display text-base font-bold leading-tight text-agro-forest">{recommendation.crop.nameEn}</h3>
-            <span className="font-mono text-[0.65rem] uppercase tracking-wide text-agro-slate">{recommendation.crop.category}</span>
+            <h3 className="font-display text-lg font-bold leading-tight text-agro-forest sm:text-xl">{recommendation.crop.nameEn}</h3>
+            <span className="font-mono text-xs uppercase tracking-wide text-agro-slate">{recommendation.crop.category}</span>
           </div>
         </div>
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2">
-        <div className="rounded-lg bg-agro-paper p-2.5">
-          <p className="font-mono text-[0.6rem] uppercase tracking-wide text-agro-slate">{bundle.results.revenue}</p>
-          <p className="mt-0.5 font-mono text-xs font-semibold text-agro-forest">
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:gap-4">
+        <div className="rounded-xl bg-agro-paper p-3 sm:p-4">
+          <p className="font-mono text-xs uppercase tracking-wide text-agro-slate">{bundle.results.revenue}</p>
+          <p className="mt-1 font-mono text-sm font-semibold text-agro-forest sm:text-base">
             PKR {recommendation.expectedRevenuePerAcrePkr.toLocaleString()}
           </p>
         </div>
-        <div className="rounded-lg bg-agro-paper p-2.5">
-          <p className="font-mono text-[0.6rem] uppercase tracking-wide text-agro-slate">Duration</p>
-          <p className="mt-0.5 font-mono text-xs font-semibold text-agro-forest">{recommendation.crop.growingDurationDays} days</p>
+        <div className="rounded-xl bg-agro-paper p-3 sm:p-4">
+          <p className="font-mono text-xs uppercase tracking-wide text-agro-slate">Duration</p>
+          <p className="mt-1 font-mono text-sm font-semibold text-agro-forest sm:text-base">{recommendation.crop.growingDurationDays} days</p>
         </div>
-        <div className="rounded-lg bg-agro-paper p-2.5">
-          <p className="font-mono text-[0.6rem] uppercase tracking-wide text-agro-slate">Water</p>
-          <p className="mt-0.5 font-mono text-xs font-semibold text-agro-forest">
+        <div className="rounded-xl bg-agro-paper p-3 sm:p-4">
+          <p className="font-mono text-xs uppercase tracking-wide text-agro-slate">Water</p>
+          <p className="mt-1 font-mono text-sm font-semibold text-agro-forest sm:text-base">
             {bundle.water[recommendation.waterRequirementLevel as keyof typeof bundle.water] ?? recommendation.waterRequirementLevel}
           </p>
         </div>
-        <div className="rounded-lg bg-agro-paper p-2.5">
-          <p className="font-mono text-[0.6rem] uppercase tracking-wide text-agro-slate">Risk</p>
-          <p className="mt-0.5 font-mono text-xs font-semibold text-agro-forest">{recommendation.crop.marketRiskBaseline}</p>
+        <div className="rounded-xl bg-agro-paper p-3 sm:p-4">
+          <p className="font-mono text-xs uppercase tracking-wide text-agro-slate">Risk</p>
+          <p className="mt-1 font-mono text-sm font-semibold text-agro-forest sm:text-base">{recommendation.crop.marketRiskBaseline}</p>
         </div>
       </div>
 
-      <p className="mt-3 text-xs leading-relaxed text-agro-ink line-clamp-2">{reason}</p>
+      <p className="mt-4 text-sm leading-relaxed text-agro-ink sm:text-base">{reason}</p>
 
       {recommendation.riskFactors.length > 0 && (
-        <div className="mt-2.5 flex flex-wrap gap-1">
+        <div className="mt-3 flex flex-wrap gap-1.5 sm:gap-2">
           {recommendation.riskFactors.slice(0, 3).map((risk) => (
-            <span key={risk} className="rounded border border-agro-sprout bg-agro-mint px-1.5 py-0.5 font-mono text-[0.65rem] text-agro-slate">
+            <span key={risk} className="rounded border border-agro-sprout bg-agro-mint px-2 py-1 font-mono text-xs text-agro-slate">
               {riskLabelMap[risk] ?? risk}
             </span>
           ))}
           {recommendation.riskFactors.length > 3 && (
-            <span className="rounded border border-agro-sprout bg-agro-mint px-1.5 py-0.5 font-mono text-[0.65rem] text-agro-slate">
+            <span className="rounded border border-agro-sprout bg-agro-mint px-2 py-1 font-mono text-xs text-agro-slate">
               +{recommendation.riskFactors.length - 3}
             </span>
           )}
         </div>
       )}
 
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-4 flex items-center gap-2 sm:gap-3">
         <button
           type="button"
           onClick={onSave}
           disabled={savingId === recommendation.id}
-          className="inline-flex h-8 flex-1 items-center justify-center gap-1 rounded-lg bg-agro-canopy px-3 text-xs font-semibold text-white transition-colors hover:bg-agro-forest disabled:opacity-70"
+          className="inline-flex h-10 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-agro-canopy px-4 text-sm font-semibold text-white transition-colors hover:bg-agro-forest disabled:opacity-70 sm:h-11 sm:text-base"
         >
-          <CheckIcon className="h-3.5 w-3.5" />
-          {savingId === recommendation.id ? bundle.results.saved : bundle.results.saveToPlan}
+          <CheckIcon className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
+          <span className="truncate">{savingId === recommendation.id ? bundle.results.saved : bundle.results.saveToPlan}</span>
         </button>
         <button
           type="button"
           onClick={onCompare}
-          className="inline-flex h-8 flex-1 items-center justify-center gap-1 rounded-lg border border-agro-sprout bg-white px-3 text-xs font-semibold text-agro-ink transition-colors hover:border-agro-canopy hover:text-agro-canopy"
+          className="inline-flex h-10 min-w-0 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-agro-sprout bg-white px-4 text-sm font-semibold text-agro-ink transition-colors hover:border-agro-canopy hover:text-agro-canopy sm:h-11 sm:text-base"
         >
-          <CompassIcon className="h-3.5 w-3.5" />
-          {bundle.results.compare}
+          <CompassIcon className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
+          <span className="truncate">{bundle.results.compare}</span>
         </button>
       </div>
     </div>
@@ -895,10 +895,18 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
         </form>
       )}
 
-      {error && (
+      {error && recommendations.length === 0 && (
         <div className="flex items-start gap-3 rounded-2xl border border-agro-sprout bg-agro-mint p-4 text-sm text-agro-ink">
           <AlertTriangleIcon className="h-5 w-5 shrink-0 text-agro-canopy" />
-          <span>{error}</span>
+          <span className="flex-1">{error}</span>
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="shrink-0 rounded-full p-1 text-agro-slate transition-colors hover:bg-agro-sprout/50 hover:text-agro-ink"
+            aria-label="Dismiss error"
+          >
+            <XIcon className="h-4 w-4" />
+          </button>
         </div>
       )}
 
@@ -924,8 +932,8 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
       )}
 
       {recommendations.length > 0 && !showCompare && (
-        <div className="space-y-4">
-          <h2 className="font-display text-xl font-bold text-agro-forest">{bundle.results.title}</h2>
+        <div className="space-y-5 sm:space-y-6">
+          <h2 className="font-display text-xl font-bold text-agro-forest sm:text-2xl">{bundle.results.title}</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {recommendations.map((rec) => (
               <RecommendationCard
