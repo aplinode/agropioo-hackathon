@@ -437,83 +437,83 @@ function RecommendationCard({
 }) {
   const soilLabel = recommendation.crop.id;
   const reason = resolveReason(bundle, recommendation.reasonKey, recommendation.crop.nameEn, soilLabel, "");
+  const isTop = recommendation.rank === 1;
 
   return (
-    <div className="rounded-2xl border border-agro-sprout bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <span className="font-mono text-xs font-semibold uppercase tracking-wide text-agro-canopy">
-            {bundle.results.rank.replace("{n}", String(recommendation.rank))}
-          </span>
-          <h3 className="mt-1 font-display text-lg font-bold text-agro-forest">{recommendation.crop.nameEn}</h3>
-        </div>
-        <span className="rounded-full bg-agro-mint px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-wide text-agro-canopy">
-          {recommendation.crop.category}
+    <div className={`relative rounded-2xl border bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${isTop ? "border-agro-canopy shadow-sm" : "border-agro-sprout"}`}>
+      {isTop && (
+        <span className="absolute -top-2.5 left-4 rounded-full bg-agro-canopy px-2.5 py-0.5 font-mono text-[0.65rem] font-bold uppercase tracking-wider text-white">
+          Top pick
         </span>
+      )}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-agro-mint font-mono text-sm font-bold text-agro-forest">
+            {recommendation.rank}
+          </span>
+          <div>
+            <h3 className="font-display text-base font-bold leading-tight text-agro-forest">{recommendation.crop.nameEn}</h3>
+            <span className="font-mono text-[0.65rem] uppercase tracking-wide text-agro-slate">{recommendation.crop.category}</span>
+          </div>
+        </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-xl bg-agro-mint p-3">
-          <p className="font-mono text-[0.65rem] uppercase tracking-wide text-agro-slate">{bundle.results.revenue}</p>
-          <p className="mt-1 font-mono text-sm font-semibold text-agro-forest">
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className="rounded-lg bg-agro-paper p-2.5">
+          <p className="font-mono text-[0.6rem] uppercase tracking-wide text-agro-slate">{bundle.results.revenue}</p>
+          <p className="mt-0.5 font-mono text-xs font-semibold text-agro-forest">
             PKR {recommendation.expectedRevenuePerAcrePkr.toLocaleString()}
           </p>
-          <p className="mt-0.5 font-mono text-[0.65rem] text-agro-slate">
-            {bundle.confidence[recommendation.revenueConfidence as keyof typeof bundle.confidence] ?? recommendation.revenueConfidence}
-          </p>
         </div>
-        <div className="rounded-xl bg-agro-mint p-3">
-          <p className="font-mono text-[0.65rem] uppercase tracking-wide text-agro-slate">Duration</p>
-          <p className="mt-1 font-mono text-sm font-semibold text-agro-forest">{recommendation.crop.growingDurationDays} days</p>
+        <div className="rounded-lg bg-agro-paper p-2.5">
+          <p className="font-mono text-[0.6rem] uppercase tracking-wide text-agro-slate">Duration</p>
+          <p className="mt-0.5 font-mono text-xs font-semibold text-agro-forest">{recommendation.crop.growingDurationDays} days</p>
         </div>
-        <div className="rounded-xl bg-agro-mint p-3">
-          <p className="font-mono text-[0.65rem] uppercase tracking-wide text-agro-slate">Water</p>
-          <p className="mt-1 font-mono text-sm font-semibold text-agro-forest">
+        <div className="rounded-lg bg-agro-paper p-2.5">
+          <p className="font-mono text-[0.6rem] uppercase tracking-wide text-agro-slate">Water</p>
+          <p className="mt-0.5 font-mono text-xs font-semibold text-agro-forest">
             {bundle.water[recommendation.waterRequirementLevel as keyof typeof bundle.water] ?? recommendation.waterRequirementLevel}
           </p>
         </div>
-        <div className="rounded-xl bg-agro-mint p-3">
-          <p className="font-mono text-[0.65rem] uppercase tracking-wide text-agro-slate">Risk</p>
-          <p className="mt-1 font-mono text-sm font-semibold text-agro-forest">
-            {recommendation.crop.marketRiskBaseline}
-          </p>
+        <div className="rounded-lg bg-agro-paper p-2.5">
+          <p className="font-mono text-[0.6rem] uppercase tracking-wide text-agro-slate">Risk</p>
+          <p className="mt-0.5 font-mono text-xs font-semibold text-agro-forest">{recommendation.crop.marketRiskBaseline}</p>
         </div>
       </div>
 
-      <div className="mt-4">
-        <p className="text-sm font-medium text-agro-ink">{bundle.results.reason}</p>
-        <p className="mt-1 text-sm leading-relaxed text-agro-slate">{reason}</p>
-      </div>
+      <p className="mt-3 text-xs leading-relaxed text-agro-ink line-clamp-2">{reason}</p>
 
       {recommendation.riskFactors.length > 0 && (
-        <div className="mt-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-agro-slate">{bundle.results.risks}</p>
-          <ul className="mt-1 flex flex-wrap gap-1.5">
-            {recommendation.riskFactors.map((risk) => (
-              <li key={risk} className="rounded-md border border-agro-sprout bg-agro-mint px-2 py-1 font-mono text-[0.7rem] text-agro-slate">
-                {riskLabelMap[risk] ?? risk}
-              </li>
-            ))}
-          </ul>
+        <div className="mt-2.5 flex flex-wrap gap-1">
+          {recommendation.riskFactors.slice(0, 3).map((risk) => (
+            <span key={risk} className="rounded border border-agro-sprout bg-agro-mint px-1.5 py-0.5 font-mono text-[0.65rem] text-agro-slate">
+              {riskLabelMap[risk] ?? risk}
+            </span>
+          ))}
+          {recommendation.riskFactors.length > 3 && (
+            <span className="rounded border border-agro-sprout bg-agro-mint px-1.5 py-0.5 font-mono text-[0.65rem] text-agro-slate">
+              +{recommendation.riskFactors.length - 3}
+            </span>
+          )}
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-3 flex items-center gap-2">
         <button
           type="button"
           onClick={onSave}
           disabled={savingId === recommendation.id}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white transition-colors hover:bg-agro-forest disabled:opacity-70"
+          className="inline-flex h-8 flex-1 items-center justify-center gap-1 rounded-lg bg-agro-canopy px-3 text-xs font-semibold text-white transition-colors hover:bg-agro-forest disabled:opacity-70"
         >
-          <CheckIcon className="h-4 w-4" />
+          <CheckIcon className="h-3.5 w-3.5" />
           {savingId === recommendation.id ? bundle.results.saved : bundle.results.saveToPlan}
         </button>
         <button
           type="button"
           onClick={onCompare}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-agro-sprout bg-white px-4 text-sm font-semibold text-agro-ink transition-colors hover:border-agro-canopy hover:text-agro-canopy"
+          className="inline-flex h-8 flex-1 items-center justify-center gap-1 rounded-lg border border-agro-sprout bg-white px-3 text-xs font-semibold text-agro-ink transition-colors hover:border-agro-canopy hover:text-agro-canopy"
         >
-          <CompassIcon className="h-4 w-4" />
+          <CompassIcon className="h-3.5 w-3.5" />
           {bundle.results.compare}
         </button>
       </div>

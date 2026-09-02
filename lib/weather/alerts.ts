@@ -93,6 +93,69 @@ export function scanAlertConditions(forecast: ForecastResult): AlertCondition[] 
   return found;
 }
 
+/* Scan each day of the forecast for conditions that warrant an avoid-action alert.
+   Returns a map of date -> alert conditions (one per alert type per day). */
+export function scanDailyAlertConditions(forecast: ForecastResult): Record<string, AlertCondition[]> {
+  const byDay: Record<string, AlertCondition[]> = {};
+  const hourlyByDay: Record<string, ForecastHour[]> = {};
+
+  for (const h of forecast.hourly) {
+    const date = h.time.slice(0, 10);
+    if (!hourlyByDay[date]) hourlyByDay[date] = [];
+    hourlyByDay[date].push(h);
+  }
+
+  for (const [date, hours] of Object.entries(hourlyByDay)) {
+    const seen = new Set<AlertType>();
+    const alerts: AlertCondition[] = [];
+
+    for (const step of hours) {
+      if (step.precip_mm >= 5 && !seen.has("heavy_rain")) {
+        seen.add("heavy_rain");
+        alerts.push({
+          type: "heavy_rain",
+          severity: step.precip_mm >= 15 ? "critical" : "warning",
+          recommendationKey: RECOMMENDATION_KEYS.heavy_rain,
+          conditionMet: { precip_mm: step.precip_mm, temp_c: step.temp_c },
+        });
+      }
+      if (step.temp_c < 5 && !seen.has("frost")) {
+        seen.add("frost");
+        alerts.push({
+          type: "frost",
+          severity: "warning",
+          recommendationKey: RECOMMENDATION_KEYS.frost,
+          conditionMet: { temp_c: step.temp_c },
+        });
+      }
+      if (step.temp_c > 38 && !seen.has("extreme_heat")) {
+        seen.add("extreme_heat");
+        alerts.push({
+          type: "extreme_heat",
+          severity: "critical",
+          recommendationKey: RECOMMENDATION_KEYS.extreme_heat,
+          conditionMet: { temp_c: step.temp_c },
+        });
+      }
+      if (step.humidity >= 80 && step.temp_c >= 20 && step.temp_c <= 30 && !seen.has("disease_risk")) {
+        seen.add("disease_risk");
+        alerts.push({
+          type: "disease_risk",
+          severity: "warning",
+          recommendationKey: RECOMMENDATION_KEYS.disease_risk,
+          conditionMet: { humidity: step.humidity, temp_c: step.temp_c },
+        });
+      }
+    }
+
+    if (alerts.length > 0) {
+      byDay[date] = alerts;
+    }
+  }
+
+  return byDay;
+}
+
 function getTransporter() {
   const host = process.env.SMTP_HOST;
   if (!host) return null;
