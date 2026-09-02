@@ -2,6 +2,8 @@ export interface FarmSummary {
   id: string;
   name: string;
   location: string;
+  lat: number;
+  lng: number;
   acres: number;
   crops: string;
   stage: string;
