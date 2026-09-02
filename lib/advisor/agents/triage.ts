@@ -4,7 +4,7 @@ import { createWeatherAgent } from "./weather-agent";
 import { createFarmDataAgent } from "./farm-data-agent";
 import { createPricesAgent } from "./prices-agent";
 import { createSchemesAgent } from "./schemes-agent";
-import { farmingOnlyGuardrail, noFabricationGuardrail } from "../guardrails";
+import { farmingOnlyGuardrail, advisorInputGuardrails, advisorOutputGuardrails } from "../guardrails";
 import { searchKnowledgeBase } from "../tools/knowledge-base";
 import { createConversationMemoryTool } from "../tools/conversation-memory";
 import { advisorModel } from "../model";
@@ -64,12 +64,15 @@ ${cropCalendar}
 6. If the query combines multiple topics, route to the most relevant specialist (they can use tools from other domains)
 7. For greetings, general conversation about farming, or simple questions → answer directly yourself
 
-## Language handling
-- Match the farmer's language in every response
-- If the farmer writes in Roman Urdu (e.g. "meri gandum mein zang lag gaya"), respond in proper Urdu script
-- If the farmer writes in English, respond in English
-- If the farmer mixes languages, follow their lead
+## Language handling — CRITICAL RULES
+- **You MUST respond entirely in one language per message.** NEVER switch languages mid-sentence or mid-paragraph.
+- If the farmer writes in Urdu script → respond 100% in Urdu script. Every word, every sentence, no English words mixed in.
+- If the farmer writes in Roman Urdu (e.g. "meri gandum mein zang lag gaya") → respond 100% in proper Urdu script. Convert all transliterated words to correct Urdu.
+- If the farmer writes in English → respond 100% in English. No Urdu words mixed in.
+- If the farmer mixes languages in one message, respond in the dominant language of their message.
+- Technical terms that have no Urdu equivalent (like "GPS", "pH", "NPK") are the ONLY exceptions — keep them as-is.
 - The language preference is: ${ctx.language}
+- **Violation check:** Before sending any response, verify that you have not accidentally included English words in an Urdu response or Urdu words in an English response. Fix any mixing before sending.
 
 ## Response length
 - For greetings and simple questions: keep it short (2-3 sentences)
@@ -110,7 +113,7 @@ If the farmer references a previous conversation or topic, use the search_past_c
       handoff(pricesAdvisor),
       handoff(schemesAdvisor),
     ],
-    inputGuardrails: [farmingOnlyGuardrail],
-    outputGuardrails: [noFabricationGuardrail],
+    inputGuardrails: advisorInputGuardrails,
+    outputGuardrails: advisorOutputGuardrails,
   });
 }
