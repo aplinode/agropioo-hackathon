@@ -13,6 +13,8 @@ type Metric = "temperature" | "precipitation" | "wind";
 type WeatherDashboardProps = {
   currentWeather: WeatherSnapshot | null;
   farmName: string;
+  farmLocation: string;
+  farmDistrict: string;
   dateTime: string;
   hourlyByDay: Record<string, ForecastHour[]>;
   days: ForecastDay[];
@@ -32,6 +34,8 @@ type WeatherDashboardProps = {
 export default function WeatherDashboard({
   currentWeather,
   farmName,
+  farmLocation,
+  farmDistrict,
   dateTime,
   hourlyByDay,
   days,
@@ -53,6 +57,8 @@ export default function WeatherDashboard({
         precipitation={hours[0]?.rain_pct ?? null}
         wind={currentWeather?.wind_kph ?? null}
         farmName={farmName}
+        farmLocation={farmLocation}
+        farmDistrict={farmDistrict}
         dateTime={dateTime}
         labels={overviewLabels}
       />

@@ -9,6 +9,8 @@ type WeatherOverviewProps = {
   precipitation: number | null;
   wind: number | null;
   farmName: string;
+  farmLocation: string;
+  farmDistrict: string;
   dateTime: string;
   labels: {
     precipitation: string;
@@ -37,6 +39,8 @@ export default function WeatherOverview({
   precipitation,
   wind,
   farmName,
+  farmLocation,
+  farmDistrict,
   dateTime,
 }: WeatherOverviewProps) {
   return (
@@ -66,15 +70,18 @@ export default function WeatherOverview({
             </div>
           </div>
         </div>
-        <div className="text-left sm:text-right">
-          <h2 className="text-xl font-semibold text-agro-forest">Weather</h2>
-          <p className="mt-1 flex items-center gap-1.5 text-sm text-agro-slate sm:justify-end">
-            <MapPinIcon size={15} />
-            {farmName}
-          </p>
-          <p className="mt-1 text-sm text-agro-slate">{dateTime}</p>
-          <p className="mt-1 text-sm font-medium text-agro-ink">{condition || "N/A"}</p>
-        </div>
+          <div className="text-left sm:text-right">
+            <h2 className="text-xl font-semibold text-agro-forest">Weather</h2>
+            <p className="mt-1 flex items-center gap-1.5 text-sm text-agro-slate sm:justify-end">
+              <MapPinIcon size={15} />
+              {farmName}
+            </p>
+            <p className="mt-0.5 text-xs text-agro-slate sm:justify-end">
+              {farmDistrict}{farmLocation ? `, ${farmLocation}` : ""}
+            </p>
+            <p className="mt-1 text-sm text-agro-slate">{dateTime}</p>
+            <p className="mt-1 text-sm font-medium text-agro-ink">{condition || "N/A"}</p>
+          </div>
       </div>
     </div>
   );
