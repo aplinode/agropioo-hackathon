@@ -15,6 +15,9 @@ import type { FarmerContext, FarmSummary } from "@/lib/advisor/context";
 import { run } from "@openai/agents";
 import { toSSEStream, sseHeaders } from "@/lib/advisor/streaming";
 
+const MAX_INPUT_TOKENS_ESTIMATE = 2000; // ~500 words, generous for farming questions
+const MAX_CONTEXT_MESSAGES = 20;
+
 async function createConversation(
   accountId: string,
   firstMessage: string,
@@ -117,12 +120,26 @@ async function loadRecentSummaries(
   }).join("\n");
 }
 
+/**
+ * Estimate token count: rough heuristic of 1 token ≈ 4 chars for English,
+ * ~2 chars for Urdu script. Used for cost control.
+ */
+function estimateTokens(text: string): number {
+  const urduChars = (text.match(/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/g) || []).length;
+  const otherChars = text.length - urduChars;
+  return Math.ceil(urduChars / 2 + otherChars / 4);
+}
+
 export async function POST(request: Request) {
   const session = await requireSessionApi();
   if (!session) return errorResponse("unauthorized", "Sign in to use the advisor.", 401);
 
+  // Dual rate limiting: per-IP and per-account
   if (!hitLimiter("advisor-chat", clientIp(request), 30, HOUR_MS)) {
     return errorResponse("rate_limited", "Too many requests. Try again in a moment.", 429);
+  }
+  if (!hitLimiter("advisor-chat-account", session.accountId, 50, HOUR_MS)) {
+    return errorResponse("rate_limited", "You've used the advisor a lot today. Try again later.", 429);
   }
 
   const body = await readJsonBody(request);
@@ -131,6 +148,16 @@ export async function POST(request: Request) {
     return errorResponse("validation_error", parsed.error.issues[0]?.message ?? "Invalid input.", 422);
   }
   const { conversationId, message } = parsed.data;
+
+  // Token budget: reject absurdly long messages
+  const inputTokens = estimateTokens(message);
+  if (inputTokens > MAX_INPUT_TOKENS_ESTIMATE) {
+    return errorResponse(
+      "validation_error",
+      "Your message is too long. Please keep it under 2000 characters.",
+      422,
+    );
+  }
 
   const convId =
     conversationId ?? (await createConversation(session.accountId, message));
@@ -144,8 +171,8 @@ export async function POST(request: Request) {
     `SELECT role, content FROM advisor_messages
      WHERE conversation_id = $1
      ORDER BY created_at ASC
-     LIMIT 20`,
-    [convId]
+     LIMIT $2`,
+    [convId, MAX_CONTEXT_MESSAGES]
   );
 
   const historyText = (existingMessages ?? [])
@@ -183,8 +210,12 @@ export async function POST(request: Request) {
 
   let result;
   try {
-    result = await run(agent, farmerMessage, { stream: true });
-  } catch {
+    result = await run(agent, farmerMessage, {
+      stream: true,
+      maxTurns: 10, // Limit agent turns to prevent infinite loops
+    });
+  } catch (err) {
+    console.error("[Advisor Chat] Agent run failed:", err);
     return errorResponse(
       "server_error",
       "Advisor service is temporarily unavailable. Please try again in a moment.",
@@ -201,6 +232,12 @@ export async function POST(request: Request) {
     await query(
       `UPDATE advisor_conversations SET updated_at = $1 WHERE id = $2`,
       [now.toISOString(), convId]
+    );
+
+    // Log token usage for cost monitoring
+    const outputTokens = estimateTokens(advisorOutput);
+    console.log(
+      `[Advisor Chat] account=${session.accountId} input≈${inputTokens}t output≈${outputTokens}t conv=${convId}`
     );
   }, farmerMessage);
 

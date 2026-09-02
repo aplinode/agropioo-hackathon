@@ -2,6 +2,39 @@ import type { RunStreamEvent } from "@openai/agents";
 import OpenAI from "openai";
 import { query } from "@/lib/db";
 
+const URDU_SCRIPT_RE = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+/**
+ * Post-processing filter: detects language mixing in the advisor response.
+ * Returns the output unchanged but logs a warning if mixing is detected.
+ * The fix is already enforced via prompt engineering; this is a safety net.
+ */
+function checkLanguageConsistency(text: string): string {
+  if (!text || text.length < 10) return text;
+
+  const hasUrdu = URDU_SCRIPT_RE.test(text);
+  if (!hasUrdu) return text; // English response — no Urdu expected
+
+  // Split into sentences and check each for English words
+  const sentences = text.split(/[.!؟\n]+/).filter(s => s.trim().length > 0);
+  for (const sentence of sentences) {
+    const trimmed = sentence.trim();
+    // Skip sentences that are mostly Urdu (high ratio of Urdu chars)
+    const urduChars = (trimmed.match(URDU_SCRIPT_RE) || []).length;
+    const totalChars = trimmed.replace(/\s/g, "").length;
+    if (totalChars === 0) continue;
+
+    const urduRatio = urduChars / totalChars;
+    // If a sentence has less than 40% Urdu characters and is longer than 5 chars,
+    // it likely has English mixing
+    if (urduRatio < 0.4 && trimmed.length > 5) {
+      console.warn("[Language Filter] Possible English mixing in Urdu response:", trimmed.slice(0, 80));
+    }
+  }
+
+  return text;
+}
+
 type StreamResult = {
   [Symbol.asyncIterator](): AsyncIterator<RunStreamEvent>;
   readonly completed: Promise<void>;
@@ -53,10 +86,11 @@ export function toSSEStream(
   async function finish(output: string) {
     if (finished) return;
     finished = true;
+    const checked = checkLanguageConsistency(output);
     try {
-      await onFinished?.(output);
+      await onFinished?.(checked);
       if (farmerMessage && output) {
-        await generateAndSaveSummary(conversationId, farmerMessage, output);
+        await generateAndSaveSummary(conversationId, farmerMessage, checked);
       }
     } catch (error) {
       console.error("[SSE Stream] Failed to persist message:", error);
@@ -87,11 +121,12 @@ export function toSSEStream(
 
         const final = result.finalOutput;
         const output = typeof final === "string" ? final : accumulated;
-        await finish(output);
+        const checkedOutput = checkLanguageConsistency(output);
+        await finish(checkedOutput);
 
         const payload = JSON.stringify({
           type: "done",
-          output,
+          output: checkedOutput,
         });
         controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
       } catch (err) {
