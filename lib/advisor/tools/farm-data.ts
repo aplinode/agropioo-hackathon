@@ -89,6 +89,14 @@ export function createFarmDataTools(accountId: string) {
       let paramIdx = 2;
 
       if (farmId) {
+        // Defense-in-depth: verify the farm belongs to this farmer before querying records
+        const farmOwner = await query<{ id: string }>(
+          `SELECT id FROM farms WHERE id = $1 AND account_id = $2 AND archived_at IS NULL`,
+          [farmId, accountId]
+        );
+        if (farmOwner.length === 0) {
+          return "Farm not found or does not belong to you. Please check your farm list.";
+        }
         conditions.push(`r.farm_id = $${paramIdx++}`);
         params.push(farmId);
       }
@@ -99,7 +107,7 @@ export function createFarmDataTools(accountId: string) {
 
       const sql = `SELECT r.id, r.farm_id, f.name AS farm_name, r.type, r.event_date, r.title, r.note, r.yield_qty, r.labor_cost, r.transport_cost
         FROM records r
-        JOIN farms f ON f.id = r.farm_id
+        JOIN farms f ON f.id = r.farm_id AND f.account_id = $1
         WHERE ${conditions.join(" AND ")}
         ORDER BY r.event_date DESC, r.created_at DESC
         LIMIT 50`;
