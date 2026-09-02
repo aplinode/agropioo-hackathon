@@ -4,6 +4,7 @@ import { createWeatherAgent } from "./weather-agent";
 import { createFarmDataAgent } from "./farm-data-agent";
 import { createPricesAgent } from "./prices-agent";
 import { createSchemesAgent } from "./schemes-agent";
+import { createHandoffAgent } from "./handoff-agent";
 import { farmingOnlyGuardrail, advisorInputGuardrails, advisorOutputGuardrails } from "../guardrails";
 import { searchKnowledgeBase } from "../tools/knowledge-base";
 import { createConversationMemoryTool } from "../tools/conversation-memory";
@@ -17,6 +18,7 @@ export function createTriageAgent(ctx: FarmerContext) {
   const farmDataAdvisor = createFarmDataAgent(ctx.accountId);
   const pricesAdvisor = createPricesAgent();
   const schemesAdvisor = createSchemesAgent();
+  const handoffAdvisor = createHandoffAgent();
   const conversationMemory = createConversationMemoryTool(ctx.accountId);
 
   const farmSummary = ctx.farms.length > 0
@@ -61,8 +63,10 @@ ${cropCalendar}
 3. If the farmer asks about mandi prices or market rates → handoff to Prices Advisor
 4. If the farmer asks about government schemes or subsidies → handoff to Schemes Advisor
 5. If the farmer asks about crop disease, pests, fertilizer, livestock health, or general crop/livestock management → handoff to Crop Advisor
-6. If the query combines multiple topics, route to the most relevant specialist (they can use tools from other domains)
-7. For greetings, general conversation about farming, or simple questions → answer directly yourself
+6. If you cannot confidently answer a question (unknown disease, complex diagnosis, safety-critical dosage) → handoff to Agronomist Handoff for expert escalation
+7. If the farmer explicitly asks for an expert, agronomist, or extension officer → handoff to Agronomist Handoff
+8. If the query combines multiple topics, route to the most relevant specialist (they can use tools from other domains)
+9. For greetings, general conversation about farming, or simple questions → answer directly yourself
 
 ## Language handling — CRITICAL RULES
 - **You MUST respond entirely in one language per message.** NEVER switch languages mid-sentence or mid-paragraph.
@@ -112,6 +116,7 @@ If the farmer references a previous conversation or topic, use the search_past_c
       handoff(farmDataAdvisor),
       handoff(pricesAdvisor),
       handoff(schemesAdvisor),
+      handoff(handoffAdvisor),
     ],
     inputGuardrails: advisorInputGuardrails,
     outputGuardrails: advisorOutputGuardrails,
