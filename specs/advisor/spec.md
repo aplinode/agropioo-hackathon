@@ -18,7 +18,8 @@ Give every farmer a knowledgeable advisor they can talk to in their own language
 | S2 | Asks a crop disease question (e.g. "my wheat leaves have yellow stripes") | A structured answer in markdown: what the disease likely is, what causes it, step-by-step treatment, timing, and safety cautions — sourced from the verified knowledge base, not invented. |
 | S3 | Asks about weather ("will it rain this week?") | A forecast for their farm's location (same data source as `/weather`), with practical cross-referenced advice (e.g. "don't spray today — rain is expected tomorrow"). |
 | S4 | Asks about their own farm data ("when did I plant my cotton?") | A smart answer pulled from their actual farm records — with analysis and advice layered on top (e.g. "You planted cotton on April 12. It's now 65 days old — flowering stage. Check for bollworm this week."). |
-| S5 | Asks "how are my farms doing?" | A summary of all farms with current crop stage, cross-referenced with weather and seasonal advisories, flagging any upcoming actions or risks. |
+| S5 | Asks "how are my farms doing?" | A summary of all farms with current crop stage, soil type, irrigation method, cross-referenced with weather and seasonal advisories, flagging any upcoming actions or risks. |
+| S5a | Asks "is cotton good for my soil?" or "what should I plant?" | A crop-soil compatibility check showing suitability scores for their soil type, with pH requirements and alternative crop suggestions if the current crop is a poor fit. |
 | S6 | Asks about government schemes ("is there a subsidy for fertilizer?") | Information about relevant schemes they may be eligible for, with eligibility criteria and how to apply — answered inline, no separate page. |
 | S7 | Asks about market prices ("what's wheat selling for at the mandi?") | Current or recent mandi prices for the crop and market they're interested in. |
 | S8 | Asks something outside farming (e.g. "tell me a joke", "who won the match") | A polite decline that redirects to farming topics — the advisor stays on-topic. |
@@ -77,13 +78,16 @@ Give every farmer a knowledgeable advisor they can talk to in their own language
 - **FR-5.5:** Knowledge base content is written from public Pakistan agriculture sources (Punjab Agriculture Department advisories, PAR publications, extension guides). Approximately 20–30 articles covering the major crops and common issues.
 
 ### FR-6: Product Data Integration
-- **FR-6.1:** The advisor retrieves the farmer's own registered farms (name, location, district, size, crop types) from the live database when answering questions about their land or fields.
+- **FR-6.1:** The advisor retrieves the farmer's own registered farms (name, location, district, size, crop types, soil type, irrigation method, sowing date) from the live database when answering questions about their land or fields.
 - **FR-6.2:** The advisor retrieves the farmer's farm records (planting dates, harvest dates, inputs used, yields, crop stage, costs) from the live database when answering questions about their farming history or current crop status.
-- **FR-6.3:** When returning farm data, the advisor provides a smart summary with analysis and advice — not a raw data dump. It includes approximate costs in PKR where available (fertilizer, pesticide per acre, labor, transport). For example: "Your wheat on Farm A was sown Nov 15. It's now 45 days old — first irrigation is due. Recommended: 60mm. Approximate irrigation cost: Rs 2,500/acre."
-- **FR-6.4:** The advisor uses the farmer's real profile data (full name, location from farm district, crops, farm size) from the database to provide location-specific and crop-specific advice without the farmer having to repeat it.
-- **FR-6.5:** All product data retrieval is scoped to the authenticated farmer — the advisor can only access the logged-in farmer's own data, never another farmer's.
-- **FR-6.6:** Product data tools are extensible: as new product features ship (detect results, price bookmarks), corresponding advisor tools can be added without changing the architecture.
-- **FR-6.7:** The advisor proactively checks for overdue actions (irrigation due based on crop stage and days since last irrigation, fertilizer windows missed, pest scouting overdue) and flags them even when the farmer doesn't ask.
+- **FR-6.3:** The advisor can retrieve detailed farm profiles including crop-level data (typical yield per acre, growing duration, water requirement, labour cost, capital requirement, market risk) from the crops reference table to provide informed crop-specific advice.
+- **FR-6.4:** The advisor can check soil-crop compatibility using the crop_soil_compatibility table, returning suitability scores, pH ranges, and notes to advise the farmer on which crops suit their soil type.
+- **FR-6.5:** When returning farm data, the advisor provides a smart summary with analysis and advice — not a raw data dump. It includes approximate costs in PKR where available (fertilizer, pesticide per acre, labor, transport). For example: "Your wheat on Farm A was sown Nov 15. It's now 45 days old — first irrigation is due. Recommended: 60mm. Approximate irrigation cost: Rs 2,500/acre."
+- **FR-6.6:** The advisor uses the farmer's real profile data (full name, location from farm district, crops, farm size, soil type) from the database to provide location-specific and crop-specific advice without the farmer having to repeat it.
+- **FR-6.7:** All product data retrieval is scoped to the authenticated farmer — the advisor can only access the logged-in farmer's own data, never another farmer's.
+- **FR-6.8:** Product data tools are extensible: as new product features ship (detect results, price bookmarks), corresponding advisor tools can be added without changing the architecture.
+- **FR-6.9:** The advisor proactively checks for overdue actions (irrigation due based on crop stage and days since last irrigation, fertilizer windows missed, pest scouting overdue) and flags them even when the farmer doesn't ask.
+- **FR-6.10:** The advisor proactively flags soil-crop mismatches — if a farm's soil type is poorly suited to its current crops, it gently mentions this and suggests better-suited alternatives with suitability scores.
 
 ### FR-7: Real-Time Data
 - **FR-7.1:** The advisor's weather tool uses live OpenWeatherMap data for any location in Pakistan, using the farmer's farm coordinates (lat/lng) or district — ensuring consistent weather information across the product and covering all districts, not just hardcoded cities.
@@ -211,6 +215,8 @@ Give every farmer a knowledgeable advisor they can talk to in their own language
 | AC-3 | Sending a crop disease question returns a structured markdown response (Problem/Cause/What to do/When/Caution) | Manual: ask "my wheat leaves have yellow stripes", verify structured format with markdown rendering |
 | AC-4 | Sending a weather question returns a location-specific forecast from the same data source as `/weather` | Manual: ask about weather, verify the response references the farmer's farm location and matches `/weather` data |
 | AC-5 | Asking about the farmer's own farm data returns a smart summary with advice, not a raw data dump | Manual: ask "when did I plant my cotton?", verify response includes planting date + analysis + recommendation |
+| AC-5a | Asking about soil or crop fit returns compatibility data from the crops reference table | Manual: ask "is cotton good for my soil?", verify response includes suitability score, pH range, and soil type from the farm |
+| AC-5b | Asking "how are my farms doing?" includes soil type, irrigation method, and crop details | Manual: verify the farm summary shows soil type, irrigation method, and crop-specific data (yield, duration, water needs) |
 | AC-6 | Asking "how are my farms doing?" returns a cross-referenced summary of all farms | Manual: verify response covers all farms, current crop stages, and any weather/action advisories |
 | AC-7 | Typing in Urdu produces an Urdu response with RTL layout | Manual: type an Urdu question, verify response is Urdu and layout is mirrored |
 | AC-8 | Typing in Roman Urdu produces an Urdu-script response with RTL layout | Manual: type "meri gandum mein zang lag gaya", verify response is in Urdu script |

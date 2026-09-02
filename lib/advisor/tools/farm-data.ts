@@ -1,6 +1,6 @@
 import { tool } from "@openai/agents";
 import { z } from "zod";
-import { query } from "@/lib/db";
+import { query, queryOne } from "@/lib/db";
 import { fetchCurrentWeather } from "@/lib/farms/weather";
 
 type FarmRow = {
@@ -13,6 +13,25 @@ type FarmRow = {
   acres: string;
   crops: string | string[];
   growth_stages: Record<string, string>;
+  soil_type: string | null;
+  irrigation_method: string | null;
+  primary_crop: string | null;
+  sowing_date: string | null;
+};
+
+type CropDetail = {
+  name: string;
+  category: string;
+  typical_yield_per_acre_kg: number;
+  growing_duration_days: number;
+  water_requirement_level: string;
+  labour_cost_level: string;
+  capital_requirement_per_acre_pkr: number;
+  market_risk_baseline: string;
+};
+
+type FarmDetailRow = FarmRow & {
+  crop_details: CropDetail[];
 };
 
 type RecordRow = {
@@ -36,6 +55,15 @@ type WeatherRecordRow = {
   type: string;
   title: string | null;
   weather: Record<string, unknown>;
+};
+
+type SoilCropFitRow = {
+  crop_name: string;
+  soil_type: string;
+  suitability_score: string;
+  ph_min: string | null;
+  ph_max: string | null;
+  notes: string | null;
 };
 
 function formatCrops(crops: string | string[]): string {
@@ -64,11 +92,11 @@ export function createFarmDataTools(accountId: string) {
       farmName: z.string().optional().describe("Specific farm name to filter by, or omit for all farms"),
     }),
     async execute({ farmName }) {
-      let sql = `SELECT id, name, location, district, acres, crops, growth_stages FROM farms WHERE account_id = $1 AND archived_at IS NULL ORDER BY created_at DESC`;
+      let sql = `SELECT id, name, location, district, lat, lng, acres, crops, growth_stages, soil_type, irrigation_method, primary_crop, sowing_date FROM farms WHERE account_id = $1 AND archived_at IS NULL ORDER BY created_at DESC`;
       const params: (string)[] = [accountId];
 
       if (farmName) {
-        sql = `SELECT id, name, location, district, acres, crops, growth_stages FROM farms WHERE account_id = $1 AND archived_at IS NULL AND lower(name) LIKE $2 ORDER BY created_at DESC`;
+        sql = `SELECT id, name, location, district, lat, lng, acres, crops, growth_stages, soil_type, irrigation_method, primary_crop, sowing_date FROM farms WHERE account_id = $1 AND archived_at IS NULL AND lower(name) LIKE $2 ORDER BY created_at DESC`;
         params.push(`%${farmName.toLowerCase()}%`);
       }
 
@@ -83,7 +111,10 @@ export function createFarmDataTools(accountId: string) {
       return `Farmer's farms:\n${farms.map(f => {
         const crops = formatCrops(f.crops);
         const stage = formatGrowthStage(f.growth_stages);
-        return `• ${f.name} (${f.location}, ${f.district}): ${f.acres} acres, ${crops}, current stage: ${stage}`;
+        const soil = f.soil_type ? `soil: ${f.soil_type}` : "soil: not set";
+        const irrigation = f.irrigation_method ? `irrigation: ${f.irrigation_method}` : "irrigation: not set";
+        const sowing = f.sowing_date ? `sowed: ${f.sowing_date}` : "";
+        return `• ${f.name} (${f.location}, ${f.district}): ${f.acres} acres, ${crops}, ${soil}, ${irrigation}, stage: ${stage}${sowing ? `, ${sowing}` : ""}`;
       }).join("\n")}`;
     },
   });
@@ -102,7 +133,6 @@ export function createFarmDataTools(accountId: string) {
       let paramIdx = 2;
 
       if (farmId) {
-        // Defense-in-depth: verify the farm belongs to this farmer before querying records
         const farmOwner = await query<{ id: string }>(
           `SELECT id FROM farms WHERE id = $1 AND account_id = $2 AND archived_at IS NULL`,
           [farmId, accountId]
@@ -143,6 +173,129 @@ export function createFarmDataTools(accountId: string) {
         if (costs.length > 0) parts.push(` | Costs: ${costs.join(", ")}`);
         return parts.join("");
       }).join("\n")}`;
+    },
+  });
+
+  const getFarmDetails = tool({
+    name: "get_farm_details",
+    description:
+      "Get detailed information about a specific farm including soil type, irrigation method, crop details (yield, duration, water needs, cost), growth stages, and sowing date. Use this when the farmer asks about soil conditions, what crops suit their land, irrigation setup, or detailed farm profile.",
+    parameters: z.object({
+      farmId: z.string().describe("The farm ID to get details for"),
+    }),
+    async execute({ farmId }) {
+      const farmOwner = await query<{ id: string }>(
+        `SELECT id FROM farms WHERE id = $1 AND account_id = $2 AND archived_at IS NULL`,
+        [farmId, accountId]
+      );
+      if (farmOwner.length === 0) {
+        return "Farm not found or does not belong to you.";
+      }
+
+      const farm = await queryOne<FarmDetailRow>(
+        `SELECT f.id, f.name, f.location, f.district, f.acres, f.crops, f.growth_stages,
+                f.soil_type, f.irrigation_method, f.primary_crop, f.sowing_date,
+                COALESCE(
+                  (SELECT jsonb_agg(jsonb_build_object(
+                    'name', c.name_en,
+                    'category', c.category,
+                    'typical_yield_per_acre_kg', c.typical_yield_per_acre_kg,
+                    'growing_duration_days', c.growing_duration_days,
+                    'water_requirement_level', c.water_requirement_level,
+                    'labour_cost_level', c.labour_cost_level,
+                    'capital_requirement_per_acre_pkr', c.capital_requirement_per_acre_pkr,
+                    'market_risk_baseline', c.market_risk_baseline
+                  ))
+                  FROM crops c
+                  WHERE c.name_en ILIKE ANY(
+                    SELECT jsonb_array_elements_text(f.crops)
+                  )), '[]'::jsonb
+                ) AS crop_details
+         FROM farms f
+         WHERE f.id = $1 AND f.account_id = $2 AND f.archived_at IS NULL`,
+        [farmId, accountId]
+      );
+
+      if (!farm) {
+        return "Farm not found.";
+      }
+
+      const crops = formatCrops(farm.crops);
+      const stage = formatGrowthStage(farm.growth_stages);
+      const soil = farm.soil_type || "not recorded";
+      const irrigation = farm.irrigation_method || "not recorded";
+      const sowing = farm.sowing_date || "not recorded";
+
+      let output = `Farm: ${farm.name}
+Location: ${farm.location}, ${farm.district}
+Size: ${farm.acres} acres
+Soil type: ${soil}
+Irrigation: ${irrigation}
+Primary crop: ${farm.primary_crop || "not set"}
+Sowing date: ${sowing}
+Crops: ${crops}
+Growth stages: ${stage}`;
+
+      if (farm.crop_details && farm.crop_details.length > 0) {
+        output += `\n\nCrop details:\n${farm.crop_details.map((c: CropDetail) =>
+          `• ${c.name} (${c.category}): yield ~${c.typical_yield_per_acre_kg} kg/acre, duration ${c.growing_duration_days} days, water: ${c.water_requirement_level}, labour: ${c.labour_cost_level}, cost ~Rs ${c.capital_requirement_per_acre_pkr}/acre, market risk: ${c.market_risk_baseline}`
+        ).join("\n")}`;
+      }
+
+      return output;
+    },
+  });
+
+  const checkSoilCropFit = tool({
+    name: "check_soil_crop_fit",
+    description:
+      "Check how well a crop suits the farmer's soil type. Returns suitability score, pH range, and notes. Use when the farmer asks 'is this crop good for my soil?', 'what should I plant?', or wants to compare crops for their land.",
+    parameters: z.object({
+      cropName: z.string().describe("Crop name to check (e.g. Wheat, Cotton, Rice)"),
+      farmId: z.string().optional().describe("Farm ID to auto-detect soil type from, or omit to provide soilType manually"),
+      soilType: z.string().optional().describe("Soil type to check against (e.g. loamy, clay, sandy). Use if farmId is not provided."),
+    }),
+    async execute({ cropName, farmId, soilType }) {
+      let resolvedSoil = soilType;
+
+      if (farmId && !resolvedSoil) {
+        const farmOwner = await query<{ id: string }>(
+          `SELECT id FROM farms WHERE id = $1 AND account_id = $2 AND archived_at IS NULL`,
+          [farmId, accountId]
+        );
+        if (farmOwner.length === 0) {
+          return "Farm not found or does not belong to you.";
+        }
+        const farm = await queryOne<{ soil_type: string | null }>(
+          `SELECT soil_type FROM farms WHERE id = $1 AND account_id = $2`,
+          [farmId, accountId]
+        );
+        resolvedSoil = farm?.soil_type ?? undefined;
+      }
+
+      if (!resolvedSoil) {
+        return "No soil type available. Please set the soil type on your farm first, or provide a soil type manually.";
+      }
+
+      const fits = await query<SoilCropFitRow>(
+        `SELECT c.name_en AS crop_name, csc.soil_type::text, csc.suitability_score::text,
+                csc.ph_min::text, csc.ph_max::text, csc.notes
+         FROM crop_soil_compatibility csc
+         JOIN crops c ON c.id = csc.crop_id
+         WHERE lower(c.name_en) LIKE $1 AND csc.soil_type::text = $2
+         LIMIT 5`,
+        [`%${cropName.toLowerCase()}%`, resolvedSoil]
+      );
+
+      if (fits.length === 0) {
+        return `No soil-crop compatibility data found for "${cropName}" on ${resolvedSoil} soil. Try checking the crop catalogue or ask about a different crop.`;
+      }
+
+      return fits.map(f => {
+        const score = parseFloat(f.suitability_score);
+        const label = score >= 0.9 ? "excellent" : score >= 0.75 ? "good" : score >= 0.5 ? "moderate" : "poor";
+        return `${f.crop_name} on ${f.soil_type} soil: ${label} fit (score ${f.suitability_score})${f.ph_min && f.ph_max ? `, pH range ${f.ph_min}–${f.ph_max}` : ""}${f.notes ? `\n  Note: ${f.notes}` : ""}`;
+      }).join("\n\n");
     },
   });
 
@@ -244,7 +397,6 @@ export function createFarmDataTools(accountId: string) {
         if (snapshot.humidity !== null) parts.push(`  ${snapshot.humidity}% humidity`);
         if (snapshot.wind_kph !== null) parts.push(`  wind ${snapshot.wind_kph} km/h`);
 
-        // Add farming-specific alerts
         if (snapshot.temp_c !== null && snapshot.humidity !== null) {
           if (snapshot.temp_c > 38) parts.push(`  ⚠ Heat stress risk — ensure irrigation`);
           if (snapshot.temp_c < 5) parts.push(`  ⚠ Frost risk — protect young crops`);
@@ -261,5 +413,5 @@ export function createFarmDataTools(accountId: string) {
     },
   });
 
-  return { getMyFarms, getMyRecords, getMyWeatherRecords, getMyFarmWeather };
+  return { getMyFarms, getMyRecords, getFarmDetails, checkSoilCropFit, getMyWeatherRecords, getMyFarmWeather };
 }
