@@ -29,6 +29,8 @@ type FarmRow = {
   crops: string[];
   lat: number;
   lng: number;
+  location: string;
+  district: string;
   growth_stages: Record<string, string> | null;
 };
 
@@ -77,7 +79,7 @@ export default async function WeatherPage({
   const bundle = await getWeatherBundle();
 
   const farms = await query<FarmRow>(
-    `SELECT id, name, primary_crop, sowing_date, crops, lat, lng, growth_stages
+    `SELECT id, name, primary_crop, sowing_date, crops, lat, lng, location, district, growth_stages
      FROM farms WHERE account_id = $1 AND archived_at IS NULL
      ORDER BY created_at DESC`,
     [session.accountId],
@@ -145,6 +147,8 @@ export default async function WeatherPage({
     id: f.id,
     name: f.name,
     cropLabel: capitalize(f.primary_crop ?? f.crops?.[0] ?? ""),
+    location: f.location,
+    district: f.district,
   }));
 
   const records = await query<RecordRow>(
@@ -369,6 +373,8 @@ export default async function WeatherPage({
       <WeatherDashboard
         currentWeather={currentWeather}
         farmName={selected.name}
+        farmLocation={selected.location}
+        farmDistrict={selected.district}
         dateTime={dateTime}
         hourlyByDay={hourlyByDay}
         days={forecast?.days ?? []}
