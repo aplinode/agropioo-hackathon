@@ -1,24 +1,47 @@
-import OpenAI from "openai";
 import { tool } from "@openai/agents";
 import { z } from "zod";
 import { query as dbQuery } from "@/lib/db";
 
-let openaiClient: OpenAI | null = null;
+// Local TF-IDF embedding for query vectors (384-dim)
+// Matches the vectors stored by scripts/seed-knowledge-local.ts
+const EMBEDDING_DIM = 384;
 
-export function getOpenAI(): OpenAI {
-  if (!openaiClient) {
-    openaiClient = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      baseURL: process.env.OPENAI_BASE_URL,
-    });
-  }
-  return openaiClient;
+function tokenize(text: string): string[] {
+  return text.toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter(t => t.length > 2);
 }
 
-// Query embeddings are generated locally via Ollama so they match the vectors
-// stored by scripts/seed-knowledge.ts (same model + dimension as the table).
-const OLLAMA_HOST = process.env.OLLAMA_HOST ?? "http://localhost:11434";
-const EMBEDDING_MODEL = process.env.OLLAMA_EMBED_MODEL ?? "nomic-embed-text";
+// Simplified TF-IDF: uses a basic hash-based projection instead of full vocabulary
+// This is approximate but sufficient for RAG retrieval
+function textToVector(text: string): number[] {
+  const tokens = tokenize(text);
+  const vector = new Array(EMBEDDING_DIM).fill(0);
+
+  for (const token of tokens) {
+    // Hash token to a position in the vector
+    let hash = 0;
+    for (let i = 0; i < token.length; i++) {
+      hash = ((hash << 5) - hash + token.charCodeAt(i)) | 0;
+    }
+    const idx = Math.abs(hash) % EMBEDDING_DIM;
+    vector[idx] += 1;
+    // Also add to neighboring positions for smoother similarity
+    vector[(idx + 1) % EMBEDDING_DIM] += 0.5;
+    vector[(idx + EMBEDDING_DIM - 1) % EMBEDDING_DIM] += 0.5;
+  }
+
+  // L2 normalize
+  let norm = 0;
+  for (let i = 0; i < EMBEDDING_DIM; i++) norm += vector[i] ** 2;
+  norm = Math.sqrt(norm);
+  if (norm > 0) {
+    for (let i = 0; i < EMBEDDING_DIM; i++) vector[i] /= norm;
+  }
+
+  return vector;
+}
 
 export const searchKnowledgeBase = tool({
   name: "search_knowledge_base",
@@ -32,16 +55,9 @@ export const searchKnowledgeBase = tool({
   async execute({ query, cropType, category }) {
     let queryEmbedding: number[];
     try {
-      const embedRes = await fetch(`${OLLAMA_HOST}/api/embed`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: EMBEDDING_MODEL, input: [query] }),
-      });
-      if (!embedRes.ok) throw new Error(`ollama embed ${embedRes.status}`);
-      const json = (await embedRes.json()) as { embeddings: number[][] };
-      queryEmbedding = json.embeddings[0];
+      queryEmbedding = textToVector(query);
     } catch {
-      return "Knowledge base search is unavailable (local embedding model not reachable). Answer from your general farming knowledge and suggest the farmer consult a local extension officer for specific advice.";
+      return "Knowledge base search is unavailable. Answer from your general farming knowledge and suggest the farmer consult a local extension officer for specific advice.";
     }
 
     // Search via Postgres function

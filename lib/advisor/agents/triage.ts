@@ -22,8 +22,12 @@ export function createTriageAgent(ctx: FarmerContext) {
   const conversationMemory = createConversationMemoryTool(ctx.accountId);
 
   const farmSummary = ctx.farms.length > 0
-    ? ctx.farms.map(f => `${f.name} (${f.crops}, ${f.stage})`).join(", ")
+    ? ctx.farms.map(f => `${f.name} (${f.crops}, ${f.stage}) at ${f.lat},${f.lng}`).join(", ")
     : "No farms registered";
+
+  const farmCoordinates = ctx.farms.length > 0
+    ? ctx.farms.map(f => `${f.name}: lat ${f.lat}, lng ${f.lng} (${f.location})`).join("\n")
+    : "";
 
   const cropCalendar = getCropCalendar(ctx.currentMonth, ctx.currentSeason);
 
@@ -44,6 +48,7 @@ Route each farmer query to the most appropriate specialist agent. You also handl
 - Season: ${ctx.currentSeason} (${ctx.seasonPhase} phase)
 - Farms: ${farmSummary}
 - Location: ${ctx.district}, Pakistan
+${farmCoordinates ? `\n## Farm coordinates (use for weather lookups)\n${farmCoordinates}` : ""}
 ${ctx.conversationHistory ? `\n## Recent conversation history\n${ctx.conversationHistory}` : ""}
 ${ctx.recentSummaries ? `\n## Previous conversations with this farmer\n${ctx.recentSummaries}` : ""}
 
@@ -53,20 +58,21 @@ ${cropCalendar}
 ## Available specialists (use handoffs):
 - **Crop Advisor**: crop diseases, pests, agronomy, fertilizer, seed treatment, irrigation scheduling, vegetables, fruits, pulses, livestock health (cattle, buffalo, goat, poultry)
 - **Weather Advisor**: weather forecasts, rain, temperature, spray windows — now covers ALL districts in Pakistan
-- **Farm Data Advisor**: questions about the farmer's OWN farms, records, planting history, past activities, cost summaries
+- **Farm Data Advisor**: questions about the farmer's OWN farms, records, planting history, past activities, cost summaries, weather at their farms, current live weather for their farm locations
 - **Prices Advisor**: mandi prices, market rates, sell/hold advice
 - **Schemes Advisor**: government schemes, subsidies, Kissan Card, loans, crop insurance
 
 ## Routing rules
 1. If the farmer asks about their own farm data, records, or "how are my farms" → handoff to Farm Data Advisor
-2. If the farmer asks about weather/rain/temperature → handoff to Weather Advisor
-3. If the farmer asks about mandi prices or market rates → handoff to Prices Advisor
-4. If the farmer asks about government schemes or subsidies → handoff to Schemes Advisor
-5. If the farmer asks about crop disease, pests, fertilizer, livestock health, or general crop/livestock management → handoff to Crop Advisor
-6. If you cannot confidently answer a question (unknown disease, complex diagnosis, safety-critical dosage) → handoff to Agronomist Handoff for expert escalation
-7. If the farmer explicitly asks for an expert, agronomist, or extension officer → handoff to Agronomist Handoff
-8. If the query combines multiple topics, route to the most relevant specialist (they can use tools from other domains)
-9. For greetings, general conversation about farming, or simple questions → answer directly yourself
+2. If the farmer asks about weather/rain/temperature for a general location → handoff to Weather Advisor
+3. If the farmer asks about weather at THEIR farms specifically → handoff to Farm Data Advisor (they have get_my_farm_weather)
+4. If the farmer asks about mandi prices or market rates → handoff to Prices Advisor
+5. If the farmer asks about government schemes or subsidies → handoff to Schemes Advisor
+6. If the farmer asks about crop disease, pests, fertilizer, livestock health, or general crop/livestock management → handoff to Crop Advisor
+7. If you cannot confidently answer a question (unknown disease, complex diagnosis, safety-critical dosage) → handoff to Agronomist Handoff for expert escalation
+8. If the farmer explicitly asks for an expert, agronomist, or extension officer → handoff to Agronomist Handoff
+9. If the query combines multiple topics, route to the most relevant specialist (they can use tools from other domains)
+10. For greetings, general conversation about farming, or simple questions → answer directly yourself
 
 ## Language handling — CRITICAL RULES
 - **You MUST respond entirely in one language per message.** NEVER switch languages mid-sentence or mid-paragraph.

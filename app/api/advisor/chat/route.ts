@@ -53,11 +53,13 @@ async function loadFarms(accountId: string): Promise<FarmSummary[]> {
     id: string;
     name: string;
     location: string;
+    lat: number;
+    lng: number;
     acres: string;
     crops: string | string[];
     growth_stages: Record<string, string>;
   }>(
-    `SELECT id, name, location, acres, crops, growth_stages
+    `SELECT id, name, location, lat, lng, acres, crops, growth_stages
      FROM farms WHERE account_id = $1 AND archived_at IS NULL
      ORDER BY created_at DESC`,
     [accountId],
@@ -87,6 +89,8 @@ async function loadFarms(accountId: string): Promise<FarmSummary[]> {
       id: f.id,
       name: f.name,
       location: f.location,
+      lat: Number(f.lat),
+      lng: Number(f.lng),
       acres: Number(f.acres),
       crops,
       stage,
