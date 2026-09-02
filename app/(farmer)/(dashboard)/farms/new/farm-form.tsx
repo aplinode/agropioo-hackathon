@@ -274,7 +274,7 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
   value: string;
   district: string;
   onChange: (val: string) => void;
-  onLocationPick: (lat: number, lng: number) => void;
+  onLocationPick: (lat: number, lng: number, displayName?: string) => void;
   error?: string;
   suggestions?: string[];
 }>(function LocationSearch({
@@ -454,7 +454,7 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
   }) => {
     const placeName = item.display_name;
     onChange(placeName);
-    onLocationPick(parseFloat(item.lat), parseFloat(item.lon));
+    onLocationPick(parseFloat(item.lat), parseFloat(item.lon), placeName);
     setOpen(false);
     setQuery(placeName);
     skipAutoGeocodeRef.current = true;
@@ -777,7 +777,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
   const [soil, setSoil] = useState<SoilType | "">("");
   const [irrigation, setIrrigation] = useState<IrrigationMethod>("drip");
 
-  const handlePickLocation = async (lat: number, lng: number) => {
+  const handlePickLocation = async (lat: number, lng: number, displayName?: string) => {
     setMarker({ lat, lng });
     setValue("lat", lat);
     setValue("lng", lng);
@@ -785,42 +785,30 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
 
     setIsGeocoding(true);
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`
-      );
-      if (res.ok) {
-        const data = await res.json();
-        const addr = data.address || {};
-        const placeName =
-          addr.village ||
-          addr.suburb ||
-          addr.town ||
-          addr.neighbourhood ||
-          addr.city_district ||
-          addr.city ||
-          addr.county ||
-          data.display_name ||
-          "Selected Location";
-
-        const fullName = data.display_name || placeName;
-        setSelectedLocationName(fullName);
-        setValue("location", placeName);
-
-        const districtCandidates = [
-          addr.city_district,
-          addr.state_district,
-          addr.county,
-          addr.city,
-          addr.town,
-          addr.village,
-        ].filter(Boolean);
-
-        const matchedDistrict = PAKISTAN_DISTRICTS.find((d) =>
-          districtCandidates.some((c) => c!.toLowerCase() === d.toLowerCase())
+      if (displayName) {
+        setSelectedLocationName(displayName);
+        setValue("location", displayName);
+      } else {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`
         );
+        if (res.ok) {
+          const data = await res.json();
+          const addr = data.address || {};
+          const placeName =
+            addr.village ||
+            addr.suburb ||
+            addr.town ||
+            addr.neighbourhood ||
+            addr.city_district ||
+            addr.city ||
+            addr.county ||
+            data.display_name ||
+            "Selected Location";
 
-        if (matchedDistrict) {
-          setValue("district", matchedDistrict);
+          const fullName = data.display_name || placeName;
+          setSelectedLocationName(fullName);
+          setValue("location", placeName);
         }
       }
     } catch (err) {
@@ -1034,7 +1022,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
         value={watch("location")}
         district={selectedDistrict}
         onChange={(val) => setValue("location", val)}
-        onLocationPick={(lat, lng) => handlePickLocation(lat, lng)}
+        onLocationPick={(lat, lng, displayName) => handlePickLocation(lat, lng, displayName)}
         error={errors.location?.message || serverErrors.location}
         suggestions={districtSuggestions}
       />
