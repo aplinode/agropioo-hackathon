@@ -13,6 +13,7 @@ function getPool(): Pool {
   pool = new Pool({
     connectionString,
     ssl: { rejectUnauthorized: true },
+    options: '-c client_encoding=UTF8',
   })
   return pool
 }
