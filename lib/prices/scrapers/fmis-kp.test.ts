@@ -95,15 +95,15 @@ describe("toIngestRows", () => {
     ]);
     expect(rows).toHaveLength(3);
     expect(rows[0]).toMatchObject({
-      source_code: "fmis_kp",
-      mandi_name: "Peshawar",
-      district: "Peshawar",
-      province: "Khyber Pakhtunkhwa",
-      crop: "Wheat",
-      unit: "per_maund_40kg",
-      observed_date: "2026-09-01",
+      mandi_external_id: "fmis_kp-peshawar",
+      crop_external_id: "wheat",
+      date: "2026-09-01",
+      modal_price: 3400,
+      min_price: 3200,
+      max_price: 3600,
+      unit: "Maund",
+      is_holiday: false,
     });
-    expect(rows[0].source_url).toContain("kp_essential_commodities_price");
   });
 
   it("skips rows with empty mandi or district", () => {
@@ -118,16 +118,16 @@ describe("toIngestRows", () => {
     expect(rows).toHaveLength(0);
   });
 
-  it("coerces non-maund units back to per_maund_40kg to match the schema's strict literal", () => {
+  it("sets is_holiday when flag is true", () => {
     const rows = toIngestRows([
       {
         mandi: "Peshawar",
         district: "Peshawar",
         observedDate: "2026-09-01",
-        cells: [{ commodity: "Wheat", unit: "per_100kg", minPricePkr: 3200, modalPricePkr: 3400, maxPricePkr: 3600 }],
+        cells: [{ commodity: "Wheat", unit: "per_maund_40kg", minPricePkr: 3200, modalPricePkr: 3400, maxPricePkr: 3600 }],
       },
-    ]);
-    expect(rows[0].unit).toBe("per_maund_40kg");
+    ], undefined, true);
+    expect(rows[0].is_holiday).toBe(true);
   });
 });
 
@@ -196,7 +196,7 @@ describe("scrapeFmis", () => {
     expect(calls.csv).toBe(1);
     expect(calls.table).toBe(0);
     expect(rows).toHaveLength(1);
-    expect(rows[0].source_code).toBe("fmis_kp");
+    expect(rows[0].mandi_external_id).toContain("fmis_kp");
   });
 
   it("falls back to table rows when the CSV export returns nothing", async () => {

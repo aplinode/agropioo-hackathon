@@ -87,21 +87,22 @@ export function parseSpiRow(input: {
   };
 }
 
-export function toIngestRows(parsed: ParsedSpiRow[], observedDate: string, sourceCode: SourceCode = SPI_SOURCE_CODE): IngestRow[] {
+function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+export function toIngestRows(parsed: ParsedSpiRow[], observedDate: string, sourceCode: SourceCode = SPI_SOURCE_CODE, isHoliday = false): IngestRow[] {
   const rows: IngestRow[] = [];
   for (const entry of parsed) {
     rows.push({
-      source_code: sourceCode,
-      mandi_name: entry.mandi,
-      district: entry.district,
-      province: SPI_PROVINCE,
-      crop: entry.commodity,
-      unit: entry.unit === PKR_PER_MAUND ? PKR_PER_MAUND : "per_maund_40kg",
-      min_price_pkr: entry.minPricePkr,
-      modal_price_pkr: entry.modalPricePkr,
-      max_price_pkr: entry.maxPricePkr,
-      observed_date: observedDate,
-      source_url: `${SELECTORS[sourceCode].baseUrl}${SELECTORS[sourceCode].priceListPath}`,
+      mandi_external_id: `${sourceCode}-${slugify(entry.mandi)}`,
+      crop_external_id: slugify(entry.commodity),
+      date: observedDate,
+      modal_price: entry.modalPricePkr,
+      min_price: entry.minPricePkr,
+      max_price: entry.maxPricePkr,
+      unit: "Maund",
+      is_holiday: isHoliday,
     });
   }
   return rows;

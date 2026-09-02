@@ -87,7 +87,7 @@ describe("parseSpiRow", () => {
 });
 
 describe("toIngestRows", () => {
-  it("emits IngestRow[] with pbs_spi source + Islamabad province", () => {
+  it("emits IngestRow[] with pbs_spi source", () => {
     const rows = toIngestRows(
       [
         {
@@ -104,33 +104,35 @@ describe("toIngestRows", () => {
     );
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({
-      source_code: "pbs_spi",
-      mandi_name: "National",
-      district: "Islamabad",
-      province: "Islamabad",
-      crop: "Wheat",
-      unit: "per_maund_40kg",
-      observed_date: "2026-09-01",
+      mandi_external_id: "pbs_spi-national",
+      crop_external_id: "wheat",
+      date: "2026-09-01",
+      modal_price: 3400,
+      min_price: 3200,
+      max_price: 3600,
+      unit: "Maund",
+      is_holiday: false,
     });
-    expect(rows[0].source_url).toContain("price-statistics");
   });
 
-  it("coerces non-maund units to per_maund_40kg", () => {
+  it("sets is_holiday when flag is true", () => {
     const rows = toIngestRows(
       [
         {
           mandi: "National",
           district: "Islamabad",
           commodity: "Wheat",
-          unit: "per_100kg",
+          unit: "per_maund_40kg",
           minPricePkr: 3200,
           modalPricePkr: 3400,
           maxPricePkr: 3600,
         },
       ],
       "2026-09-01",
+      undefined,
+      true,
     );
-    expect(rows[0].unit).toBe("per_maund_40kg");
+    expect(rows[0].is_holiday).toBe(true);
   });
 });
 
@@ -144,7 +146,7 @@ describe("parseSpiWorkbook", () => {
     ];
     const out = parseSpiWorkbook({ rows, observedDate: "2026-09-01" });
     expect(out).toHaveLength(2);
-    expect(out.map((r) => r.crop).sort()).toEqual(["Sugar", "Wheat"]);
+    expect(out.map((r) => r.crop_external_id).sort()).toEqual(["sugar", "wheat"]);
   });
 });
 
@@ -187,12 +189,9 @@ describe("scrapeSpi", () => {
     });
     expect(out).toHaveLength(2);
     expect(out[0]).toMatchObject({
-      source_code: "pbs_spi",
-      mandi_name: "National",
-      district: "Islamabad",
-      province: "Islamabad",
-      crop: "Wheat",
-      unit: "per_maund_40kg",
+      mandi_external_id: "pbs_spi-national",
+      crop_external_id: "wheat",
+      unit: "Maund",
     });
   });
 });

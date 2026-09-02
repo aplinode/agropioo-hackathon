@@ -24,10 +24,10 @@
 
 import { randomUUID } from "node:crypto";
 
-import { chunkBatch, postBatch, type IngestBatch, type IngestRow, type PostResult } from "./post";
-import { detectDrift, type DriftResult } from "./drift-detector";
+import { postBatch, type IngestPayload, type IngestRow, type PostResult } from "./post";
+import { detectDrift, type DriftInputs, type DriftResult } from "./drift-detector";
 import { SELECTORS, type SourceCode } from "./selectors";
-import type { HolidayLookup } from "./holiday-check";
+import type { HolidayLookup, HolidayLookupResult } from "./holiday-check";
 
 export interface SourceRunResult {
   source: SourceCode;
@@ -51,38 +51,34 @@ export interface ExecuteRunInput {
   ingest: {
     baseUrl: string;
     secret: string;
-    chunkSize?: number;
   };
   detectDriftFn?: typeof detectDrift;
+  postBatchFn?: typeof postBatch;
 }
 
 export interface ExecuteRunOutput {
   sourceRuns: SourceRunResult[];
-  ingestCalls: Array<{ source: SourceCode; status: number; body: unknown; durationMs: number }>;
+  ingestCalls: Array<{ source: SourceCode; status: number; rowsWritten: number; rowsRejected: number; durationMs: number }>;
   totalRowsWritten: number;
   exitCode: 0 | 1;
 }
 
 export async function executeRun(input: ExecuteRunInput): Promise<ExecuteRunOutput> {
   const detect = input.detectDriftFn ?? detectDrift;
+  const post = input.postBatchFn ?? postBatch;
   const sourceRuns: SourceRunResult[] = [];
   const ingestCalls: ExecuteRunOutput["ingestCalls"] = [];
   let totalRowsWritten = 0;
 
+  const isHolidayResult: HolidayLookupResult = { isHoliday: false };
+
   for (const source of input.sources) {
-    const drift = await detect(
-      {
-        source: source.code,
-        todayIso: input.observedDate,
-        weekday: [1, 2, 3, 4, 5].includes(new Date(input.observedDate + "T00:00:00Z").getUTCDay()),
-        rowsScrapedToday: source.rows.length,
-      },
-      {
-        queryFn: (async () => []) as never,
-        queryOneFn: (async () => null) as never,
-        lookbackDays: 60,
-      },
-    );
+    const drift = await detect({
+      sourceCode: source.code,
+      rowsWritten: source.rows.length,
+      targetDate: input.observedDate,
+      allHolidays: isHolidayResult.isHoliday,
+    });
 
     const sourceRun: SourceRunResult = {
       source: source.code,
@@ -103,31 +99,31 @@ export async function executeRun(input: ExecuteRunInput): Promise<ExecuteRunOutp
       continue;
     }
 
-    const batch: IngestBatch = {
-      source_run_id: input.runId,
+    const payload: IngestPayload = {
+      source_code: source.code,
+      scraped_at: new Date().toISOString(),
       rows: source.rows,
     };
-    const chunks = chunkBatch(batch, input.ingest.chunkSize ?? 5000);
-    for (const chunk of chunks) {
-      const t0 = Date.now();
-      const result: PostResult = await postBatch(chunk, {
-        baseUrl: input.ingest.baseUrl,
-        secret: input.ingest.secret,
-        fetchImpl: globalThis.fetch,
-      });
-      ingestCalls.push({
-        source: source.code,
-        status: result.status,
-        body: result.body,
-        durationMs: Date.now() - t0,
-      });
-      if (result.status >= 200 && result.status < 300) {
-        totalRowsWritten += chunk.rows.length;
-        sourceRun.rowsWritten += chunk.rows.length;
-      } else {
-        sourceRun.status = "failed";
-        sourceRun.errorMessage = `ingest ${result.status}`;
-      }
+
+    const t0 = Date.now();
+    const result: PostResult = await post(
+      input.ingest.baseUrl,
+      input.ingest.secret,
+      payload,
+    );
+    ingestCalls.push({
+      source: source.code,
+      status: result.status,
+      rowsWritten: result.rowsWritten,
+      rowsRejected: result.rowsRejected,
+      durationMs: Date.now() - t0,
+    });
+    if (result.ok) {
+      totalRowsWritten += result.rowsWritten;
+      sourceRun.rowsWritten = result.rowsWritten;
+    } else {
+      sourceRun.status = "failed";
+      sourceRun.errorMessage = result.errorMessage ?? `ingest ${result.status}`;
     }
     sourceRuns.push(sourceRun);
   }
