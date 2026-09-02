@@ -1,5 +1,4 @@
 import { Agent } from "@openai/agents";
-import { searchKnowledgeBase } from "../tools/knowledge-base";
 import { advisorModel } from "../model";
 
 /**
