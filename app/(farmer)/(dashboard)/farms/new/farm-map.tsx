@@ -70,7 +70,7 @@ export function FarmMap({
   return (
     <div>
       <label className="block text-sm font-semibold text-agro-ink mb-1">
-        Farm Location (Google Maps Pin)
+        Farm Location
       </label>
       <div className="relative h-[320px] w-full overflow-hidden rounded-2xl border border-agro-sprout shadow-sm">
         <MapContainer
@@ -79,8 +79,8 @@ export function FarmMap({
           style={{ height: "100%", width: "100%" }}
         >
           <TileLayer
-            attribution='&copy; Google Maps'
-            url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapRecenter center={[marker.lat, marker.lng]} />
           <MapPicker onPick={onPickLocation} />
