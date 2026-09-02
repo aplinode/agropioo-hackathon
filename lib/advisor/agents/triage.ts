@@ -5,7 +5,7 @@ import { createFarmDataAgent } from "./farm-data-agent";
 import { createPricesAgent } from "./prices-agent";
 import { createSchemesAgent } from "./schemes-agent";
 import { createHandoffAgent } from "./handoff-agent";
-import { farmingOnlyGuardrail, advisorInputGuardrails, advisorOutputGuardrails } from "../guardrails";
+import { advisorInputGuardrails, advisorOutputGuardrails } from "../guardrails";
 import { searchKnowledgeBase } from "../tools/knowledge-base";
 import { createConversationMemoryTool } from "../tools/conversation-memory";
 import { advisorModel } from "../model";
