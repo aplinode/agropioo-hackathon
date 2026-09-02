@@ -16,7 +16,7 @@ import {
 import type { CropsBundle } from "./crops-bundle";
 
 const formSchema = z.object({
-  farmId: z.string().uuid().optional().nullable(),
+  farmId: z.string().uuid("Please select a farm"),
   targetSeason: z.enum(["summer", "winter", "autumn", "spring", "rainy", "windy"]),
   targetYear: z.number().int().min(new Date().getFullYear()).max(2035),
   soilType: z.enum([
@@ -108,19 +108,19 @@ function resolveReason(bundle: CropsBundle, reasonKey: string, cropName: string,
     .replace("{season}", seasonLabel);
 }
 
-function SeasonSelect({ bundle, value, onChange, isOpen, onOpen, inputRef }: { bundle: CropsBundle; value: string; onChange: (v: "summer" | "winter" | "autumn" | "spring" | "rainy" | "windy") => void; isOpen?: boolean; onOpen?: () => void; inputRef?: React.Ref<HTMLButtonElement> }) {
+function SeasonSelect({ bundle, value, onChange, isOpen, onOpen, inputRef }: { bundle: CropsBundle; value: string; onChange: (v: "summer" | "winter" | "autumn" | "spring" | "rainy" | "windy") => void; isOpen?: boolean; onOpen?: (key: string | null) => void; inputRef?: React.Ref<HTMLButtonElement> }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const handleClick = () => {
-    if (onOpen) onOpen();
+    if (onOpen) onOpen(isOpen ? null : "season");
   };
   const handleSelect = (opt: "summer" | "winter" | "autumn" | "spring" | "rainy" | "windy") => {
     onChange(opt);
-    if (onOpen) onOpen();
+    if (onOpen) onOpen(null);
   };
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node) && onOpen) {
-        onOpen();
+        onOpen(null);
       }
     }
     if (isOpen) {
@@ -161,20 +161,20 @@ function SeasonSelect({ bundle, value, onChange, isOpen, onOpen, inputRef }: { b
   );
 }
 
-function SoilSelect({ bundle, value, onChange, isOpen, onOpen, inputRef }: { bundle: CropsBundle; value: string; onChange: (v: string) => void; isOpen?: boolean; onOpen?: () => void; inputRef?: React.Ref<HTMLButtonElement> }) {
+function SoilSelect({ bundle, value, onChange, isOpen, onOpen, inputRef }: { bundle: CropsBundle; value: string; onChange: (v: string) => void; isOpen?: boolean; onOpen?: (key: string | null) => void; inputRef?: React.Ref<HTMLButtonElement> }) {
   const soilKeys = ["sandy", "sandy_loam", "loamy", "clay_loam", "clay", "silty", "saline", "rocky", "other"] as const;
   const containerRef = useRef<HTMLDivElement>(null);
   const handleClick = () => {
-    if (onOpen) onOpen();
+    if (onOpen) onOpen(isOpen ? null : "soil");
   };
   const handleSelect = (opt: typeof soilKeys[number]) => {
     onChange(opt);
-    if (onOpen) onOpen();
+    if (onOpen) onOpen(null);
   };
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node) && onOpen) {
-        onOpen();
+        onOpen(null);
       }
     }
     if (isOpen) {
@@ -215,20 +215,20 @@ function SoilSelect({ bundle, value, onChange, isOpen, onOpen, inputRef }: { bun
   );
 }
 
-function IrrigationSelect({ bundle, value, onChange, isOpen, onOpen, inputRef }: { bundle: CropsBundle; value: string; onChange: (v: string) => void; isOpen?: boolean; onOpen?: () => void; inputRef?: React.Ref<HTMLButtonElement> }) {
+function IrrigationSelect({ bundle, value, onChange, isOpen, onOpen, inputRef }: { bundle: CropsBundle; value: string; onChange: (v: string) => void; isOpen?: boolean; onOpen?: (key: string | null) => void; inputRef?: React.Ref<HTMLButtonElement> }) {
   const irrigationKeys = ["rainfed", "canal", "tubewell", "mixed"] as const;
   const containerRef = useRef<HTMLDivElement>(null);
   const handleClick = () => {
-    if (onOpen) onOpen();
+    if (onOpen) onOpen(isOpen ? null : "irrigation");
   };
   const handleSelect = (opt: typeof irrigationKeys[number]) => {
     onChange(opt);
-    if (onOpen) onOpen();
+    if (onOpen) onOpen(null);
   };
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node) && onOpen) {
-        onOpen();
+        onOpen(null);
       }
     }
     if (isOpen) {
@@ -269,20 +269,20 @@ function IrrigationSelect({ bundle, value, onChange, isOpen, onOpen, inputRef }:
   );
 }
 
-function BudgetSelect({ bundle, value, onChange, isOpen, onOpen, inputRef }: { bundle: CropsBundle; value: string; onChange: (v: string) => void; isOpen?: boolean; onOpen?: () => void; inputRef?: React.Ref<HTMLButtonElement> }) {
+function BudgetSelect({ bundle, value, onChange, isOpen, onOpen, inputRef }: { bundle: CropsBundle; value: string; onChange: (v: string) => void; isOpen?: boolean; onOpen?: (key: string | null) => void; inputRef?: React.Ref<HTMLButtonElement> }) {
   const budgetKeys = ["low", "medium", "high", "very_high"] as const;
   const containerRef = useRef<HTMLDivElement>(null);
   const handleClick = () => {
-    if (onOpen) onOpen();
+    if (onOpen) onOpen(isOpen ? null : "budget");
   };
   const handleSelect = (opt: typeof budgetKeys[number]) => {
     onChange(opt);
-    if (onOpen) onOpen();
+    if (onOpen) onOpen(null);
   };
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node) && onOpen) {
-        onOpen();
+        onOpen(null);
       }
     }
     if (isOpen) {
@@ -582,7 +582,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
-      farmId: farms[0]?.id ?? null,
+      farmId: farms[0]!.id,
       targetSeason: "winter",
       targetYear: currentYear + 1,
       soilType: "loamy",
@@ -746,7 +746,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.seasonLabel}</label>
               <input type="hidden" {...register("targetSeason")} value={watchedSeason} />
               <div className="mt-1">
-                <SeasonSelect bundle={bundle} value={watchedSeason} onChange={(v) => setValue("targetSeason", v as FormValues["targetSeason"])} isOpen={activeDropdown === "season"} onOpen={() => setActiveDropdown("season")} inputRef={seasonRef} />
+                <SeasonSelect bundle={bundle} value={watchedSeason} onChange={(v) => setValue("targetSeason", v as FormValues["targetSeason"])} isOpen={activeDropdown === "season"} onOpen={(key) => setActiveDropdown(key)} inputRef={seasonRef} />
               </div>
             </div>
 
@@ -768,7 +768,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.soilLabel}</label>
               <input type="hidden" {...register("soilType")} value={watch("soilType")} />
               <div className="mt-1">
-                <SoilSelect bundle={bundle} value={watch("soilType")} onChange={(v) => setValue("soilType", v as FormValues["soilType"])} isOpen={activeDropdown === "soil"} onOpen={() => setActiveDropdown("soil")} inputRef={soilRef} />
+                <SoilSelect bundle={bundle} value={watch("soilType")} onChange={(v) => setValue("soilType", v as FormValues["soilType"])} isOpen={activeDropdown === "soil"} onOpen={(key) => setActiveDropdown(key)} inputRef={soilRef} />
               </div>
             </div>
 
@@ -776,7 +776,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.irrigationLabel}</label>
               <input type="hidden" {...register("irrigationType")} value={watch("irrigationType")} />
               <div className="mt-1">
-                <IrrigationSelect bundle={bundle} value={watch("irrigationType")} onChange={(v) => setValue("irrigationType", v as FormValues["irrigationType"])} isOpen={activeDropdown === "irrigation"} onOpen={() => setActiveDropdown("irrigation")} inputRef={irrigationRef} />
+                <IrrigationSelect bundle={bundle} value={watch("irrigationType")} onChange={(v) => setValue("irrigationType", v as FormValues["irrigationType"])} isOpen={activeDropdown === "irrigation"} onOpen={(key) => setActiveDropdown(key)} inputRef={irrigationRef} />
               </div>
             </div>
 
@@ -784,7 +784,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
               <label className="block text-sm font-medium text-agro-ink">{bundle.form.budgetLabel}</label>
               <input type="hidden" {...register("budgetBracket")} value={watchedBudget} />
               <div className="mt-1">
-                <BudgetSelect bundle={bundle} value={watchedBudget} onChange={(v) => setValue("budgetBracket", v as FormValues["budgetBracket"])} isOpen={activeDropdown === "budget"} onOpen={() => setActiveDropdown("budget")} inputRef={budgetRef} />
+                <BudgetSelect bundle={bundle} value={watchedBudget} onChange={(v) => setValue("budgetBracket", v as FormValues["budgetBracket"])} isOpen={activeDropdown === "budget"} onOpen={(key) => setActiveDropdown(key)} inputRef={budgetRef} />
               </div>
             </div>
           </div>
