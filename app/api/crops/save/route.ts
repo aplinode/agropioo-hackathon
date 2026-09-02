@@ -148,10 +148,10 @@ export async function POST(request: Request) {
     for (const rot of rotations) {
       const row = await client.query(
         `INSERT INTO crop_rotation_suggestions
-          (id, farm_plan_entry_id, sequence_position, target_season, target_year,
-           crop_id, reason_key, is_generic, created_at)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,now())
-         RETURNING *`,
+           (id, farm_plan_entry_id, sequence_position, target_season, target_year,
+            crop_id, reason_key, is_generic, created_at)
+          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,now())
+          RETURNING *`,
          [
            randomUUID(),
            planRow.rows[0].id,
@@ -162,11 +162,27 @@ export async function POST(request: Request) {
            rot.reasonKey,
            rot.isGeneric,
          ],
-      );
-      savedRotations.push({ ...row.rows[0]!, crop: rot.crop });
+       );
+      savedRotations.push({
+        sequencePosition: row.rows[0].sequence_position,
+        targetSeason: row.rows[0].target_season as RotationSuggestion["targetSeason"],
+        targetYear: row.rows[0].target_year,
+        crop: rot.crop,
+        reasonKey: row.rows[0].reason_key,
+        isGeneric: row.rows[0].is_generic,
+      });
     }
 
-    return { plan: planRow.rows[0]!, rotations: savedRotations };
+    const plan: FarmPlanEntry = {
+      id: planRow.rows[0].id,
+      farmId: planRow.rows[0].farm_id,
+      recommendationId: planRow.rows[0].recommendation_id,
+      targetSeason: planRow.rows[0].target_season as FarmPlanEntry["targetSeason"],
+      targetYear: planRow.rows[0].target_year,
+      rotationSuggestions: savedRotations,
+    };
+
+    return { plan, rotations: savedRotations };
   });
 
   return jsonResponse({

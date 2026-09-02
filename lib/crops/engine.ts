@@ -264,14 +264,31 @@ export async function recommendCrops(
   const nowIso = new Date().toISOString();
 
   return await withTransaction(async (client) => {
-    const requestRow = await client.query<CropRecommendationRequest>(
+    const requestRow = await client.query<
+      Record<string, unknown> & {
+        id: string;
+        account_id: string;
+        farm_id: string;
+        target_season: string;
+        target_year: number;
+        soil_type: string;
+        soil_is_regional_default: boolean;
+        irrigation_type: string;
+        budget_bracket: string;
+        weather_confidence: string;
+        market_confidence: string;
+        soil_confidence: string;
+        inputs_snapshot: string;
+        created_at: string;
+      }
+    >(
       `INSERT INTO crop_recommendation_requests
-        (id, account_id, farm_id, target_season, target_year, soil_type,
-         soil_is_regional_default, irrigation_type, budget_bracket,
-         weather_confidence, market_confidence, soil_confidence,
-         inputs_snapshot, created_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
-       RETURNING *`,
+         (id, account_id, farm_id, target_season, target_year, soil_type,
+          soil_is_regional_default, irrigation_type, budget_bracket,
+          weather_confidence, market_confidence, soil_confidence,
+          inputs_snapshot, created_at)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+        RETURNING *`,
       [
         randomUUID(),
         accountId,
@@ -290,7 +307,13 @@ export async function recommendCrops(
       ],
     );
 
-    const request = requestRow.rows[0]!;
+    const request: CropRecommendationRequest = {
+      id: requestRow.rows[0]!.id,
+      farmId: requestRow.rows[0]!.farm_id,
+      targetSeason: requestRow.rows[0]!.target_season,
+      targetYear: requestRow.rows[0]!.target_year,
+      createdAt: requestRow.rows[0]!.created_at,
+    };
     const recommendations: CropRecommendation[] = [];
 
     for (let rank = 1; rank <= ranked.length; rank++) {
@@ -300,15 +323,36 @@ export async function recommendCrops(
         soilLabel: soilLabel(resolved.soilType),
       });
 
-      const recRow = await client.query<CropRecommendation>(
+      const recRow = await client.query<
+        Record<string, unknown> & {
+          id: string;
+          request_id: string;
+          rank: number;
+          crop_id: string;
+          expected_revenue_per_acre_pkr: number;
+          revenue_confidence: string;
+          reason_key: string;
+          risk_factors: string[];
+          water_requirement_level: string;
+          suitability_score: number;
+          weather_fit_score: number;
+          profitability_score: number;
+          risk_score: number;
+          sustainability_score: number;
+          final_score: number;
+          data_sources_used: string[];
+          data_fresheness_seconds: number;
+          created_at: string;
+        }
+      >(
         `INSERT INTO crop_recommendations
-          (id, request_id, rank, crop_id, expected_revenue_per_acre_pkr,
-           revenue_confidence, reason_key, risk_factors,
-           water_requirement_level, suitability_score, weather_fit_score,
-           profitability_score, risk_score, sustainability_score, final_score,
-           data_sources_used, data_fresheness_seconds, created_at)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
-         RETURNING *`,
+           (id, request_id, rank, crop_id, expected_revenue_per_acre_pkr,
+            revenue_confidence, reason_key, risk_factors,
+            water_requirement_level, suitability_score, weather_fit_score,
+            profitability_score, risk_score, sustainability_score, final_score,
+            data_sources_used, data_fresheness_seconds, created_at)
+          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+          RETURNING *`,
         [
           randomUUID(),
           request.id,
@@ -332,9 +376,24 @@ export async function recommendCrops(
       );
 
       recommendations.push({
-        ...recRow.rows[0]!,
+        id: recRow.rows[0]!.id,
+        rank: recRow.rows[0]!.rank,
         crop: item.crop,
-        scores: item.scores,
+        expectedRevenuePerAcrePkr: Number(recRow.rows[0]!.expected_revenue_per_acre_pkr),
+        revenueConfidence: recRow.rows[0]!.revenue_confidence,
+        reasonKey: recRow.rows[0]!.reason_key,
+        riskFactors: recRow.rows[0]!.risk_factors,
+        waterRequirementLevel: recRow.rows[0]!.water_requirement_level,
+        scores: {
+          suitability: Number(recRow.rows[0]!.suitability_score),
+          weatherFit: Number(recRow.rows[0]!.weather_fit_score),
+          profitability: Number(recRow.rows[0]!.profitability_score),
+          risk: Number(recRow.rows[0]!.risk_score),
+          sustainability: Number(recRow.rows[0]!.sustainability_score),
+          final: Number(recRow.rows[0]!.final_score),
+        },
+        dataSourcesUsed: recRow.rows[0]!.data_sources_used,
+        dataFreshnessSeconds: recRow.rows[0]!.data_fresheness_seconds,
       });
     }
 

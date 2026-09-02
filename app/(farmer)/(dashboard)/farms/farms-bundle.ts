@@ -99,6 +99,7 @@ export type FarmsBundle = {
     viewAllRecords: string;
     logFieldEvent: string;
     scanCrop: string;
+    noRecords: string;
   };
   records: {
     eyebrow: string;
