@@ -143,6 +143,7 @@ type DashboardViewProps = {
   appLocale?: Locale;
   bundle: DashboardBundle;
   farms?: Array<Record<string, unknown>>;
+  totalFarms?: number;
   user?: { fullName: string; email: string };
   widgetPrices?: WidgetCropPrice[];
 };
@@ -166,6 +167,7 @@ export default function DashboardView({
   appLocale,
   bundle,
   farms: realFarms,
+  totalFarms,
   user: realUser,
   widgetPrices = [],
 }: DashboardViewProps) {
@@ -570,7 +572,8 @@ export default function DashboardView({
             id="farms-heading"
             title={bundle.myFarms}
             meta={String(displayFarms.length)}
-            action={
+          action={
+            (totalFarms ?? 0) > 3 ? (
               <Link
                 href="/farms"
                 className="inline-flex min-h-11 items-center gap-1 rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline"
@@ -578,7 +581,8 @@ export default function DashboardView({
                 {bundle.viewAllFarms}
                 <ArrowRightIcon className="h-4 w-4" />
               </Link>
-            }
+            ) : undefined
+          }
           />
           <ul className="mt-3 flex flex-wrap gap-4 pb-2 lg:grid lg:grid-cols-3 lg:pb-0">
             {displayFarms.map((farm) => (

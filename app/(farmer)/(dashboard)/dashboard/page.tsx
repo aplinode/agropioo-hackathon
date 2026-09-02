@@ -25,6 +25,7 @@ export default async function DashboardPage({
 
   const session = await requireSessionPage();
   let farms: Array<Record<string, unknown>> = [];
+  let totalFarms = 0;
 
   const userRow = await queryOne<{ full_name: string }>(
     `SELECT full_name FROM users WHERE id = $1`,
@@ -37,9 +38,15 @@ export default async function DashboardPage({
 
   try {
     const rawFarms = await query<Record<string, unknown>>(
-      `SELECT * FROM farms WHERE account_id = $1 AND archived_at IS NULL ORDER BY created_at DESC LIMIT 4`,
+      `SELECT * FROM farms WHERE account_id = $1 AND archived_at IS NULL ORDER BY created_at DESC LIMIT 3`,
       [session.accountId]
     );
+
+    const totalFarmsRow = await queryOne<{ count: string }>(
+      `SELECT COUNT(*)::text AS count FROM farms WHERE account_id = $1 AND archived_at IS NULL`,
+      [session.accountId]
+    );
+    totalFarms = Number(totalFarmsRow?.count ?? 0);
 
     farms = await Promise.all(
       rawFarms.map(async (farm) => {
@@ -122,6 +129,7 @@ export default async function DashboardPage({
       appLocale={appLocale}
       bundle={bundle}
       farms={farms}
+      totalFarms={totalFarms}
       user={user}
       widgetPrices={widgetPrices}
     />

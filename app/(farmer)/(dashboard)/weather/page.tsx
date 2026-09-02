@@ -12,12 +12,12 @@ import { computeGrowthStage, type GrowthStage, type Severity } from "@/lib/weath
 import { generateAIAdviceBatch } from "@/lib/weather/ai-advisory";
 import FarmSelector from "@/components/weather/FarmSelector";
 import AdvisoryCard from "@/components/weather/AdvisoryCard";
-import ForecastList from "@/components/weather/ForecastList";
+import DailyAlertList from "@/components/weather/DailyAlertList";
 import AlertBanner, { type AlertItem } from "@/components/weather/AlertBanner";
 import RegisterFarmForm from "@/components/weather/RegisterFarmForm";
 import WeatherDashboard from "@/components/weather/WeatherDashboard";
 import { CROPS } from "@/lib/farms/constants";
-import { scanAlertConditions, type AlertCondition } from "@/lib/weather/alerts";
+import { scanAlertConditions, scanDailyAlertConditions, type AlertCondition } from "@/lib/weather/alerts";
 
 export const metadata: Metadata = { title: "Weather ΓÇö Agropioo" };
 
@@ -184,7 +184,15 @@ export default async function WeatherPage({
   const staticAlertConditions: AlertCondition[] = forecast ? scanAlertConditions(forecast) : [];
 
   let todayAdvice: { growth_stage: GrowthStage; advice_text: string; severity: Severity } | null = null;
-  let forecastDays: Parameters<typeof ForecastList>[0]["days"] = [];
+  let forecastDays: Array<{
+    date: string;
+    weather: { temp_max: number; temp_min: number; precip_mm: number; humidity: number; description: string };
+    growth_stage: GrowthStage;
+    advice_text: string;
+    severity: Severity;
+    label?: string;
+  }> = [];
+  const dailyAlerts: Record<string, Array<{ type: string; severity: Severity; recommendation: string }>> = {};
   let dataSourceLabel = bundle.source.demo;
 
   if (forecast) {
@@ -220,6 +228,15 @@ export default async function WeatherPage({
         label: ai?.label,
       };
     });
+
+    const rawDailyAlerts = scanDailyAlertConditions(forecast);
+    for (const [date, alerts] of Object.entries(rawDailyAlerts)) {
+      dailyAlerts[date] = alerts.map((a) => ({
+        type: a.type,
+        severity: a.severity,
+        recommendation: t(a.recommendationKey as CatalogKey).text,
+      }));
+    }
 
     const todays = forecastDays.find((d) => d.date === today) ?? forecastDays[0];
     todayAdvice = {
@@ -408,12 +425,13 @@ export default async function WeatherPage({
         </section>
       )}
 
-      {forecastDays.length > 0 && (
-        <ForecastList
-          days={forecastDays}
+      {(forecast?.days.length ?? 0) > 0 && (
+        <DailyAlertList
+          days={forecast!.days}
+          dailyAlerts={dailyAlerts}
           title={bundle.forecastTitle}
           subtitle={bundle.forecastSubtitle}
-          stageLabels={stageLabels}
+          genericRecommendation={t("app.weather.advisory.recommendation.generic").text}
         />
       )}
     </div>

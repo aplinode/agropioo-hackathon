@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ChevronRightIcon } from "@/components/icons";
+import { useState, useRef, useEffect } from "react";
+import { ChevronDownIcon, CheckIcon } from "@/components/icons";
 
 export type FarmOption = {
   id: string;
@@ -13,35 +14,66 @@ export type FarmSelectorProps = {
   farms: FarmOption[];
   selectedId: string | null;
   label: string;
-  /** When true the selector collapses to a "register first" prompt. */
   onNoFarms?: () => void;
 };
 
-/* Farm switcher (US1/US3): changing the selection re-renders the server page
-   via the ?farm= query param so advisories and forecast reload for that farm. */
 export default function FarmSelector({ farms, selectedId, label }: FarmSelectorProps) {
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [isOpen]);
 
   if (farms.length === 0) return null;
+
+  const selectedFarm = farms.find((f) => f.id === selectedId);
 
   return (
     <label className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-agro-slate">
       <span>{label}</span>
-      <select
-        value={selectedId ?? ""}
-        onChange={(e) => {
-          const value = e.target.value;
-          router.push(value ? `/weather?farm=${value}` : "/weather");
-        }}
-        className="w-full rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
-      >
-        {farms.map((farm) => (
-          <option key={farm.id} value={farm.id}>
-            {farm.name} — {farm.cropLabel || "—"}
-          </option>
-        ))}
-      </select>
-      <ChevronRightIcon size={14} className="text-agro-slate" />
+      <div ref={containerRef} className="relative flex-1">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="focus-ring-none flex h-12 w-full items-center justify-between rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-agro-canopy/20 focus:border-agro-canopy"
+        >
+          <span className="truncate">
+            {selectedFarm ? `${selectedFarm.name} — ${selectedFarm.cropLabel || "—"}` : label}
+          </span>
+          <ChevronDownIcon className={`h-4 w-4 shrink-0 text-agro-slate transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+        </button>
+        {isOpen && (
+          <ul className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-xl border border-agro-sprout bg-white shadow-xl">
+            {farms.map((farm) => (
+              <li key={farm.id}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    router.push(`/weather?farm=${farm.id}`);
+                    setIsOpen(false);
+                  }}
+                  className={`flex w-full items-center px-3 py-2.5 text-start text-sm transition-colors ${
+                    farm.id === selectedId ? "bg-agro-canopy/10 font-semibold text-agro-canopy" : "text-agro-ink hover:bg-agro-mint"
+                  }`}
+                >
+                  {farm.id === selectedId && <CheckIcon size={14} className="me-2 shrink-0 text-agro-canopy" />}
+                  {farm.name} — {farm.cropLabel || "—"}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </label>
   );
 }

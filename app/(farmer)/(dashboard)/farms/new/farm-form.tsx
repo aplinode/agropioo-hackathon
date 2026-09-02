@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createFarmSchema, type CreateFarmInput } from "@/lib/validation/farms";
 import { PAKISTAN_DISTRICTS } from "@/lib/farms/districts";
 import { CROPS, IRRIGATION_METHODS, SOIL_TYPES, type Crop, type IrrigationMethod, type SoilType } from "@/lib/farms/constants";
+import { photonReverse, photonSearch } from "@/lib/maps/photon";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -274,7 +275,7 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
   value: string;
   district: string;
   onChange: (val: string) => void;
-  onLocationPick: (lat: number, lng: number) => void;
+  onLocationPick: (lat: number, lng: number, displayName?: string) => void;
   error?: string;
   suggestions?: string[];
 }>(function LocationSearch({
@@ -288,7 +289,7 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<
-    Array<{ display_name: string; lat: string; lon: string }>
+    Array<{ display_name: string; lat: number; lon: number; address?: Record<string, string> }>
   >([]);
   const [loading, setLoading] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -318,26 +319,6 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
 
   const effectiveSuggestions = suggestions;
 
-  const isWithinDistrict = (addr: Record<string, string>, displayName: string, district: string): boolean => {
-    if (!district) return true;
-    const lower = district.toLowerCase();
-    if (displayName.toLowerCase().includes(lower)) return true;
-    const candidates = [
-      addr.city_district,
-      addr.state_district,
-      addr.county,
-      addr.city,
-      addr.town,
-      addr.village,
-      addr.suburb,
-      addr.neighbourhood,
-    ].filter(Boolean);
-    return candidates.some((c) => {
-      const cl = c!.toLowerCase();
-      return cl.includes(lower) || lower.includes(cl);
-    });
-  };
-
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (!district) {
@@ -357,43 +338,14 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
       setLoading(true);
       try {
         const searchQuery = `${query}, ${district}, Pakistan`;
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=pk&limit=6&addressdetails=1`
-        );
-        const data = await res.json() as Array<{
-          display_name: string;
-          lat: string;
-          lon: string;
-          address?: Record<string, string>;
-        }>;
+        let filtered = await photonSearch(searchQuery, 6);
 
-        let filtered: Array<{ display_name: string; lat: string; lon: string; address?: Record<string, string> }>;
-        if (data.length === 0) {
-          const fallbackRes = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ", Pakistan")}&countrycodes=pk&limit=12&addressdetails=1`
-          );
-          const fallbackData = await fallbackRes.json() as Array<{
-            display_name: string;
-            lat: string;
-            lon: string;
-            address?: Record<string, string>;
-          }>;
-          filtered = fallbackData.filter((item) => isWithinDistrict(item.address || {}, item.display_name || "", district));
-        } else {
-          filtered = data.filter((item) => isWithinDistrict(item.address || {}, item.display_name || "", district));
+        if (filtered.length === 0) {
+          filtered = await photonSearch(`${query}, Pakistan`, 12);
         }
 
         if (filtered.length === 0 && district) {
-          const broaderRes = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(district + ", Pakistan")}&countrycodes=pk&limit=6&addressdetails=1`
-          );
-          const broaderData = await broaderRes.json() as Array<{
-            display_name: string;
-            lat: string;
-            lon: string;
-            address?: Record<string, string>;
-          }>;
-          filtered = broaderData.filter((item) => isWithinDistrict(item.address || {}, item.display_name || "", district));
+          filtered = await photonSearch(`${district}, Pakistan`, 6);
         }
 
         setResults(filtered);
@@ -427,14 +379,11 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
     autoGeocodeRef.current = window.setTimeout(async () => {
       try {
         const searchQuery = `${query}, ${district || "Pakistan"}`;
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=pk&limit=1&addressdetails=1`
-        );
-        const data = await res.json();
-        if (data && data[0]) {
+        const results = await photonSearch(searchQuery, 1);
+        if (results[0]) {
           locationPickRef.current(
-            parseFloat(data[0].lat),
-            parseFloat(data[0].lon)
+            results[0].lat,
+            results[0].lon
           );
         }
       } catch (e) {
@@ -449,12 +398,12 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
 
   const handleSelect = (item: {
     display_name: string;
-    lat: string;
-    lon: string;
+    lat: number;
+    lon: number;
   }) => {
     const placeName = item.display_name;
     onChange(placeName);
-    onLocationPick(parseFloat(item.lat), parseFloat(item.lon));
+    onLocationPick(parseFloat(item.lat), parseFloat(item.lon), placeName);
     setOpen(false);
     setQuery(placeName);
     skipAutoGeocodeRef.current = true;
@@ -468,12 +417,9 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
     skipAutoGeocodeRef.current = true;
 
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullLoc + ", Pakistan")}&countrycodes=pk&limit=1`
-      );
-      const data = await res.json();
-      if (data && data[0]) {
-        onLocationPick(parseFloat(data[0].lat), parseFloat(data[0].lon));
+      const results = await photonSearch(`${fullLoc}, Pakistan`, 1);
+      if (results[0]) {
+        onLocationPick(results[0].lat, results[0].lon);
       }
     } catch (e) {
       console.error(e);
@@ -625,12 +571,9 @@ function DistrictSelect({
 
     setLoading(true);
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(district + ", Pakistan")}&countrycodes=pk&limit=1&addressdetails=1`
-      );
-      const data = await res.json();
-      if (data && data[0]) {
-        onLocationPick(parseFloat(data[0].lat), parseFloat(data[0].lon));
+      const results = await photonSearch(`${district}, Pakistan`, 1);
+      if (results[0]) {
+        onLocationPick(results[0].lat, results[0].lon);
       }
     } catch (e) {
       console.error(e);
@@ -777,7 +720,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
   const [soil, setSoil] = useState<SoilType | "">("");
   const [irrigation, setIrrigation] = useState<IrrigationMethod>("drip");
 
-  const handlePickLocation = async (lat: number, lng: number) => {
+  const handlePickLocation = async (lat: number, lng: number, displayName?: string) => {
     setMarker({ lat, lng });
     setValue("lat", lat);
     setValue("lng", lng);
@@ -785,42 +728,27 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
 
     setIsGeocoding(true);
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`
-      );
-      if (res.ok) {
-        const data = await res.json();
-        const addr = data.address || {};
-        const placeName =
-          addr.village ||
-          addr.suburb ||
-          addr.town ||
-          addr.neighbourhood ||
-          addr.city_district ||
-          addr.city ||
-          addr.county ||
-          data.display_name ||
-          "Selected Location";
+      if (displayName) {
+        setSelectedLocationName(displayName);
+        setValue("location", displayName);
+      } else {
+        const result = await photonReverse(lat, lng);
+        if (result) {
+          const addr = result.address || {};
+          const placeName =
+            addr.village ||
+            addr.suburb ||
+            addr.town ||
+            addr.neighbourhood ||
+            addr.city_district ||
+            addr.city ||
+            addr.county ||
+            result.display_name ||
+            "Selected Location";
 
-        const fullName = data.display_name || placeName;
-        setSelectedLocationName(fullName);
-        setValue("location", placeName);
-
-        const districtCandidates = [
-          addr.city_district,
-          addr.state_district,
-          addr.county,
-          addr.city,
-          addr.town,
-          addr.village,
-        ].filter(Boolean);
-
-        const matchedDistrict = PAKISTAN_DISTRICTS.find((d) =>
-          districtCandidates.some((c) => c!.toLowerCase() === d.toLowerCase())
-        );
-
-        if (matchedDistrict) {
-          setValue("district", matchedDistrict);
+          const fullName = result.display_name || placeName;
+          setSelectedLocationName(fullName);
+          setValue("location", placeName);
         }
       }
     } catch (err) {
@@ -838,20 +766,17 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
     let cancelled = false;
     async function fetchSuggestions() {
       try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(selectedDistrict + ", Pakistan")}&countrycodes=pk&limit=20&addressdetails=1`
-        );
-        const data = await res.json();
+        const data = await photonSearch(`${selectedDistrict}, Pakistan`, 20);
         if (!cancelled) {
           const areas = new Set<string>();
-          (data as Array<{ address?: Record<string, string>; display_name?: string }>).forEach((item) => {
+          data.forEach((item) => {
             const addr = item.address || {};
             const candidates = [
               addr.suburb, addr.neighbourhood, addr.town, addr.village,
-              addr.city_district, addr.county, addr.road,
+              addr.city_district, addr.county, addr.street,
             ].filter(Boolean);
             candidates.forEach((c) => {
-              const name = c!.split(",")[0].trim();
+              const name = c.split(",")[0].trim();
               if (name && name.toLowerCase() !== selectedDistrict.toLowerCase()) {
                 areas.add(name);
               }
@@ -1034,7 +959,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
         value={watch("location")}
         district={selectedDistrict}
         onChange={(val) => setValue("location", val)}
-        onLocationPick={(lat, lng) => handlePickLocation(lat, lng)}
+        onLocationPick={(lat, lng, displayName) => handlePickLocation(lat, lng, displayName)}
         error={errors.location?.message || serverErrors.location}
         suggestions={districtSuggestions}
       />

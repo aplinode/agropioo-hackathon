@@ -51,6 +51,12 @@ export default function FarmRecordsSection({ farmId, records, bundle }: Props) {
       {records.length === 0 ? (
         <div className="rounded-2xl border border-agro-sprout bg-white p-8 text-center">
           <p className="text-sm text-agro-slate">{bundle.detail.noRecords}</p>
+          <Link
+            href={`/records/new?farm=${farmId}`}
+            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
+          >
+            {bundle.detail.logFieldEvent}
+          </Link>
         </div>
       ) : (
         <>

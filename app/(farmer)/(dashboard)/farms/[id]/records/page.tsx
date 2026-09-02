@@ -4,6 +4,7 @@ import { getFarmsBundle } from "@/lib/i18n/server";
 import { requireSessionPage } from "@/lib/auth/guards";
 import { query } from "@/lib/db";
 import FarmRecordItem from "./farm-record-item";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Farm records — Agropioo",
@@ -54,9 +55,17 @@ export default async function FarmRecordsPage({
       />
 
       {records.length === 0 ? (
-        <p className="mt-6 rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-2.5 text-center font-mono text-xs tracking-wide text-agro-slate">
-          No records yet. Log your first field event.
-        </p>
+        <div className="mt-6 rounded-xl border-dashed border-agro-sprout bg-agro-mint px-4 py-6 text-center">
+          <p className="font-mono text-xs tracking-wide text-agro-slate">
+            No records yet. Log your first field event.
+          </p>
+          <Link
+            href={`/records/new?farm=${id}`}
+            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
+          >
+            {bundle.detail.logFieldEvent}
+          </Link>
+        </div>
       ) : (
         <ol className="mt-6 space-y-3">
           {records.map((record, index) => (
