@@ -72,12 +72,13 @@ export function InstallPrompt() {
       };
     }
 
-    if (typeof navigator !== "undefined") {
-      const ua = navigator.userAgent;
-      if (/iPhone|iPad|iPod/.test(ua)) {
-        setShowIosPrompt(true);
+    setShowIosPrompt((prev) => {
+      if (prev) return prev;
+      if (typeof navigator !== "undefined" && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        return true;
       }
-    }
+      return prev;
+    });
   }, []);
 
   if (dismissed) return null;
