@@ -1393,7 +1393,7 @@ export const en = {
   "app.crops.soil.saline": "Saline",
   "app.crops.soil.rocky": "Rocky",
   "app.crops.soil.other": "Not sure / Other",
-  "app.crops.budget.low": "Low (up to Rs 25,000/acre)",
+  "app.crops.budget.low": "Low (under Rs 25,000/acre)",
   "app.crops.budget.medium": "Medium (Rs 25,000–60,000/acre)",
   "app.crops.budget.high": "High (Rs 60,000–120,000/acre)",
   "app.crops.budget.very_high": "Very high (over Rs 120,000/acre)",

@@ -1219,7 +1219,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.crops.soil.saline": "نمکین",
   "app.crops.soil.rocky": "پتھریلی",
   "app.crops.soil.other": "پتہ نہیں / دیگر",
-  "app.crops.budget.low": "کم (فی ایکڑ 25,000 روپے تک)",
+  "app.crops.budget.low": "کم (فی ایکڑ 25,000 روپے سے کم)",
   "app.crops.budget.medium": "درمیانہ (25,000–60,000 روپے)",
   "app.crops.budget.high": "زیادہ (60,000–120,000 روپے)",
   "app.crops.budget.very_high": "بہت زیادہ (120,000 روپے سے اوپر)",
