@@ -63,7 +63,10 @@ export async function POST(request: Request) {
       );
     }
     if (err instanceof NoCandidatesError) {
-      return errorResponse(err.code, err.message, err.status);
+      return Response.json(
+        { error: { code: err.code, message: err.message }, lowestViableBracket: err.lowestViableBracket },
+        { status: err.status },
+      );
     }
     if (err instanceof OutsidePakistanError) {
       return errorResponse(err.code, err.message, err.status);

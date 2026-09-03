@@ -702,6 +702,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
   const [savingId, setSavingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [noCandidates, setNoCandidates] = useState(false);
+  const [lowestViableBracket, setLowestViableBracket] = useState<string | null>(null);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const farmRef = useRef<HTMLButtonElement>(null);
@@ -747,6 +748,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
     setLoading(true);
     setError(null);
     setNoCandidates(false);
+    setLowestViableBracket(null);
     setExistingRequest(null);
     setRecommendations([]);
     setRotationPlan(null);
@@ -774,6 +776,11 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
         }
         if (res.status === 503) {
           setError(bundle.errors.serviceUnavailable);
+          return;
+        }
+        if (res.status === 422 && data.error?.code === "no_candidates" && data.lowestViableBracket) {
+          setNoCandidates(true);
+          setLowestViableBracket(data.lowestViableBracket);
           return;
         }
         setError(data.error?.message ?? bundle.errors.generic);
@@ -999,7 +1006,24 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
 
       {noCandidates && !error && (
         <div className="rounded-2xl border border-agro-sprout bg-white p-5 text-sm text-agro-ink">
-          {bundle.results.noCandidates}
+          {lowestViableBracket ? (
+            <div className="space-y-3">
+              <p>{bundle.form.lowestViableWarning.replace("{bracket}", bundle.budget[lowestViableBracket as keyof typeof bundle.budget] ?? lowestViableBracket)}</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setValue("budgetBracket", lowestViableBracket as FormValues["budgetBracket"]);
+                  setNoCandidates(false);
+                  setLowestViableBracket(null);
+                }}
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
+              >
+                {bundle.form.switchBracket.replace("{bracket}", bundle.budget[lowestViableBracket as keyof typeof bundle.budget] ?? lowestViableBracket)}
+              </button>
+            </div>
+          ) : (
+            <p>{bundle.results.noCandidates}</p>
+          )}
         </div>
       )}
 

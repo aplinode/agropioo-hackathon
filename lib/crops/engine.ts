@@ -211,8 +211,9 @@ export async function recommendCrops(
     input.budgetBracket,
   );
   if (catalogue.length === 0) {
+    const allSeasonCrops = await getCropsBySeasonAndBudget(input.targetSeason, "very_high");
     throw new NoCandidatesError(
-      computeLowestViableBracket(input.budgetBracket, []),
+      computeLowestViableBracket(input.budgetBracket, allSeasonCrops),
     );
   }
 
