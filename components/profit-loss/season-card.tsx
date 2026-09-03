@@ -59,7 +59,7 @@ function ActionDropdown({ seasonId }: { seasonId: string }) {
   );
 }
 
-export default function SeasonCard({ season }: { season: Season & { farm_name?: string; crop_name?: string; pl?: { netProfitLoss: number; roi: number | null } } }) {
+export default function SeasonCard({ season }: { season: { id: string; crop_name?: string; farm_name?: string; season: string; year: string; acres: number; status: string; pl: { netProfitLoss: number; roi: number | null } } }) {
   const pl = season.pl ?? { netProfitLoss: 0, roi: null };
   const roiStatus = pl.roi === null ? "break_even" : pl.roi > 0 ? "profit" : pl.roi < 0 ? "loss" : "break_even";
 
@@ -84,14 +84,14 @@ export default function SeasonCard({ season }: { season: Season & { farm_name?: 
       </div>
 
       <h2 className="mt-3 line-clamp-2 font-display text-lg font-bold leading-snug text-agro-ink">
-        {season.crop_name ?? season.crop_id}
+        {season.crop_name}
       </h2>
       <p className="mt-1 flex items-center gap-1.5 text-sm text-agro-slate">
         <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-agro-canopy" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M20 10c0 5-5.5 10.2-7.4 11.8a1 1 0 0 1-1.2 0C9.5 20.2 4 15 4 10a8 8 0 0 1 16 0Z" />
           <circle cx="12" cy="10" r="3" />
         </svg>
-        {season.farm_name ?? season.farm_id}
+        {season.farm_name}
       </p>
 
       <div className="mt-3 flex flex-wrap items-center gap-1.5">
