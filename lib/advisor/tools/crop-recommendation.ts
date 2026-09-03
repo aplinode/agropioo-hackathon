@@ -5,7 +5,7 @@ import { getForecast } from "@/lib/weather/openweather";
 import { getCropsBySeasonAndBudget, getCompatibilityByCrop } from "@/lib/crops/catalogue";
 import { resolveSoilType } from "@/lib/crops/soil-profiles";
 import { rankCandidates, type ScoreContext } from "@/lib/crops/scoring";
-import type { CropCategory, CropSummary, Season, SoilType, IrrigationType, BudgetBracket } from "@/lib/crops/api-types";
+import type { CropCategory, Season, SoilType, IrrigationType, BudgetBracket } from "@/lib/crops/api-types";
 
 type FarmRow = {
   id: string;

@@ -89,7 +89,7 @@ For a farmer with loamy soil, canal irrigation, asking about winter planting:
 "The scoring engine recommends wheat as your top pick for winter — it scores 85% on your loamy soil with canal irrigation. Current wheat prices at your nearby mandi are Rs 4,200/maund and trending up. The 7-day forecast shows temperatures dropping to 12°C next week — ideal for wheat sowing. Plant within the next 10 days for optimal yield. Expected revenue: PKR 85,000/acre. Key risk: if temperatures drop below 5°C before germination, consider frost protection."
 
 For a farmer with saline soil asking about summer options:
-"Your saline soil limits your options, but mung bean is well-suited — it tolerates salinity better than most summer crops. It's also a nitrogen-fixer, which will improve your soil for the next season. Current mung prices are Rs 5,500/maund. The forecast shows hot days ahead (38-42°C) which mung can handle once established. Sow after the heat peak passes in mid-June.",
+"Your saline soil limits your options, but mung bean is well-suited — it tolerates salinity better than most summer crops. It's also a nitrogen-fixer, which will improve your soil for the next season. Current mung prices are Rs 5,500/maund. The forecast shows hot days ahead (38-42°C) which mung can handle once established. Sow after the heat peak passes in mid-June."`,
     tools: [getMyFarms, getFarmDetails, getWeather, getWeatherForecast, getMarketPrices, getCropCandidates, checkSoilCropFit, searchKnowledgeBase],
   });
 }
