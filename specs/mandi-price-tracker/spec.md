@@ -10,6 +10,7 @@
 **Solution:** Daily mandi prices scraped from official government portals for every province of Pakistan, displayed for nearby markets, plus a 7–14 day forecast that powers sell/hold guidance and target-price alerts.
 
 **How It Works (No Hardware):**
+- On the `/prices` page, a farm-selector dropdown lists every farm registered to the logged-in farmer. Selecting a farm immediately recontextualizes the entire price tracker — nearby mandis, weather, recommendations, best-crop suggestions, and predictions all switch to that farm's district and location. The last-selected farm is persisted in the session and restored on revisit; if the farmer has zero farms, the selector is hidden and the page falls back to the nearest provincial market hub with the existing setup banner.
 - Playwright-based daily scraper pulls wholesale mandi prices from four provincial portals (Punjab AMIS, Sindh SAMIS, KP FMIS, Balochistan BMIS) plus a federal cross-check (PBS Weekly SPI XLSX).
 - Scraped rows are POSTed to a single authenticated Route Handler that writes to the existing `mandi_prices` table (`source = 'govt_api'`).
 - Prices are displayed in PKR per Maund (40 kg) with 7–14 day Holt-Winters forecasts and confidence bands.
@@ -99,15 +100,34 @@ A farmer opens the price tracker to see what crops are selling for today across 
 
 **Acceptance Scenarios**:
 
-1. **Given** a logged-in farmer on the price tracker page, **When** they open the page, **Then** the system automatically loads current prices for markets near their registered farm location without requiring manual selection.
-2. **Given** the price tracker is displaying market prices, **When** a market has no data available for the selected day, **Then** that market is shown with a clear "no data available" indicator rather than a blank or broken display.
-3. **Given** a farmer is viewing prices, **When** they switch between crops, **Then** the price list updates to show prices for the newly selected crop without requiring a page reload.
+1. **Given** a logged-in farmer on the price tracker page with at least one registered farm, **When** they open the page, **Then** a farm-selector dropdown is visible and pre-selected to their last-chosen farm (or the first farm if none was previously chosen), and prices auto-load for that farm's nearby markets without requiring manual selection.
+2. **Given** a logged-in farmer on the price tracker page with zero registered farms, **When** they open the page, **Then** the farm selector is hidden and the page falls back to the nearest provincial market hub with the existing setup banner prompting farm registration.
+3. **Given** the price tracker is displaying market prices, **When** a market has no data available for the selected day, **Then** that market is shown with a clear "no data available" indicator rather than a blank or broken display.
+4. **Given** a farmer is viewing prices, **When** they switch between crops, **Then** the price list updates to show prices for the newly selected crop without requiring a page reload.
+
+---
+
+### User Story 1.5 - Switch Farm Context (Priority: P1)
+
+A farmer switches between their registered farms to view market prices, weather, recommendations, and best-crop insights specific to each farm's location.
+
+**Why this priority**: Many farmers manage multiple farms in different districts. The price tracker must adapt to whichever farm they are currently interested in, without losing context.
+
+**Independent Test**: A farmer with two farms selects each farm in turn and sees the entire price tracker page (markets, weather, predictions, recommendations, best crops) update to reflect the selected farm's district and location.
+
+**Acceptance Scenarios**:
+
+1. **Given** a logged-in farmer with multiple registered farms, **When** they open the farm-selector dropdown, **Then** every registered farm is listed and selectable.
+2. **Given** the farmer selects a different farm from the dropdown, **When** the selection is made, **Then** prices, weather, recommendations, predictions, and best-crop suggestions all refresh immediately to reflect the new farm's location and district context.
+3. **Given** the farmer selects a farm, **When** they close and reopen the price tracker in a later session, **Then** the same farm remains selected (persisted in session/localStorage).
+4. **Given** the farmer is viewing price alerts, **When** they switch farms, **Then** alerts remain visible and global to the farmer (not filtered by farm district), and the nearby-market list updates to the new farm's district.
+5. **Given** the farmer selects a farm, **When** the system evaluates best crops for that farm, **Then** the evaluation uses the existing daily cron-scraped data already present in `mandi_prices` (no on-demand Playwright run is triggered by farm selection).
 
 ---
 
 ### User Story 2 - Compare Prices Across Markets (Priority: P2)
 
-A farmer compares prices for the same crop across multiple nearby markets to decide where to sell.
+A farmer compares prices for the same crop across multiple nearby markets to decide where to sell, within the context of their currently selected farm.
 
 **Why this priority**: Market comparison is what transforms raw price data into a selling decision. It directly addresses the "which mandi should I go to" question.
 
@@ -123,7 +143,7 @@ A farmer compares prices for the same crop across multiple nearby markets to dec
 
 ### User Story 3 - See Price Trend Predictions (Priority: P2)
 
-A farmer views predicted price movements for the next 7–14 days to plan their selling strategy.
+A farmer views predicted price movements for the next 7–14 days to plan their selling strategy, based on the district and crops relevant to their currently selected farm.
 
 **Why this priority**: Predictions give farmers forward-looking intelligence, turning reactive price-checking into proactive decision-making. This is the feature's unique value beyond a simple price list.
 
@@ -140,7 +160,7 @@ A farmer views predicted price movements for the next 7–14 days to plan their 
 
 ### User Story 4 - Receive Sell/Hold Recommendation (Priority: P2)
 
-A farmer gets a clear recommendation on whether to sell now or hold for later based on current prices and predicted trends.
+A farmer gets a clear recommendation on whether to sell now or hold for later based on current prices and predicted trends for their selected farm's nearby markets.
 
 **Why this priority**: Farmers need guidance, not just data. A recommendation translates complex price analysis into a simple, actionable instruction.
 
@@ -156,7 +176,7 @@ A farmer gets a clear recommendation on whether to sell now or hold for later ba
 
 ### User Story 5 - Set Price Alerts (Priority: P3)
 
-A farmer sets a target price for a crop and receives an alert when the market price reaches or exceeds that target.
+A farmer sets a target price for a crop and receives an alert when the market price reaches or exceeds that target. Alerts are global to the farmer and not tied to a specific farm selection.
 
 **Why this priority**: Alerts automate the monitoring process, so farmers don't need to check prices daily. This is a convenience feature that increases the feature's daily utility.
 
@@ -173,7 +193,7 @@ A farmer sets a target price for a crop and receives an alert when the market pr
 
 ### User Story 6 - View Price History (Priority: P3)
 
-A farmer reviews historical price trends for a crop to understand seasonal patterns and make better future decisions.
+A farmer reviews historical price trends for a crop to understand seasonal patterns and make better future decisions, scoped to the markets relevant to their currently selected farm.
 
 **Why this priority**: Historical context helps farmers understand whether current prices are good or bad relative to seasonal norms, improving their overall market intuition.
 
@@ -199,6 +219,9 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 - What happens when one of the scraper's source portals is down on a given day?
 - What happens when the GitHub Actions cron fails before POSTing any rows to `/api/prices/ingest`?
 - What happens when the cron partial-succeeds (one source scraped, another failed)?
+- What happens when the farmer selects a farm that has no nearby mandis with price data?
+- How does the system behave when the farmer switches farms while a prediction chart or alert list is already loading?
+- What happens when the farmer's last-selected farm is deleted or becomes inaccessible?
 
 ## Requirements *(mandatory)*
 
@@ -234,6 +257,11 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 - **FR-023**: System MUST cache the last viewed price list and history charts in browser local storage to enable offline viewing when connectivity is lost.
 - **FR-024**: System MUST ensure that every new or updated user interface string (including page headers, button labels, badge texts, alert notifications, chart legend labels, and search placeholders) has corresponding translation keys and translated strings inserted into the Neon database `translations` table across all 8 supported Pakistan locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) using Neon MCP or `scripts/sync-translations.mts` before the feature is marked complete.
 - **FR-025**: System MUST mark every `mandi_prices` row with `source = 'govt_api'` and additionally tag the originating portal via `source_code` (`amis_pk` | `samis_pk` | `fmis_kp` | `bmis_balochistan` | `pbs_spi` | `seed_pk_initial`); `admin_manual` is intentionally NOT supported in this build.
+- **FR-026**: System MUST render a farm-selector dropdown on the `/prices` page that lists every farm registered to the logged-in farmer. If the farmer has zero farms, the selector MUST be hidden and the page MUST fall back to the nearest provincial market hub with the existing setup banner.
+- **FR-027**: System MUST persist the last-selected farm in the farmer's session/localStorage and restore it on subsequent visits to the `/prices` page.
+- **FR-028**: System MUST recontextualize the entire price tracker — nearby mandis, weather, recommendations, predictions, and best-crop suggestions — immediately upon farm selection, without requiring a manual refresh or page reload.
+- **FR-029**: System MUST keep price alerts global to the farmer regardless of which farm is selected; switching farms MUST NOT filter, pause, or delete existing alerts.
+- **FR-030**: System MUST derive "best crops" and on-page crop suggestions from the existing daily cron-scraped data already present in `mandi_prices`; farm selection MUST NOT trigger an on-demand Playwright scrape run.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -266,3 +294,5 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 - **SC-011**: The free GitHub Actions cron successfully ingests prices from at least the Punjab AMIS source daily; the run completes in under 15 minutes and POSTs all collected rows to `/api/prices/ingest` in a single authenticated batch.
 - **SC-012**: When a provincial portal (e.g. SAMIS) is unreachable, the cron logs the failure, leaves the existing rows untouched, and no user-visible price is wiped or set to zero.
 - **SC-013**: `GET /api/prices` responds with p95 latency < 200ms at the Vercel edge for a farmer session with district + bordering districts selected (measured on a 14-day rolling window via Vercel Analytics).
+- **SC-014**: When a logged-in farmer with multiple farms opens `/prices`, the farm selector is visible and the page auto-loads data for the persisted or first farm within 2 seconds on a 4G connection.
+- **SC-015**: Switching farms via the dropdown refreshes prices, weather, recommendations, predictions, and best-crop suggestions in under 3 seconds without a full page reload.

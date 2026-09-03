@@ -711,6 +711,7 @@ export const en = {
   /* ── Shell nav ─────────────────────────────────────── */
   "app.shell.nav.dashboard": "Dashboard",
   "app.shell.nav.farms": "Farms",
+  "app.shell.nav.profitLoss": "Profit / Loss",
   "app.shell.nav.advisor": "Advisor",
   "app.shell.nav.detect": "Detect",
   "app.shell.nav.crops": "Crops",
