@@ -74,7 +74,7 @@ export default function WeatherOverview({
             <h2 className="text-xl font-semibold text-agro-forest">Weather</h2>
             <p className="mt-1 flex items-center gap-1.5 text-sm text-agro-slate sm:justify-end">
               <MapPinIcon size={15} />
-              {farmName}
+              {farmLocation}
             </p>
             <p className="mt-0.5 text-xs text-agro-slate sm:justify-end">
               {farmDistrict}{farmLocation ? `, ${farmLocation}` : ""}

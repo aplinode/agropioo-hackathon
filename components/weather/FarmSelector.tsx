@@ -41,13 +41,13 @@ export default function FarmSelector({ farms, selectedId, label }: FarmSelectorP
   const selectedFarm = farms.find((f) => f.id === selectedId);
 
   return (
-    <label className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-agro-slate">
-      <span>{label}</span>
-      <div ref={containerRef} className="relative flex-1">
+    <div>
+      <span className="font-mono text-xs uppercase tracking-[0.22em] text-agro-slate">{label}</span>
+      <div ref={containerRef} className="relative mt-2 w-full max-w-sm">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="focus-ring-none flex h-12 w-full items-center justify-between rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-agro-canopy/20 focus:border-agro-canopy"
+          className="focus-ring-none flex h-12 w-full items-center justify-between rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-xs text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-agro-canopy/20 focus:border-agro-canopy"
         >
           <span className="truncate">
             {selectedFarm
@@ -66,14 +66,14 @@ export default function FarmSelector({ farms, selectedId, label }: FarmSelectorP
                     router.push(`/weather?farm=${farm.id}`);
                     setIsOpen(false);
                   }}
-                  className={`flex w-full items-center px-3 py-2.5 text-start text-sm transition-colors ${
+                  className={`flex w-full items-center px-3 py-2.5 text-start text-xs transition-colors ${
                     farm.id === selectedId ? "bg-agro-canopy/10 font-semibold text-agro-canopy" : "text-agro-ink hover:bg-agro-mint"
                   }`}
                 >
                   {farm.id === selectedId && <CheckIcon size={14} className="me-2 shrink-0 text-agro-canopy" />}
                   <div className="flex flex-col">
                     <span>{farm.name}</span>
-                    <span className="text-xs text-agro-slate">
+                    <span className="text-[0.7rem] text-agro-slate">
                       {farm.district}{farm.location ? `, ${farm.location}` : ""}
                     </span>
                   </div>
@@ -83,6 +83,6 @@ export default function FarmSelector({ farms, selectedId, label }: FarmSelectorP
           </ul>
         )}
       </div>
-    </label>
+    </div>
   );
 }

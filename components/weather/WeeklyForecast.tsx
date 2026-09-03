@@ -47,7 +47,7 @@ export default function WeeklyForecast({ days, selectedDate, onSelect }: WeeklyF
               key={day.date}
               type="button"
               onClick={() => onSelect(day.date)}
-              className={`flex min-w-[5.5rem] flex-col items-center gap-1 rounded-xl border px-3 py-2 text-center transition-colors ${
+              className={`flex min-w-[5.5rem] flex-col items-center gap-1 rounded-xl border px-3 py-2 text-center transition-colors focus:outline-none focus:ring-2 focus:ring-agro-canopy/20 focus:border-agro-canopy ${
                 isActive
                   ? "border-agro-canopy bg-agro-mint"
                   : "border-agro-sprout bg-white hover:border-agro-canopy"

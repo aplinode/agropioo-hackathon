@@ -159,8 +159,8 @@ export default function SignupForm({ copy }: { copy: SignupCopy }) {
   const inputClass = (hasError?: { message?: string }) =>
     `mt-2 h-12 w-full rounded-lg border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
       hasError?.message
-        ? "border-agro-error focus:border-agro-error focus:ring-agro-error/20"
-        : "border-agro-clay focus:border-agro-canopy focus:ring-agro-canopy/20"
+        ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
+        : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
     }`;
 
   return (
