@@ -36,7 +36,8 @@ export const getPricesQuerySchema = z.object({
       "mandi_id": "multan-grain-mandi",
       "mandi_name": "Multan Grain Mandi",
       "district": "multan",
-      "distance_km": 12.5,
+       "distance_km": 12.5,
+       "transport_cost_pkr": 187.50,
       "crop_id": "wheat",
       "crop_name": "Wheat (گندم)",
       "date": "2026-08-30",
@@ -148,7 +149,35 @@ export const updatePriceAlertSchema = z.object({
 
 ---
 
-## 5. Daily Price Ingestion (Scraper → DB)
+## 5. Favourite Crops CRUD
+
+**Endpoints**:
+- `GET /api/favourites`: List farmer's favorite crop IDs with display order.
+- `POST /api/favourites`: Add a crop to favorites (or reorder).
+- `DELETE /api/favourites`: Remove a crop from favorites.
+
+### Zod Validation Schemas
+```ts
+export const favouriteCropSchema = z.object({
+  crop_id: z.string().min(1),
+  display_order: z.number().int().nonnegative().optional(),
+});
+```
+
+### Response `200 OK` (GET)
+```json
+{
+  "favourites": [
+    { "crop_id": "wheat", "display_order": 0 },
+    { "crop_id": "cotton", "display_order": 1 },
+    { "crop_id": "rice-basmati", "display_order": 2 }
+  ]
+}
+```
+
+---
+
+## 6. Daily Price Ingestion (Scraper → DB)
 
 **Endpoint**: `POST /api/prices/ingest`
 **Authentication**: `Authorization: Bearer ${PRICES_CRON_SECRET}` (required, 401 on mismatch)
@@ -196,7 +225,7 @@ The handler looks up `mandis` and `crops` by external ID (mapped via `scripts/se
 
 ---
 
-## 6. Scraper Health (Operator-Facing)
+## 7. Scraper Health (Operator-Facing)
 
 **Endpoint**: `GET /api/prices/health`
 **Authentication**: None (public, no PII)

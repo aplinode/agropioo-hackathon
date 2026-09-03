@@ -66,7 +66,8 @@ Stores daily market price entries per crop per market.
 | `source_code` | `VARCHAR(32)` | NOT NULL, CHECK (`source_code IN ('amis_pk','samis_pk','fmis_kp','bmis_balochistan','pbs_spi','seed_pk_initial')`) | Which portal produced the row |
 | `created_at` | `TIMESTAMPTZ` | DEFAULT NOW() | Insertion timestamp |
 
-*Indexes*: `(mandi_id, crop_id, date DESC)`, `(crop_id, date DESC)`, `(source_code, date DESC)`.
+*Indexes*: `(mandi_id, crop_id, date DESC)`, `(crop_id, date DESC)`, `(source_code, date DESC)`.  
+*Unique constraint*: `UNIQUE (mandi_id, crop_id, date, source_code)` — prevents duplicate rows when the scraper runs twice in one day; the ingest Route Handler uses an upsert on this key.
 
 ---
 

@@ -47,7 +47,7 @@
 - Q: How should "nearby markets" be determined for a farmer's farm location? → A: Mandis in the farmer's district plus immediately adjacent bordering districts
 - Q: When a user has not set a registered farm location, what should be displayed on initial load? → A: Default to nearest major provincial market hub (e.g. Lahore/Multan) with a banner prompting location setup
 - Q: How should crop names be displayed in market price listings and search? → A: Display crop names strictly according to the user's active UI language setting
-- Q: How should transport cost implications be shown in market comparisons (User Story 2)? → A: Display distance in km from farm location to each mandi without calculating PKR transport costs
+- Q: How should transport cost implications be shown in market comparisons (User Story 2)? → A: Display distance in km from farm location to each mandi AND an estimated transport cost in PKR calculated using a flat per-km rate (calibrated to local freight norms for a 40kg Maund load).
 - Q: How should recommendations be rendered when price prediction confidence is low or volatile? → A: Show sell/hold recommendation accompanied by a prominent "High Volatility / Low Data" warning badge
 - Q: How should price alert management work for existing alerts? → A: Allow in-place target price editing and active/paused state toggling directly on existing alerts
 - Q: How detailed should daily mandi price data storage and display be for each crop? → A: Store and display Modal (prevailing) price along with Minimum and Maximum traded prices per day
@@ -65,6 +65,11 @@
 - Q: How should the price tracker behave when the farmer is offline / low connectivity? → A: Cache last viewed price list and history charts in browser local storage for offline viewing
 - Q: When should price alert evaluations and email/in-app dispatches be executed? → A: Evaluate all active price alerts immediately after the daily price ingestion pipeline completes
 - Q: Should historical price data export (CSV / PDF) be included? → A: Out of scope for launch (viewing and visual charts only)
+- Q: How should farmers manage their favorite/tracked crops for the dashboard widget? → A: A star icon appears on every crop container across the price tracker; tapping it toggles the crop into/out of the farmer's favorites list. A dedicated `/favourites` route (and `/api/favourites` endpoint) shows the full favorites list with add/remove controls. The dashboard widget always shows the top 3 favorited crops.
+- Q: What formula should be used for the estimated transport cost shown in market comparisons? → A: A flat per-km rate (Rs X per km per 40kg Maund, stored as a configurable constant in `lib/prices/transport.ts` and calibrated to local freight norms). The market comparison card shows both the distance in km and the estimated transport cost in PKR.
+- Q: After how many days of no fresh data should a market be marked as "data not available" instead of showing the last known price? → A: Up to 7 days the last known price is shown with the "Updated X days ago" badge; after 7 days the UI shows a "data not available" state for that market.
+- Q: How should the system prevent duplicate rows when the scraper runs twice in one day? → A: The `mandi_prices` table carries a UNIQUE constraint on `(mandi_id, crop_id, date, source_code)`. The ingest Route Handler uses an upsert so a second batch for the same key overwrites the earlier rows idempotently.
+- Q: What should the dashboard price widget show when the farmer has no registered farms? → A: The widget falls back to the nearest provincial market hub and shows the existing setup banner prompting farm registration; the widget does not show a farm selector itself — farm selection happens on `/prices`.
 
 ## Out of Scope
 
@@ -174,7 +179,25 @@ A farmer gets a clear recommendation on whether to sell now or hold for later ba
 
 ---
 
-### User Story 5 - Set Price Alerts (Priority: P3)
+### User Story 5 - Manage Favorite Crops (Priority: P3)
+
+A farmer marks crops as favorites so they appear as quick-access tiles on the dashboard widget and can be managed from a dedicated favorites page.
+
+**Why this priority**: Personalization increases daily engagement. The dashboard widget is most useful when it shows the crops the farmer actually sells.
+
+**Independent Test**: A farmer taps the star icon on three crop cards, visits the dashboard, and sees those three crops with mini-sparklines. Removing a star updates the dashboard within the same session.
+
+**Acceptance Scenarios**:
+
+1. **Given** a farmer is viewing any crop in the price tracker, **When** they tap the star icon on that crop's card, **Then** the crop is added to their favorites list and the star toggles to a filled state.
+2. **Given** a crop is already a favorite, **When** the farmer taps the star again, **Then** the crop is removed from favorites and the star returns to an outline state.
+3. **Given** a farmer has favorited crops, **When** they view the dashboard, **Then** the price widget shows up to 3 favorited crops with 7-day mini-sparklines, ordered by the farmer's display preference.
+4. **Given** a farmer visits the `/favourites` route, **When** the page loads, **Then** all favorited crops are listed with the ability to remove each one.
+5. **Given** a farmer removes a crop from favorites on the `/favourites` page, **When** the removal is confirmed, **Then** the dashboard widget updates on next load to reflect the new favorites list.
+
+---
+
+### User Story 6 - Set Price Alerts (Priority: P3)
 
 A farmer sets a target price for a crop and receives an alert when the market price reaches or exceeds that target. Alerts are global to the farmer and not tied to a specific farm selection.
 
@@ -191,7 +214,7 @@ A farmer sets a target price for a crop and receives an alert when the market pr
 
 ---
 
-### User Story 6 - View Price History (Priority: P3)
+### User Story 7 - View Price History (Priority: P3)
 
 A farmer reviews historical price trends for a crop to understand seasonal patterns and make better future decisions, scoped to the markets relevant to their currently selected farm.
 
@@ -244,10 +267,10 @@ A farmer reviews historical price trends for a crop to understand seasonal patte
 - **FR-010**: System MUST provide a sell/hold recommendation whenever data is available, accompanied by a prominent "High Volatility / Low Data" warning badge when prediction confidence is low.
 - **FR-011**: System MUST explain each recommendation in plain language alongside the recommendation.
 - **FR-012**: System MUST allow farmers to set unlimited sell-only target price alerts for any crop (triggering when market price reaches or exceeds target price).
-- **FR-013**: System MUST notify farmers in the app AND via email (using nodemailer + SMTP) on every daily price update where a market price reaches or exceeds their target, including a direct "View Mandi Prices" deep-link button (`/prices?crop=X&mandi=Y`) in emails, highlighting in-app alert notifications with a green badge and pinning them to the top of the in-app notification feed.
+- **FR-013**: System MUST notify farmers in the app AND via email (using nodemailer + SMTP) on every daily price update where a market price reaches or exceeds their target. Notifications follow a dual pattern: (1) a single daily in-app digest pinned at the top of the feed summarising all triggered alerts for that day ("N target prices reached today"), and (2) one separate HTML email per triggered alert, each containing crop name, market location, target price, current market price, and a direct "View Mandi Prices" deep-link button (`/prices?crop=X&mandi=Y`). In-app alert notifications are highlighted with a green badge and pinned to the top of the feed.
 - **FR-014**: System MUST allow farmers to view, edit target prices in-place, toggle active/paused status, and delete their price alerts.
-- **FR-015**: System MUST allow farmers to compare prices and view distance in km from their farm location across multiple selected markets on a single view.
-- **FR-016**: System MUST handle markets with missing daily price updates from government APIs by showing the last recorded price with a prominent "Updated X days ago" badge.
+- **FR-015**: System MUST allow farmers to compare prices and view distance in km AND an estimated transport cost in PKR (using a flat per-km rate) from their farm location across multiple selected markets on a single view.
+- **FR-016**: System MUST handle markets with missing daily price updates from government APIs by showing the last recorded price with a prominent "Updated X days ago" badge for up to 7 days; after 7 days without fresh data the market must show a "data not available" state.
 - **FR-017**: System MUST ensure price displays, history charts, and trend predictions are tailored to the farmer's selected crops and district context.
 - **FR-018**: System MUST handle historical price data rendering seamlessly across custom date ranges up to 12 months without breaking visual charts.
 - **FR-019**: System MUST only show prices and predictions relevant to the farmer's selected crops and region.
