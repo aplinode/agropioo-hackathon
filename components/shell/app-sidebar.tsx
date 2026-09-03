@@ -13,6 +13,7 @@ import {
   LogOutIcon,
   SproutIcon,
   TagIcon,
+  TrendingUpIcon,
   WeatherIcon,
   WheatIcon,
 } from "@/components/icons";
@@ -34,6 +35,7 @@ export default function AppSidebar({ bundle }: AppSidebarProps) {
   const destinations = [
     { href: "/dashboard", label: nav.dashboard, Icon: HomeIcon },
     { href: "/farms", label: nav.farms, Icon: LeafIcon },
+    { href: "/profit-loss", label: nav.profitLoss, Icon: TrendingUpIcon },
     { href: "/advisor", label: nav.advisor, Icon: ChatIcon },
     { href: "/detect", label: nav.detect, Icon: CameraIcon },
     { href: "/crops", label: nav.crops, Icon: WheatIcon },

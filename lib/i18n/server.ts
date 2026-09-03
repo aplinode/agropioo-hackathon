@@ -153,6 +153,7 @@ export async function getShellBundle() {
     nav: {
       dashboard: t("app.shell.nav.dashboard").text,
       farms: t("app.shell.nav.farms").text,
+      profitLoss: t("app.shell.nav.profitLoss").text,
       advisor: t("app.shell.nav.advisor").text,
       detect: t("app.shell.nav.detect").text,
       crops: t("app.shell.nav.crops").text,
