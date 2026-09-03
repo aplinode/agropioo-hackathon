@@ -22,10 +22,23 @@ vi.mock("@/lib/auth/rate-limit", () => ({
   RATE_RULES: { cropsIp: { limit: 20, windowMs: 3600000 } },
 }));
 
-vi.mock("@/lib/crops/engine", () => ({
-  recommendCrops: (...args: unknown[]) => mockRecommendCrops(...args),
-  WeatherUnavailableError: class WeatherUnavailableError extends Error {},
-}));
+vi.mock("@/lib/crops/engine", () => {
+  class WeatherUnavailableError extends Error {}
+  class NoCandidatesError extends Error {}
+  class OutsidePakistanError extends Error {}
+  class FarmNotFoundError extends Error {}
+  class FarmForbiddenError extends Error {}
+  class RecommendationExistsError extends Error {}
+  return {
+    recommendCrops: (...args: unknown[]) => mockRecommendCrops(...args),
+    WeatherUnavailableError,
+    NoCandidatesError,
+    OutsidePakistanError,
+    FarmNotFoundError,
+    FarmForbiddenError,
+    RecommendationExistsError,
+  };
+});
 
 function createRequest(body: unknown): Request {
   return new Request("http://localhost/api/crops", {

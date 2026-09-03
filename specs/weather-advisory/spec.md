@@ -173,6 +173,11 @@ Farmer reviews past advisories to see what was recommended on previous days and 
 - Q: Which tab is active by default when the farmer opens the weather page? → A: The Advisory tab is active by default, showing today's advice first.
 - Q: Should the dashboard and weather page show the same alerts or different sets? → A: The same alerts are shown on both pages. Read/unread state is synced across both views.
 - Q: What happens when the farmer presses the Refresh button on the weather page? → A: The button fetches fresh forecast data and regenerates advice, but does not clear the existing cache. Cached data for other dates remains intact.
+- Q: How should scroll position behave when switching between weather page tabs? → A: Preserve scroll position per tab. When the farmer switches away and back, each tab resumes at its previous scroll position.
+- Q: Should opening a history detail modal update the URL? → A: No. The modal is a simple popup without URL changes.
+- Q: Should the dashboard include a weather widget in addition to the farm selector? → A: An optional weather widget may be shown on the dashboard, consistent with the existing dashboard patterns.
+- Q: Should the dashboard show an unread alert count badge? → A: Yes. The dashboard shows an alert count badge alongside the alert banner.
+- Q: What loading pattern should the weather page use? → A: Follow the existing app pattern: server components fetch and render data directly without explicit skeletons or spinners. The stale-while-revalidate behavior is achieved by serving cached data from the server component first, then refreshing in the background.
 
 ## Assumptions
 

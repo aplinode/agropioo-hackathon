@@ -14,6 +14,7 @@ export type DetectBundle = {
   takePhoto: string;
   readingLeaf: string;
   analyzing: string;
+  sampleScan: string;
   scanAnother: string;
   discussAdvisor: string;
   saveToFarm: string;

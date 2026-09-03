@@ -9,7 +9,7 @@ import HistoryList, { type HistoryItem } from "@/components/weather/HistoryList"
 
 export const metadata: Metadata = { title: "Advisory history — Agropioo" };
 
-type FarmRow = { id: string; name: string; primary_crop: string | null; crops: string[] };
+type FarmRow = { id: string; name: string; primary_crop: string | null; crops: string[]; location: string; district: string };
 
 function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
@@ -24,7 +24,7 @@ export default async function WeatherHistoryPage({
   const bundle = await getWeatherBundle();
 
   const farms = await query<FarmRow>(
-    `SELECT id, name, primary_crop, crops FROM farms
+    `SELECT id, name, primary_crop, crops, location, district FROM farms
      WHERE account_id = $1 AND archived_at IS NULL ORDER BY created_at DESC`,
     [session.accountId],
   );
@@ -72,6 +72,8 @@ export default async function WeatherHistoryPage({
     id: f.id,
     name: f.name,
     cropLabel: capitalize(f.primary_crop ?? f.crops?.[0] ?? ""),
+    location: f.location,
+    district: f.district,
   }));
 
   return (

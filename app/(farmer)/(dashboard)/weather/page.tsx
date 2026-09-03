@@ -120,10 +120,12 @@ export default async function WeatherPage({
             id: f.id,
             name: f.name,
             cropLabel: capitalize(f.primary_crop ?? f.crops?.[0] ?? ""),
+            location: f.location,
+            district: f.district,
           }))} selectedId={selected.id} label={bundle.farmSelectorLabel} />
         </div>
         <p className="mt-4 rounded-2xl border border-agro-canopy/30 bg-agro-mint px-4 py-3 text-sm text-agro-forest">
-          {bundle.weatherUnavailable} ΓÇö Please add location coordinates to your farm to see weather data.
+          {bundle.weatherUnavailable} — Please add location coordinates to your farm to see weather data.
         </p>
       </div>
     );
@@ -366,7 +368,7 @@ export default async function WeatherPage({
 
       {!forecast && (
         <p className="mt-4 rounded-2xl border border-agro-canopy/30 bg-agro-mint px-4 py-3 text-sm text-agro-forest">
-          <strong className="font-semibold">{bundle.weatherUnavailable}</strong> ΓÇö {bundle.weatherUnavailableBody}
+          <strong className="font-semibold">{bundle.weatherUnavailable}</strong> — {bundle.weatherUnavailableBody}
         </p>
       )}
 

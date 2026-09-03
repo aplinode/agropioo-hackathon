@@ -62,6 +62,11 @@ The following decisions from `/speckit.clarify` are reflected in this plan:
   - The Advisory tab is the default active tab when the weather page opens.
   - Dashboard and weather page show the same alerts with synced read/unread state.
   - The Refresh button fetches fresh forecast data without clearing the existing cache.
+  - Scroll position is preserved per tab when switching between Advisory, Forecast, and History.
+  - History detail modals do not update the URL.
+  - An optional weather widget may appear on the dashboard, following existing dashboard patterns.
+  - The dashboard shows an unread alert count badge alongside the alert banner.
+  - The weather page loading state follows the existing app pattern: server components fetch and render data directly without explicit skeletons or spinners. Stale-while-revalidate is achieved by serving cached data first, then refreshing in the background.
   - Advisory history is surfaced as a tab on the main weather page instead of a separate route, keeping navigation simple for the farmer.
  - Completion of translation catalogs for `ps`, `sd`, `skr`, `bal`, and `hno` is tracked as an implementation task, not a spec change.
 
