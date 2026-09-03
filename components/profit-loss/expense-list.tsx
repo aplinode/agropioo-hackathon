@@ -4,11 +4,11 @@ import type { Expense } from "@/lib/validation/profit-loss";
 
 const categoryColors: Record<string, string> = {
   seed: "bg-agro-mint text-agro-canopy",
-  fertilizer: "bg-agro-wheat/20 text-agro-forest",
-  labor: "bg-agro-paper text-agro-ink",
-  irrigation: "bg-blue-50 text-blue-700",
-  transport: "bg-agro-stone text-agro-ink",
-  other: "bg-gray-100 text-gray-700",
+  fertilizer: "bg-agro-sprout text-agro-forest",
+  labor: "bg-agro-mint text-agro-canopy",
+  irrigation: "bg-agro-sprout/60 text-agro-ink",
+  transport: "bg-agro-leaf/20 text-agro-forest",
+  other: "bg-agro-mint text-agro-canopy",
 };
 
 export default function ExpenseList({ expenses }: { expenses: (Expense & { variance?: number; variance_percentage?: number | null })[] }) {
