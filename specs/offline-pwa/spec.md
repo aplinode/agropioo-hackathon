@@ -21,7 +21,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 **US-2. Record a field observation offline.** When a farmer logs a farm record (sowing, irrigation, harvest, disease observation) with no signal, the record is saved locally and appears in their record list instantly. When signal returns, the record syncs to the server automatically.
 
-**US-3. Upload a photo offline.** When a farmer takes or selects a photo for a disease observation or farm record while offline, the photo is stored locally as a blob in IndexedDB and a queue entry referencing the pending photo upload to `POST /api/detect` is created. When the network returns, the photo uploads to Cloudinary via the existing `lib/detect/cloudinary.ts` `uploadScanImage` path and the record syncs.
+**US-3. Upload a photo offline.** When a farmer takes or selects a photo for a disease observation or farm record while offline, the photo is stored locally as a blob in the `photos` object store and a queue entry (`entity=photo`, target `POST /api/detect`) is created. When the network returns, the photo is replayed through `/api/detect` — which runs the **full detection pipeline** (HuggingFace model + Cloudinary upload) and returns the final `imageUrl`. If the photo is paired with an offline record, a second queue entry (`entity=record`, target `POST /api/records`) was queued immediately after the photo entry; on replay the photo entry is sent first, its returned `imageUrl` is backfilled into the record's body, and then the record entry is sent.
 
 **US-4. Edit farm details offline.** When a farmer edits a farm's crop, sowing date, or area while offline, the edit is stored locally and synced on reconnect. If another device changed the same farm in the meantime, last-write-wins by server `updated_at`.
 
@@ -39,7 +39,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 - **FR-1**: The app must be installable as a PWA. A `manifest.json` with appropriate icons, name, short_name, display="standalone", and theme_color must be served. The browser `beforeinstallprompt` event must be captured in the farmer app shell and surfaced as a custom "Add to Home screen" button; the browser's native install banner remains as a fallback for browsers that ignore the custom UI.
 
-- **FR-2**: A service worker must be registered on every farmer app page load and must intercept all navigation requests and `GET` API requests under `/api/`.
+- **FR-2**: A service worker must be registered with **root scope (`/`)** on every page load and must intercept all navigation requests and `GET` API requests under `/api/`. Root scope covers both the farmer app and the marketing/site routes so offline page caching works everywhere (FR-5).
 
 - **FR-3**: The service worker must cache core static assets (fonts, CSS, icons, favicon) for offline serving. These assets must be cached at service worker install time (stale-to-revalidate for runtime, cache-first for assets).
 
@@ -51,7 +51,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 - **FR-7**: When the farmer submits a new farm record while the app detects no effective network connection (`navigator.onLine === false` **or** the API call fails with a network/timeout error — not only on `onLine === false`, since rural 4G can report online while unreachable), the write must be saved to the IndexedDB queue as `pending` and displayed in the UI immediately (optimistic rendering). The queued record is joined into the in-browser record list alongside server-fetched records; when sync succeeds, the local copy is dropped from the queue and the server-confirmed record takes its place (no duplicate).
 
-- **FR-8**: When the farmer uploads a photo (for disease detection or farm records) while offline, the photo must be stored as a blob in the `photos` object store of IndexedDB and a queue entry created referencing the pending upload to `POST /api/detect` (formData field `image`), which calls `uploadScanImage` (Cloudinary) server-side.
+- **FR-8**: When the farmer uploads a photo (for disease detection or farm records) while offline, the photo must be stored as a blob in the `photos` object store of IndexedDB and a queue entry created referencing the pending upload to `POST /api/detect` (formData field `image`). The replay runs the full `/api/detect` pipeline (HuggingFace detection + Cloudinary upload) and yields the `imageUrl`. **Photo-to-record coupling:** when a photo is paired with an offline record, a second queue entry (`entity=record`, target `POST /api/records`) is queued immediately after the photo entry. On replay the photo entry is sent first (FIFO), its returned `imageUrl` is backfilled into the record body, and then the record entry is sent. If the photo entry fails, the paired record entry is not attempted (it stays pending for the next drain).
 
 - **FR-9**: When the farmer edits an existing farm's details offline, the edit must be queued as a PATCH operation in IndexedDB with the farm's UUID and the original `updated_at` timestamp.
 
@@ -79,7 +79,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 - **EC-1. Never-cached page while offline.** When the farmer navigates to a page that was never loaded while online (no cached version exists and no service-worker route match), the UI shows a "offline content unavailable" message with a "connect to sync" prompt (served from the `/offline` fallback route) instead of a network error or blank screen. The offline fallback page itself is cached at service-worker install time and loads instantly.
 
-- **EC-2. Large queue.** When the offline queue exceeds 50 pending entries, the oldest synced entries are evicted from IndexedDB to free space, and the farmer sees an "offline storage nearly full" warning.
+- **EC-2. Large queue.** The queue enforces a **hard cap of 50 pending entries**. If a farmer attempts to queue a 51st write, the save is blocked and the farmer sees "offline storage nearly full — connect to sync." `synced` entries are auto-purged from IndexedDB the moment the server confirms them (status `synced`); they do not accumulate. `failed` entries are retained (for manual retry per FR-12) until the farmer dismisses them.
 
 - **EC-3. Duplicate offline submissions.** When the farmer double-taps the submit button while offline, the UI must prevent duplicate queue entries (debounced submit + client-side UUID dedup before inserting into IndexedDB).
 
@@ -97,7 +97,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 - **EC-10. Partial sync.** When syncing a batch of 20 pending writes and the first 5 succeed, the next 10 fail with 5xx, and the last 5 were never attempted — the successfully-synced 5 are marked `synced`, the failed 10 stay `pending` for retry, and the remaining 5 are not yet sent. Replay is strict FIFO (oldest-first): entries that fail due to entity dependencies (e.g. a record referencing a farm not yet synced) retry on the next drain attempt. The UI reflects partial progress.
 
-- **EC-11. Offline during photo upload.** If the farmer takes a photo, the network drops before upload completes, the photo is stored in the `photos` object store in IndexedDB and a queue entry is created for `POST /api/detect`. On reconnect, the photo uploads to Cloudinary via the existing upload path and links to the record.
+- **EC-11. Offline during photo upload.** If the farmer takes a photo, the network drops before upload completes, the photo is stored in the `photos` object store in IndexedDB and a queue entry (`entity=photo`, target `POST /api/detect`) is created. On reconnect, the photo is replayed through `/api/detect` (full detection + Cloudinary upload via `lib/detect/cloudinary.ts`). Its returned `imageUrl` is backfilled into any paired record queue entry, which is then sent to `/api/records`.
 
 - **EC-12. Offline price data.** Price data cached via the service worker remains available. If the farmer tries to set a price alert while offline, the alert creation is queued as a `record`-entity POST to `/api/prices/alerts` and syncs on reconnect.
 
@@ -144,7 +144,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 ## Internal artifacts (new, no new deps)
 
 - `lib/offline/idb.ts` — promise wrapper around native IndexedDB; manages `agropioo_offline` DB (stores `writes`, `photos`, `meta`).
-- `lib/offline/queue.ts` — enqueue / drain / retry logic; wires `online`/`offline` events and exponential backoff (FR-12).
+- `lib/offline/queue.ts` — enqueue / drain / retry logic; wires `online`/`offline` events and exponential backoff (FR-12); enforces the 50-pending hard cap (EC-2); handles photo→record `imageUrl` backfill on replay (FR-8).
 - `lib/offline/status.ts` — readable store emitting network + sync status for the shell indicator (FR-13).
 - `app/offline/page.tsx` — static offline fallback route (EC-1), registered as the SW navigation fallback.
 - `lib/i18n/server.ts` — add `getOfflineBundle()` following the `getShellBundle` / `getWeatherBundle` pattern; resolves `app.offline.*` from the `translations` table.
@@ -156,6 +156,8 @@ See `adrs/` — this feature requires recording the offline caching and sync arc
 
 - **ADR-0014.1** — Conflict resolution: server always overwrites on PATCH (last-write-wins by `updated_at`); the client detects divergence on the 200 response by comparing returned `updated_at`. No 409 path.
 - **ADR-0014.2** — Auth in offline mode: the queue stores no session data; replay uses `credentials: 'include'`. On 401 the queue is cleared.
-- **ADR-0014.3** — Replay ordering: strict FIFO (oldest-first); dependency failures retried per FR-12.
+- **ADR-0014.3** — Replay ordering: strict FIFO (oldest-first); dependency failures retried per FR-12. Photo-record coupling is handled within FIFO (photo entry is queued before its paired record entry, so replay order is preserved).
 - **ADR-0014.4** — IndexedDB schema: version 1, three stores (`writes`, `photos`, `meta`), additive-only `onupgradeneeded`.
 - **ADR-0014.5** — Scope: SMS alerts (Twilio) deferred to a separate `specs/sms-alerts/` ticket; this feature is PWA + offline sync only.
+- **ADR-0014.6** — Service worker scope: registered at root `/` so it caches marketing pages (FR-5) and the farmer app, not just `/(farmer)`.
+- **ADR-0014.7** — Sync trigger: the queue drains only when the app is in the foreground (active tab) — a `visibilitychange`/`focus` listener initiates the drain alongside the `online` event, so sync does not run silently in the background.
