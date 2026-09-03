@@ -994,6 +994,11 @@
       "translated": ""
     },
     {
+      "key": "app.records.noRecordsFound",
+      "english": "No records found for this filter.",
+      "translated": ""
+    },
+    {
       "key": "nav.dashboard",
       "english": "Dashboard",
       "translated": ""

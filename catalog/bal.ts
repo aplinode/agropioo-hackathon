@@ -891,6 +891,8 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "app.records.types.disease": "╪¿█î┘à╪º╪▒█î",
   "app.records.types.harvest": "┌⌐┘╣╪º╪ª█î",
 
+  "app.records.noRecordsFound": "",
+
   /* ΓöÇΓöÇ ╪▒█î┌⌐╪º╪▒┌ê╪º┌║ ╪ª█î ┘ü█ü╪▒╪│╪¬ ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
   "app.records.farmRecords.pageTitle": "╪┤┘Å╪¬┘Å┘à ╪ª█î ╪▒█î┌⌐╪º╪▒┌ê ΓÇö ╪º┌»╪▒┘ê┘╛█î┘ê",
   "app.records.farmRecords.heading": "╪┤┘Å╪¬┘Å┘à ╪ª█î █î╪º╪»╪»╪º╪┤╪¬",

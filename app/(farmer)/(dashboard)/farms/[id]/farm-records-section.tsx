@@ -9,6 +9,7 @@ import {
   BugIcon,
   WheatIcon,
   RecordIcon,
+  PlusIcon,
 } from "@/components/icons";
 import FarmDetailRecordItem from "./farm-detail-record-item";
 import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle";
@@ -41,11 +42,20 @@ export default function FarmRecordsSection({ farmId, records, bundle }: Props) {
         <h2 id="activity-heading" className="shrink-0 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate">
           {bundle.detail.activityHeading}
         </h2>
-        {records.length > 0 && (
-          <Link href={`/farms/${farmId}/records`} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline">
-            {bundle.detail.viewAllRecords}
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/records/new?farm=${farmId}`}
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
+          >
+            <PlusIcon size={16} />
+            {bundle.detail.logFieldEvent}
           </Link>
-        )}
+          {records.length > 0 && (
+            <Link href={`/farms/${farmId}/records`} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline">
+              {bundle.detail.viewAllRecords}
+            </Link>
+          )}
+        </div>
       </div>
 
       {records.length === 0 ? (
@@ -58,42 +68,50 @@ export default function FarmRecordsSection({ farmId, records, bundle }: Props) {
             {bundle.detail.logFieldEvent}
           </Link>
         </div>
+      ) : filtered.length === 0 ? (
+        <div className="rounded-2xl border border-agro-sprout bg-white p-8 text-center">
+          <p className="text-sm text-agro-slate">{bundle.records.noRecordsFound}</p>
+          <Link
+            href={`/records/new?farm=${farmId}`}
+            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
+          >
+            {bundle.detail.logFieldEvent}
+          </Link>
+        </div>
       ) : (
         <>
-          {uniqueTypes.length > 1 && (
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => setActiveType(null)}
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  activeType === null
-                    ? 'bg-agro-canopy text-white'
-                    : 'border border-agro-sprout bg-white text-agro-slate hover:border-agro-canopy hover:text-agro-canopy'
-                }`}
-              >
-                All
-              </button>
-              {uniqueTypes.map((type) => {
-                const Icon = typeIcon[type] || RecordIcon;
-                const label = bundle.records.types[type as keyof typeof bundle.records.types] || type;
-                return (
-                  <button
-                    key={type}
-                    type="button"
-                    onClick={() => setActiveType(type)}
-                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
-                      activeType === type
-                        ? 'bg-agro-canopy text-white'
-                        : 'border border-agro-sprout bg-white text-agro-slate hover:border-agro-canopy hover:text-agro-canopy'
-                    }`}
-                  >
-                    <Icon size={14} />
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          )}
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setActiveType(null)}
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+                activeType === null
+                  ? 'bg-agro-canopy text-white'
+                  : 'border border-agro-sprout bg-white text-agro-slate hover:border-agro-canopy hover:text-agro-canopy'
+              }`}
+            >
+              All
+            </button>
+            {uniqueTypes.map((type) => {
+              const Icon = typeIcon[type] || RecordIcon;
+              const label = bundle.records.types[type as keyof typeof bundle.records.types] || type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setActiveType(type)}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+                    activeType === type
+                      ? 'bg-agro-canopy text-white'
+                      : 'border border-agro-sprout bg-white text-agro-slate hover:border-agro-canopy hover:text-agro-canopy'
+                  }`}
+                >
+                  <Icon size={14} />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
 
           <ul className="divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
             {filtered.map((record) => (

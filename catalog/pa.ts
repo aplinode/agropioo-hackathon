@@ -897,6 +897,8 @@ export const pa: Partial<Record<CatalogKey, string>> = {
   "app.records.types.disease": "╪¿█î┘à╪º╪▒█î",
   "app.records.types.harvest": "┌⌐┘╣╪º╪ª█î",
 
+  "app.records.noRecordsFound": "",
+
   /* ΓöÇΓöÇ ╪▒█î┌⌐╪º╪▒┌ê╪º┌║ ╪»█î ┘ü█ü╪▒╪│╪¬ ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
   "app.records.farmRecords.pageTitle": "┌⌐┌╛█î╪¬ ╪»█Æ ╪▒█î┌⌐╪º╪▒┌ê ΓÇö ╪º┌»╪▒┘ê┘╛█î┘ê",
   "app.records.farmRecords.heading": "┌⌐┌╛█î╪¬ ╪»█î █î╪º╪»╪»╪º╪┤╪¬",

@@ -923,6 +923,8 @@ export const en = {
   "app.records.types.disease": "Disease",
   "app.records.types.harvest": "Harvest",
 
+  "app.records.noRecordsFound": "No records found for this filter.",
+
   /* ── Records list ───────────────────────────────────── */
   "app.records.farmRecords.pageTitle": "Farm records \u2014 Agropioo",
   "app.records.farmRecords.heading": "The farm\u2019s memory",

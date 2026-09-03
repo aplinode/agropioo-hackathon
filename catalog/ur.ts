@@ -905,6 +905,8 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.records.types.disease": "بیماری",
   "app.records.types.harvest": "کٹائی",
 
+  "app.records.noRecordsFound": "",
+
   /* ── ریکارڈ کی فہرست ───────────────────────────────── */
   "app.records.farmRecords.pageTitle": "کھیت کے ریکارڈ — اگروپیو",
   "app.records.farmRecords.heading": "کھیت کی یادداشت",

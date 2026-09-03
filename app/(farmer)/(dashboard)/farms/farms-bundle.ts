@@ -110,6 +110,7 @@ export type FarmsBundle = {
       disease: string;
       harvest: string;
     };
+    noRecordsFound: string;
       farmRecords: {
         pageTitle: string;
         heading: string;
