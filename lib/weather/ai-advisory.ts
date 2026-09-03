@@ -1,7 +1,6 @@
 import "server-only";
 
 import OpenAI from "openai";
-import { query } from "@/lib/db";
 
 let openaiClient: OpenAI | null = null;
 
