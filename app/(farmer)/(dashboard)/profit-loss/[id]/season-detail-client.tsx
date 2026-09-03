@@ -36,10 +36,14 @@ type SeasonDetail = {
   crop_unit: string;
 };
 
-export default function SeasonDetailClient({ season, onRefresh }: { season: SeasonDetail; onRefresh: () => void }) {
+export default function SeasonDetailClient({ season }: { season: SeasonDetail }) {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const onRefresh = () => {
+    if (typeof window !== "undefined") window.location.reload();
+  };
 
   const totalProjectedCost = season.projected_costs.reduce((sum, p) => sum + Number(p.total_projected_pkr), 0);
   const totalActualCost = season.expenses.reduce((sum, e) => sum + Number(e.amount), 0);

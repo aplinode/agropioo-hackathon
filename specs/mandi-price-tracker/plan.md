@@ -30,6 +30,7 @@ This plan layers Playwright + xlsx on top of the existing Next.js + Postgres sta
   - `GET /api/prices` p95 < 200ms at the Vercel edge for an authenticated farmer with district + bordering districts (SC-013, measured via Vercel Analytics on a 14-day rolling window).
   - `/api/prices/ingest` accepts a batch up to 5,000 rows in a single POST under 30s.
   - Cron run completes within 15 min (SC-011).
+  - Transport cost estimation is a synchronous constant lookup (`lib/prices/transport.ts`) — no DB hit, <1ms per mandi.
 - **Constraints**:
   - Free tier only — GitHub Actions minutes per repo, no Vercel cron, no scraper-as-a-service.
   - Single Route Handler is the only writer to `mandi_prices` (Constitution IV).
@@ -85,11 +86,14 @@ app/(farmer)/dashboard/page.tsx
 app/api/prices/route.ts
 app/api/prices/alerts/route.ts
 app/api/prices/predictions/route.ts
+app/api/prices/health/route.ts
+app/api/favourites/route.ts
 lib/db.ts
 lib/http.ts
 lib/prices/forecast.ts
 lib/prices/proximity.ts
 lib/prices/alerts.ts
+lib/prices/transport.ts
 lib/prices/api-types.ts
 scripts/seed-mandi-prices.ts
 db/migrations/0008_mandi_prices.sql
@@ -120,6 +124,8 @@ db/migrations/0010_scraper_audit_and_holidays.sql
 
 components/prices/data-source-badge.tsx  # NEW — visual chip showing source portal per row
 components/prices/farm-selector.tsx      # NEW — farm context dropdown on /prices; lists all farmer farms, persists selection, auto-refreshes page context
+components/prices/favorite-crop-star.tsx # NEW — star toggle on crop cards; adds/removes from favourites
+app/(farmer)/favourites/page.tsx         # NEW — dedicated favourites management page
 .github/workflows/mandi-cron.yml         # EXTENDED — Playwright install + scrape runner
 
 package.json                              # EXTENDED — `scrape:prices` script; new deps scoped via devDependencies
@@ -135,6 +141,8 @@ package.json                              # EXTENDED — `scrape:prices` script;
 | New dep: `xlsx` (SheetJS) | PBS publishes Weekly SPI only as XLSX on `pbs.gov.pk` (no JSON API). | Manual CSV parsing from the XLSX binary: rejected — fragile and reinvents what SheetJS already does correctly. Migrate to PBS dcrates.data.gov.pk: rejected — that endpoint is retail CPI, not mandi-level wholesale. |
 | Adding `scraper_runs` audit table | Clarification Q3 requires per-call auditability (timestamp, source, rows, status, IP) for abuse review. | Inline `console.log`: rejected — no retention, no query, no per-IP correlation. External log service (Datadog etc): rejected — paid, Constitution IV says no new paid deps. |
 | Adding `mandi_holidays` table | Clarification Q4 requires pre-flagging holidays so 0-row days are not mistaken for schema drift. | Encode holidays in `selectors.ts`: rejected — conflates data and code, and holidays change yearly. |
+| Adding UNIQUE constraint on `mandi_prices` (mandi_id, crop_id, date, source_code) | Clarification Q8 requires idempotent scraper runs so manual re-triggers or double-cron do not create duplicate rows. | Application-level dedup in scraper: rejected — race conditions between concurrent runs; DB-level guarantee is the only safe choice. |
+| Adding `lib/prices/transport.ts` constant | User clarification requires a flat per-km transport cost estimate in market comparisons. | On-the-fly geocoding API call: rejected — paid API, violates free-tier constraint. |
 
 ## Open Risks (track in `tasks.md`)
 
@@ -152,8 +160,8 @@ After this plan is approved, `/speckit-tasks` will produce a `tasks.md` grouped 
 3. **Phase 2 — Ingest hardening**: extend `POST /api/prices/ingest` with bearer + rate-limit + audit; new `GET /api/prices/health`.
 4. **Phase 3 — Scraper runner**: implement `scripts/scrape-prices/` (sources, selectors, post, drift detector, holiday check).
 5. **Phase 4 — Workflow**: extend `.github/workflows/mandi-cron.yml`; add Playwright cache; document `PRICES_CRON_SECRET` in `.env.example`.
-6. **Phase 5 — UI**: farm-selector dropdown on `/prices` (lists all farmer farms, persists last selection, auto-refreshes context); small `data-source-badge` chip; no other UI work needed in this iteration.
-7. **Phase 6 — Translations**: insert all new keys in Neon `translations` for 8 locales via `scripts/sync-translations.mts`.
+ 6. **Phase 5 — UI**: farm-selector dropdown on `/prices` (lists all farmer farms, persists last selection, auto-refreshes context); small `data-source-badge` chip; star toggle on crop cards for favourites; `/favourites` route for managing favorites; transport cost estimate in market comparison cards.
+ 7. **Phase 6 — Translations**: insert all new keys in Neon `translations` for 8 locales via `scripts/sync-translations.mts`.
 8. **Phase 7 — Verification**: `npm run lint` + `npm run build`, manual acceptance run-through against spec US1/US3 + FR-003 + SC-011/SC-012.
 
 No code is written until `tasks.md` is approved.

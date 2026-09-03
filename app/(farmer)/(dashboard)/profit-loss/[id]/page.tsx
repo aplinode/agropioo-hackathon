@@ -79,10 +79,5 @@ export default async function SeasonDetailPage({
     crop_unit: "Maund",
   };
 
-  return (
-    <SeasonDetailClient
-      season={seasonDetail}
-      onRefresh={() => window.location.reload()}
-    />
-  );
+  return <SeasonDetailClient season={seasonDetail} />;
 }

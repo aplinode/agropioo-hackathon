@@ -382,6 +382,7 @@ export async function getFarmsBundle(): Promise<FarmsBundle> {
         disease: t("app.records.types.disease").text,
         harvest: t("app.records.types.harvest").text,
       },
+      noRecordsFound: t("app.records.noRecordsFound").text,
       farmRecords: {
         pageTitle: t("app.records.farmRecords.pageTitle").text,
         heading: t("app.records.farmRecords.heading").text,
