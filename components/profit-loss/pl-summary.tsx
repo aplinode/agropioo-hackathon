@@ -1,6 +1,7 @@
 import type { PLSummary } from "@/lib/calculations/profit-loss";
 
 const gridItem = "rounded-xl border border-agro-sprout bg-white p-4";
+const gridItemAccent = "rounded-xl border border-agro-sprout bg-agro-paper p-4";
 
 export default function PLSummary({ data }: { data: {
   totalProjectedCost: number;
@@ -25,7 +26,7 @@ export default function PLSummary({ data }: { data: {
         <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">Actual cost</p>
         <p className="mt-1 font-mono text-sm font-semibold text-agro-ink">{fmt(data.totalActualCost)}</p>
       </div>
-      <div className={gridItem}>
+      <div className={gridItemAccent}>
         <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">Variance</p>
         <p className={`mt-1 font-mono text-sm font-semibold ${varianceColor}`}>
           {data.variance.percentage !== null ? `${data.variance.percentage > 0 ? "+" : ""}${data.variance.percentage}%` : "N/A"}
@@ -40,11 +41,11 @@ export default function PLSummary({ data }: { data: {
         <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">Actual revenue</p>
         <p className="mt-1 font-mono text-sm font-semibold text-agro-ink">{data.actualRevenue > 0 ? fmt(data.actualRevenue) : "—"}</p>
       </div>
-      <div className={gridItem}>
+      <div className={gridItemAccent}>
         <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">Net P&L</p>
         <p className={`mt-1 font-mono text-sm font-semibold ${plColor}`}>{fmt(data.netProfitLoss)}</p>
       </div>
-      <div className={gridItem}>
+      <div className={gridItemAccent}>
         <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">ROI</p>
         <p className={`mt-1 font-mono text-sm font-semibold ${data.roi === null ? "text-agro-slate" : data.roi >= 0 ? "text-agro-canopy" : "text-agro-error"}`}>
           {data.roi !== null ? `${data.roi}%` : "N/A"}
