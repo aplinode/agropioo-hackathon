@@ -2,8 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import type { Season } from "@/lib/validation/profit-loss";
-import { ChevronDownIcon, MoreVerticalIcon } from "@/components/icons";
+import { MoreVerticalIcon } from "@/components/icons";
 
 const statusChip = {
   active: "bg-agro-mint text-agro-canopy",
@@ -13,7 +12,7 @@ const statusChip = {
 
 const roiChip = {
   profit: "bg-agro-mint text-agro-canopy",
-  loss: "bg-agro-error/10 text-agro-error",
+  loss: "bg-agro-sprout/60 text-agro-forest",
   break_even: "bg-agro-sprout/50 text-agro-ink",
 };
 
@@ -49,7 +48,7 @@ function ActionDropdown({ seasonId }: { seasonId: string }) {
             <button type="button" className="flex w-full items-center px-4 py-2 text-start text-sm text-agro-ink transition-colors hover:bg-agro-mint" onClick={() => setOpen(false)}>
               Archive
             </button>
-            <button type="button" className="flex w-full items-center px-4 py-2 text-start text-sm text-agro-error transition-colors hover:bg-red-50" onClick={() => setOpen(false)}>
+            <button type="button" className="flex w-full items-center px-4 py-2 text-start text-sm text-agro-forest transition-colors hover:bg-agro-mint" onClick={() => setOpen(false)}>
               Delete
             </button>
           </div>
@@ -104,7 +103,7 @@ export default function SeasonCard({ season }: { season: { id: string; crop_name
       </div>
 
       <div className="mt-4 flex items-center gap-2">
-        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.7rem] font-medium ${pl.netProfitLoss >= 0 ? "bg-agro-mint text-agro-canopy" : "bg-agro-error/10 text-agro-error"}`}>
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.7rem] font-medium ${pl.netProfitLoss >= 0 ? "bg-agro-mint text-agro-canopy" : "bg-agro-sprout/60 text-agro-forest"}`}>
           {pl.netProfitLoss >= 0 ? "Profit" : "Loss"}: PKR {Math.abs(pl.netProfitLoss).toLocaleString("en-PK")}
         </span>
         {pl.roi !== null && (
