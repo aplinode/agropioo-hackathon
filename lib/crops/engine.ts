@@ -233,7 +233,7 @@ export async function recommendCrops(
   const pastCrop = await queryOne<{ category: CropCategory | null }>(
     `SELECT c.category
      FROM farms f
-     JOIN crops c ON c.name_en = f.primary_crop
+     JOIN crops c ON LOWER(c.name_en) = LOWER(f.primary_crop)
      WHERE f.id = $1
      LIMIT 1`,
     [input.farmId],

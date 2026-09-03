@@ -77,6 +77,9 @@ export async function POST(request: Request) {
     if (err instanceof FarmForbiddenError) {
       return errorResponse(err.code, err.message, err.status);
     }
+    if (err && typeof err === "object" && "code" in err && err.code === "23505") {
+      return errorResponse("recommendation_exists", "You already have a recommendation for this farm, season, and year.", 409);
+    }
     console.error("crops recommendation failed:", err);
     return errorResponse("server_error", "Something went wrong. Please try again.", 500);
   }
