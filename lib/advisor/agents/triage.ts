@@ -5,6 +5,7 @@ import { createFarmDataAgent } from "./farm-data-agent";
 import { createPricesAgent } from "./prices-agent";
 import { createSchemesAgent } from "./schemes-agent";
 import { createHandoffAgent } from "./handoff-agent";
+import { createCropRecommendationAgent } from "./crop-recommendation-agent";
 import { advisorInputGuardrails, advisorOutputGuardrails } from "../guardrails";
 import { searchKnowledgeBase } from "../tools/knowledge-base";
 import { createConversationMemoryTool } from "../tools/conversation-memory";
@@ -19,6 +20,7 @@ export function createTriageAgent(ctx: FarmerContext) {
   const pricesAdvisor = createPricesAgent();
   const schemesAdvisor = createSchemesAgent();
   const handoffAdvisor = createHandoffAgent();
+  const cropRecommendationAdvisor = createCropRecommendationAgent(ctx.accountId);
   const conversationMemory = createConversationMemoryTool(ctx.accountId);
 
   const farmSummary = ctx.farms.length > 0
@@ -57,6 +59,7 @@ ${cropCalendar}
 
 ## Available specialists (use handoffs):
 - **Crop Advisor**: crop diseases, pests, agronomy, fertilizer, seed treatment, irrigation scheduling, vegetables, fruits, pulses, livestock health (cattle, buffalo, goat, poultry)
+- **Crop Recommendation Advisor**: what to plant, crop selection, seasonal planting advice, crop rotation planning — personalized based on farm data, weather, and market prices
 - **Weather Advisor**: weather forecasts, rain, temperature, spray windows — now covers ALL districts in Pakistan
 - **Farm Data Advisor**: questions about the farmer's OWN farms, records, planting history, past activities, cost summaries, weather at their farms, current live weather for their farm locations
 - **Prices Advisor**: mandi prices, market rates, sell/hold advice
@@ -69,10 +72,11 @@ ${cropCalendar}
 4. If the farmer asks about mandi prices or market rates → handoff to Prices Advisor
 5. If the farmer asks about government schemes or subsidies → handoff to Schemes Advisor
 6. If the farmer asks about crop disease, pests, fertilizer, livestock health, or general crop/livestock management → handoff to Crop Advisor
-7. If you cannot confidently answer a question (unknown disease, complex diagnosis, safety-critical dosage) → handoff to Agronomist Handoff for expert escalation
-8. If the farmer explicitly asks for an expert, agronomist, or extension officer → handoff to Agronomist Handoff
-9. If the query combines multiple topics, route to the most relevant specialist (they can use tools from other domains)
-10. For greetings, general conversation about farming, or simple questions → answer directly yourself
+7. If the farmer asks what to plant, crop recommendations, crop selection, "which crop should I sow", "what's the best crop for my farm", or seasonal planting advice → handoff to Crop Recommendation Advisor
+8. If you cannot confidently answer a question (unknown disease, complex diagnosis, safety-critical dosage) → handoff to Agronomist Handoff for expert escalation
+9. If the farmer explicitly asks for an expert, agronomist, or extension officer → handoff to Agronomist Handoff
+10. If the query combines multiple topics, route to the most relevant specialist (they can use tools from other domains)
+11. For greetings, general conversation about farming, or simple questions → answer directly yourself
 
 ## Language handling — CRITICAL RULES
 - **You MUST respond entirely in one language per message.** NEVER switch languages mid-sentence or mid-paragraph.
@@ -146,6 +150,7 @@ If the farmer references a previous conversation or topic, use the search_past_c
       handoff(pricesAdvisor),
       handoff(schemesAdvisor),
       handoff(handoffAdvisor),
+      handoff(cropRecommendationAdvisor),
     ],
     inputGuardrails: advisorInputGuardrails,
     outputGuardrails: advisorOutputGuardrails,
