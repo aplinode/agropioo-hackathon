@@ -52,6 +52,15 @@ export function createHandoffAgent() {
       "",
       "## Follow-up",
       'Always end with: "In the meantime, if you notice [specific interim action], that can help prevent the problem from getting worse while you wait for expert advice."',
+      "",
+      "## Language rules — CRITICAL",
+      "- Detect the farmer's language from their message and respond ENTIRELY in that language.",
+      "- If the farmer writes in Urdu script → respond 100% in Urdu script. No English words.",
+      "- If the farmer writes in Roman Urdu (e.g. \"meri gandum mein zang lag gaya\") → respond 100% in proper Urdu script.",
+      "- If the farmer writes in English → respond 100% in English. No Urdu words.",
+      "- NEVER switch languages mid-sentence. Every response must be entirely in one language.",
+      "- Only exception: technical terms with no local equivalent (pH, NPK, DAP, GPS) may stay as-is.",
+      "- Before sending, verify: \"Is this entirely in one language?\" Fix any mixing.",
     ].join("\n"),
   });
 }

@@ -82,6 +82,18 @@ type FarmPlanEntry = {
   rotationSuggestions: RotationSuggestion[];
 };
 
+type AgentAnalysis = {
+  summary: string;
+  cropAnalyses: Array<{
+    cropName: string;
+    analysis: string;
+    timingAdvice: string;
+    riskContext: string;
+  }>;
+  weatherInsight: string;
+  overallRecommendation: string;
+};
+
 const riskLabelMap: Record<string, string> = {
   price_volatility: "Price volatility",
   pest_pressure: "Pest pressure",
@@ -681,6 +693,48 @@ function RotationPlan({ plan, bundle }: { plan: FarmPlanEntry | null; bundle: Cr
   );
 }
 
+function AgentAnalysisSection({ analysis }: { analysis: AgentAnalysis }) {
+  return (
+    <div className="rounded-2xl border border-agro-canopy/30 bg-gradient-to-br from-agro-mint/50 to-white p-5 sm:p-6">
+      <div className="flex items-center gap-2">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-agro-canopy text-xs font-bold text-white">AI</span>
+        <h3 className="font-display text-lg font-bold text-agro-forest">Personalized Analysis</h3>
+      </div>
+
+      <p className="mt-3 text-sm leading-relaxed text-agro-ink sm:text-base">{analysis.summary}</p>
+
+      <div className="mt-4 space-y-3">
+        {analysis.cropAnalyses.map((crop) => (
+          <div key={crop.cropName} className="rounded-xl border border-agro-sprout bg-white p-4">
+            <h4 className="font-semibold text-agro-forest">{crop.cropName}</h4>
+            <p className="mt-1 text-sm text-agro-ink">{crop.analysis}</p>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              <div className="rounded-lg bg-agro-mint/50 p-2">
+                <p className="font-mono text-xs uppercase text-agro-slate">Timing</p>
+                <p className="mt-0.5 text-sm text-agro-ink">{crop.timingAdvice}</p>
+              </div>
+              <div className="rounded-lg bg-agro-mint/50 p-2">
+                <p className="font-mono text-xs uppercase text-agro-slate">Risk Context</p>
+                <p className="mt-0.5 text-sm text-agro-ink">{crop.riskContext}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 rounded-xl border border-agro-canopy/20 bg-agro-canopy/5 p-4">
+        <p className="font-mono text-xs uppercase tracking-wide text-agro-slate">Weather Insight</p>
+        <p className="mt-1 text-sm text-agro-ink">{analysis.weatherInsight}</p>
+      </div>
+
+      <div className="mt-3 rounded-xl bg-agro-forest/5 p-4">
+        <p className="font-mono text-xs uppercase tracking-wide text-agro-slate">Our Recommendation</p>
+        <p className="mt-1 text-sm font-semibold text-agro-forest">{analysis.overallRecommendation}</p>
+      </div>
+    </div>
+  );
+}
+
 type CropsClientProps = {
   bundle: CropsBundle;
   farms: Array<{ id: string; name: string; location: string }>;
@@ -696,6 +750,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
   const [currentRequestId, setCurrentRequestId] = useState<string | null>(null);
   const [existingRequest, setExistingRequest] = useState<CropRecommendationRequest | null>(null);
   const [rotationPlan, setRotationPlan] = useState<FarmPlanEntry | null>(null);
+  const [agentAnalysis, setAgentAnalysis] = useState<AgentAnalysis | null>(null);
   const [showCompare, setShowCompare] = useState(false);
   const [compareSelectedId, setCompareSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -752,6 +807,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
     setExistingRequest(null);
     setRecommendations([]);
     setRotationPlan(null);
+    setAgentAnalysis(null);
 
     try {
       const res = await fetch("/api/crops", {
@@ -789,6 +845,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
 
       setRecommendations(data.recommendations ?? []);
       setCurrentRequestId((data.request as { id?: string } | undefined)?.id ?? null);
+      setAgentAnalysis(data.agentAnalysis ?? null);
       if (data.recommendations?.length === 0) setNoCandidates(true);
     } catch {
       setError(bundle.errors.generic);
@@ -1061,6 +1118,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
               />
             ))}
           </div>
+          {agentAnalysis && <AgentAnalysisSection analysis={agentAnalysis} />}
           <RotationPlan plan={rotationPlan} bundle={bundle} />
         </div>
       )}

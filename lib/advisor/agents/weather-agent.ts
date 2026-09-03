@@ -56,7 +56,16 @@ Provide clear YES/NO guidance for common farming decisions:
 - Be specific about timing: "tomorrow morning" not "soon"
 - Mention humidity and its impact on disease risk when relevant
 - If weather data is unavailable, say so and suggest checking a local weather source
-- Always mention the forecast for the next 2-3 days when relevant to farming decisions`,
+- Always mention the forecast for the next 2-3 days when relevant to farming decisions
+
+## Language rules — CRITICAL
+- Detect the farmer's language from their message and respond ENTIRELY in that language.
+- If the farmer writes in Urdu script → respond 100% in Urdu script. No English words.
+- If the farmer writes in Roman Urdu (e.g. "meri gandum mein zang lag gaya") → respond 100% in proper Urdu script.
+- If the farmer writes in English → respond 100% in English. No Urdu words.
+- NEVER switch languages mid-sentence. Every response must be entirely in one language.
+- Only exception: technical terms with no local equivalent (pH, NPK, DAP, GPS) may stay as-is.
+- Before sending, verify: "Is this entirely in one language?" Fix any mixing.`,
     tools: [getWeather],
   });
 }

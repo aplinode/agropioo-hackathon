@@ -10,6 +10,7 @@ import {
   listCropRecommendationsQuerySchema,
 } from "@/lib/validation/crops";
 import { recommendCrops, WeatherUnavailableError, RecommendationExistsError, NoCandidatesError, OutsidePakistanError, FarmNotFoundError, FarmForbiddenError } from "@/lib/crops/engine";
+import { generateAgentAnalysis } from "@/lib/crops/agent-analysis";
 import { query, queryOne } from "@/lib/db";
 import type { RecommendCropsInput } from "@/lib/crops/api-types";
 
@@ -48,8 +49,20 @@ export async function POST(request: Request) {
       regenerate: parsed.data.regenerate,
     };
     const result = await recommendCrops(input, session.accountId);
+
+    // Generate agent analysis in parallel (non-blocking — returns null on failure)
+    const agentAnalysis = await generateAgentAnalysis(
+      result.request,
+      result.recommendations,
+      session.accountId,
+    );
+
     return jsonResponse(
-      { request: result.request, recommendations: result.recommendations },
+      {
+        request: result.request,
+        recommendations: result.recommendations,
+        agentAnalysis,
+      },
       201,
     );
   } catch (err) {

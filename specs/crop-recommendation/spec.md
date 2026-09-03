@@ -92,6 +92,13 @@ After selecting a crop for the current season, the farmer is shown a suggested c
 - **FR-016**: Recommendation page MUST be accessible in all supported languages and render correctly in RTL layouts for Urdu and Pashto.
 - **FR-017**: Recommendation output MUST include a plain-language explanation readable by a farmer with no technical background — farmer-first copy is required.
 - **FR-018**: System MUST gracefully handle missing upstream data (weather, market, soil) by either degrading with clear disclosure or refusing to recommend — never by producing silent low-quality output.
+- **FR-019**: System MUST invoke the crop-recommendation agent after the scoring engine produces candidates. The agent MUST have access to: the farmer's farm details, past crop records, current weather, 7-day weather forecast, and market price data.
+- **FR-020**: The agent MUST use the scoring engine's output as its primary data source — never inventing metrics, scores, or revenue figures. The agent adds conversational reasoning, not alternative rankings.
+- **FR-021**: The agent MUST produce a personalized analysis that references the farmer's specific farm data (soil type, past crops, irrigation method), current weather conditions, and forecast for the growing season.
+- **FR-022**: The agent MUST respond in the farmer's selected language (English or Urdu for launch). The analysis text is LLM-generated in the target language, not translated from English.
+- **FR-023**: When the agent is unavailable (LLM API down, timeout), the system MUST still return the scoring engine's structured results. The `agentAnalysis` field is `null` and the UI hides the AI Analysis section gracefully.
+- **FR-024**: The crop-recommendation agent MUST be available as a handoff target in the advisor triage agent, so farmers can ask "what should I plant?" in the advisor chat and receive a conversational recommendation.
+- **FR-025**: The agent MUST incorporate weather forecast data (not just current weather) when providing timing advice — e.g., "plant wheat in the next 2 weeks before the temperature drops" or "delay sowing until rain passes next week."
 
 ### Key Entities
 
@@ -113,6 +120,10 @@ After selecting a crop for the current season, the farmer is shown a suggested c
 - **SC-005**: 90% of recommendation responses include full weather + market + soil data; the remaining 10% clearly disclose which data source was missing.
 - **SC-006**: Farmers report that the recommendation explanation is understandable on first read in at least 85% of post-session feedback responses (when feedback is collected).
 - **SC-007**: Recommendation feature works end-to-end on a 320px-wide mobile screen with no horizontal scroll, meeting the project's outdoor-mobile accessibility baseline.
+- **SC-008**: Agent analysis appears within 5 seconds of the structured recommendations being displayed, providing personalized reasoning that references the farmer's farm data and weather forecast.
+- **SC-009**: When the agent is unavailable, the structured recommendations still render correctly and the AI Analysis section is hidden without errors.
+- **SC-010**: Farmers can ask "what should I plant?" in the advisor chat and receive a conversational recommendation powered by the crop-recommendation agent, with access to their farm records and weather data.
+- **SC-011**: The agent's analysis references at least 2 of the following in each recommendation: farm soil type, past crop history, weather forecast, market price trend — never purely generic text.
 
 ## Clarifications
 
@@ -221,6 +232,51 @@ This section closes the gaps flagged by the requirements/quality-gate checklists
 - **Charting library**: mandates verifying the mandi feature's approved choice; if none approved, `comparison-chart.tsx` falls back to pure-CSS bars (T025). Open approval item tracked in plan Risks.
 - Cross-feature types imported from `lib/weather` / `lib/prices` api-types; the static fallback decouples the crop engine from upstream churn.
 
+## Agent-Powered Recommendation Architecture
+
+The crop recommendation engine uses a **deterministic scoring engine** (`lib/crops/scoring.ts`) for auditable, reproducible rankings. An **AI agent** (`lib/advisor/agents/crop-recommendation-agent.ts`) layers personalized reasoning on top, using the scoring engine as a tool.
+
+### Agent Flow
+
+1. Farmer submits form inputs (farm, season, year, soil, irrigation, budget)
+2. Scoring engine runs first — produces 3 ranked candidates with scores (deterministic, <50ms)
+3. Agent is called with the scoring results + farmer context (weather forecast, farm records, market prices)
+4. Agent produces personalized analysis: summary, per-crop advice, weather-aware timing, risk context
+5. Client shows both structured recommendation cards AND agent's AI analysis
+
+### Agent Tools
+
+| Tool | Source | Purpose |
+|---|---|---|
+| `get_crop_candidates` | Scoring engine wrapper | Returns top 3 ranked crops with scores |
+| `get_farm_details` | Existing farm-data tools | Farm location, soil, irrigation, past crops |
+| `get_my_records` | Existing farm-data tools | Irrigation history, fertilizer apps, harvests |
+| `get_weather` | Existing weather tool | Current temperature, humidity, conditions |
+| `get_weather_forecast` | **NEW** — wraps `getForecast()` | 7-day forecast with daily temp, rainfall |
+| `get_market_prices` | Existing prices tool | Current mandi prices, trends, volatility |
+| `search_knowledge_base` | Existing KB tool | Agronomic knowledge for reasoning |
+
+### Dual Integration
+
+- **`/crops` page**: Form submit → scoring engine → agent analysis → structured cards + AI analysis section
+- **`/advisor` chat**: "What should I plant?" → triage routes to crop-recommendation agent → conversational recommendation with follow-up capability
+
+### Agent Output Shape
+
+```typescript
+{
+  summary: string;           // personalized overview paragraph
+  cropAnalyses: Array<{
+    cropName: string;
+    analysis: string;        // weather-aware reasoning
+    timingAdvice: string;    // when to plant based on forecast
+    riskContext: string;     // risk factors with farm-specific context
+  }>;
+  weatherInsight: string;    // how weather affects the decision
+  overallRecommendation: string; // final personalized pick
+}
+```
+
 ## Out of Scope
 
 - Hardware-based soil sensing or satellite-derived soil analysis (satellite monitoring is a separate feature).
@@ -241,3 +297,4 @@ This section closes the gaps flagged by the requirements/quality-gate checklists
 - **i18n / RTL infrastructure** — recommendation copy must flow through the translation system for all 8 supported locales.
 - **Pakistan soil health dataset** — external data source whose availability and format must be confirmed during research.
 - **Pakistani crop catalogue (PARC-aligned)** — reference data to be assembled before the recommendation engine can be built.
+- **Advisor multi-agent infrastructure** — the crop-recommendation agent uses the same `@openai/agents` SDK, tools, and streaming pipeline as the advisor feature.
