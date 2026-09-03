@@ -1,6 +1,7 @@
 "use client";
 
 import { MapPinIcon, TrendingUpIcon, TrendingDownIcon, InfoIcon } from "@/components/icons";
+import DataSourceBadge from "./data-source-badge";
 import type { PricesBundle } from "@/app/(farmer)/(dashboard)/prices/prices-bundle";
 import type { EnrichedPrice } from "@/lib/prices/api-types";
 
@@ -56,11 +57,14 @@ export default function MandiPriceCard({
           </div>
         </div>
 
-        {price.is_best_price ? (
-          <span className="inline-flex shrink-0 items-center rounded-full bg-agro-wheat px-2.5 py-1 text-xs font-semibold text-agro-forest">
-            {bundle.bestPrice}
-          </span>
-        ) : null}
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <DataSourceBadge sourceCode={price.source_code} bundle={bundle} />
+          {price.is_best_price ? (
+            <span className="inline-flex items-center rounded-full bg-agro-wheat px-2.5 py-1 text-xs font-semibold text-agro-forest">
+              {bundle.bestPrice}
+            </span>
+          ) : null}
+        </div>
       </div>
 
       <div className="px-5 pb-4">

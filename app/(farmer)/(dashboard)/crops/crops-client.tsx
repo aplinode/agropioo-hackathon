@@ -786,6 +786,10 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
           setLowestViableBracket(data.lowestViableBracket);
           return;
         }
+        if (res.status === 422 && data.error?.code === "data_unavailable") {
+          setError(data.error?.message ?? bundle.errors.generic);
+          return;
+        }
         setError(data.error?.message ?? bundle.errors.generic);
         return;
       }

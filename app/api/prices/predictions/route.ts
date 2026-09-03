@@ -6,7 +6,7 @@ import { query } from "@/lib/db";
 import { errorResponse, jsonResponse } from "@/lib/http";
 import { requireSessionApi } from "@/lib/auth/guards";
 import { predictionQuerySchema } from "@/lib/prices/api-types";
-import { forecastPrices } from "@/lib/prices/forecast";
+import { forecastPrices, canForecast } from "@/lib/prices/forecast";
 
 export async function GET(request: Request): Promise<Response> {
   const session = await requireSessionApi();
@@ -33,11 +33,30 @@ export async function GET(request: Request): Promise<Response> {
       [crop_id, mandi_id]
     );
 
+    const forecastCheck = canForecast(historical);
+
+    if (!forecastCheck.ok) {
+      return jsonResponse({
+        crop_id,
+        mandi_id,
+        can_forecast: false,
+        reason: forecastCheck.reason,
+        row_count: forecastCheck.rowCount,
+        last_date: forecastCheck.lastDate,
+        predictions: [],
+        recommendation: "HOLD",
+        recommendation_reason: "Not enough price data to generate a forecast.",
+        volatility_warning: true,
+        model_confidence: 0,
+      });
+    }
+
     const forecast = forecastPrices(historical, 14);
 
     return jsonResponse({
       crop_id,
       mandi_id,
+      can_forecast: true,
       ...forecast,
     });
   } catch (err) {

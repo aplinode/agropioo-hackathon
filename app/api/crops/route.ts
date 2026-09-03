@@ -9,7 +9,7 @@ import {
   createCropRecommendationSchema,
   listCropRecommendationsQuerySchema,
 } from "@/lib/validation/crops";
-import { recommendCrops, WeatherUnavailableError, RecommendationExistsError, NoCandidatesError, OutsidePakistanError, FarmNotFoundError, FarmForbiddenError } from "@/lib/crops/engine";
+import { recommendCrops, WeatherUnavailableError, RecommendationExistsError, NoCandidatesError, OutsidePakistanError, FarmNotFoundError, FarmForbiddenError, DataUnavailableError } from "@/lib/crops/engine";
 import { query, queryOne } from "@/lib/db";
 import type { RecommendCropsInput } from "@/lib/crops/api-types";
 
@@ -75,6 +75,9 @@ export async function POST(request: Request) {
       return errorResponse(err.code, err.message, err.status);
     }
     if (err instanceof FarmForbiddenError) {
+      return errorResponse(err.code, err.message, err.status);
+    }
+    if (err instanceof DataUnavailableError) {
       return errorResponse(err.code, err.message, err.status);
     }
     if (err && typeof err === "object" && "code" in err && err.code === "23505") {

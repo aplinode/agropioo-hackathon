@@ -21,6 +21,7 @@ export interface PriceTrigger {
   mandi_id: string;
   mandi_name_en: string;
   modal_price: number;
+  source_code: string;
 }
 
 let transporter: Transporter | null = null;
@@ -96,7 +97,7 @@ export async function evaluateAndDispatchAlerts(
 
   const latestPrices = await query<PriceTrigger>(`
     select distinct on (crop_id, mandi_id)
-           crop_id, mandi_id, m.name_en as mandi_name_en, modal_price
+           crop_id, mandi_id, m.name_en as mandi_name_en, modal_price, p.source_code
     from mandi_prices p
     join mandis m on m.id = p.mandi_id
     order by crop_id, mandi_id, date desc
@@ -133,6 +134,10 @@ export async function evaluateAndDispatchAlerts(
         await client.query(
           `update price_alerts set last_triggered_at = $1, updated_at = $1 where id = $2`,
           [triggeredAt.toISOString(), alert.id]
+        );
+
+        console.log(
+          `[alert] triggered crop=${trigger.crop_id} mandi=${trigger.mandi_id} source=${trigger.source_code} price=${trigger.modal_price} target=${alert.target_price_pkr}`
         );
 
         try {

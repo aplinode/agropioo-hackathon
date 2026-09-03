@@ -19,6 +19,31 @@ export interface ForecastResult {
   model_confidence: number;
 }
 
+export interface CanForecastResult {
+  ok: boolean;
+  reason: "insufficient_rows" | "stale_data" | "ok";
+  rowCount: number;
+  lastDate: string | null;
+}
+
+export function canForecast(historicalPrices: { date: string; modal_price: number }[]): CanForecastResult {
+  const sorted = [...historicalPrices].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+  const rowCount = sorted.length;
+  const lastDate = rowCount > 0 ? sorted[rowCount - 1].date : null;
+  const lastDateMs = lastDate ? new Date(lastDate).getTime() : 0;
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+  if (rowCount < 3) {
+    return { ok: false, reason: "insufficient_rows", rowCount, lastDate };
+  }
+  if (lastDateMs < sevenDaysAgo) {
+    return { ok: false, reason: "stale_data", rowCount, lastDate };
+  }
+  return { ok: true, reason: "ok", rowCount, lastDate };
+}
+
 function toISODate(date: Date): string {
   return date.toISOString().split("T")[0];
 }

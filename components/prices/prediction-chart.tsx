@@ -14,11 +14,22 @@ function formatDate(dateStr: string): string {
 
 export default function PredictionChart({
   predictions,
+  canForecast,
   bundle,
 }: {
   predictions: ForecastPoint[];
+  canForecast?: boolean;
   bundle: PricesBundle;
 }) {
+  if (canForecast === false) {
+    return (
+      <div className="rounded-3xl border border-agro-sprout bg-white p-6 text-center">
+        <p className="text-sm font-semibold text-agro-forest">{bundle.volatilityWarning}</p>
+        <p className="mt-1 text-xs text-agro-slate">Not enough recent data to generate a forecast. Check back after more prices are collected.</p>
+      </div>
+    );
+  }
+
   if (predictions.length === 0) return null;
 
   const width = 720;
