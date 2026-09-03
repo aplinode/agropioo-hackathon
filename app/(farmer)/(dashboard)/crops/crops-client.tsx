@@ -693,6 +693,7 @@ type CropsClientProps = {
 
 export default function CropsClient({ bundle, farms, initialRecommendations = [], initialRequest }: CropsClientProps) {
   const [recommendations, setRecommendations] = useState<CropRecommendation[]>(initialRecommendations);
+  const [currentRequestId, setCurrentRequestId] = useState<string | null>(null);
   const [existingRequest, setExistingRequest] = useState<CropRecommendationRequest | null>(null);
   const [rotationPlan, setRotationPlan] = useState<FarmPlanEntry | null>(null);
   const [showCompare, setShowCompare] = useState(false);
@@ -780,6 +781,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
       }
 
       setRecommendations(data.recommendations ?? []);
+      setCurrentRequestId((data.request as { id?: string } | undefined)?.id ?? null);
       if (data.recommendations?.length === 0) setNoCandidates(true);
     } catch {
       setError(bundle.errors.generic);
@@ -821,12 +823,34 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
       }
       const data = await res.json();
       setRecommendations(data.recommendations ?? []);
+      setCurrentRequestId(requestId);
       setExistingRequest(null);
       if (data.recommendations?.length === 0) setNoCandidates(true);
     } catch {
       setError(bundle.errors.generic);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleRegenerate() {
+    if (!currentRequestId) {
+      handleSubmit(handleFormSubmit)();
+      return;
+    }
+    const confirmed = window.confirm(bundle.results.regenerateConfirm);
+    if (!confirmed) return;
+    setError(null);
+    try {
+      const res = await fetch(`/api/crops/${currentRequestId}`, { method: "DELETE" });
+      if (!res.ok) {
+        setError(bundle.errors.generic);
+        return;
+      }
+      setCurrentRequestId(null);
+      handleSubmit(handleFormSubmit)();
+    } catch {
+      setError(bundle.errors.generic);
     }
   }
 
@@ -989,7 +1013,18 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
 
       {recommendations.length > 0 && !showCompare && (
         <div className="space-y-5 sm:space-y-6">
-          <h2 className="font-display text-xl font-bold text-agro-forest sm:text-2xl">{bundle.results.title}</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-display text-xl font-bold text-agro-forest sm:text-2xl">{bundle.results.title}</h2>
+            <button
+              type="button"
+              onClick={handleRegenerate}
+              disabled={loading}
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-agro-sprout bg-white px-4 text-sm font-semibold text-agro-ink transition-colors hover:border-agro-canopy hover:text-agro-canopy disabled:opacity-70"
+            >
+              <SproutIcon className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
+              <span className="truncate">{bundle.results.regenerate}</span>
+            </button>
+          </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {recommendations.map((rec) => (
               <RecommendationCard

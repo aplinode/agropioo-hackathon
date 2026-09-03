@@ -68,6 +68,7 @@ export type CropsBundle = {
     marketMissing: string;
     soilMissing: string;
     regenerate: string;
+    regenerateConfirm: string;
     alreadyExists: string;
     viewExisting: string;
     noCandidates: string;
