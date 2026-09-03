@@ -13,6 +13,7 @@ import {
 } from "@/components/icons";
 import FarmDetailRecordItem from "./farm-detail-record-item";
 import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle";
+import { RECORD_TYPES } from "@/lib/farms/constants";
 
 const typeIcon: Record<string, React.ComponentType<{size?: number}>> = {
   irrigation: CloudRainIcon,
@@ -33,7 +34,6 @@ type Props = {
 export default function FarmRecordsSection({ farmId, records, bundle }: Props) {
   const [activeType, setActiveType] = useState<string | null>(null);
 
-  const uniqueTypes = Array.from(new Set(records.map((r) => String(r.type)).filter(Boolean)));
   const filtered = activeType ? records.filter((r) => String(r.type) === activeType) : records;
 
   return (
@@ -42,20 +42,11 @@ export default function FarmRecordsSection({ farmId, records, bundle }: Props) {
         <h2 id="activity-heading" className="shrink-0 font-mono text-xs font-semibold uppercase tracking-[0.22em] text-agro-slate">
           {bundle.detail.activityHeading}
         </h2>
-        <div className="flex items-center gap-2">
-          <Link
-            href={`/records/new?farm=${farmId}`}
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
-          >
-            <PlusIcon size={16} />
-            {bundle.detail.logFieldEvent}
+        {records.length > 0 && (
+          <Link href={`/farms/${farmId}/records`} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline">
+            {bundle.detail.viewAllRecords}
           </Link>
-          {records.length > 0 && (
-            <Link href={`/farms/${farmId}/records`} className="inline-flex min-h-11 items-center rounded-md text-sm font-semibold text-agro-canopy underline-offset-4 hover:underline">
-              {bundle.detail.viewAllRecords}
-            </Link>
-          )}
-        </div>
+        )}
       </div>
 
       {records.length === 0 ? (
@@ -92,7 +83,7 @@ export default function FarmRecordsSection({ farmId, records, bundle }: Props) {
             >
               All
             </button>
-            {uniqueTypes.map((type) => {
+            {RECORD_TYPES.map((type) => {
               const Icon = typeIcon[type] || RecordIcon;
               const label = bundle.records.types[type as keyof typeof bundle.records.types] || type;
               return (
@@ -118,6 +109,16 @@ export default function FarmRecordsSection({ farmId, records, bundle }: Props) {
               <FarmDetailRecordItem key={record.id as string} record={record} />
             ))}
           </ul>
+
+          <div className="flex justify-center">
+            <Link
+              href={`/records/new?farm=${farmId}`}
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
+            >
+              <PlusIcon size={16} />
+              {bundle.detail.logFieldEvent}
+            </Link>
+          </div>
         </>
       )}
     </section>
