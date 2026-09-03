@@ -13,7 +13,6 @@ import {
   ClipboardIcon,
   CloudRainIcon,
   LeafIcon,
-  MapPinIcon,
   PlusIcon,
   TagIcon,
   TrendingUpIcon,
@@ -242,12 +241,6 @@ export default function DashboardView({
           <h1 className="display-heading mt-2 font-display text-[1.75rem] font-semibold leading-tight tracking-tight text-agro-forest sm:text-4xl">
             {bundle.greeting.replace("{name}", displayUser.firstName)}
           </h1>
-          {!isEmpty && realUser && (
-            <p className="mt-2 flex items-center gap-1.5 text-sm text-agro-slate">
-              <MapPinIcon size={16} className="shrink-0 text-agro-canopy" />
-              {latin(realUser.email)}
-            </p>
-          )}
         </div>
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <div ref={profileRef} className="relative">
