@@ -190,12 +190,12 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
           <h2 className="font-display text-lg font-semibold text-agro-ink">Yield & price</h2>
           <form onSubmit={yieldForm.handleSubmit((data) => handleHarvest(data))} className="mt-4 space-y-3">
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Expected yield (per acre)</label>
-              <input type="number" step="0.01" {...yieldForm.register("expected_yield")} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30" />
+              <label className="block text-sm font-semibold text-agro-ink">Expected yield (per acre)</label>
+              <input type="number" step="0.01" {...yieldForm.register("expected_yield")} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
             </div>
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Expected price (PKR per unit)</label>
-              <input type="number" step="0.01" {...yieldForm.register("expected_price")} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30" />
+              <label className="block text-sm font-semibold text-agro-ink">Expected price (PKR per unit)</label>
+              <input type="number" step="0.01" {...yieldForm.register("expected_price")} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
             </div>
             <button type="submit" disabled={refreshing} className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
               Save yield / price
@@ -248,12 +248,12 @@ function HarvestForm({ seasonId, onDone }: { seasonId: string; onDone: () => voi
   return (
     <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="mt-3 space-y-3">
       <div>
-        <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Actual yield (total units)</label>
-        <input type="number" step="0.01" value={actualYield} onChange={(e) => setActualYield(e.target.value)} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30" />
+        <label className="block text-sm font-semibold text-agro-ink">Actual yield (total units)</label>
+        <input type="number" step="0.01" value={actualYield} onChange={(e) => setActualYield(e.target.value)} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
       </div>
       <div>
-        <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Actual selling price (PKR per unit)</label>
-        <input type="number" step="0.01" value={actualPrice} onChange={(e) => setActualPrice(e.target.value)} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30" />
+        <label className="block text-sm font-semibold text-agro-ink">Actual selling price (PKR per unit)</label>
+        <input type="number" step="0.01" value={actualPrice} onChange={(e) => setActualPrice(e.target.value)} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
       </div>
       <button type="submit" disabled={submitting} className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-wheat px-4 text-sm font-semibold text-agro-forest shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50">
         Mark harvested
