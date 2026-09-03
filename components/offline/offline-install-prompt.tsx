@@ -52,9 +52,17 @@ export function OfflineBanner() {
  * 2. iOS Safari: show a banner instructing share-sheet → "Add to Home Screen"
  * 3. Other browsers: hidden
  */
+function isIOS(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return /iPhone|iPad|iPod/.test(navigator.userAgent);
+}
+
 export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showIosPrompt, setShowIosPrompt] = useState(false);
+  const [showIosPrompt, setShowIosPrompt] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !("BeforeInstallPromptEvent" in window) && isIOS();
+  });
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
@@ -71,14 +79,6 @@ export function InstallPrompt() {
         window.removeEventListener("beforeinstallprompt", handler as EventListener);
       };
     }
-
-    setShowIosPrompt((prev) => {
-      if (prev) return prev;
-      if (typeof navigator !== "undefined" && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
-        return true;
-      }
-      return prev;
-    });
   }, []);
 
   if (dismissed) return null;
