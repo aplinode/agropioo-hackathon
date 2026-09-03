@@ -37,25 +37,25 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 ## Functional Requirements
 
-- **FR-1**: The app must be installable as a PWA. A `manifest.json` with appropriate icons, name, short_name, display="standalone", and theme_color must be served. The browser install prompt must be handled in the farmer app shell.
+- **FR-1**: The app must be installable as a PWA. A `manifest.json` with appropriate icons, name, short_name, display="standalone", and theme_color must be served. The browser `beforeinstallprompt` event must be captured in the farmer app shell and surfaced as a custom "Add to Home screen" button; the browser's native install banner remains as a fallback for browsers that ignore the custom UI.
 
 - **FR-2**: A service worker must be registered on every farmer app page load and must intercept all navigation requests and `GET` API requests under `/api/`.
 
 - **FR-3**: The service worker must cache core static assets (fonts, CSS, icons, favicon) for offline serving. These assets must be cached at service worker install time (stale-to-revalidate for runtime, cache-first for assets).
 
-- **FR-4**: All `GET` API responses (weather forecast, weather alerts, farm list, farm details, records list, price data) must be cached by the service worker. When offline, these responses must be served from the cache with a max-age TTL. Stale content is acceptable for weather and prices (acceptable staleness < 24h).
+- **FR-4**: All `GET` API responses (weather forecast, weather alerts, farm list, farm details, records list, price data) must be cached by the service worker using a **uniform 24-hour cache-first** strategy. When offline, these responses must be served from the cache. Stale content up to 24h is acceptable for weather and prices.
 
 - **FR-5**: Static marketing pages (crop guides, scheme/feature pages under `/[locale]/features/*`, `/[locale]/how-it-works`, etc.) must be cached at service worker install time so they load instantly offline.
 
 - **FR-6**: An IndexedDB local database (`agropioo_offline`, version 1) must store queued write operations across three object stores: `writes` (keyPath `uuid`), `photos` (pending image blobs), and `meta` (app settings + cache version). Schema migration uses an additive-only `onupgradeneeded` version switch: future versions only add new stores or keys, never alter existing entry shapes. Each queue entry must carry a client-generated UUID, the target endpoint, the HTTP method, a serialized JSON body, the entity type (`record`, `photo`, `farm_edit`, `pnl` — `pnl` reserved for the future Profit/Loss feature #7, not yet producing entries), a status field (`pending`, `syncing`, `failed`, `synced`, `discarded`), a retry count, and a timestamp.
 
-- **FR-7**: When the farmer submits a new farm record while the app detects no network (`navigator.onLine === false` **or** the API call fails with a network error — not only on `onLine === false`, since rural 4G can report online while unreachable), the write must be saved to the IndexedDB queue as `pending` and displayed in the UI immediately (optimistic rendering).
+- **FR-7**: When the farmer submits a new farm record while the app detects no effective network connection (`navigator.onLine === false` **or** the API call fails with a network/timeout error — not only on `onLine === false`, since rural 4G can report online while unreachable), the write must be saved to the IndexedDB queue as `pending` and displayed in the UI immediately (optimistic rendering). The queued record is joined into the in-browser record list alongside server-fetched records; when sync succeeds, the local copy is dropped from the queue and the server-confirmed record takes its place (no duplicate).
 
 - **FR-8**: When the farmer uploads a photo (for disease detection or farm records) while offline, the photo must be stored as a blob in the `photos` object store of IndexedDB and a queue entry created referencing the pending upload to `POST /api/detect` (formData field `image`), which calls `uploadScanImage` (Cloudinary) server-side.
 
 - **FR-9**: When the farmer edits an existing farm's details offline, the edit must be queued as a PATCH operation in IndexedDB with the farm's UUID and the original `updated_at` timestamp.
 
-- **FR-10**: When the app transitions from offline to online (via the `online` event or a successful API call after being offline), it must drain the IndexedDB write queue by replaying each pending entry against the corresponding Route Handler in order.
+- **FR-10**: When the app transitions from offline to online (via the `online` event or a successful API call after being offline), it must drain the IndexedDB write queue by replaying each pending entry against the corresponding Route Handler in order. Draining only proceeds while the app is in the **foreground** (the active tab) — a `visibilitychange`/`focus` listener initiates the drain so the sync runs when the farmer brings the app back up, not silently in the background. Sync must complete within 60 seconds of the drain starting while the tab is focused.
 
 - **FR-11**: On sync, each queue entry is sent to the server with `credentials: 'include'`. If the server returns 200/201, the entry status becomes `synced`. If the server returns 401 (auth expired), the entry is marked `failed`, the **entire pending queue is cleared**, and the farmer sees "session expired — sign in again." If the server returns 404 (entity deleted), the entry status becomes `failed` with a "deleted" flag and the farmer is notified in-app. For farm edits (PATCH), the server **always overwrites** (last-write-wins by `updated_at`): on 200 the client compares the returned `updated_at` to the timestamp it sent — if they differ, the local edit is marked `discarded` and a "record updated on another device" banner shows; if the server returns 5xx or the network fails, the entry stays `pending` and the retry count increments.
 
@@ -83,7 +83,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 - **EC-3. Duplicate offline submissions.** When the farmer double-taps the submit button while offline, the UI must prevent duplicate queue entries (debounced submit + client-side UUID dedup before inserting into IndexedDB).
 
-- **EC-4. Photo storage quota.** When the offline photo queue approaches the browser's IndexedDB storage quota, the oldest unsynced photos are compressed (downscale to 1080px max dimension) before storage. When quota is exceeded, the farmer sees a "storage full — connect to sync" error and the photo is not saved.
+- **EC-4. Photo storage quota.** When the offline photo queue approaches the browser's IndexedDB storage quota, the oldest unsynced photos are compressed (downscale to 1024px max dimension, matching the online /api/detect path) before storage. When quota is exceeded, the farmer sees a "storage full — connect to sync" error and the photo is not saved.
 
 - **EC-5. Conflicting farm edits.** When two devices edit the same farm offline, the server always accepts the first replay and overwrites (last-write-wins by `updated_at`). On 200, if the returned `updated_at` differs from the timestamp the client sent, the losing device's edit is marked `discarded` in the queue and the farmer is shown a "record updated on another device" banner. The server never returns 409 for this case.
 
@@ -123,7 +123,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 - **AC-2**: The app is installable as a PWA on mobile (install prompt appears in the farmer app on a cold start after one visit). `manifest.json` is served with icons, `display="standalone"`, and `theme_color`.
 - **AC-3**: A service worker is registered and active on every farmer app page (`/dashboard`, `/farms`, `/records`, `/weather`, `/advisor`, `/detect`, `/prices`).
 - **AC-4**: After loading the Weather page and Farm list page once online, both load instantly from cache when the device is offline.
-- **AC-5**: A farm record created while offline appears in the record list immediately (optimistic render) and syncs to the server within 60 seconds of regaining connectivity.
+- **AC-5**: A farm record created while offline appears in the record list immediately (optimistic render, joined from IndexedDB) and syncs to the server within 60 seconds of the drain starting while the app is in the foreground.
 - **AC-6**: A photo taken/selected while offline uploads to Cloudinary and completes sync when the network returns.
 - **AC-7**: The network status indicator shows "Offline" with a queued count when `navigator.onLine` is false, "Syncing" during queue drain, and disappears when all writes are synced.
 - **AC-8**: After a full page reload while offline, pending writes are still in the IndexedDB queue and sync on the next online transition.
