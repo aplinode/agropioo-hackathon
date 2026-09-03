@@ -119,6 +119,7 @@ db/migrations/0010_scraper_audit_and_holidays.sql
   # CREATE TABLE mandi_holidays (mandi_id, date, label, source_code).
 
 components/prices/data-source-badge.tsx  # NEW — visual chip showing source portal per row
+components/prices/farm-selector.tsx      # NEW — farm context dropdown on /prices; lists all farmer farms, persists selection, auto-refreshes page context
 .github/workflows/mandi-cron.yml         # EXTENDED — Playwright install + scrape runner
 
 package.json                              # EXTENDED — `scrape:prices` script; new deps scoped via devDependencies
@@ -151,7 +152,7 @@ After this plan is approved, `/speckit-tasks` will produce a `tasks.md` grouped 
 3. **Phase 2 — Ingest hardening**: extend `POST /api/prices/ingest` with bearer + rate-limit + audit; new `GET /api/prices/health`.
 4. **Phase 3 — Scraper runner**: implement `scripts/scrape-prices/` (sources, selectors, post, drift detector, holiday check).
 5. **Phase 4 — Workflow**: extend `.github/workflows/mandi-cron.yml`; add Playwright cache; document `PRICES_CRON_SECRET` in `.env.example`.
-6. **Phase 5 — UI**: small `data-source-badge` chip; no other UI work needed in this iteration.
+6. **Phase 5 — UI**: farm-selector dropdown on `/prices` (lists all farmer farms, persists last selection, auto-refreshes context); small `data-source-badge` chip; no other UI work needed in this iteration.
 7. **Phase 6 — Translations**: insert all new keys in Neon `translations` for 8 locales via `scripts/sync-translations.mts`.
 8. **Phase 7 — Verification**: `npm run lint` + `npm run build`, manual acceptance run-through against spec US1/US3 + FR-003 + SC-011/SC-012.
 
