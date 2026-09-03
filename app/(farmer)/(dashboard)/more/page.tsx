@@ -9,6 +9,7 @@ import {
   GearIcon,
   LeafIcon,
   TagIcon,
+  TrendingUpIcon,
   WheatIcon,
 } from "@/components/icons";
 
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
 
 const primaryTools = [
   { href: "/farms", label: "Farms", description: "Your farms and records", Icon: LeafIcon },
+  { href: "/profit-loss", label: "Profit / Loss", description: "Track season costs and profits", Icon: TrendingUpIcon },
   { href: "/advisor", label: "Advisor", description: "Ask about your crop", Icon: ChatIcon },
   { href: "/detect", label: "Detect", description: "Scan a sick leaf", Icon: CameraIcon },
   { href: "/crops", label: "Crops", description: "Get crop recommendations", Icon: WheatIcon },

@@ -8,6 +8,7 @@ export type ShellBundle = {
   nav: {
     dashboard: string;
     farms: string;
+    profitLoss: string;
     advisor: string;
     detect: string;
     crops: string;

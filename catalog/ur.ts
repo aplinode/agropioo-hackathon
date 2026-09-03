@@ -707,6 +707,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   /* ── شیل نیویگیشن ─────────────────────────────────── */
   "app.shell.nav.dashboard": "ڈیش بورڈ",
   "app.shell.nav.farms": "کھیت",
+  "app.shell.nav.profitLoss": "Profit/Loss",
   "app.shell.nav.advisor": "مشیر",
   "app.shell.nav.detect": "تشخیص",
   "app.shell.nav.crops": "Crops",
