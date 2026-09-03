@@ -116,7 +116,7 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
   return (
     <div className="space-y-6 pt-1">
       <div className="flex items-center gap-3">
-        <Link href="/profit-loss" className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-agro-sprout text-agro-slate transition-colors hover:bg-agro-mint">
+        <Link href="/profit-loss" className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-agro-sprout text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy">
           <ArrowLeftIcon size={18} />
         </Link>
         <div>
@@ -125,15 +125,15 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
         </div>
         <div className="ms-auto flex items-center gap-2">
           {season.archived_at ? (
-            <button onClick={handleRestore} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint disabled:opacity-50">
+            <button onClick={handleRestore} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint hover:text-agro-canopy disabled:opacity-50">
               <RestoreIcon size={14} /> Restore
             </button>
           ) : (
             <>
-              <button onClick={handleArchive} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint disabled:opacity-50">
+              <button onClick={handleArchive} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint hover:text-agro-canopy disabled:opacity-50">
                 <ArchiveIcon size={14} /> Archive
               </button>
-              <button onClick={handleDelete} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-error/30 px-3 text-xs font-semibold text-agro-error transition-colors hover:bg-red-50 disabled:opacity-50">
+              <button onClick={handleDelete} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-canopy/30 px-3 text-xs font-semibold text-agro-canopy transition-colors hover:bg-agro-mint disabled:opacity-50">
                 <TrashIcon size={14} /> Delete
               </button>
             </>
@@ -141,53 +141,67 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
         </div>
       </div>
 
-      {error && <p className="rounded-lg border border-agro-error/30 bg-red-50 p-3 text-sm text-agro-error">{error}</p>}
+      {error && <div className="rounded-lg border border-agro-canopy/30 bg-agro-mint p-3 text-sm text-agro-forest">{error}</div>}
 
       <section className="grid gap-4">
-        <h2 className="font-display text-lg font-semibold text-agro-ink">P&L Summary</h2>
-        <PLSummaryComponent
-          data={{
-            totalProjectedCost,
-            totalActualCost,
-            projectedRevenue,
-            actualRevenue,
-            netProfitLoss: season.pl.netProfitLoss,
-            roi: season.pl.roi,
-            variance: season.pl.variance,
-          }}
-        />
+        <div className="flex items-center gap-2">
+          <div className="h-1 w-8 rounded-full bg-agro-canopy" />
+          <h2 className="font-display text-lg font-semibold text-agro-forest">P&L Summary</h2>
+        </div>
+        <div className="rounded-2xl border border-agro-sprout bg-white p-1">
+          <PLSummaryComponent
+            data={{
+              totalProjectedCost,
+              totalActualCost,
+              projectedRevenue,
+              actualRevenue,
+              netProfitLoss: season.pl.netProfitLoss,
+              roi: season.pl.roi,
+              variance: season.pl.variance,
+            }}
+          />
+        </div>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <h2 className="font-display text-lg font-semibold text-agro-ink">Break-even</h2>
-          <div className="mt-2">
+        <div className="rounded-2xl border border-agro-sprout bg-white p-5">
+          <div className="flex items-center gap-2">
+            <div className="h-1 w-8 rounded-full bg-agro-canopy" />
+            <h2 className="font-display text-lg font-semibold text-agro-forest">Break-even</h2>
+          </div>
+          <div className="mt-4">
             <BreakEvenDisplay data={season.break_even} />
           </div>
           <div className="mt-3">
             <BreakEvenBar currentYield={season.expected_yield ?? null} breakEvenYield={season.break_even?.yield ?? null} cropUnit={season.crop_unit} />
           </div>
         </div>
-        <div>
-          <h2 className="font-display text-lg font-semibold text-agro-ink">Expense breakdown</h2>
+        <div className="rounded-2xl border border-agro-sprout bg-white p-5">
+          <div className="flex items-center gap-2">
+            <div className="h-1 w-8 rounded-full bg-agro-canopy" />
+            <h2 className="font-display text-lg font-semibold text-agro-forest">Expense breakdown</h2>
+          </div>
           <ExpenseBreakdown expenses={season.expenses.map((e) => ({ category: e.category as string, amount: Number(e.amount) }))} />
         </div>
       </section>
 
-      <section>
-        <h2 className="font-display text-lg font-semibold text-agro-ink">Monthly trend</h2>
+      <section className="rounded-2xl border border-agro-sprout bg-white p-5">
+        <div className="flex items-center gap-2">
+          <div className="h-1 w-8 rounded-full bg-agro-canopy" />
+          <h2 className="font-display text-lg font-semibold text-agro-forest">Monthly trend</h2>
+        </div>
         <ExpenseTimeSeries expenses={expenseRows} projectedCosts={projectedRows} />
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border border-agro-sprout bg-white p-5">
-          <h2 className="font-display text-lg font-semibold text-agro-ink">Log expense</h2>
+        <div className="rounded-2xl border border-agro-sprout bg-agro-paper p-5">
+          <h2 className="font-display text-lg font-semibold text-agro-forest">Log expense</h2>
           <div className="mt-4">
             <ExpenseForm seasonId={season.id} onCreated={handleExpenseCreated} />
           </div>
         </div>
-        <div className="rounded-2xl border border-agro-sprout bg-white p-5">
-          <h2 className="font-display text-lg font-semibold text-agro-ink">Yield & price</h2>
+        <div className="rounded-2xl border border-agro-sprout bg-agro-paper p-5">
+          <h2 className="font-display text-lg font-semibold text-agro-forest">Yield & price</h2>
           <form onSubmit={yieldForm.handleSubmit((data) => handleHarvest(data))} className="mt-4 space-y-3">
             <div>
               <label className="block text-sm font-semibold text-agro-ink">Expected yield (per acre)</label>
@@ -197,7 +211,7 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
               <label className="block text-sm font-semibold text-agro-ink">Expected price (PKR per unit)</label>
               <input type="number" step="0.01" {...yieldForm.register("expected_price")} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
             </div>
-            <button type="submit" disabled={refreshing} className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
+            <button type="submit" disabled={refreshing} className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
               Save yield / price
             </button>
           </form>
@@ -208,8 +222,11 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
         </div>
       </section>
 
-      <section className="rounded-2xl border border-agro-sprout bg-white p-5">
-        <h2 className="font-display text-lg font-semibold text-agro-ink">Expenses</h2>
+      <section className="rounded-2xl border border-agro-sprout bg-agro-paper p-5">
+        <div className="flex items-center gap-2">
+          <div className="h-1 w-8 rounded-full bg-agro-canopy" />
+          <h2 className="font-display text-lg font-semibold text-agro-forest">Expenses</h2>
+        </div>
         <div className="mt-4">
           <ExpenseList expenses={season.expenses.map((e) => ({
             id: String(e.id),
@@ -255,7 +272,7 @@ function HarvestForm({ seasonId, onDone }: { seasonId: string; onDone: () => voi
         <label className="block text-sm font-semibold text-agro-ink">Actual selling price (PKR per unit)</label>
         <input type="number" step="0.01" value={actualPrice} onChange={(e) => setActualPrice(e.target.value)} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
       </div>
-      <button type="submit" disabled={submitting} className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-wheat px-4 text-sm font-semibold text-agro-forest shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50">
+      <button type="submit" disabled={submitting} className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
         Mark harvested
       </button>
     </form>
