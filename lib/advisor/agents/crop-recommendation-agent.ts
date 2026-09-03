@@ -8,7 +8,7 @@ import { searchKnowledgeBase } from "../tools/knowledge-base";
 import { advisorModel } from "../model";
 
 export function createCropRecommendationAgent(accountId: string) {
-  const { getMyFarms, getMyRecords, getFarmDetails, checkSoilCropFit } = createFarmDataTools(accountId);
+  const { getMyFarms, getFarmDetails, checkSoilCropFit } = createFarmDataTools(accountId);
 
   return new Agent({
     name: "Crop Recommendation Advisor",
