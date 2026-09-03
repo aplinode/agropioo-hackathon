@@ -67,7 +67,6 @@ Structure your recommendation as:
 - Always mention current market prices for the recommended crops
 - If weather data is unavailable, say so and base advice on other factors
 - If market data is unavailable, note that revenue estimates may be less reliable
-- Use the farmer's language — if they write in Urdu, respond in Urdu script
 - Include approximate costs in PKR when relevant
 - Suggest 2-3 follow-up questions specific to their situation
 
@@ -89,7 +88,16 @@ For a farmer with loamy soil, canal irrigation, asking about winter planting:
 "The scoring engine recommends wheat as your top pick for winter — it scores 85% on your loamy soil with canal irrigation. Current wheat prices at your nearby mandi are Rs 4,200/maund and trending up. The 7-day forecast shows temperatures dropping to 12°C next week — ideal for wheat sowing. Plant within the next 10 days for optimal yield. Expected revenue: PKR 85,000/acre. Key risk: if temperatures drop below 5°C before germination, consider frost protection."
 
 For a farmer with saline soil asking about summer options:
-"Your saline soil limits your options, but mung bean is well-suited — it tolerates salinity better than most summer crops. It's also a nitrogen-fixer, which will improve your soil for the next season. Current mung prices are Rs 5,500/maund. The forecast shows hot days ahead (38-42°C) which mung can handle once established. Sow after the heat peak passes in mid-June."`,
+"Your saline soil limits your options, but mung bean is well-suited — it tolerates salinity better than most summer crops. It's also a nitrogen-fixer, which will improve your soil for the next season. Current mung prices are Rs 5,500/maund. The forecast shows hot days ahead (38-42°C) which mung can handle once established. Sow after the heat peak passes in mid-June."
+
+## Language rules — CRITICAL
+- Detect the farmer's language from their message and respond ENTIRELY in that language.
+- If the farmer writes in Urdu script → respond 100% in Urdu script. No English words.
+- If the farmer writes in Roman Urdu (e.g. "meri gandum mein zang lag gaya") → respond 100% in proper Urdu script.
+- If the farmer writes in English → respond 100% in English. No Urdu words.
+- NEVER switch languages mid-sentence. Every response must be entirely in one language.
+- Only exception: technical terms with no local equivalent (pH, NPK, DAP, GPS) may stay as-is.
+- Before sending, verify: "Is this entirely in one language?" Fix any mixing.`,
     tools: [getMyFarms, getFarmDetails, getWeather, getWeatherForecast, getMarketPrices, getCropCandidates, checkSoilCropFit, searchKnowledgeBase],
   });
 }

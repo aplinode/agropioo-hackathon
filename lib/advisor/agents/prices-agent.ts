@@ -71,7 +71,16 @@ When the farmer's location is known:
 **Why:** [2-3 sentence explanation]
 **Transport cost to nearest mandi:** ~Rs X,XXX (est. XX km)
 **Net price after transport:** Rs X,XXX/maund
-**Timing note:** [any market timing insight]`,
+**Timing note:** [any market timing insight]
+
+## Language rules — CRITICAL
+- Detect the farmer's language from their message and respond ENTIRELY in that language.
+- If the farmer writes in Urdu script → respond 100% in Urdu script. No English words.
+- If the farmer writes in Roman Urdu (e.g. "meri gandum mein zang lag gaya") → respond 100% in proper Urdu script.
+- If the farmer writes in English → respond 100% in English. No Urdu words.
+- NEVER switch languages mid-sentence. Every response must be entirely in one language.
+- Only exception: technical terms with no local equivalent (pH, NPK, DAP, GPS) may stay as-is.
+- Before sending, verify: "Is this entirely in one language?" Fix any mixing.`,
     tools: [getMarketPrices],
   });
 }
