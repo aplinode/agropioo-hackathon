@@ -48,7 +48,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 - **FR-6**: An IndexedDB local database (`agropioo_offline`, version 1) must store queued write operations across three object stores: `writes` (keyPath `uuid`), `photos` (pending image blobs), and `meta` (app settings + cache version). Schema migration uses an additive-only `onupgradeneeded` version switch: future versions only add new stores or keys, never alter existing entry shapes. Each queue entry must carry a client-generated UUID, the target endpoint, the HTTP method, a serialized JSON body, the entity type (`record`, `photo`, `farm_edit`, `pnl` — `pnl` reserved for the future Profit/Loss feature #7, not yet producing entries), a status field (`pending`, `syncing`, `failed`, `synced`, `discarded`), a retry count, and a timestamp.
 
-- **FR-7**: When the farmer submits a new farm record while the app detects no effective network connection (`navigator.onLine === false` **or** the API call fails with a network/timeout error — not only on `onLine === false`, since rural 4G can report online while unreachable), the write must be saved to the IndexedDB queue as `pending` and displayed in the UI immediately (optimistic rendering). The queued record is joined into the in-browser record list alongside server-fetched records; when sync succeeds, the local copy is dropped from the queue and the server-confirmed record takes its place (no duplicate).
+- **FR-7**: When the farmer submits a new farm record while the app detects no effective network connection (`navigator.onLine === false` **or** the API call fails with a network/timeout error — not only on `onLine === false`, since rural 4G can report online while unreachable), the write must be saved to the IndexedDB queue as `pending` and displayed in the UI immediately (optimistic rendering). The queued record body carries a client-generated `client_uuid`. `POST /api/records` stores it (new `client_uuid` column — see migration `0015_add_client_uuid_to_records.sql`) and echoes it in the 201 response. On sync success, the client matches its optimistic entry by `client_uuid`, marks the entry `synced`/`discarded`, and the server-confirmed record (with its real `id`) takes the optimistic entry's place in the merged list — no duplicate, no flicker.
 
 - **FR-8**: When the farmer uploads a photo (for disease detection or farm records) while offline, the photo must be stored as a blob in the `photos` object store of IndexedDB and a queue entry created referencing the pending upload to `POST /api/detect` (formData field `image`). The replay runs the full `/api/detect` pipeline (HuggingFace detection + Cloudinary upload) and yields the `imageUrl`. **Photo-to-record coupling:** when a photo is paired with an offline record, a second queue entry (`entity=record`, target `POST /api/records`) is queued immediately after the photo entry. On replay the photo entry is sent first (FIFO), its returned `imageUrl` is backfilled into the record body, and then the record entry is sent. If the photo entry fails, the paired record entry is not attempted (it stays pending for the next drain).
 
@@ -64,9 +64,9 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 - **FR-14**: All queued writes must survive a full page reload or browser restart while offline. The IndexedDB data must persist across sessions.
 
-- **FR-15**: The service worker must implement cache-busting for authenticated API `GET` responses by including the session cookie in fetch options (`credentials: 'include'`) so cached responses respect per-user data.
+- **FR-15**: The service worker must include the session cookie in `credentials: 'include'` on `GET` API fetches so the server returns the authenticated farmer's data (the cached response is therefore per-user *when fetched online*). The cache key remains URL-based — see EC-13 for the shared-device caveat.
 
-- **FR-16**: A cache version identifier must be stored in the service worker. When the service worker updates, it must clear old cache entries before activating the new version.
+- **FR-16**: A cache version identifier must be stored in the service worker (next-pwa/Workbox precache manifest, keyed by build content hash). When the service worker updates, it must clear old cache entries (previous precache names) before activating the new version (Workbox `clientsClaim: true` + `cleanupOutdatedCaches: true`).
 
 - **FR-17**: All new user-visible strings (offline indicator text, sync status, error messages for offline content unavailability) must have translation keys for all 8 locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) inserted in the Neon `translations` table. Keys are namespaced under `app.offline.*`.
 
@@ -100,11 +100,13 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 - **EC-12. Offline price data.** Price data cached via the service worker remains available. If the farmer tries to set a price alert while offline, the alert creation is queued as a `record`-entity POST to `/api/prices/alerts` and syncs on reconnect.
 
+- **EC-13. Shared-device cache.** On a shared device, the service-worker cache keys authenticated `GET /api/*` responses by URL only (not by account). If two farmers using different accounts browse while online on the same device, the most-recent account's cached response could be briefly served to the other while offline. This is accepted as a non-security risk (offline cached data is not live); switching accounts triggers a fresh online fetch that repopulates the cache.
+
 ---
 
 ## Out of Scope
 
-- SMS alerts via Twilio (deferred — AGENTS.md lists SMS as out of scope for demo; alerts remain email + in-app only)
+- SMS alerts via Twilio (deferred to `specs/sms-alerts/` — out of scope per AGENTS.md for demo; alerts remain email + in-app only)
 - Offline *generation* of new weather advisories (requires online weather API; only previously-generated cached advisories are available offline)
 - Caching satellite imagery tiles (size constraints; deferred to future phase)
 - Voice input/output for the advisor (out of scope per AGENTS.md)
@@ -146,6 +148,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 - `lib/offline/queue.ts` — enqueue / drain / retry logic; wires `online`/`offline` events and exponential backoff (FR-12); enforces the 50-pending hard cap (EC-2); handles photo→record `imageUrl` backfill on replay (FR-8).
 - `lib/offline/status.ts` — readable store emitting network + sync status for the shell indicator (FR-13).
 - `app/[locale]/offline/page.tsx` — locale-aware static offline fallback route (EC-1), pre-cached by `next-pwa` for each of the 8 locales and registered as the SW `navigateFallback`.
+- `db/migrations/0015_add_client_uuid_to_records.sql` — adds nullable `client_uuid text` column + index on `records` (applied via Neon MCP per the AGENTS.md schema workflow).
 - `lib/i18n/server.ts` — add `getOfflineBundle()` following the `getShellBundle` / `getWeatherBundle` pattern; resolves `app.offline.*` from the `translations` table.
 - `catalog/{en,ur,pa,ps,sd,skr,bal,hno}.ts` — add `app.offline.*` keys for all 8 locales before `npm run sync:translations`.
 
@@ -162,3 +165,5 @@ See `adrs/` — this feature requires recording the offline caching and sync arc
 - **ADR-0014.7** — Sync trigger: the queue drains only when the app is in the foreground (active tab) — a `visibilitychange`/`focus` listener initiates the drain alongside the `online` event, so sync does not run silently in the background.
 - **ADR-0014.8** — Online data freshness: the SW uses a network-first strategy for GET /api responses; the SW cache is an offline-only mirror and Next.js's fetch cache / ISR remains the live source of truth (no stale live data served from the SW cache).
 - **ADR-0014.9** — Offline UX: the `/offline` fallback is locale-aware (`/[locale]/offline`) so it renders in the farmer's language (Urdu/Pashto RTL included).
+- **ADR-0014.10** — Optimistic record creation: a client-generated `client_uuid` is stored on the `records` row (new nullable column, migration `0015`) and echoed back in the 201 response so the offline queue can deterministically match an optimistic entry to its server-confirmed row. Farm edits do NOT need this (the farm row already exists server-side).
+- **ADR-0014.11** — Cache isolation: the SW cache keys authenticated `GET /api/*` by URL only. Shared-device multi-account reuse is a documented non-security caveat (EC-13); live fetch always repopulates the cache per account.
