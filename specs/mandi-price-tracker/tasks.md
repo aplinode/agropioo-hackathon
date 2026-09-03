@@ -4,12 +4,12 @@
 **Prerequisites**: [plan.md](plan.md) (required), [spec.md](spec.md) (required), [research.md](research.md), [data-model.md](data-model.md), [contracts/api-contracts.md](contracts/api-contracts.md), [quickstart.md](quickstart.md)
 **Tests**: Zod/Route Handler unit tests via Vitest; manual acceptance verification for UI and cron (per Constitution §Testing Policy). No live-network tests committed.
 
-**Organization**: Tasks are grouped by user story + a new "Scraper" phase (US-S1…US-S4) that has no farmer-facing acceptance but is the only path to fresh data. All UI stories (US1–US6) reuse the existing pages from the prior implementation and only change in behaviour once scraper data is in the table.
+**Organization**: Tasks are grouped by user story + a new "Scraper" phase (US-S1…US-S4) that has no farmer-facing acceptance but is the only path to fresh data. All UI stories (US1–US7) reuse the existing pages from the prior implementation and only change in behaviour once scraper data is in the table.
 
 ## Format: `- [ ] [TaskID] [P?] [Story?] Description with file path`
 
 - **[P]**: Can run in parallel (different files, no dependencies on incomplete tasks)
-- **[Story]**: US1–US6 (farmer-facing) or US-S1…US-S4 (scraper/infra)
+- **[Story]**: US1–US7 (farmer-facing) or US-S1…US-S4 (scraper/infra)
 - Includes exact file paths in descriptions
 
 ---
@@ -38,6 +38,7 @@
   - drops the `('govt_api','admin_manual')` CHECK on `mandi_prices.source`,
   - alters `mandi_prices` to add `source_code VARCHAR(32) NOT NULL` with the new CHECK enum,
   - adds index `(source_code, date DESC)` on `mandi_prices`,
+  - adds UNIQUE constraint `(mandi_id, crop_id, date, source_code)` on `mandi_prices`,
   - creates `scraper_runs` table (id, received_at, source_code, status, rows_written, rows_rejected, caller_ip INET, request_id UUID) with the 7-day retention column set,
   - creates `mandi_holidays` table (id, mandi_id, province, date, label, source_code) with the `UNIQUE(mandi_id, date)` constraint
 - [x] T007 [P] Extend `scripts/seed-mandi-prices.ts` to backfill `mandi_prices.source_code = 'seed_pk_initial'` for any existing seed rows
@@ -52,7 +53,7 @@
   - on success return `{ success, request_id, rows_written, rows_rejected, ingested_at }`
 - [x] T011 [P] Implement `GET /api/prices/health` in `app/api/prices/health/route.ts` returning per-source `last_success`, `rows`, and `status` from `scraper_runs` (no auth, no PII)
 - [x] T012 [P] Add a Vitest unit test `app/api/prices/ingest/route.test.ts` covering: missing bearer → 401, bad bearer → 401, rate-limit → 429, valid bearer + valid body → 200 + audit row, malformed row in body → that row skipped + `rows_rejected` incremented
-- [x] T013 [P] Add a Vitest unit test for `app/api/prices/health/route.ts` asserting the per-source shape from `contracts/api-contracts.md` §6
+- [x] T013 [P] Add a Vitest unit test for `app/api/prices/health/route.ts` asserting the per-source shape from `contracts/api-contracts.md` §7
 
 **Checkpoint**: Migration applies cleanly on a fresh DB; ingest endpoint hardened and tested; no app UI work has begun.
 
@@ -67,30 +68,15 @@
 ### Implementation for US-S1
 
 - [x] T014 [P] Create `scripts/scrape-prices/selectors.ts` exporting a single object keyed by `source_code` with each portal's CSS selectors, the base URL, and the date-extraction strategy (single file so drift is auditable)
-<<<<<<< HEAD
 - [x] T015 [P] Create `scripts/scrape-prices/sources/amis.ts` (Punjab AMIS) — Playwright opens `ViewPrices.aspx`, walks per-commodity + per-mandi, returns `IngestRow[]` (≥3 historical rows per active mandi to satisfy the FR-008 prediction bar of ≥3 rows / ≤7d)
 - [x] T016 [P] Create `scripts/scrape-prices/sources/samis.ts` (Sindh SAMIS) — Playwright navigates the React frontend at `new-theme.staging-amis.com/market_price`, applies district/market/commodity filters via URL, returns `IngestRow[]`
 - [x] T017 [P] Create `scripts/scrape-prices/sources/fmis-kp.ts` (KP FMIS) — Playwright loads `fmis.kp.gov.pk/kp_essential_commodities_price`, iterates the datatable rows, returns `IngestRow[]` (the built-in CSV export endpoint is the preferred happy path; fall back to table scrape if needed)
 - [x] T018 [P] Create `scripts/scrape-prices/sources/bmis.ts` (Balochistan BMIS + balochistankissan fallback) — Playwright visits `amisbalochistan.org/prices/` and `balochistankissan.gob.pk/pages/market-rates`, picks district from the dropdown, returns `IngestRow[]`
 - [x] T019 [P] Create `scripts/scrape-prices/sources/pbs-spi.ts` (PBS Weekly SPI XLSX) — uses `xlsx` to parse the latest weekly XLSX from `pbs.gov.pk/price-statistics/`, returns `IngestRow[]` (federal cross-check; sparse is expected)
-=======
-- [ ] T015 [P] Create `scripts/scrape-prices/sources/amis.ts` (Punjab AMIS) — Playwright opens `ViewPrices.aspx`, walks per-commodity + per-mandi, returns `IngestRow[]` (≥3 historical rows per active mandi to satisfy the FR-008 prediction bar of ≥3 rows / ≤7d)
-- [ ] T016 [P] Create `scripts/scrape-prices/sources/samis.ts` (Sindh SAMIS) — Playwright navigates the React frontend at `new-theme.staging-amis.com/market_price`, applies district/market/commodity filters via URL, returns `IngestRow[]`
-- [ ] T017 [P] Create `scripts/scrape-prices/sources/fmis-kp.ts` (KP FMIS) — Playwright loads `fmis.kp.gov.pk/kp_essential_commodities_price`, iterates the datatable rows, returns `IngestRow[]` (the built-in CSV export endpoint is the preferred happy path; fall back to table scrape if needed)
-- [ ] T018 [P] Create `scripts/scrape-prices/sources/bmis.ts` (Balochistan BMIS + balochistankissan fallback) — Playwright visits `amisbalochistan.org/prices/` and `balochistankissan.gob.pk/pages/market-rates`, picks district from the dropdown, returns `IngestRow[]`
-- [ ] T019 [P] Create `scripts/scrape-prices/sources/pbs-spi.ts` (PBS Weekly SPI XLSX) — uses `xlsx` to parse the latest weekly XLSX from `pbs.gov.pk/price-statistics/`, returns `IngestRow[]` (federal cross-check; sparse is expected)
-<<<<<<< HEAD
->>>>>>> c84d8bc (feat(002-scraper): per-portal CSS selectors (single source of truth))
-- [ ] T020 [P] Create `scripts/scrape-prices/holiday-check.ts` — `isHoliday(mandiId, date)` returns `true` if a row exists in `mandi_holidays`; used to set `is_holiday=true` so the UI shows the badge and the drift detector doesn't false-positive
-- [ ] T021 [P] Create `scripts/scrape-prices/drift-detector.ts` — `detectDrift(source_code, rows)` returns `status='drift_suspected'` if rows=0 AND that source had historical rows for the same weekday; otherwise `status='ok'`
-- [ ] T022 Create `scripts/scrape-prices/post.ts` — `postBatch(source_code, rows, secret)` splits rows into ≤5000-row batches, signs each with the bearer, POSTs to `/api/prices/ingest`, retries once on 5xx with backoff, returns aggregated counts
-- [x] T023 Create `scripts/scrape-prices/index.ts` — the runner: loads env, instantiates a single Playwright browser, calls each `sources/*.ts` in its own try/catch (one failure cannot block others), runs `holiday-check` and `drift-detector` per source, posts each batch via `post.ts`, exits 0 if any source wrote rows, exits 1 if zero rows across all sources (per spec §Q1)
-=======
 - [x] T020 [P] Create `scripts/scrape-prices/holiday-check.ts` — `isHoliday(mandiId, date)` returns `true` if a row exists in `mandi_holidays`; used to set `is_holiday=true` so the UI shows the badge and the drift detector doesn't false-positive
 - [x] T021 [P] Create `scripts/scrape-prices/drift-detector.ts` — `detectDrift(source_code, rows)` returns `status='drift_suspected'` if rows=0 AND that source had historical rows for the same weekday; otherwise `status='ok'`
 - [x] T022 Create `scripts/scrape-prices/post.ts` — `postBatch(source_code, rows, secret)` splits rows into ≤5000-row batches, signs each with the bearer, POSTs to `/api/prices/ingest`, retries once on 5xx with backoff, returns aggregated counts
 - [ ] T023 Create `scripts/scrape-prices/index.ts` — the runner: loads env, instantiates a single Playwright browser, calls each `sources/*.ts` in its own try/catch (one failure cannot block others), runs `holiday-check` and `drift-detector` per source, posts each batch via `post.ts`, exits 0 if any source wrote rows, exits 1 if zero rows across all sources (per spec §Q1)
->>>>>>> b42257a (Merge branch '002-mandi-price-tracker' into main — resolve 19 conflicts)
 
 **Checkpoint**: Locally, `npm run scrape:prices` ingests real prices for at least Punjab AMIS into the dev DB. The runner never imports the Next.js app.
 
@@ -133,11 +119,11 @@
 
 ---
 
-## Phase 6: User Story 3 - See Price Trend Predictions (Priority: P2)
+## Phase 6: User Story 3 & 7 — Price Predictions & History (Priority: P2/P3)
 
-**Goal**: The 14-day Holt-Winters chart only renders when ≥3 historical rows exist and the most recent row is within 7 days (per spec §Q2); otherwise show a clear "Not enough data" state.
+**Goal**: The 14-day Holt-Winters chart only renders when ≥3 historical rows exist and the most recent row is within 7 days (per spec §Q2); otherwise show a clear "Not enough data" state. Price history supports 1M/3M/6M/12M range toggles.
 
-**Independent Test**: With only 2 historical rows for a crop, the predictions chart shows the "Not enough data" state; with 3+ rows where the most recent is 6 days old, the chart shows the 14 forecast points + confidence band.
+**Independent Test**: With only 2 historical rows for a crop, the predictions chart shows the "Not enough data" state; with 3+ rows where the most recent is 6 days old, the chart shows the 14 forecast points + confidence band. History chart renders across all four ranges without breaking.
 
 ### Implementation for User Story 3
 
@@ -145,7 +131,13 @@
 - [ ] T033 [US3] Wire `canForecast` into the existing prediction route and prediction chart so the "Not enough data" state renders when `ok=false`
 - [ ] T034 [US3] Manually verify US3 acceptance #3 + #4 against a crop with deliberately thinned history; record in `specs/002-mandi-price-tracker/checklists/us3-acceptance.md`
 
-**Checkpoint**: Predictions correctly self-defer on thin data; existing happy-path predictions still work.
+### Implementation for User Story 7
+
+- [ ] T035 [P] [US7] Implement `GET /api/prices/history` Route Handler accepting date range parameters (`1M`, `3M`, `3M`, `6M`, `12M`) in `app/api/prices/history/route.ts`
+- [ ] T036 [P] [US7] Create interactive price history chart component `components/prices/price-history-chart.tsx` with date range selector toggles
+- [ ] T037 [US7] Integrate price history chart into `app/(farmer)/prices/page.tsx`
+
+**Checkpoint**: Predictions correctly self-defer on thin data; existing happy-path predictions still work. History chart renders across all ranges.
 
 ---
 
@@ -157,14 +149,40 @@
 
 ### Implementation for User Story 5
 
-- [ ] T035 [US5] Extend `lib/prices/alerts.ts` (existing) so that the evaluation log includes the `source_code` of the row that triggered the alert (audit, not user-facing)
-- [ ] T036 [US5] Manually verify the full alert flow: set target PKR 3,500 for `wheat` at a mandi, force a cron run that ingests a row ≥ 3,500, confirm in-app + email + `last_triggered_at` update + audit log entry
+- [ ] T038 [US5] Extend `lib/prices/alerts.ts` (existing) so that the evaluation log includes the `source_code` of the row that triggered the alert (audit, not user-facing)
+- [ ] T039 [US5] Manually verify the full alert flow: set target PKR 3,500 for `wheat` at a mandi, force a cron run that ingests a row ≥ 3,500, confirm in-app + email + `last_triggered_at` update + audit log entry
 
 **Checkpoint**: Alerts are confirmed end-to-end with scraper-sourced data.
 
 ---
 
-## Phase 8: Cross-cutting — Drift detection health (US-S4, P0 infrastructure visible in `/api/prices/health`)
+## Phase 8: User Story 4 & 6 — Favorites & Market Comparison Enhancements (Priority: P2/P3)
+
+**Goal**: Farmers can mark favorite crops with a star icon, manage them on `/favourites`, and see estimated transport cost in market comparisons.
+
+**Independent Test**: A farmer stars 3 crops, visits the dashboard, and sees those 3 with sparklines. Market comparison cards show both distance and estimated PKR transport cost.
+
+### Implementation for User Story 4 — Favorites
+
+- [ ] T040 [P] [US4] Implement `GET /api/favourites` Route Handler returning the farmer's favorite crop IDs with display order
+- [ ] T041 [P] [US4] Implement `POST /api/favourites` Route Handler to add/update a favorite crop
+- [ ] T042 [P] [US4] Implement `DELETE /api/favourites` Route Handler to remove a favorite crop
+- [ ] T043 [P] [US4] Create `components/prices/favorite-crop-star.tsx` — star icon component that toggles favorite state on crop cards; ≥44×44px tap target, accessible focus ring
+- [ ] T044 [US4] Wire `favorite-crop-star` into existing crop cards on `/prices` so tapping it calls `POST /api/favourites` or `DELETE /api/favourites`
+- [ ] T045 [P] [US4] Create `app/(farmer)/favourites/page.tsx` — dedicated page listing all favorited crops with remove controls
+- [ ] T046 [US4] Update dashboard widget `components/prices/dashboard-prices-widget.tsx` to read from `/api/favourites` and show top 3 favorite crops with 7-day mini-sparklines; falls back to provincial hub with setup banner if no farms registered
+
+### Implementation for User Story 6 — Transport Cost
+
+- [ ] T047 [P] [US6] Create `lib/prices/transport.ts` exporting a flat per-km rate constant (PKR per km per 40kg Maund, calibrated to local freight norms) and a `estimateTransportCost(distanceKm)` helper
+- [ ] T048 [US6] Update `app/api/prices/route.ts` to include `transport_cost_pkr` in the response using `lib/prices/transport.ts`
+- [ ] T049 [US6] Update market comparison UI to show both `distance_km` and `transport_cost_pkr` on each market card
+
+**Checkpoint**: Favorites and transport cost are functional across `/prices`, `/favourites`, and dashboard widget.
+
+---
+
+## Phase 9: Cross-cutting — Drift detection health (US-S4, P0 infrastructure visible in `/api/prices/health`)
 
 **Goal**: The new `GET /api/prices/health` endpoint surfaces a "drift_suspected" status so a maintainer can see at a glance which portal's selectors are stale.
 
@@ -172,51 +190,35 @@
 
 ### Implementation for US-S4
 
-<<<<<<< HEAD
-- [x] T037 [P] [US-S4] Vitest integration test for `scripts/scrape-prices/drift-detector.ts` — given a stub source with rows=[] and same-weekday history, returns `drift_suspected`; given rows=[] but a matching `mandi_holidays` row, returns `ok` with `is_holiday=true`
-- [x] T038 [US-S4] Document the operator runbook for drift in `specs/002-mandi-price-tracker/runbook.md` (how to read the health endpoint, where to fix selectors, how to manually trigger the workflow)
-=======
-- [ ] T037 [P] [US-S4] Vitest integration test for `scripts/scrape-prices/drift-detector.ts` — given a stub source with rows=[] and same-weekday history, returns `drift_suspected`; given rows=[] but a matching `mandi_holidays` row, returns `ok` with `is_holiday=true`
-- [ ] T038 [US-S4] Document the operator runbook for drift in `specs/002-mandi-price-tracker/runbook.md` (how to read the health endpoint, where to fix selectors, how to manually trigger the workflow)
-- [X] T028 [P] [US6] Implement `GET /api/prices/history` Route Handler accepting date range parameters (`1M`, `3M`, `6M`, `12M`) in `app/api/prices/history/route.ts`
-- [X] T029 [P] [US6] Create interactive price history chart component `components/prices/price-history-chart.tsx` with date range selector toggles
-- [X] T030 [US6] Integrate price history chart into `app/(farmer)/prices/page.tsx`
->>>>>>> b42257a (Merge branch '002-mandi-price-tracker' into main — resolve 19 conflicts)
+- [x] T050 [P] [US-S4] Vitest integration test for `scripts/scrape-prices/drift-detector.ts` — given a stub source with rows=[] and same-weekday history, returns `drift_suspected`; given rows=[] but a matching `mandi_holidays` row, returns `ok` with `is_holiday=true`
+- [x] T051 [US-S4] Document the operator runbook for drift in `specs/002-mandi-price-tracker/runbook.md` (how to read the health endpoint, where to fix selectors, how to manually trigger the workflow)
 
 **Checkpoint**: Drift is visible and actionable.
 
 ---
 
-## Phase 9: Polish & Cross-Cutting Concerns
+## Phase 10: Polish & Cross-Cutting Concerns
 
 **Purpose**: Ship-time cleanup and verification.
 
-- [ ] T039 [P] Run `npm run lint` and fix all new warnings introduced by the scraper
-- [ ] T040 [P] Run `npm run build` and confirm zero TS errors (no `any`, no `!`, no `@ts-ignore`)
-- [ ] T041 [P] Insert any new UI strings introduced by the scraper (e.g. the `data-source-badge` labels) into the Neon `translations` table across all 8 locales via `scripts/sync-translations.mts` (per Constitution §Language Policy)
-- [ ] T042 [P] Update `AGENTS.md` `<!-- SPECKIT -->` pointer if any further plan/spec moves (no change needed for this iteration — already points at this `plan.md`)
-- [ ] T043 [P] Append a short ADR to `adrs/0018-playwright-scraper.md` recording the decision to add Playwright + xlsx scoped to the scraper, the rejected alternatives, and the constitution-violation justification (per AGENTS.md "Significant architecture decisions")
-- [ ] T044 Commit + push per atomic-commit rule (one task = one commit where the unit stands alone; multi-file coherent change = one commit; e.g. T010/T011/T012/T013 can be one commit; T024/T025/T026 can be one commit)
-- [ ] T045 Open PR from `feat/002-scraper` to `main` with the spec + plan + research linked; per Constitution, solo founder review is the gate
-- [X] T031 [P] Create Pakistan-wide global crop and mandi search bar component `components/prices/global-mandi-search.tsx`
-- [X] T032 [P] Create dashboard summary widget `components/prices/dashboard-prices-widget.tsx` rendering top 3 tracked crops with 7-day mini-sparklines
-- [X] T033 Integrate summary widget into main farmer dashboard in `app/(farmer)/(dashboard)/dashboard/page.tsx`
-- [X] T034 [P] Create offline price list and history caching hook `hooks/use-offline-prices.ts` storing data in browser `localStorage`
-- [X] T035 Create scheduled nightly prediction background cron Route Handler `POST /api/cron/predict-prices` in `app/api/cron/predict-prices/route.ts`
-- [ ] T036 Create free GitHub Actions scheduled workflow configuration `.github/workflows/mandi-cron.yml` triggering daily price ingestion and predictions
+- [ ] T052 [P] Run `npm run lint` and fix all new warnings introduced by the scraper
+- [ ] T053 [P] Run `npm run build` and confirm zero TS errors (no `any`, no `!`, no `@ts-ignore`)
+- [ ] T054 [P] Insert any new UI strings introduced by the scraper (e.g. the `data-source-badge` labels, favorite star aria-labels, transport cost labels) into the Neon `translations` table across all 8 locales via `scripts/sync-translations.mts` (per Constitution §Language Policy)
+- [ ] T055 [P] Update `AGENTS.md` `<!-- SPECKIT -->` pointer if any further plan/spec moves (no change needed for this iteration — already points at this `plan.md`)
+- [ ] T056 [P] Append a short ADR to `adrs/0018-playwright-scraper.md` recording the decision to add Playwright + xlsx scoped to the scraper, the rejected alternatives, and the constitution-violation justification (per AGENTS.md "Significant architecture decisions")
+- [ ] T057 Commit + push per atomic-commit rule (one task = one commit where the unit stands alone; multi-file coherent change = one commit; e.g. T010/T011/T012/T013 can be one commit; T024/T025/T026 can be one commit)
+- [ ] T058 Open PR from `feat/002-scraper` to `main` with the spec + plan + research linked; per Constitution, solo founder review is the gate
 
 ---
 
-## Phase 10: Polish & Quality Gates
+## Phase 11: Polish & Quality Gates
 
 **Purpose**: 8-locale Neon translation database population, Vitest automated testing, and release gate verification
 
-- [ ] T037 Sync all Mandi Price Tracker UI string keys and translations across all 8 Pakistan locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) into Neon `translations` database table using `scripts/sync-translations.mts`
-- [X] T038 [P] Create Zod schema and Route Handler unit tests in `app/api/prices/prices-api.test.ts`
-- [X] T039 [P] Create statistical forecasting unit tests in `lib/prices/forecast.test.ts`
-- [X] T040 Run `npx vitest run` to verify all automated test suites pass
-- [ ] T041 Run `npm run lint` and `npm run build` to confirm zero TypeScript compilation or linting errors
-- [ ] T042 Verify all 36 items in `specs/002-mandi-price-tracker/checklists/quality-gate.md` pass
+- [ ] T059 Sync all Mandi Price Tracker UI string keys and translations across all 8 Pakistan locales (`en`, `ur`, `pa`, `ps`, `sd`, `skr`, `bal`, `hno`) into Neon `translations` database table using `scripts/sync-translations.mts`
+- [ ] T060 [P] Run `npx vitest run` to verify all automated test suites pass
+- [ ] T061 [P] Run `npm run lint` and `npm run build` to confirm zero TypeScript compilation or linting errors
+- [ ] T062 [P] Verify all 36 items in `specs/002-mandi-price-tracker/checklists/quality-gate.md` pass
 
 ---
 
@@ -229,16 +231,20 @@
 - **Phase 3 (US-S1 Scraper)**: Depends on Phase 2 (migration + ingest hardening). No app UI work needed before this — the scraper is the only new data path.
 - **Phase 4 (US-S2 Workflow)**: Depends on Phase 3 (runner must exist). Parallelizable with Phase 5/6 UI work.
 - **Phase 5 (US1)**: Depends on Phase 2 (so the read path returns the new `source_code`). Can run in parallel with Phase 6/7.
-- **Phase 6 (US3)**: Depends on Phase 2. Independent of US1.
+- **Phase 6 (US3/US7)**: Depends on Phase 2. Independent of US1.
 - **Phase 7 (US5)**: Depends on Phase 3 (needs scraper-written rows to trigger alerts on).
-- **Phase 8 (US-S4)**: Depends on Phase 3 (drift logic only meaningful once scraper runs).
-- **Phase 9 (Polish)**: Depends on all chosen user stories being complete.
+- **Phase 8 (US4/US6)**: Depends on Phase 2 (favorites API + transport cost are read-path extensions).
+- **Phase 9 (US-S4)**: Depends on Phase 3 (drift logic only meaningful once scraper runs).
+- **Phase 10 (Polish)**: Depends on all chosen user stories being complete.
+- **Phase 11 (Quality Gates)**: Depends on Phase 10.
 
 ### Parallel Opportunities (within `feat/002-scraper`)
 
 - T015–T019 (per-source scraper files) can all be written in parallel — different files, no shared state.
 - T020, T021 (holiday + drift) can run in parallel with T014 (selectors) — different files.
 - T028 + T029 (badge component + translation keys) can run in parallel with T032 (forecast helper) — different files.
+- T040–T042 (favorites CRUD endpoints) can run in parallel with T043 (star component) — different files.
+- T047 (transport.ts) is independent and can run in parallel with any UI work.
 
 ---
 
@@ -254,7 +260,7 @@
 
 ### Incremental Delivery
 
-After MVP, layer the existing user stories (US1 UI chip, US3 thin-data guard, US5 alert audit) in order of their priority in spec.md. Each is independently testable.
+After MVP, layer the existing user stories (US1 UI chip, US3 thin-data guard, US5 alert audit, US4 favorites, US6 transport cost, US7 history) in order of their priority in spec.md. Each is independently testable.
 
 ### Risk-aware sequencing
 
