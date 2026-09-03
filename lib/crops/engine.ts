@@ -310,8 +310,17 @@ export async function recommendCrops(
     const request: CropRecommendationRequest = {
       id: requestRow.rows[0]!.id,
       farmId: requestRow.rows[0]!.farm_id,
-      targetSeason: requestRow.rows[0]!.target_season,
+      targetSeason: requestRow.rows[0]!.target_season as CropRecommendationRequest["targetSeason"],
       targetYear: requestRow.rows[0]!.target_year,
+      soilType: requestRow.rows[0]!.soil_type as CropRecommendationRequest["soilType"],
+      soilIsRegionalDefault: requestRow.rows[0]!.soil_is_regional_default,
+      irrigationType: requestRow.rows[0]!.irrigation_type as CropRecommendationRequest["irrigationType"],
+      budgetBracket: requestRow.rows[0]!.budget_bracket as CropRecommendationRequest["budgetBracket"],
+      confidence: {
+        weather: requestRow.rows[0]!.weather_confidence as CropRecommendationRequest["confidence"]["weather"],
+        market: requestRow.rows[0]!.market_confidence as CropRecommendationRequest["confidence"]["market"],
+        soil: requestRow.rows[0]!.soil_confidence as CropRecommendationRequest["confidence"]["soil"],
+      },
       createdAt: requestRow.rows[0]!.created_at,
     };
     const recommendations: CropRecommendation[] = [];
@@ -380,10 +389,10 @@ export async function recommendCrops(
         rank: recRow.rows[0]!.rank,
         crop: item.crop,
         expectedRevenuePerAcrePkr: Number(recRow.rows[0]!.expected_revenue_per_acre_pkr),
-        revenueConfidence: recRow.rows[0]!.revenue_confidence,
+        revenueConfidence: recRow.rows[0]!.revenue_confidence as CropRecommendation["revenueConfidence"],
         reasonKey: recRow.rows[0]!.reason_key,
         riskFactors: recRow.rows[0]!.risk_factors,
-        waterRequirementLevel: recRow.rows[0]!.water_requirement_level,
+        waterRequirementLevel: recRow.rows[0]!.water_requirement_level as CropRecommendation["waterRequirementLevel"],
         scores: {
           suitability: Number(recRow.rows[0]!.suitability_score),
           weatherFit: Number(recRow.rows[0]!.weather_fit_score),

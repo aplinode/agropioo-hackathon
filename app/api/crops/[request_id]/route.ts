@@ -25,6 +25,8 @@ export async function GET(
   }
 
   const recs = await query<{
+    id: string;
+    rank: number;
     crop_id: string;
     name_en: string;
     name_key: string;
@@ -36,6 +38,18 @@ export async function GET(
     labour_cost_level: string;
     capital_requirement_per_acre_pkr: unknown;
     market_risk_baseline: string;
+    expected_revenue_per_acre_pkr: unknown;
+    revenue_confidence: string;
+    reason_key: string;
+    risk_factors: unknown;
+    suitability_score: unknown;
+    weather_fit_score: unknown;
+    profitability_score: unknown;
+    risk_score: unknown;
+    sustainability_score: unknown;
+    final_score: unknown;
+    data_sources_used: unknown;
+    data_fresheness_seconds: unknown;
   }>(
     `SELECT r.*, c.id AS crop_id, c.name_en, c.name_key, c.category,
             c.typical_yield_per_acre_kg, c.growing_duration_days, c.season_windows,

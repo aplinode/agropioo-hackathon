@@ -166,5 +166,14 @@ export type CropsBundle = {
     soybean_then_wheat: string;
     onion_then_maize: string;
     tomato_then_wheat: string;
+    barley_then_chickpea: string;
+    bajra_then_cowpea: string;
+    sunflower_then_wheat: string;
+    canola_then_wheat: string;
+    lentil_then_cotton: string;
+    pea_then_maize: string;
+    cauliflower_then_pea: string;
+    okra_then_cowpea: string;
+    garlic_then_wheat: string;
   };
 };

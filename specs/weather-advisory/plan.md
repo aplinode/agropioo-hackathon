@@ -5,7 +5,7 @@
 
 ## Summary
 
-Build a weather advisory feature within the existing Agropioo Next.js app that turns OpenWeatherMap forecast data into daily farming recommendations and critical alerts. Farmers register crops, sowing dates, and farm details; the system determines growth stage, fetches forecasts, generates personalized advice per farm, and delivers alerts via email and in-app notifications. Advisory history is tracked per farm.
+Build a weather advisory feature within the existing Agropioo Next.js app that turns OpenWeatherMap forecast data into daily farming recommendations and critical alerts. Farmers register crops, sowing dates, farm area, and farm details; the system determines growth stage, fetches forecasts, generates personalized advice per farm, and delivers alerts via email and in-app notifications. Advisory history is tracked per farm.
 
 ## Technical Context
 
@@ -28,7 +28,42 @@ The following decisions from `/speckit.clarify` are reflected in this plan:
 - Alert deduplication: one alert per condition type per farm per 6-hour window.
 - Growth stage is computed dynamically at advisory generation time based on current date vs sowing date and crop duration.
 - Email alerts are sent for both warning and critical severities; in-app notifications show both.
-- Translation keys are namespaced under `app.weather.*`; client components receive strings via `getWeatherBundle()` server-side props.
+ - Translation keys are namespaced under `app.weather.*`; client components receive strings via `getWeatherBundle()` server-side props.
+ - Farm registration includes `acres` (area size) via the weather-specific registration form (`POST /api/weather/register`); validation ensures `acres > 0`.
+ - A dedicated `get_forecast` tool is added to the weather advisor agent so it can provide forecast-aware guidance; the existing `getWeather` tool remains for current conditions.
+  - AI-generated daily advice is cached in the `weather_advisories` table keyed by `(farm_id, advisory_date)`, satisfying SC-001's 30-second target on repeat visits. Cache is regenerated only when a new forecast is fetched for a date that already has cached advice; same-day repeat visits reuse the cached row.
+  - The weather advisor agent's `get_forecast` tool returns the full 7-day forecast with daily AI-generated advice text, enabling forecast-aware guidance without additional round-trips.
+  - OpenWeatherMap API calls are protected by per-IP rate limiting on weather routes; repeated requests from the same device/account within the limit window are blocked.
+  - When the OpenWeatherMap API key is missing or invalid, the weather page shows an explicit error message. No sample or demo weather data is served; the farmer can still view the last cached advisory from history.
+  - Advisory history is surfaced as a tab on the main weather page instead of a separate route, keeping navigation simple for the farmer. The tab order is Advisory → Forecast → History, matching the farmer's natural reading flow.
+  - The weather page's empty state for farmers with no registered farms uses an inline register-farm form, reducing friction by capturing farm details without leaving the page.
+  - The farm selector is placed at the top of the weather page, above the advisory content.
+  - Current weather conditions are shown only on the weather page, not on the dashboard.
+  - The alert banner appears on both the dashboard and the weather page.
+  - Advisory history detail opens in a modal popup from the history tab, preserving the farmer's place in the list.
+  - The weather page uses a two-column layout on desktop (advisory left, forecast right) and collapses to a single column on mobile.
+  - Farm switching on the weather page uses client-side switching without a full page reload.
+  - Weather page tabs are client-side tabs within the same page (Advisory, Forecast, History), not separate routes.
+  - Alert dismiss is permanent within the 6-hour deduplication window; dismissed alerts do not reappear until a new alert of the same type is generated.
+  - The history tab includes filters for severity and farm, plus a Load more button for pagination.
+  - A manual Refresh button is available on the weather page to re-fetch the latest forecast and regenerate advice.
+  - The selected farm is persisted via the URL query parameter (`?farm=<id>`), with the most recent farm as the fallback default.
+  - The history tab sorts advisories newest-first and includes filters for severity and farm.
+  - The alert banner appears on both the dashboard and the weather page.
+  - The weather page uses dynamic SEO metadata including farm name and location when available.
+  - Offline behavior shows cached forecast and advisory data with an offline indicator; the last saved advisory remains visible.
+  - The alert banner has no dismiss button; alerts transition only between unread and read states, synced across dashboard and weather page.
+  - The history tab shows all advisories by default with no filter applied, sorted newest first. Optional filters for severity and farm are available.
+  - The weather page uses stale-while-revalidate loading: cached data is shown immediately, then refreshed in the background.
+  - The dashboard includes a farm selector, consistent with the weather page.
+  - AI-generated advice text is written in the farmer's selected locale, with English as the fallback.
+  - The dashboard farm selector also uses the URL query parameter (`?farm=<id>`) for consistency.
+  - History tab filters are persisted in URL query parameters for shareability and reload resilience.
+  - The Advisory tab is the default active tab when the weather page opens.
+  - Dashboard and weather page show the same alerts with synced read/unread state.
+  - The Refresh button fetches fresh forecast data without clearing the existing cache.
+  - Advisory history is surfaced as a tab on the main weather page instead of a separate route, keeping navigation simple for the farmer.
+ - Completion of translation catalogs for `ps`, `sd`, `skr`, `bal`, and `hno` is tracked as an implementation task, not a spec change.
 
 ## Constitution Check
 
@@ -65,10 +100,8 @@ specs/001-weather-advisory/
 ```text
 app/
 ├── (farmer)/(dashboard)/      # Authenticated farmer route group
-│   ├── weather/               # New: weather advisory page + history
-│   │   ├── page.tsx           # Main advisory + 7-day forecast view
-│   │   ├── history/
-│   │   │   └── page.tsx       # Advisory history list + detail
+│   ├── weather/               # New: weather advisory page with inline history tab
+│   │   ├── page.tsx           # Main advisory + 7-day forecast + history tab (client-side tabs)
 │   │   └── demo-data.ts       # Demo forecast data per location
 │   └── advisor/               # Existing: AI chat advisor (reuse patterns)
 ├── api/
@@ -80,10 +113,14 @@ components/
 ├── weather/                   # Feature-specific UI components
 │   ├── AdvisoryCard.tsx
 │   ├── AlertBanner.tsx
-│   ├── FarmSelector.tsx
+│   ├── FarmSelector.tsx       # Shared: weather page + dashboard
 │   ├── ForecastList.tsx
-│   └── HistoryList.tsx
-├── icons.tsx                  # Shared SVG icons (existing)
+│   ├── HistoryList.tsx        # History list with filters + Load more
+│   ├── WeatherHistoryTab.tsx  # Tabbed history view with modal detail
+│   └── WeatherPageShell.tsx   # Client-side tab shell
+├── shell/                     # Existing app shell components
+│   ├── page-header.tsx
+│   └── ...
 lib/
 ├── db.ts                      # Shared Neon client (existing)
 ├── weather/
@@ -96,7 +133,7 @@ catalog/
 ├── en.ts                      # Add weather advisory translation keys
 ├── ur.ts, pa.ts, ps.ts, ...   # Draft translations for all 7 other locales
 db/migrations/
-└── 0008_weather_advisory.sql  # farms extensions + weather_advisories + weather_alerts
+└── 0008_weather_advisory.sql  # farms extensions + weather_advisories + weather_alerts (+ acres column)
 ```
 
 **Structure Decision**: Extend the existing farmer route group with `app/(farmer)/(dashboard)/weather/` for the advisory UI and `app/api/weather/` for API routes. Feature components live in `components/weather/`. Translation keys are added to `catalog/*.ts` and synced to the `translations` table via `npm run sync:translations`. All data access flows through `lib/db.ts`. Migrations live in `db/migrations/` and are applied in order.

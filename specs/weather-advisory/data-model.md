@@ -22,7 +22,7 @@ The weather advisory feature extends the existing `farms` table rather than crea
 | crops | jsonb | no | '[]' | Array of crop enums (existing, used by farm-records) |
 | primary_crop | text | yes | — | Single crop type for weather advisory; derived from `crops[0]` if null |
 | sowing_date | date | yes | — | Most recent sowing date for the primary crop |
-| acres | numeric(6,2) | no | — | Area size, > 0 (existing) |
+| acres | numeric(6,2) | no | — | Farm area in acres; required by FR-001 and validated as > 0. |
 | soil_type | text | yes | — | e.g., clay, loam, sandy, silt |
 | irrigation_method | text | yes | — | e.g., drip, flood, sprinkler, rainfed |
 | growth_stages | jsonb | no | '{}' | Stage map keyed by crop name (existing) |
@@ -59,7 +59,7 @@ Represents a single day's personalized recommendation for one farm.
 | advisory_date | date | no | — | The date this advisory covers |
 | forecast_snapshot | jsonb | no | '{}' | Cached weather data used to generate advice |
 | growth_stage | text | yes | — | Computed stage at advisory_date (seedling, vegetative, flowering, maturation, harvest-ready) |
-| advice_text | text | no | — | Localized actionable recommendation |
+| advice_text | text | no | — | Localized actionable recommendation. On days where AI-generated advice is cached, this stores the resolved advice string for the farmer's locale at the time of generation. The cache is regenerated only when a new forecast is fetched for a date that already has cached advice. |
 | advice_key | text | no | — | Translation key for `advice_text` |
 | severity | text | no | 'info' | Check: `info`, `warning`, `critical` |
 | acknowledged | boolean | no | false | Farmer marked as seen |
@@ -163,7 +163,7 @@ create table if not exists public.translations (
 
 New migration file: `db/migrations/0008_weather_advisory.sql`
 
-1. Add columns to `farms`: `primary_crop`, `sowing_date`, `soil_type`, `irrigation_method`.
+1. Add columns to `farms`: `primary_crop`, `sowing_date`, `soil_type`, `irrigation_method`, `acres`.
 2. Create `weather_advisories` table with indexes and uniqueness constraint.
 3. Create `weather_alerts` table with indexes.
 4. Backfill `primary_crop` from `crops[0]` for existing farms.

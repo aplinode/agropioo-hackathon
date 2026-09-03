@@ -27,7 +27,14 @@ export default async function CropRecommendationDetailPage({ params }: PageProps
     if (requestRow) {
       request = requestRow;
       const recs = await query<Record<string, unknown>>(
-        `SELECT * FROM crop_recommendations WHERE request_id = $1 ORDER BY rank ASC`,
+        `SELECT r.*, c.id AS crop_id, c.name_en, c.name_key, c.category,
+                c.typical_yield_per_acre_kg, c.growing_duration_days, c.season_windows,
+                c.water_requirement_level, c.labour_cost_level,
+                c.capital_requirement_per_acre_pkr, c.market_risk_baseline
+         FROM crop_recommendations r
+         JOIN crops c ON c.id = r.crop_id
+         WHERE r.request_id = $1
+         ORDER BY r.rank ASC`,
         [request_id]
       );
       recommendations = recs;
@@ -49,16 +56,16 @@ export default async function CropRecommendationDetailPage({ params }: PageProps
     rank: rec.rank as number,
     crop: {
       id: rec.crop_id as string,
-      nameEn: rec.crop_name_en as string,
-      category: rec.crop_category as string,
-      typicalYieldPerAcreKg: rec.typical_yield_per_acre_kg as number,
-      growingDurationDays: rec.growing_duration_days as number,
+      nameEn: rec.name_en as string,
+      category: rec.category as string,
+      typicalYieldPerAcreKg: Number(rec.typical_yield_per_acre_kg),
+      growingDurationDays: Number(rec.growing_duration_days),
       waterRequirementLevel: rec.water_requirement_level as string,
       labourCostLevel: rec.labour_cost_level as string,
-      capitalRequirementPerAcrePkr: rec.capital_requirement_per_acre_pkr as number,
+      capitalRequirementPerAcrePkr: Number(rec.capital_requirement_per_acre_pkr),
       marketRiskBaseline: rec.market_risk_baseline as string,
     },
-    expectedRevenuePerAcrePkr: rec.expected_revenue_per_acre_pkr as number,
+    expectedRevenuePerAcrePkr: Number(rec.expected_revenue_per_acre_pkr),
     revenueConfidence: rec.revenue_confidence as string,
     reasonKey: rec.reason_key as string,
     riskFactors: (rec.risk_factors as string[]) ?? [],
@@ -72,8 +79,15 @@ export default async function CropRecommendationDetailPage({ params }: PageProps
       final: number;
     },
     dataSourcesUsed: (rec.data_sources_used as string[]) ?? [],
-    dataFreshnessSeconds: rec.data_freshness_seconds as number,
+    dataFreshnessSeconds: rec.data_fresheness_seconds as number,
   }));
+
+  const initialRequestData = request
+    ? {
+        soilType: request.soil_type as string,
+        targetSeason: request.target_season as string,
+      }
+    : undefined;
 
   return (
     <div className="space-y-6 pt-1">
@@ -109,6 +123,7 @@ export default async function CropRecommendationDetailPage({ params }: PageProps
         bundle={bundle}
         farms={[]}
         initialRecommendations={mappedRecommendations}
+        initialRequest={initialRequestData}
       />
     </div>
   );

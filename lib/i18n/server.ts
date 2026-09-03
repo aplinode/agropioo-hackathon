@@ -800,6 +800,7 @@ export async function getCropsBundle(): Promise<CropsBundle> {
       marketMissing: t("app.crops.results.marketMissing").text,
       soilMissing: t("app.crops.results.soilMissing").text,
       regenerate: t("app.crops.results.regenerate").text,
+      regenerateConfirm: t("app.crops.results.regenerateConfirm").text,
       alreadyExists: t("app.crops.results.alreadyExists").text,
       viewExisting: t("app.crops.results.viewExisting").text,
       noCandidates: t("app.crops.results.noCandidates").text,
@@ -898,6 +899,15 @@ export async function getCropsBundle(): Promise<CropsBundle> {
       soybean_then_wheat: t("app.crops.rotation.soybean_then_wheat").text,
       onion_then_maize: t("app.crops.rotation.onion_then_maize").text,
       tomato_then_wheat: t("app.crops.rotation.tomato_then_wheat").text,
+      barley_then_chickpea: t("app.crops.rotation.barley_then_chickpea").text,
+      bajra_then_cowpea: t("app.crops.rotation.bajra_then_cowpea").text,
+      sunflower_then_wheat: t("app.crops.rotation.sunflower_then_wheat").text,
+      canola_then_wheat: t("app.crops.rotation.canola_then_wheat").text,
+      lentil_then_cotton: t("app.crops.rotation.lentil_then_cotton").text,
+      pea_then_maize: t("app.crops.rotation.pea_then_maize").text,
+      cauliflower_then_pea: t("app.crops.rotation.cauliflower_then_pea").text,
+      okra_then_cowpea: t("app.crops.rotation.okra_then_cowpea").text,
+      garlic_then_wheat: t("app.crops.rotation.garlic_then_wheat").text,
     },
   };
 }
