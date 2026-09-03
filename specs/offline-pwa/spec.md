@@ -41,9 +41,8 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 - **FR-2**: A service worker must be registered with **root scope (`/`)** on every page load and must intercept all navigation requests and `GET` API requests under `/api/`. Root scope covers both the farmer app and the marketing/site routes so offline page caching works everywhere (FR-5).
 
-- **FR-3**: The service worker must cache core static assets (fonts, CSS, icons, favicon) for offline serving. These assets must be cached at service worker install time (stale-to-revalidate for runtime, cache-first for assets).
-
-- **FR-4**: All `GET` API responses (weather forecast, weather alerts, farm list, farm details, records list, price data) must be cached by the service worker using a **uniform 24-hour cache-first** strategy. When offline, these responses must be served from the cache. Stale content up to 24h is acceptable for weather and prices.
+- **FR-3**: The service worker must cache core static assets (fonts, CSS, icons, favicon) for offline serving using a **cache-first** strategy at service-worker install time (precache). At runtime, assets use **stale-while-revalidate**: serve from cache immediately, update in the background.
+- **FR-4**: All `GET` API responses (weather forecast, weather alerts, farm list, farm details, records list, price data) must be cached by the service worker using a **network-first** strategy (Workbox `NetworkFirst`): live requests always go to the server and pass through Next.js's own fetch cache / ISR, making that the single source of truth. The service-worker cache is consulted **only when the network is unavailable** (true offline), with a uniform 24-hour max-age TTL. Stale content up to 24h is acceptable for weather and prices.
 
 - **FR-5**: Static marketing pages (crop guides, scheme/feature pages under `/[locale]/features/*`, `/[locale]/how-it-works`, etc.) must be cached at service worker install time so they load instantly offline.
 
@@ -59,7 +58,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 - **FR-11**: On sync, each queue entry is sent to the server with `credentials: 'include'`. If the server returns 200/201, the entry status becomes `synced`. If the server returns 401 (auth expired), the entry is marked `failed`, the **entire pending queue is cleared**, and the farmer sees "session expired — sign in again." If the server returns 404 (entity deleted), the entry status becomes `failed` with a "deleted" flag and the farmer is notified in-app. For farm edits (PATCH), the server **always overwrites** (last-write-wins by `updated_at`): on 200 the client compares the returned `updated_at` to the timestamp it sent — if they differ, the local edit is marked `discarded` and a "record updated on another device" banner shows; if the server returns 5xx or the network fails, the entry stays `pending` and the retry count increments.
 
-- **FR-12**: Queue sync must implement exponential backoff per entry: retry after 5s, then 30s, then 2min, then 5min, up to 3 retries. After 3 failed retries, the entry status becomes `failed` with a manual-retry indicator in the UI.
+- **FR-12**: Queue sync must implement exponential backoff per entry: retry after 5s, then 30s, then 2min, then 5min, up to 3 retries. After 3 failed retries, the entry status becomes `failed` with a per-entry **Retry** button in the Pending Issues view and a bulk **Retry all failed** button in the network-status indicator. The farmer may retry individual failed entries (including 422 validation failures from EC-6) or all at once; either action re-injects the selected entries into the drain queue.
 
 - **FR-13**: The farmer app shell (bottom tab bar) must display a persistent network status indicator showing: Offline (with queued count), Syncing (with progress), or nothing when all synced. This indicator must be visible on every farmer app page.
 
@@ -77,13 +76,13 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 
 ## Edge Cases & Rules
 
-- **EC-1. Never-cached page while offline.** When the farmer navigates to a page that was never loaded while online (no cached version exists and no service-worker route match), the UI shows a "offline content unavailable" message with a "connect to sync" prompt (served from the `/offline` fallback route) instead of a network error or blank screen. The offline fallback page itself is cached at service-worker install time and loads instantly.
+- **EC-1. Never-cached page while offline.** When the farmer navigates to a page that was never loaded while online (no cached version exists and no service-worker route match), the UI shows a "offline content unavailable" message with a "connect to sync" prompt (served from the locale-aware `/[locale]/offline` fallback route) instead of a network error or blank screen. The offline fallback page itself is cached at service-worker install time (one copy per locale under `/[locale]/offline`) and loads instantly. The SW `navigateFallback` maps to the matching `/[locale]/offline` path.
 
 - **EC-2. Large queue.** The queue enforces a **hard cap of 50 pending entries**. If a farmer attempts to queue a 51st write, the save is blocked and the farmer sees "offline storage nearly full — connect to sync." `synced` entries are auto-purged from IndexedDB the moment the server confirms them (status `synced`); they do not accumulate. `failed` entries are retained (for manual retry per FR-12) until the farmer dismisses them.
 
 - **EC-3. Duplicate offline submissions.** When the farmer double-taps the submit button while offline, the UI must prevent duplicate queue entries (debounced submit + client-side UUID dedup before inserting into IndexedDB).
 
-- **EC-4. Photo storage quota.** When the offline photo queue approaches the browser's IndexedDB storage quota, the oldest unsynced photos are compressed (downscale to 1024px max dimension, matching the online /api/detect path) before storage. When quota is exceeded, the farmer sees a "storage full — connect to sync" error and the photo is not saved.
+- **EC-4. Photo storage quota.** When the offline photo queue approaches the browser's IndexedDB storage quota, the app calls `navigator.storage.estimate()` and, when usage ≥ 50% of `quota` (or `quota` is unavailable), downscales the oldest unsynced photos to 1024px max dimension before storing another photo (matching the online `/api/detect` ≤1024px path). When `QuotaExceededError` is actually thrown by the browser, the farmer sees a "storage full — connect to sync" error and the photo is not saved.
 
 - **EC-5. Conflicting farm edits.** When two devices edit the same farm offline, the server always accepts the first replay and overwrites (last-write-wins by `updated_at`). On 200, if the returned `updated_at` differs from the timestamp the client sent, the losing device's edit is marked `discarded` in the queue and the farmer is shown a "record updated on another device" banner. The server never returns 409 for this case.
 
@@ -146,7 +145,7 @@ Rural Pakistan farmers lose connectivity daily in fields where 4G is spotty. Agr
 - `lib/offline/idb.ts` — promise wrapper around native IndexedDB; manages `agropioo_offline` DB (stores `writes`, `photos`, `meta`).
 - `lib/offline/queue.ts` — enqueue / drain / retry logic; wires `online`/`offline` events and exponential backoff (FR-12); enforces the 50-pending hard cap (EC-2); handles photo→record `imageUrl` backfill on replay (FR-8).
 - `lib/offline/status.ts` — readable store emitting network + sync status for the shell indicator (FR-13).
-- `app/offline/page.tsx` — static offline fallback route (EC-1), registered as the SW navigation fallback.
+- `app/[locale]/offline/page.tsx` — locale-aware static offline fallback route (EC-1), pre-cached by `next-pwa` for each of the 8 locales and registered as the SW `navigateFallback`.
 - `lib/i18n/server.ts` — add `getOfflineBundle()` following the `getShellBundle` / `getWeatherBundle` pattern; resolves `app.offline.*` from the `translations` table.
 - `catalog/{en,ur,pa,ps,sd,skr,bal,hno}.ts` — add `app.offline.*` keys for all 8 locales before `npm run sync:translations`.
 
@@ -161,3 +160,5 @@ See `adrs/` — this feature requires recording the offline caching and sync arc
 - **ADR-0014.5** — Scope: SMS alerts (Twilio) deferred to a separate `specs/sms-alerts/` ticket; this feature is PWA + offline sync only.
 - **ADR-0014.6** — Service worker scope: registered at root `/` so it caches marketing pages (FR-5) and the farmer app, not just `/(farmer)`.
 - **ADR-0014.7** — Sync trigger: the queue drains only when the app is in the foreground (active tab) — a `visibilitychange`/`focus` listener initiates the drain alongside the `online` event, so sync does not run silently in the background.
+- **ADR-0014.8** — Online data freshness: the SW uses a network-first strategy for GET /api responses; the SW cache is an offline-only mirror and Next.js's fetch cache / ISR remains the live source of truth (no stale live data served from the SW cache).
+- **ADR-0014.9** — Offline UX: the `/offline` fallback is locale-aware (`/[locale]/offline`) so it renders in the farmer's language (Urdu/Pashto RTL included).
