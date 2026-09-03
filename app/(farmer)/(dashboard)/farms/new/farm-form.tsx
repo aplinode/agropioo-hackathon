@@ -798,6 +798,11 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
     };
   }, [selectedDistrict]);
 
+  useEffect(() => {
+    setValue("location", "");
+    setSelectedLocationName("");
+  }, [selectedDistrict, setValue]);
+
   const onSubmit = async (data: CreateFarmInput) => {
     setStatus("loading");
     setServerErrors({});

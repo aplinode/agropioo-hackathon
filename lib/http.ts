@@ -14,7 +14,8 @@ export type ApiErrorCode =
   | "internal_error"
   | "server_error"
   | "no_candidates"
-  | "outside_pakistan";
+  | "outside_pakistan"
+  | "data_unavailable";
 
 export function errorBody(code: ApiErrorCode, message: string) {
   return { error: { code, message } };

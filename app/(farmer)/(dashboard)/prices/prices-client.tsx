@@ -8,6 +8,7 @@ import PredictionChart from "@/components/prices/prediction-chart";
 import RecommendationBadge from "@/components/prices/recommendation-badge";
 import PriceAlertModal, { type AlertFormData, type SavedAlert } from "@/components/prices/price-alert-modal";
 import PriceHistoryChart, { type HistoryPoint } from "@/components/prices/price-history-chart";
+import FavoriteCropStar from "@/components/prices/favorite-crop-star";
 import { SearchIcon } from "@/components/icons";
 import type { PricesBundle } from "./prices-bundle";
 import type { ForecastPoint } from "@/lib/prices/forecast";
@@ -22,6 +23,10 @@ type PricesResponse = {
 };
 
 type PredictionResponse = {
+  can_forecast: boolean;
+  reason?: string;
+  row_count?: number;
+  last_date?: string | null;
   predictions: ForecastPoint[];
   recommendation: "SELL" | "HOLD";
   recommendation_reason: string;
@@ -56,6 +61,7 @@ export default function PricesClient({ bundle, crops, mandis, initial }: PricesC
   const [modalOpen, setModalOpen] = useState(false);
   const [editingAlert, setEditingAlert] = useState<SavedAlert | null>(null);
   const [alertActionPending, setAlertActionPending] = useState(false);
+  const [favourites, setFavourites] = useState<string[]>([]);
 
   async function loadPrices(params: { crop_id?: string; query?: string }) {
     startTransition(async () => {
@@ -227,6 +233,38 @@ export default function PricesClient({ bundle, crops, mandis, initial }: PricesC
     }
   }
 
+  async function toggleFavourite(cropId: string) {
+    const isFav = favourites.includes(cropId);
+    const url = "/api/favourites";
+    const method = isFav ? "DELETE" : "POST";
+    const body = isFav ? undefined : JSON.stringify({ crop_id: cropId, display_order: 0 });
+
+    const res = await fetch(url, {
+      method,
+      credentials: "same-origin",
+      headers: method === "POST" ? { "Content-Type": "application/json" } : undefined,
+      body,
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setFavourites((data.favourites ?? []).map((f: { crop_id: string }) => f.crop_id));
+    }
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      const res = await fetch("/api/favourites", { credentials: "same-origin" });
+      if (!cancelled && res.ok) {
+        const data = await res.json();
+        setFavourites((data.favourites ?? []).map((f: { crop_id: string }) => f.crop_id));
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
   function openNewAlert() {
     setEditingAlert(null);
     setModalOpen(true);
@@ -272,6 +310,17 @@ export default function PricesClient({ bundle, crops, mandis, initial }: PricesC
             ))}
           </select>
         </div>
+
+        {selectedCrop ? (
+          <div className="flex items-center">
+            <FavoriteCropStar
+              cropId={selectedCrop}
+              isFavorite={favourites.includes(selectedCrop)}
+              onToggle={toggleFavourite}
+              ariaLabel={favourites.includes(selectedCrop) ? "Remove from favourites" : "Add to favourites"}
+            />
+          </div>
+        ) : null}
 
         <form onSubmit={handleSearchSubmit} className="flex-1">
           <label htmlFor="price-search" className="sr-only">
@@ -324,7 +373,11 @@ export default function PricesClient({ bundle, crops, mandis, initial }: PricesC
                 modelConfidence={prediction.model_confidence}
                 bundle={bundle}
               />
-              <PredictionChart predictions={prediction.predictions} bundle={bundle} />
+              <PredictionChart
+                predictions={prediction.predictions}
+                canForecast={prediction.can_forecast}
+                bundle={bundle}
+              />
             </div>
           ) : null}
           {selectedCrop && predictionPending ? (

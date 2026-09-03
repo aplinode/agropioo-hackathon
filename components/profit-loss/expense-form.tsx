@@ -17,6 +17,23 @@ type Props = {
   onCreated?: () => void;
 };
 
+const inputClass = (err?: string) =>
+  `focus-ring-none mt-2 h-12 w-full rounded-xl border bg-white px-4 text-sm text-agro-ink transition-colors duration-200 placeholder:text-agro-cloud focus:outline-none focus:ring-2 ${
+    err
+      ? "border-agro-forest focus:border-agro-forest focus:ring-agro-forest/20"
+      : "border-agro-sprout focus:border-agro-canopy focus:ring-agro-canopy/20"
+  }`;
+
+function getMessage(err: unknown): string | undefined {
+  if (!err) return undefined;
+  if (typeof err === "string") return err;
+  if (typeof err === "object" && err !== null && "message" in err) {
+    const message = (err as { message?: unknown }).message;
+    if (typeof message === "string") return message;
+  }
+  return undefined;
+}
+
 export default function ExpenseForm({ seasonId, onCreated }: Props) {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<CreateExpenseInput>({
     resolver: async (data) => {
@@ -44,31 +61,31 @@ export default function ExpenseForm({ seasonId, onCreated }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Category</label>
-        <select {...register("category")} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30">
+        <label className="block text-sm font-semibold text-agro-ink">Category</label>
+        <select {...register("category")} className={inputClass(getMessage(errors.category))}>
           {EXPENSE_CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>{c.label}</option>
           ))}
         </select>
-        {errors.category && <p className="mt-1 text-xs text-agro-error">{String(errors.category.message)}</p>}
+        {errors.category && <p className="mt-1.5 text-sm font-medium text-agro-forest">{String(getMessage(errors.category))}</p>}
       </div>
       <div>
-        <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Amount (PKR)</label>
-        <input type="number" step="0.01" {...register("amount")} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30" />
-        {errors.amount && <p className="mt-1 text-xs text-agro-error">{String(errors.amount.message)}</p>}
+        <label className="block text-sm font-semibold text-agro-ink">Amount (PKR)</label>
+        <input type="number" step="0.01" {...register("amount")} className={inputClass(getMessage(errors.amount))} />
+        {errors.amount && <p className="mt-1.5 text-sm font-medium text-agro-forest">{String(getMessage(errors.amount))}</p>}
       </div>
       <div>
-        <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Date</label>
-        <input type="date" {...register("date")} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30" />
-        {errors.date && <p className="mt-1 text-xs text-agro-error">{String(errors.date.message)}</p>}
+        <label className="block text-sm font-semibold text-agro-ink">Date</label>
+        <input type="date" {...register("date")} className={inputClass(getMessage(errors.date))} />
+        {errors.date && <p className="mt-1.5 text-sm font-medium text-agro-forest">{String(getMessage(errors.date))}</p>}
       </div>
       <div>
-        <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Note (optional)</label>
-        <input type="text" {...register("note")} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30" />
+        <label className="block text-sm font-semibold text-agro-ink">Note (optional)</label>
+        <input type="text" {...register("note")} className={inputClass(getMessage(errors.note))} />
       </div>
-      <button type="submit" disabled={isSubmitting} className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
+      <button type="submit" disabled={isSubmitting} className="inline-flex h-11 w-full cursor-pointer items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
         Add expense
       </button>
     </form>

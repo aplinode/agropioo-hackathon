@@ -13,6 +13,7 @@ import {
   type EnrichedPrice,
 } from "@/lib/prices/api-types";
 import { getAppLocale } from "@/lib/i18n/server";
+import { estimateTransportCost } from "@/lib/prices/transport";
 
 
 function cropNameColumn(locale: string): string {
@@ -42,27 +43,27 @@ export async function GET(request: Request): Promise<Response> {
 
   try {
     if (input.query) {
-      const prices = await query<CurrentPriceRow>(
-        `select
-           m.id as mandi_id, m.name_en as mandi_name, m.district,
-           m.latitude, m.longitude,
-           c.id as crop_id, c.${nameColumn} as crop_name,
-           p.date, p.modal_price, p.min_price, p.max_price, p.unit, p.is_holiday,
-           0 as updated_days_ago,
-           lag(p.modal_price) over (partition by p.mandi_id, p.crop_id order by p.date) as prev_modal
-         from mandi_prices p
-         join mandis m on m.id = p.mandi_id
-         join crops c on c.id = p.crop_id
-         where (
-           lower(m.name_en) like $1
-           or lower(m.district) like $1
-           or lower(c.name_en) like $1
-           or lower(c.${nameColumn}) like $1
-         )
-         order by p.date desc, p.modal_price desc
-         limit 50`,
-        [`%${input.query.toLowerCase()}%`]
-      );
+    const prices = await query<CurrentPriceRow>(
+      `select
+         m.id as mandi_id, m.name_en as mandi_name, m.district,
+         m.latitude, m.longitude,
+         c.id as crop_id, c.${nameColumn} as crop_name,
+         p.date, p.modal_price, p.min_price, p.max_price, p.unit, p.is_holiday, p.source_code,
+         current_date - p.date as updated_days_ago,
+         lag(p.modal_price) over (partition by p.mandi_id, p.crop_id order by p.date) as prev_modal
+       from mandi_prices p
+       join mandis m on m.id = p.mandi_id
+       join crops c on c.id = p.crop_id
+       where (
+         lower(m.name_en) like $1
+         or lower(m.district) like $1
+         or lower(c.name_en) like $1
+         or lower(c.${nameColumn}) like $1
+       )
+       order by p.date desc, p.modal_price desc
+       limit 50`,
+      [`%${input.query.toLowerCase()}%`]
+    );
       return jsonResponse({
         district: null,
         is_fallback_hub: false,
@@ -89,7 +90,7 @@ export async function GET(request: Request): Promise<Response> {
          m.id as mandi_id, m.name_en as mandi_name, m.district,
          m.latitude, m.longitude,
          c.id as crop_id, c.${nameColumn} as crop_name,
-         p.date, p.modal_price, p.min_price, p.max_price, p.unit, p.is_holiday,
+         p.date, p.modal_price, p.min_price, p.max_price, p.unit, p.is_holiday, p.source_code,
          current_date - p.date as updated_days_ago,
          lag(p.modal_price) over (partition by p.mandi_id, p.crop_id order by p.date) as prev_modal
        from mandi_prices p
@@ -157,6 +158,7 @@ function enrichPrices(
       change_pct,
       change_pkr,
       is_best_price: false,
+      transport_cost_pkr: estimateTransportCost(distance_km),
     };
   });
 }

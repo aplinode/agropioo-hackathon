@@ -1360,6 +1360,11 @@ export const en = {
   "app.prices.retry": "Try again",
   "app.prices.noPricesForCrop": "No prices found for this crop nearby.",
   "app.prices.comingSoon": "Coming soon",
+  "app.prices.transportCost": "Transport ~Rs {cost}",
+  "app.prices.transport": "Transport",
+  "app.prices.favouriteAdd": "Add to favourites",
+  "app.prices.favouriteRemove": "Remove from favourites",
+  "app.prices.dataSourceBadge": "Data source",
 
   /* ── Crop Recommendation Engine (app.crops.*) ─────────────────────── */
   "app.crops.eyebrow": "Crop recommendation",
@@ -1396,7 +1401,7 @@ export const en = {
   "app.crops.soil.saline": "Saline",
   "app.crops.soil.rocky": "Rocky",
   "app.crops.soil.other": "Not sure / Other",
-  "app.crops.budget.low": "Low (under Rs 25,000/acre)",
+  "app.crops.budget.low": "Under 25,000",
   "app.crops.budget.medium": "Medium (Rs 25,000–60,000/acre)",
   "app.crops.budget.high": "High (Rs 60,000–120,000/acre)",
   "app.crops.budget.very_high": "Very high (over Rs 120,000/acre)",
@@ -1472,6 +1477,7 @@ export const en = {
   "app.crops.catalogue.empty": "No crops match this filter.",
   "app.crops.errors.serviceUnavailable": "Recommendation service is temporarily unavailable. Please retry.",
   "app.crops.errors.generic": "Something went wrong. Please try again.",
+  "app.crops.errors.dataUnavailable": "No data found for this selection. Please adjust your filters and try again.",
   "app.crops.errors.notFound": "Recommendation not found.",
   "app.crops.errors.rateLimited": "Too many requests. Please wait a moment.",
   "app.crops.reason.suitability": "{crop} suits your {soil} soil better than most alternatives.",

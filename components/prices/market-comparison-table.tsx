@@ -35,7 +35,8 @@ export default function MarketComparisonTable({
               <th className="px-5 py-3">{bundle.minPrice}</th>
               <th className="px-5 py-3">{bundle.maxPrice}</th>
               <th className="px-5 py-3">{bundle.change}</th>
-              <th className="px-5 py-3">{bundle.distance}</th>
+               <th className="px-5 py-3">{bundle.distance}</th>
+               <th className="px-5 py-3">Transport</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-agro-sprout">
@@ -79,6 +80,11 @@ export default function MarketComparisonTable({
                   <td className="px-5 py-3 text-agro-slate">
                     {price.distance_km !== null
                       ? bundle.distanceKm.replace("{km}", String(Math.round(price.distance_km)))
+                      : "—"}
+                  </td>
+                  <td className="px-5 py-3 text-agro-slate">
+                    {price.transport_cost_pkr !== null && price.transport_cost_pkr > 0
+                      ? "Rs " + Number(price.transport_cost_pkr).toLocaleString("en-PK")
                       : "—"}
                   </td>
                 </tr>
