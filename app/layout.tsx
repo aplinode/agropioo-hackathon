@@ -88,7 +88,7 @@ export default async function RootLayout({
       className={`${fontVariables} h-full antialiased`}
       data-scroll-behavior="smooth"
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
         {children}
       </body>
     </html>
