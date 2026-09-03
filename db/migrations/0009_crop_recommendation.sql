@@ -194,6 +194,41 @@ values
   ('Tomato',     'app.crops.catalogue.tomato',     'vegetable', 9000, 110, array['winter','spring','autumn'],              'high',   'high',   65000, 'high',   'Vegetable; high value, pest pressure.')
 on conflict (name_en) do nothing;
 
+insert into crops (name_en, name_key, category, typical_yield_per_acre_kg, growing_duration_days,
+                  season_windows, water_requirement_level, labour_cost_level,
+                  capital_requirement_per_acre_pkr, market_risk_baseline, notes)
+values
+  ('Barley',       'app.crops.catalogue.barley',       'staple',   1200, 120, array['winter','autumn'],                        'low',    'low',    12000, 'low',    'Dryland cereal; drought-tolerant.'),
+  ('Bajra',        'app.crops.catalogue.bajra',        'staple',   800,  90,  array['summer','rainy'],                          'low',    'low',    10000, 'low',    'Pearl millet; arid-zone staple.'),
+  ('Jowar',        'app.crops.catalogue.jowar',        'staple',   1000, 100, array['summer','rainy'],                          'low',    'low',    11000, 'low',    'Sorghum; drought-tolerant.'),
+  ('Tobacco',      'app.crops.catalogue.tobacco',      'cash',     1200, 120, array['winter','spring'],                        'medium', 'high',   80000, 'high',   'Cash crop; labour-intensive.'),
+  ('Sunflower',    'app.crops.catalogue.sunflower',    'cash',     800,  90,  array['spring','summer','autumn'],               'low',    'low',    18000, 'medium', 'Oilseed; short duration.'),
+  ('Canola',       'app.crops.catalogue.canola',       'cash',     600,  130, array['winter'],                                  'low',    'low',    20000, 'medium', 'Rapeseed; cool-season oilseed.'),
+  ('Sesame',       'app.crops.catalogue.sesame',       'cash',     300,  90,  array['summer','spring'],                         'low',    'low',    12000, 'medium', 'Til; drought-tolerant oilseed.'),
+  ('Lentil',       'app.crops.catalogue.lentil',       'pulse',    400,  120, array['winter'],                                  'low',    'low',    14000, 'low',    'Masoor; short-duration pulse.'),
+  ('Pigeon Pea',   'app.crops.catalogue.pigeon_pea',   'pulse',    500,  150, array['summer','rainy'],                          'low',    'low',    13000, 'low',    'Tur/arhar; deep-rooted pulse.'),
+  ('Black Gram',   'app.crops.catalogue.black_gram',   'pulse',    350,  100, array['summer','rainy'],                          'low',    'low',    12000, 'low',    'Urad; warm-season pulse.'),
+  ('Pea',          'app.crops.catalogue.pea',          'pulse',    600,  90,  array['winter','autumn'],                        'low',    'low',    16000, 'low',    'Cool-season vegetable/pulse.'),
+  ('Cowpea',       'app.crops.catalogue.cowpea',       'pulse',    400,  80,  array['summer','rainy'],                          'low',    'low',    11000, 'low',    'Lobiya; drought-tolerant.'),
+  ('Cauliflower',  'app.crops.catalogue.cauliflower',  'vegetable', 8000, 100, array['winter','autumn'],                        'medium', 'high',   50000, 'medium', 'Cool-season vegetable.'),
+  ('Cabbage',      'app.crops.catalogue.cabbage',      'vegetable', 7000, 95,  array['winter','autumn'],                        'medium', 'high',   48000, 'medium', 'Cool-season vegetable.'),
+  ('Brinjal',      'app.crops.catalogue.brinjal',      'vegetable', 6000, 120, array['summer','rainy'],                          'medium', 'medium', 35000, 'medium', 'Eggplant; warm-season.'),
+  ('Okra',         'app.crops.catalogue.okra',         'vegetable', 4000, 60,  array['summer','rainy'],                          'medium', 'medium', 30000, 'medium', 'Bhindi; short-duration.'),
+  ('Chili',        'app.crops.catalogue.chili',        'vegetable', 2000, 120, array['summer','rainy'],                          'medium', 'high',   40000, 'high',   'Hot pepper; high value.'),
+  ('Garlic',       'app.crops.catalogue.garlic',       'vegetable', 3000, 150, array['winter','autumn'],                        'medium', 'high',   50000, 'high',   'Cool-season bulb.'),
+  ('Ginger',       'app.crops.catalogue.ginger',       'vegetable', 5000, 240, array['spring','summer'],                        'high',   'high',   90000, 'high',   'Warm-season rhizome.'),
+  ('Cucumber',     'app.crops.catalogue.cucumber',     'vegetable', 6000, 55,  array['summer','spring'],                        'high',   'medium', 25000, 'medium', 'Short-duration vegetable.'),
+  ('Watermelon',   'app.crops.catalogue.watermelon',   'vegetable', 8000, 90,  array['summer','rainy'],                          'high',   'medium', 30000, 'medium', 'Warm-season fruit/vegetable.'),
+  ('Pumpkin',      'app.crops.catalogue.pumpkin',      'vegetable', 7000, 100, array['summer','rainy'],                          'medium', 'low',    20000, 'low',    'Warm-season vine crop.'),
+  ('Carrot',       'app.crops.catalogue.carrot',       'vegetable', 5000, 70,  array['winter','autumn'],                        'medium', 'medium', 35000, 'medium', 'Cool-season root.'),
+  ('Spinach',      'app.crops.catalogue.spinach',      'vegetable', 4000, 45,  array['winter','autumn'],                        'low',    'medium', 15000, 'low',    'Cool-season leafy green.'),
+  ('Fenugreek',    'app.crops.catalogue.fenugreek',    'vegetable', 2500, 40,  array['winter','autumn'],                        'low',    'low',    12000, 'low',    'Methi; short-duration leafy.'),
+  ('Mango',        'app.crops.catalogue.mango',        'cash',     8000, 365, array['spring','summer'],                        'medium', 'medium', 60000, 'medium', 'Perennial fruit; long-term.'),
+  ('Citrus',       'app.crops.catalogue.citrus',       'cash',     10000,365, array['winter','spring'],                        'medium', 'medium', 70000, 'medium', 'Perennial fruit; medium-term.'),
+  ('Guava',        'app.crops.catalogue.guava',        'cash',     6000, 365, array['summer','autumn'],                        'low',    'low',    40000, 'low',    'Perennial fruit; hardy.'),
+  ('Apple',        'app.crops.catalogue.apple',        'cash',     12000,365, array['spring','summer'],                        'medium', 'high',   80000, 'medium', 'Temperate fruit; high-input.')
+on conflict (name_en) do nothing;
+
 -- ──────────────────── Seed: crop × soil compatibility ────────────────────
 -- suitability_score 0.00-1.00 per (crop, soil_type)
 insert into crop_soil_compatibility (crop_id, soil_type, suitability_score, ph_min, ph_max, notes)
@@ -257,7 +292,16 @@ from (values
   ('Mustard','Cotton',  'Cotton after oilseed',                'app.crops.rotation.mustard_then_cotton', 0.70),
   ('Soybean','Wheat',   'Wheat after soybean',                 'app.crops.rotation.soybean_then_wheat',  0.84),
   ('Onion','Maize',     'Maize after onion on fertile bed',    'app.crops.rotation.onion_then_maize',    0.75),
-  ('Tomato','Wheat',    'Wheat after tomato',                  'app.crops.rotation.tomato_then_wheat',   0.73)
+  ('Tomato','Wheat',    'Wheat after tomato',                  'app.crops.rotation.tomato_then_wheat',   0.73),
+  ('Barley','Chickpea','Pulse after barley breaks cereal cycle','app.crops.rotation.barley_then_chickpea',0.72),
+  ('Bajra','Cowpea',   'Cowpea after bajra on sandy loam',    'app.crops.rotation.bajra_then_cowpea',   0.68),
+  ('Sunflower','Wheat','Wheat after sunflower on good land',  'app.crops.rotation.sunflower_then_wheat',0.70),
+  ('Canola','Wheat',   'Wheat after canola restores soil',    'app.crops.rotation.canola_then_wheat',   0.72),
+  ('Lentil','Cotton',  'Cotton after lentil benefits from N', 'app.crops.rotation.lentil_then_cotton',  0.74),
+  ('Pea','Maize',      'Maize after pea on fertile soil',     'app.crops.rotation.pea_then_maize',      0.70),
+  ('Cauliflower','Pea','Pea after cauliflower keeps rotation','app.crops.rotation.cauliflower_then_pea',0.65),
+  ('Okra','Cowpea',    'Cowpea after okra fixes soil',        'app.crops.rotation.okra_then_cowpea',    0.66),
+  ('Garlic','Wheat',   'Wheat after garlic on loam',          'app.crops.rotation.garlic_then_wheat',   0.68)
 ) as r(prev, next, benefit, reason_key, score)
 join crops p on p.name_en = r.prev
 join crops n on n.name_en = r.next

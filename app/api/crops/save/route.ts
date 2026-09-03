@@ -92,7 +92,7 @@ export async function POST(request: Request) {
   const allCrops = await query<CropRow>(`SELECT * FROM crops`);
 
   const result = await withTransaction(async (client) => {
-    const planRow = await client.query<FarmPlanEntry>(
+    const planRow = await client.query<FarmPlanRow>(
       `INSERT INTO farm_plan_entries
         (id, account_id, farm_id, recommendation_id, target_season, target_year, created_at, updated_at)
        VALUES ($1,$2,$3,$4,$5,$6,now(),now())
