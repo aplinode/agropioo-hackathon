@@ -120,6 +120,8 @@ export default async function WeatherPage({
             id: f.id,
             name: f.name,
             cropLabel: capitalize(f.primary_crop ?? f.crops?.[0] ?? ""),
+            location: f.location,
+            district: f.district,
           }))} selectedId={selected.id} label={bundle.farmSelectorLabel} />
         </div>
         <p className="mt-4 rounded-2xl border border-agro-canopy/30 bg-agro-mint px-4 py-3 text-sm text-agro-forest">

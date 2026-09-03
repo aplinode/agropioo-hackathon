@@ -3,7 +3,7 @@ import "server-only";
 import nodemailer from "nodemailer";
 
 import { query, queryOne } from "@/lib/db";
-import type { ForecastResult } from "./openweather";
+import type { ForecastResult, ForecastHour } from "./openweather";
 
 /* Alert rule engine (research §3). Scans the near-term forecast window for
    yield-threatening conditions, deduplicates per condition type per farm within a

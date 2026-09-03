@@ -403,7 +403,7 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
   }) => {
     const placeName = item.display_name;
     onChange(placeName);
-    onLocationPick(parseFloat(item.lat), parseFloat(item.lon), placeName);
+    onLocationPick(item.lat, item.lon, placeName);
     setOpen(false);
     setQuery(placeName);
     skipAutoGeocodeRef.current = true;

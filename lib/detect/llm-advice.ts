@@ -1,4 +1,6 @@
-import { getOpenAI } from "@/lib/advisor/tools/knowledge-base";
+import OpenAI from "openai";
+
+const openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export interface LlmAdvice {
   causes: string;
@@ -14,7 +16,6 @@ export async function generateAdvice(params: {
   locale: string;
   confidence: number;
 }): Promise<LlmAdvice> {
-  const openai = getOpenAI();
   const model = process.env.ADVISOR_MODEL ?? "gpt-4o-mini";
 
   const localeMap: Record<string, string> = {
@@ -49,7 +50,7 @@ Provide structured advice in JSON format:
 
 Respond ONLY with valid JSON, no markdown, no extra text.`;
 
-  const response = await openai.chat.completions.create({
+  const response = await openaiClient.chat.completions.create({
     model,
     messages: [
       { role: "system", content: systemPrompt },

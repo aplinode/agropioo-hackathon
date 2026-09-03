@@ -39,7 +39,7 @@ export default async function FarmDetailPage({
         [id]
       );
 
-      const health = computeFarmHealth(data.growth_stages as Record<string, string>, recentRecords);
+      const health = computeFarmHealth(data.growth_stages as Record<string, string>, recentRecords as { type: string; event_date: string }[]);
 
       farm = {
         ...data,
@@ -84,7 +84,7 @@ export default async function FarmDetailPage({
             {Array.isArray(f.crops) ? (f.crops as string[]).join(', ') : String(f.crops)}
           </span>
           <span className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-white/75">
-            {f.acres} {bundle.unitsAcres}
+            {String(f.acres)} {bundle.unitsAcres}
           </span>
           <span className="rounded-full border border-white/15 px-3 py-1 text-xs font-medium text-white/75">
             {f.district as string}
