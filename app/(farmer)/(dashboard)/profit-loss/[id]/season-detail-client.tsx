@@ -105,7 +105,7 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
   };
 
   const expenseRows = season.expenses.map((e) => ({
-    date: e.date as string,
+    date: new Date(e.date as string | Date).toISOString().slice(0, 7),
     amount: Number(e.amount),
   }));
   const projectedRows = season.projected_costs.map((p) => ({
