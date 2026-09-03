@@ -98,12 +98,9 @@ export default function MarkdownRender({ text, className = "" }: Props) {
               {...props}
             />
           ),
-          li: ({ children, ordered }) => {
-            if (ordered) {
-              return <li className="mb-1">{children}</li>;
-            }
-            return <li className="mb-1">{children}</li>;
-          },
+          li: ({ children }) => (
+            <li className="mb-1">{children}</li>
+          ),
         }}
       >
         {text}
