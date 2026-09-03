@@ -1,4 +1,4 @@
-# Research: Offline-First PWA + SMS Alerts
+# Research: Offline-First PWA + Sync
 
 **Feature**: 14-offline-pwa-sms  
 **Date**: 2026-09-03  
