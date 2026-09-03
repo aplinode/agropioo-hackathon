@@ -1,6 +1,6 @@
 # Research: Offline-First PWA + Sync
 
-**Feature**: 14-offline-pwa-sms  
+**Feature**: 14-offline-pwa (folder renamed from offline-pwa-sms; SMS alerts deferred to specs/sms-alerts)  
 **Date**: 2026-09-03  
 **Status**: Complete  
 
@@ -102,7 +102,7 @@ The existing i18n system must be used for all new UI strings:
 - Add keys to `catalog/en.ts` under namespace `app.offline.*`
 - Draft translations in all 7 non-English catalog files
 - Run `npm run sync:translations` to upsert into the Neon `translations` table
-- Create `getOfflineBundle()` in `lib/i18n/server.ts` following the `getWeatherBundle()` / `getAdvisorBundle()` pattern
+- Add offline indicator strings to `getShellBundle()` in `lib/i18n/server.ts` (tab-bar indicator is the only `"use client"` sub-component)
 - Client components receive strings as flat props (per the RSC boundary pattern)
 
 ### 8. Existing Tests
@@ -111,12 +111,12 @@ Test pattern: `vitest.config.ts` runs `lib/**/*.test.ts`, `catalog/**/*.test.ts`
 
 ## Open Risks
 
-- **Dependency approval**: `next-pwa` + `workbox` and `twilio` are new dependencies requiring founder approval. The constitution's Dependency rule (AGENTS.md §"Dependencies & decisions") requires proposing package + reason + maintenance weight and waiting for explicit yes.
-- **AGANTS.md conflict**: The constitution explicitly lists "SMS alerts" as "Out of scope for demo." The feature document includes SMS alerts. This scope conflict needs resolution.
-- **Safari support**: Background Sync API is not supported in Safari. IndexedDB + online/offline events work everywhere but require more custom code.
-- **Service worker + Next.js cache**: Next.js has its own data cache (fetch cache). The service worker layer is separate and must be carefully coordinated to avoid stale data serving.
-- **IndexedDB schema management**: Unlike SQL migrations, IndexedDB schema changes are manual and versioned via `onupgradeneeded`. Need a strategy for evolving the local database schema.
-- **Conflict resolution**: When a farmer edits the same record offline on two devices, the server needs a strategy. For a hackathon demo, last-write-wins with a server-generated `updated_at` timestamp is acceptable but must be documented.
+- **Dependency approval**: `next-pwa` + `workbox` — **approved** by founder (2026-09-03). `twilio` deferred with SMS (see Out of Scope). ✅ resolved
+- **AGANTS.md conflict**: SMS listed out-of-scope for demo but in the feature doc → **resolved by deferring SMS to `specs/sms-alerts/`**; this feature is PWA+offline only. ✅ resolved
+- **Safari support**: Background Sync API not supported in Safari → **acceptable**, since sync uses client-side IndexedDB + `online`/`focus` events (no Background Sync dependency). ✅ resolved
+- **Service worker + Next.js cache**: coordinated via network-first strategy; SW cache is an offline-only mirror, Next.js fetch cache/ISR is the live source of truth (ADR-0014.8). ✅ resolved
+- **IndexedDB schema management**: versioned DB (v1, three stores) with additive-only `onupgradeneeded`; future entity types add new stores, never alter entry shapes (ADR-0014.4). ✅ resolved
+- **Conflict resolution**: last-write-wins by server `updated_at`; client detects divergence on the 200 response, no 409 (ADR-0014.1). ✅ resolved
 
 ## Translation Strategy
 
@@ -125,7 +125,7 @@ All new visible strings follow the existing catalog → DB sync pattern:
 1. **Authoring**: Add namespaced keys to `catalog/en.ts` under `app.offline.*`.
 2. **Drafting**: Add partial translations to the other 7 locale catalog files.
 3. **Sync**: Run `npm run sync:translations` to upsert the full key × locale matrix.
-4. **Runtime**: Server-side `getOfflineBundle()` in `lib/i18n/server.ts` loads the dictionary and returns a flat props bundle to client components.
+4. **Runtime**: Offline indicator strings are added to `getShellBundle()` in `lib/i18n/server.ts` (the tab-bar indicator is the only `"use client"` sub-component, subscribing to `lib/offline/status.ts`); the `/[locale]/offline` fallback page resolves `app.offline.*` via the existing `getDictionary`.
 5. **Fallback**: If the DB is unreachable, the build-time catalog draft is used; English is always present as the source of truth.
 
 **Key namespacing convention**: `app.offline.pageTitle`, `app.offline.status.online`, `app.offline.status.offline`, `app.offline.sync.pending`, `app.offline.sync.syncing`, `app.offline.sync.synced`, etc.
