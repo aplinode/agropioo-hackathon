@@ -706,6 +706,7 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   /* ΓöÇΓöÇ ╪┤█î┘ä ┘å█î┘ê█î┌½█î╪┤┘å ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
   "app.shell.nav.dashboard": "┌ë█î╪┤╪¿┘ê╪▒┌ë",
   "app.shell.nav.farms": "┌⌐┌ë█É",
+  "app.shell.nav.profitLoss": "Profit/Loss",
   "app.shell.nav.advisor": "┘à╪┤█î╪▒",
   "app.shell.nav.detect": "╪¬╪┤╪«█î╪╡",
   "app.shell.nav.crops": "Crops",

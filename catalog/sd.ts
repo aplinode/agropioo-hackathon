@@ -706,6 +706,7 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   /* ΓöÇΓöÇ ╪┤┘è┘ä ┘å┘è┘ê┘è┌»┘è╪┤┘å ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
   "app.shell.nav.dashboard": "┌è┘è╪┤ ╪¿┘ê╪▒┌è",
   "app.shell.nav.farms": "┌⌐┘è╪½╪▒",
+  "app.shell.nav.profitLoss": "Profit/Loss",
   "app.shell.nav.advisor": "┘à╪┤┘è╪▒",
   "app.shell.nav.detect": "╪¬╪┤╪«┘è╪╡",
   "app.shell.nav.crops": "Crops",
