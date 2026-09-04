@@ -46,9 +46,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const projectedRevenue = (season.expected_yield != null && season.expected_price != null)
       ? Number(season.expected_yield) * Number(season.expected_price)
       : 0;
-    const actualRevenue = (season.actual_yield != null && season.actual_price != null)
-      ? Number(season.actual_yield) * Number(season.actual_price)
-      : 0;
+    const actualRevenue = (season.actual_price != null) ? Number(season.actual_price) : 0;
 
     const pl = computePL({ totalProjectedCost, totalActualCost, projectedRevenue, actualRevenue, totalInvestment: totalProjectedCost });
     const breakEven = computeBreakEven(totalProjectedCost, Number(season.expected_price) || null, Number(season.expected_yield) || null, Number(season.acres));

@@ -730,6 +730,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
           soil_type: values.soilType,
           irrigation_type: values.irrigationType,
           budget_bracket: values.budgetBracket,
+          regenerate: true,
         }),
       });
 
