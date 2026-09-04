@@ -6,8 +6,8 @@ const URDU_SCRIPT_RE = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
 
 /**
  * Post-processing filter: detects language mixing in the advisor response.
- * Returns the output unchanged but logs a warning if mixing is detected.
- * The fix is already enforced via prompt engineering; this is a safety net.
+ * If mixing is detected in an Urdu response, attempts to fix by removing
+ * stray English sentences. Returns the (potentially fixed) output.
  */
 function checkLanguageConsistency(text: string): string {
   if (!text || text.length < 10) return text;
@@ -17,19 +17,35 @@ function checkLanguageConsistency(text: string): string {
 
   // Split into sentences and check each for English words
   const sentences = text.split(/[.!؟\n]+/).filter(s => s.trim().length > 0);
+  const fixedSentences: string[] = [];
+
   for (const sentence of sentences) {
     const trimmed = sentence.trim();
-    // Skip sentences that are mostly Urdu (high ratio of Urdu chars)
+    if (trimmed.length === 0) continue;
+
+    // Count Urdu vs total characters
     const urduChars = (trimmed.match(URDU_SCRIPT_RE) || []).length;
     const totalChars = trimmed.replace(/\s/g, "").length;
-    if (totalChars === 0) continue;
+    if (totalChars === 0) {
+      fixedSentences.push(trimmed);
+      continue;
+    }
 
     const urduRatio = urduChars / totalChars;
-    // If a sentence has less than 40% Urdu characters and is longer than 5 chars,
-    // it likely has English mixing
-    if (urduRatio < 0.4 && trimmed.length > 5) {
-      console.warn("[Language Filter] Possible English mixing in Urdu response:", trimmed.slice(0, 80));
+
+    // If a sentence has less than 30% Urdu characters and is longer than 10 chars,
+    // it's likely an English sentence mixed into an Urdu response — remove it
+    if (urduRatio < 0.3 && trimmed.length > 10) {
+      console.warn("[Language Filter] Removed English sentence from Urdu response:", trimmed.slice(0, 80));
+      continue;
     }
+
+    fixedSentences.push(trimmed);
+  }
+
+  // If we removed sentences, rejoin
+  if (fixedSentences.length < sentences.length) {
+    return fixedSentences.join(". ");
   }
 
   return text;
