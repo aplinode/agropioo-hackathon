@@ -1,6 +1,6 @@
 # Research: Offline-First PWA + Sync
 
-**Feature**: 14-offline-pwa-sms  
+**Feature**: 14-offline-pwa (folder renamed from offline-pwa-sms; SMS alerts deferred to specs/sms-alerts)  
 **Date**: 2026-09-03  
 **Status**: Complete  
 
@@ -21,7 +21,9 @@ Feature #14 from `docs/Agropioo_features.md`. Listed as a "Wow Factor" (green ti
 
 **Existing partial pattern**: `hooks/use-offline-prices.ts` implements a simple localStorage cache with TTL for price data. This is a read-through cache, not a write-through queue. It does not support background sync, queued writes, or conflict resolution.
 
-**Conclusion**: PWA infrastructure must be built from scratch. `next-pwa` (the standard Next.js PWA plugin) + Workbox is the standard approach, but this is a new dependency requiring founder approval per the constitution's "New dependency rule."
+**Existing partial pattern**: `hooks/use-offline-prices.ts` implements a simple localStorage cache with TTL for price data. This is a read-through cache, not a write-through queue. It does not support background sync, queued writes, or conflict resolution.
+
+**Conclusion (revised after reading the bundled Next 16 docs)**: PWA infrastructure must be built from scratch. `next-pwa` is NOT referenced by this version's docs; **Serwist** is the docs-recommended library, the web app manifest is Next.js built-in (`app/manifest.ts`), and connectivity detection is the built-in experimental `useOffline` hook. Serwist is a new dependency approved by the founder (2026-09-03).
 
 ### 2. Existing SMS/Twilio Infrastructure
 
@@ -69,18 +71,25 @@ Based on the feature description and existing codebase patterns:
 - Service worker caches GET responses (static assets + API GETs)
 - Client-side IndexedDB queue handles writes via online/offline event listeners
 
-**Assessment**: The constitution allows no new dependencies without approval. Workbox comes bundled with `next-pwa`. However, the Background Sync API and IndexedDB can be used natively (no library needed) — IndexedDB is available in the browser with no wrapper, and the `online`/`offline` events are standard. This reduces dependency surface.
+**Assessment (resolved)**: Founder chose Option C (Hybrid) realized with Serwist for SW caching + a client-side IndexedDB write queue. Serwist (not `next-pwa`) provides the precache and runtime `NetworkFirst` caching for GET /api; the write queue is hand-built on native IndexedDB (no extra runtime lib) and drains via `online`/`focus` events, fed by the built-in `useOffline` hook for connectivity detection. Background Sync API is NOT used (Safari gap; per-founder foreground-only, focus-triggered drain).
 
 ### 5. Next.js PWA Considerations
 
 **Constraint**: The constitution says "Route Handlers ARE the API layer — no separate Express/Node backend" and "Server Actions are not used." This applies to both client and server code. The PWA service worker runs in a separate worker context and cannot directly use Next.js Route Handlers — it must fetch from HTTP endpoints, which is compatible.
 
-**Key decisions**:
-- Next.js 16 with App Router. PWA plugins for Next.js typically inject a service worker via Workbox.
-- The existing i18n is locale-based via URL slugs (`/ur/...`). The service worker cache strategies must respect locale-aware routing.
-- Server-first RSC approach means most data fetching happens server-side. The PWA layer must cache API responses (Route Handler responses) for offline use, not just static assets.
+**⚠️ KEY FINDING — this Next.js 16.3.2 build does not recommend `next-pwa`.** The bundled PWA guide (`node_modules/next/dist/docs/01-app/02-guides/progressive-web-apps.md`) explicitly names **Serwist** (not `next-pwa`) for service-worker-based offline caching, and ships a **built-in `app/manifest.ts`** (MetadataRoute.Manifest) — so the web app manifest needs no plugin. The guide also ships an **experimental `useOffline` hook** (`next/offline`, enabled via `experimental.useOffline: true`) that is "more reliable than `navigator.onLine`" (catches WiFi-with-no-upstream, dead DNS). CRITICAL CAVEAT: `useOffline` auto-retry covers only **navigation, prefetch, and Server Action** requests — NOT `fetch()` to Route Handlers (offline-support.md line 21). Since the constitution forbids Server Actions, our Route Handler write queue must still be hand-built; `useOffline` is usable only for connectivity detection.
 
-**next-pwa alternative**: Since `next-pwa` is a new dependency, we could also write a custom service worker. However, Workbox provides battle-tested caching strategies and is the industry standard. The constitution's dependency rule applies.
+**Decisions (founder 2026-09-03)**:
+- **Service worker library**: Serwist (docs-recommended), registered at root scope, NOT `next-pwa`.
+- **Manifest**: Next.js built-in `app/manifest.ts` (brand-palette colors, 192/512 icons).
+- **Connectivity detection**: experimental `useOffline` hook (`lib/offline/status.ts` consumes it); queue still falls back to network-error detection on write attempts.
+- **Install prompt**: platform-aware — `beforeinstallprompt` + custom button on Android/Chrome/Edge; iOS share-sheet banner on Safari iOS (beforeinstallprompt unsupported there).
+
+**Cache strategy reconciliation**:
+- Next.js 16 with App Router. Serwist injects the service worker (precache + runtime caching).
+- The existing i18n is locale-based via URL slugs (`/ur/...`). The service worker cache (Serwist) strategies must respect locale-aware routing — the `/[locale]/offline` fallback is pre-cached per locale.
+- Server-first RSC: most data fetching is server-side. The SW (network-first) caches Route Handler GET responses for offline use; Next.js's own fetch cache / ISR remains the live source of truth (ADR-0014.8).
+- Serwist `NetworkFirst` runtime caching for GET /api with `credentials: 'include'` (FR-15); URL-keyed cache with shared-device caveat (EC-13).
 
 ### 6. Existing Alert Delivery System
 
@@ -102,7 +111,7 @@ The existing i18n system must be used for all new UI strings:
 - Add keys to `catalog/en.ts` under namespace `app.offline.*`
 - Draft translations in all 7 non-English catalog files
 - Run `npm run sync:translations` to upsert into the Neon `translations` table
-- Create `getOfflineBundle()` in `lib/i18n/server.ts` following the `getWeatherBundle()` / `getAdvisorBundle()` pattern
+- Add offline indicator strings to `getShellBundle()` in `lib/i18n/server.ts` (tab-bar indicator is the only `"use client"` sub-component)
 - Client components receive strings as flat props (per the RSC boundary pattern)
 
 ### 8. Existing Tests
@@ -111,12 +120,12 @@ Test pattern: `vitest.config.ts` runs `lib/**/*.test.ts`, `catalog/**/*.test.ts`
 
 ## Open Risks
 
-- **Dependency approval**: `next-pwa` + `workbox` and `twilio` are new dependencies requiring founder approval. The constitution's Dependency rule (AGENTS.md §"Dependencies & decisions") requires proposing package + reason + maintenance weight and waiting for explicit yes.
-- **AGANTS.md conflict**: The constitution explicitly lists "SMS alerts" as "Out of scope for demo." The feature document includes SMS alerts. This scope conflict needs resolution.
-- **Safari support**: Background Sync API is not supported in Safari. IndexedDB + online/offline events work everywhere but require more custom code.
-- **Service worker + Next.js cache**: Next.js has its own data cache (fetch cache). The service worker layer is separate and must be carefully coordinated to avoid stale data serving.
-- **IndexedDB schema management**: Unlike SQL migrations, IndexedDB schema changes are manual and versioned via `onupgradeneeded`. Need a strategy for evolving the local database schema.
-- **Conflict resolution**: When a farmer edits the same record offline on two devices, the server needs a strategy. For a hackathon demo, last-write-wins with a server-generated `updated_at` timestamp is acceptable but must be documented.
+- **Dependency approval**: `serwist` + `experimental.useOffline` (built-in) approved by founder (2026-09-03); `twilio` deferred with SMS (see Out of Scope). ✅ resolved
+- **AGANTS.md conflict**: SMS listed out-of-scope for demo but in the feature doc → **resolved by deferring SMS to `specs/sms-alerts/`**; this feature is PWA+offline only. ✅ resolved
+- **Safari support**: Background Sync API not supported in Safari → **acceptable**, since sync uses client-side IndexedDB + `online`/`focus` events (no Background Sync dependency). ✅ resolved
+- **Service worker + Next.js cache**: coordinated via network-first strategy; SW cache is an offline-only mirror, Next.js fetch cache/ISR is the live source of truth (ADR-0014.8). ✅ resolved
+- **IndexedDB schema management**: versioned DB (v1, three stores) with additive-only `onupgradeneeded`; future entity types add new stores, never alter entry shapes (ADR-0014.4). ✅ resolved
+- **Conflict resolution**: last-write-wins by server `updated_at`; client detects divergence on the 200 response, no 409 (ADR-0014.1). ✅ resolved
 
 ## Translation Strategy
 
@@ -125,7 +134,7 @@ All new visible strings follow the existing catalog → DB sync pattern:
 1. **Authoring**: Add namespaced keys to `catalog/en.ts` under `app.offline.*`.
 2. **Drafting**: Add partial translations to the other 7 locale catalog files.
 3. **Sync**: Run `npm run sync:translations` to upsert the full key × locale matrix.
-4. **Runtime**: Server-side `getOfflineBundle()` in `lib/i18n/server.ts` loads the dictionary and returns a flat props bundle to client components.
+4. **Runtime**: Offline indicator strings are added to `getShellBundle()` in `lib/i18n/server.ts` (the tab-bar indicator is the only `"use client"` sub-component, subscribing to `lib/offline/status.ts`); the `/[locale]/offline` fallback page resolves `app.offline.*` via the existing `getDictionary`.
 5. **Fallback**: If the DB is unreachable, the build-time catalog draft is used; English is always present as the source of truth.
 
 **Key namespacing convention**: `app.offline.pageTitle`, `app.offline.status.online`, `app.offline.status.offline`, `app.offline.sync.pending`, `app.offline.sync.syncing`, `app.offline.sync.synced`, etc.
