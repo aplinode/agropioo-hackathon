@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { type UpdateSeasonInput } from "@/lib/validation/profit-loss";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { PLSummary } from "@/lib/calculations/profit-loss";
 import PLSummaryComponent from "@/components/profit-loss/pl-summary";
 import BreakEvenDisplay from "@/components/profit-loss/break-even-display";
@@ -45,6 +45,21 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
   const [liveActualYield, setLiveActualYield] = useState<string>(season.actual_yield != null ? String(season.actual_yield) : "");
   const [liveActualPrice, setLiveActualPrice] = useState<string>(season.actual_price != null ? String(season.actual_price) : "");
   const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: "archive" | "delete" | "restore" | null }>({ open: false, action: null });
+
+  const yieldForm = useForm<UpdateSeasonInput>({
+    defaultValues: {
+      expected_yield: season.expected_yield ?? undefined,
+      expected_price: season.expected_price ?? undefined,
+    },
+  });
+
+  const totalProjectedCost = useMemo(() => season.projected_costs.reduce((sum, p) => sum + Number(p.total_projected_pkr ?? 0), 0), [season.projected_costs]);
+  const totalActualCost = useMemo(() => season.expenses.reduce((sum, e) => sum + Number(e.amount ?? 0), 0), [season.expenses]);
+  const projectedRevenue = useMemo(() => (season.expected_yield != null && season.expected_price != null ? season.expected_yield * season.expected_price : 0), [season.expected_yield, season.expected_price]);
+  const actualRevenue = season.actual_revenue ?? 0;
+  const liveNetProfitLoss = season.pl.netProfitLoss;
+  const liveRoi = season.pl.roi;
+  const liveVariance = season.pl.variance;
 
   const onRefresh = () => {
     if (typeof window !== "undefined") window.location.reload();
