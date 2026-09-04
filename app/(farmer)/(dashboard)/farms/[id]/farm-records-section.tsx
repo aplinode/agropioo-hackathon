@@ -114,7 +114,7 @@ export default function FarmRecordsSection({ farmId, records, bundle }: Props) {
           <div className="flex justify-center">
             <Link
               href={`/records/new?farm=${farmId}`}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-dashed border-agro-sprout px-5 text-sm font-semibold text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
             >
               <PlusIcon size={16} />
               {bundle.detail.logFieldEvent}
