@@ -12,6 +12,7 @@ import ExpenseTimeSeries from "@/components/profit-loss/charts/expense-time-seri
 import ExpenseBreakdown from "@/components/profit-loss/charts/expense-breakdown";
 import BreakEvenBar from "@/components/profit-loss/charts/break-even-bar";
 import { ArrowLeftIcon, TrashIcon, ArchiveIcon, RestoreIcon } from "@/components/icons";
+import ConfirmModal from "@/components/profit-loss/confirm-modal";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -34,56 +35,62 @@ type SeasonDetail = {
   pl: PLSummary;
   break_even: { yield: string; price: string } | null;
   crop_unit: string;
+  actual_revenue: number;
 };
 
 export default function SeasonDetailClient({ season }: { season: SeasonDetail }) {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [liveActualYield, setLiveActualYield] = useState<string>(season.actual_yield != null ? String(season.actual_yield) : "");
+  const [liveActualPrice, setLiveActualPrice] = useState<string>(season.actual_price != null ? String(season.actual_price) : "");
+  const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: "archive" | "delete" | "restore" | null }>({ open: false, action: null });
 
   const onRefresh = () => {
     if (typeof window !== "undefined") window.location.reload();
   };
 
-  const totalProjectedCost = season.projected_costs.reduce((sum, p) => sum + Number(p.total_projected_pkr), 0);
-  const totalActualCost = season.expenses.reduce((sum, e) => sum + Number(e.amount), 0);
-  const projectedRevenue = season.expected_yield && season.expected_price ? Number(season.expected_yield) * Number(season.expected_price) : 0;
-  const actualRevenue = season.actual_yield && season.actual_price ? Number(season.actual_yield) * Number(season.actual_price) : 0;
-
-  const yieldForm = useForm<UpdateSeasonInput>({
-    defaultValues: {
-      expected_yield: season.expected_yield ?? undefined,
-      expected_price: season.expected_price ?? undefined,
-    },
-  });
-
   const handleArchive = async () => {
-    if (!confirm("Archive this season? It will be hidden from your list but all data will be preserved.")) return;
     setRefreshing(true);
     const res = await fetch(`/api/profit-loss/${season.id}/archive`, { method: "POST" });
     setRefreshing(false);
+    setConfirmModal({ open: false, action: null });
     if (res.ok) onRefresh();
   };
 
   const handleRestore = async () => {
-    if (!confirm("Restore this season? It will return to your active list.")) return;
     setRefreshing(true);
     const res = await fetch(`/api/profit-loss/${season.id}/restore`, { method: "POST" });
     setRefreshing(false);
+    setConfirmModal({ open: false, action: null });
     if (res.ok) onRefresh();
   };
 
   const handleDelete = async () => {
-    if (!confirm("Permanently delete this season? This cannot be undone.")) return;
     setRefreshing(true);
     const res = await fetch(`/api/profit-loss/${season.id}`, { method: "DELETE" });
     setRefreshing(false);
+    setConfirmModal({ open: false, action: null });
     if (res.ok) router.push("/profit-loss");
     else {
       const err = await res.json();
       setError(err.error?.message ?? "Failed to delete");
     }
   };
+
+  const openConfirm = (action: "archive" | "delete" | "restore") => setConfirmModal({ open: true, action });
+  const closeConfirm = () => setConfirmModal({ open: false, action: null });
+
+  const confirmTitle =
+    confirmModal.action === "delete" ? "Delete season?" : confirmModal.action === "archive" ? "Archive season?" : "Restore season?";
+  const confirmDescription =
+    confirmModal.action === "delete"
+      ? "This will permanently delete this season and all its data. This cannot be undone."
+      : confirmModal.action === "archive"
+        ? "This season will be hidden from your list, but all data will be saved."
+        : "This season will return to your active list.";
+  const confirmLabel = confirmModal.action === "delete" ? "Delete" : confirmModal.action === "archive" ? "Archive" : "Restore";
+  const confirmVariant = confirmModal.action === "delete" ? "danger" : "warning";
 
   const handleHarvest = async (data: UpdateSeasonInput) => {
     setRefreshing(true);
@@ -105,7 +112,7 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
   };
 
   const expenseRows = season.expenses.map((e) => ({
-    date: e.date as string,
+    date: new Date(e.date as string | Date).toISOString().slice(0, 7),
     amount: Number(e.amount),
   }));
   const projectedRows = season.projected_costs.map((p) => ({
@@ -116,7 +123,7 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
   return (
     <div className="space-y-6 pt-1">
       <div className="flex items-center gap-3">
-        <Link href="/profit-loss" className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-agro-sprout text-agro-slate transition-colors hover:bg-agro-mint">
+        <Link href="/profit-loss" className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-agro-sprout text-agro-slate transition-colors hover:bg-agro-mint hover:text-agro-canopy">
           <ArrowLeftIcon size={18} />
         </Link>
         <div>
@@ -125,15 +132,15 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
         </div>
         <div className="ms-auto flex items-center gap-2">
           {season.archived_at ? (
-            <button onClick={handleRestore} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint disabled:opacity-50">
+            <button onClick={() => openConfirm("restore")} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint hover:text-agro-canopy disabled:opacity-50">
               <RestoreIcon size={14} /> Restore
             </button>
           ) : (
             <>
-              <button onClick={handleArchive} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint disabled:opacity-50">
+              <button onClick={() => openConfirm("archive")} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint hover:text-agro-canopy disabled:opacity-50">
                 <ArchiveIcon size={14} /> Archive
               </button>
-              <button onClick={handleDelete} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-error/30 px-3 text-xs font-semibold text-agro-error transition-colors hover:bg-red-50 disabled:opacity-50">
+              <button onClick={() => openConfirm("delete")} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-canopy/30 px-3 text-xs font-semibold text-agro-canopy transition-colors hover:bg-agro-mint disabled:opacity-50">
                 <TrashIcon size={14} /> Delete
               </button>
             </>
@@ -141,75 +148,99 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
         </div>
       </div>
 
-      {error && <p className="rounded-lg border border-agro-error/30 bg-red-50 p-3 text-sm text-agro-error">{error}</p>}
+      {error && <div className="rounded-lg border border-agro-canopy/30 bg-agro-mint p-3 text-sm text-agro-forest">{error}</div>}
 
       <section className="grid gap-4">
-        <h2 className="font-display text-lg font-semibold text-agro-ink">P&L Summary</h2>
-        <PLSummaryComponent
-          data={{
-            totalProjectedCost,
-            totalActualCost,
-            projectedRevenue,
-            actualRevenue,
-            netProfitLoss: season.pl.netProfitLoss,
-            roi: season.pl.roi,
-            variance: season.pl.variance,
-          }}
-        />
+        <div className="flex items-center gap-2">
+          <div className="h-1 w-8 rounded-full bg-agro-canopy" />
+          <h2 className="font-display text-lg font-semibold text-agro-forest">Profit summary</h2>
+        </div>
+        <div className="rounded-2xl border border-agro-sprout bg-white p-1">
+          <PLSummaryComponent
+            data={{
+              totalProjectedCost,
+              totalActualCost,
+              projectedRevenue,
+              actualRevenue,
+              netProfitLoss: liveNetProfitLoss,
+              roi: liveRoi,
+              variance: liveVariance,
+            }}
+          />
+        </div>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <h2 className="font-display text-lg font-semibold text-agro-ink">Break-even</h2>
-          <div className="mt-2">
+        <div className="rounded-2xl border border-agro-sprout bg-white p-5">
+          <div className="flex items-center gap-2">
+            <div className="h-1 w-8 rounded-full bg-agro-canopy" />
+            <h2 className="font-display text-lg font-semibold text-agro-forest">Break-even</h2>
+          </div>
+          <div className="mt-4">
             <BreakEvenDisplay data={season.break_even} />
           </div>
           <div className="mt-3">
             <BreakEvenBar currentYield={season.expected_yield ?? null} breakEvenYield={season.break_even?.yield ?? null} cropUnit={season.crop_unit} />
           </div>
         </div>
-        <div>
-          <h2 className="font-display text-lg font-semibold text-agro-ink">Expense breakdown</h2>
+        <div className="rounded-2xl border border-agro-sprout bg-white p-5">
+          <div className="flex items-center gap-2">
+            <div className="h-1 w-8 rounded-full bg-agro-canopy" />
+            <h2 className="font-display text-lg font-semibold text-agro-forest">Expense breakdown</h2>
+          </div>
           <ExpenseBreakdown expenses={season.expenses.map((e) => ({ category: e.category as string, amount: Number(e.amount) }))} />
         </div>
       </section>
 
-      <section>
-        <h2 className="font-display text-lg font-semibold text-agro-ink">Monthly trend</h2>
+      <section className="rounded-2xl border border-agro-sprout bg-white p-5">
+        <div className="flex items-center gap-2">
+          <div className="h-1 w-8 rounded-full bg-agro-canopy" />
+          <h2 className="font-display text-lg font-semibold text-agro-forest">Monthly trend</h2>
+        </div>
         <ExpenseTimeSeries expenses={expenseRows} projectedCosts={projectedRows} />
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border border-agro-sprout bg-white p-5">
-          <h2 className="font-display text-lg font-semibold text-agro-ink">Log expense</h2>
+        <div className="rounded-2xl border border-agro-sprout bg-agro-paper p-5">
+          <h2 className="font-display text-lg font-semibold text-agro-forest">Log expense</h2>
           <div className="mt-4">
             <ExpenseForm seasonId={season.id} onCreated={handleExpenseCreated} />
           </div>
         </div>
-        <div className="rounded-2xl border border-agro-sprout bg-white p-5">
-          <h2 className="font-display text-lg font-semibold text-agro-ink">Yield & price</h2>
+        <div className="rounded-2xl border border-agro-sprout bg-agro-paper p-5">
+          <h2 className="font-display text-lg font-semibold text-agro-forest">Yield & price</h2>
           <form onSubmit={yieldForm.handleSubmit((data) => handleHarvest(data))} className="mt-4 space-y-3">
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Expected yield (per acre)</label>
-              <input type="number" step="0.01" {...yieldForm.register("expected_yield")} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30" />
+              <label className="block text-sm font-semibold text-agro-ink">Expected yield (per acre)</label>
+              <input type="number" step="0.01" {...yieldForm.register("expected_yield")} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
             </div>
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Expected price (PKR per unit)</label>
-              <input type="number" step="0.01" {...yieldForm.register("expected_price")} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30" />
+              <label className="block text-sm font-semibold text-agro-ink">Expected price (PKR per unit)</label>
+              <input type="number" step="0.01" {...yieldForm.register("expected_price")} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
             </div>
-            <button type="submit" disabled={refreshing} className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
+            <button type="submit" disabled={refreshing} className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
               Save yield / price
             </button>
           </form>
           <div className="mt-6">
             <h3 className="text-sm font-semibold text-agro-ink">Mark harvested</h3>
-            <HarvestForm seasonId={season.id} onDone={() => onRefresh()} />
+            <HarvestForm
+              seasonId={season.id}
+              actualYield={liveActualYield}
+              actualPrice={liveActualPrice}
+              onYieldChange={setLiveActualYield}
+              onPriceChange={setLiveActualPrice}
+              onDone={() => onRefresh()}
+            />
           </div>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-agro-sprout bg-white p-5">
-        <h2 className="font-display text-lg font-semibold text-agro-ink">Expenses</h2>
+      <section className="rounded-2xl border border-agro-sprout bg-agro-paper p-5">
+        <div className="flex items-center gap-2">
+          <div className="h-1 w-8 rounded-full bg-agro-canopy" />
+          <h2 className="font-display text-lg font-semibold text-agro-forest">Expenses</h2>
+        </div>
         <div className="mt-4">
           <ExpenseList expenses={season.expenses.map((e) => ({
             id: String(e.id),
@@ -225,13 +256,33 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
           }))} />
         </div>
       </section>
+      <ConfirmModal
+        isOpen={confirmModal.open}
+        title={confirmTitle}
+        description={confirmDescription}
+        confirmLabel={confirmLabel}
+        cancelLabel="Cancel"
+        variant={confirmVariant}
+        onConfirm={() => {
+          if (confirmModal.action === "delete") handleDelete();
+          else if (confirmModal.action === "archive") handleArchive();
+          else if (confirmModal.action === "restore") handleRestore();
+        }}
+        onCancel={closeConfirm}
+        isPending={refreshing}
+      />
     </div>
   );
 }
 
-function HarvestForm({ seasonId, onDone }: { seasonId: string; onDone: () => void }) {
-  const [actualYield, setActualYield] = useState("");
-  const [actualPrice, setActualPrice] = useState("");
+function HarvestForm({ seasonId, actualYield, actualPrice, onYieldChange, onPriceChange, onDone }: {
+  seasonId: string;
+  actualYield: string;
+  actualPrice: string;
+  onYieldChange: (val: string) => void;
+  onPriceChange: (val: string) => void;
+  onDone: () => void;
+}) {
   const [submitting, setSubmitting] = useState(false);
 
   const submit = async () => {
@@ -248,14 +299,20 @@ function HarvestForm({ seasonId, onDone }: { seasonId: string; onDone: () => voi
   return (
     <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="mt-3 space-y-3">
       <div>
-        <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Actual yield (total units)</label>
-        <input type="number" step="0.01" value={actualYield} onChange={(e) => setActualYield(e.target.value)} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30" />
+        <label className="block text-sm font-semibold text-agro-ink">Actual yield (total units)</label>
+        <input type="number" step="0.01" value={actualYield} onChange={(e) => onYieldChange(e.target.value)} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
       </div>
       <div>
-        <label className="block text-xs font-medium uppercase tracking-wide text-agro-slate">Actual selling price (PKR per unit)</label>
-        <input type="number" step="0.01" value={actualPrice} onChange={(e) => setActualPrice(e.target.value)} className="mt-1 block w-full rounded-lg border border-agro-sprout bg-white px-3 py-2 text-sm text-agro-ink focus:border-agro-canopy focus:outline-none focus:ring-2 focus:ring-agro-canopy/30" />
+        <label className="block text-sm font-semibold text-agro-ink">Actual revenue (PKR)</label>
+        <input type="number" step="0.01" value={actualPrice} onChange={(e) => onPriceChange(e.target.value)} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
       </div>
-      <button type="submit" disabled={submitting} className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-wheat px-4 text-sm font-semibold text-agro-forest shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50">
+      {actualPrice !== "" && (
+        <div className="rounded-lg border border-agro-canopy/30 bg-agro-mint/40 p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">Actual revenue</p>
+           <p className="mt-1 font-mono text-sm font-semibold text-agro-forest">PKR {Number(actualPrice).toLocaleString("en-PK")}</p>
+        </div>
+      )}
+      <button type="submit" disabled={submitting} className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
         Mark harvested
       </button>
     </form>

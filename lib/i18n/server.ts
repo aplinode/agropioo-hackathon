@@ -665,6 +665,7 @@ export async function getPricesBundle(): Promise<PricesBundle> {
     eyebrow: t("app.prices.eyebrow").text,
     title: t("app.prices.title").text,
     description: t("app.prices.description").text,
+    selectFarm: t("app.prices.selectFarm").text,
     selectCrop: t("app.prices.selectCrop").text,
     searchPlaceholder: t("app.prices.searchPlaceholder").text,
     globalSearchPlaceholder: t("app.prices.globalSearchPlaceholder").text,
@@ -679,6 +680,8 @@ export async function getPricesBundle(): Promise<PricesBundle> {
     perMaund: t("app.prices.perMaund").text,
     bestPrice: t("app.prices.bestPrice").text,
     distanceKm: t("app.prices.distanceKm").text,
+    transportCost: t("app.prices.transportCost").text,
+    transport: t("app.prices.transport").text,
     hold: t("app.prices.hold").text,
     sell: t("app.prices.sell").text,
     recommendationHold: t("app.prices.recommendationHold").text,
@@ -721,6 +724,9 @@ export async function getPricesBundle(): Promise<PricesBundle> {
     retry: t("app.prices.retry").text,
     noPricesForCrop: t("app.prices.noPricesForCrop").text,
     comingSoon: t("app.prices.comingSoon").text,
+    favouriteAdd: t("app.prices.favouriteAdd").text,
+    favouriteRemove: t("app.prices.favouriteRemove").text,
+    dataSourceBadge: t("app.prices.dataSourceBadge").text,
   };
 }
 
@@ -872,6 +878,7 @@ export async function getCropsBundle(): Promise<CropsBundle> {
     errors: {
       serviceUnavailable: t("app.crops.errors.serviceUnavailable").text,
       generic: t("app.crops.errors.generic").text,
+      dataUnavailable: t("app.crops.errors.dataUnavailable").text,
       notFound: t("app.crops.errors.notFound").text,
       rateLimited: t("app.crops.errors.rateLimited").text,
     },

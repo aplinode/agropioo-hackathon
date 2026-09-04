@@ -3,6 +3,7 @@ import { z } from "zod";
 export const getPricesQuerySchema = z.object({
   crop_id: z.string().optional(),
   district: z.string().optional(),
+  farm_id: z.string().optional(),
   query: z.string().optional(),
   include_bordering: z.coerce.boolean().default(true),
 });
@@ -40,6 +41,11 @@ export const historyQuerySchema = z.object({
   range: z.enum(["1M", "3M", "6M", "12M"]).default("3M"),
 });
 
+export const favouriteCropSchema = z.object({
+  crop_id: z.string().min(1, "crop_id is required"),
+  display_order: z.coerce.number().int().nonnegative().optional(),
+});
+
 export type CurrentPriceRow = {
   mandi_id: string;
   mandi_name: string;
@@ -56,6 +62,7 @@ export type CurrentPriceRow = {
   is_holiday: boolean;
   updated_days_ago: number;
   prev_modal: number | null;
+  source_code: string;
 };
 
 export type EnrichedPrice = CurrentPriceRow & {
@@ -63,4 +70,5 @@ export type EnrichedPrice = CurrentPriceRow & {
   change_pct: number;
   change_pkr: number;
   is_best_price: boolean;
+  transport_cost_pkr: number | null;
 };

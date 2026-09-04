@@ -434,57 +434,22 @@ function YearSelect({ value, onChange, isOpen, onOpen, inputRef, minYear }: { va
   );
 }
 
-function SkeletonCard() {
-  return (
-    <div className="rounded-2xl border border-agro-sprout bg-white p-5 sm:p-6 animate-pulse">
-      <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-full bg-agro-paper sm:h-11 sm:w-11" />
-        <div className="flex-1 space-y-2">
-          <div className="h-5 w-32 rounded bg-agro-paper" />
-          <div className="h-3 w-20 rounded bg-agro-paper" />
-        </div>
-      </div>
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:gap-4">
-        <div className="rounded-xl bg-agro-paper p-3 sm:p-4">
-          <div className="h-3 w-16 rounded bg-agro-paper/80" />
-          <div className="mt-2 h-5 w-24 rounded bg-agro-paper/80" />
-        </div>
-        <div className="rounded-xl bg-agro-paper p-3 sm:p-4">
-          <div className="h-3 w-16 rounded bg-agro-paper/80" />
-          <div className="mt-2 h-5 w-24 rounded bg-agro-paper/80" />
-        </div>
-        <div className="rounded-xl bg-agro-paper p-3 sm:p-4">
-          <div className="h-3 w-16 rounded bg-agro-paper/80" />
-          <div className="mt-2 h-5 w-24 rounded bg-agro-paper/80" />
-        </div>
-        <div className="rounded-xl bg-agro-paper p-3 sm:p-4">
-          <div className="h-3 w-16 rounded bg-agro-paper/80" />
-          <div className="mt-2 h-5 w-24 rounded bg-agro-paper/80" />
-        </div>
-      </div>
-      <div className="mt-4 h-4 w-full rounded bg-agro-paper/60" />
-      <div className="mt-4 flex gap-2">
-        <div className="h-10 flex-1 rounded-xl bg-agro-paper/60" />
-        <div className="h-10 flex-1 rounded-xl border border-agro-sprout bg-agro-paper/40" />
-      </div>
-    </div>
-  );
-}
-
 function RecommendationCard({
   recommendation,
   bundle,
   onCompare,
   onSave,
   savingId,
+  soilType,
 }: {
   recommendation: CropRecommendation;
   bundle: CropsBundle;
   onCompare: () => void;
   onSave: () => void;
   savingId: string | null;
+  soilType: string;
 }) {
-  const soilLabel = recommendation.crop.id;
+  const soilLabel = bundle.soil[soilType as keyof typeof bundle.soil] ?? soilType;
   const reason = resolveReason(bundle, recommendation.reasonKey, recommendation.crop.nameEn, soilLabel, "");
   const isTop = recommendation.rank === 1;
 
@@ -798,6 +763,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
   const watchedSeason = watch("targetSeason");
   const watchedYear = watch("targetYear");
   const watchedBudget = watch("budgetBracket");
+  const watchedSoilType = watch("soilType");
 
   async function handleFormSubmit(values: FormValues) {
     setLoading(true);
@@ -820,14 +786,24 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
           soil_type: values.soilType,
           irrigation_type: values.irrigationType,
           budget_bracket: values.budgetBracket,
+          regenerate: true,
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
+        console.log("crops api error", res.status, data);
         if (res.status === 409 && data.error?.code === "recommendation_exists") {
-          setExistingRequest(data.existing);
+          console.log("crops 409 existing", data.existing);
+          const existingId = data.existing?.id ?? data.existing?.request_id ?? null;
+          if (existingId) {
+            await loadExisting(existingId);
+          } else if (data.existing) {
+            setExistingRequest(data.existing);
+          } else {
+            setError(bundle.errors.generic);
+          }
           return;
         }
         if (res.status === 503) {
@@ -837,6 +813,10 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
         if (res.status === 422 && data.error?.code === "no_candidates" && data.lowestViableBracket) {
           setNoCandidates(true);
           setLowestViableBracket(data.lowestViableBracket);
+          return;
+        }
+        if (res.status === 422 && data.error?.code === "data_unavailable") {
+          setError(data.error?.message ?? bundle.errors.generic);
           return;
         }
         setError(data.error?.message ?? bundle.errors.generic);
@@ -1084,14 +1064,6 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
         </div>
       )}
 
-      {loading && recommendations.length === 0 && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-        </div>
-      )}
-
       {recommendations.length > 0 && !showCompare && (
         <div className="space-y-5 sm:space-y-6">
           <div className="flex items-center justify-between gap-3">
@@ -1115,6 +1087,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
                 onCompare={() => setShowCompare(true)}
                 onSave={() => saveRecommendation(rec.id)}
                 savingId={savingId}
+                soilType={watchedSoilType}
               />
             ))}
           </div>

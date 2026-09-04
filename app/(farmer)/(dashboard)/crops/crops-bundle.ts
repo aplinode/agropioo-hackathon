@@ -132,12 +132,23 @@ export type CropsBundle = {
     nextSeason: string;
     savedTitle: string;
   };
+  savedPlans: {
+    title: string;
+    empty: string;
+    farm: string;
+    season: string;
+    year: string;
+    crop: string;
+    updated: string;
+    viewPlan: string;
+  };
   catalogue: {
     empty: string;
   };
   errors: {
     serviceUnavailable: string;
     generic: string;
+    dataUnavailable: string;
     notFound: string;
     rateLimited: string;
   };

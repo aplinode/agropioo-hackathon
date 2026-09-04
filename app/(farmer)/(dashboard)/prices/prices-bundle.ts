@@ -6,6 +6,7 @@ export interface PricesBundle {
   eyebrow: string;
   title: string;
   description: string;
+  selectFarm: string;
   selectCrop: string;
   searchPlaceholder: string;
   globalSearchPlaceholder: string;
@@ -20,6 +21,7 @@ export interface PricesBundle {
   perMaund: string;
   bestPrice: string;
   distanceKm: string;
+  transportCost: string;
   hold: string;
   sell: string;
   recommendationHold: string;
@@ -51,6 +53,7 @@ export interface PricesBundle {
   maxPrice: string;
   change: string;
   distance: string;
+  transport: string;
   adminTitle: string;
   adminDate: string;
   adminModalPrice: string;
@@ -62,4 +65,7 @@ export interface PricesBundle {
   retry: string;
   noPricesForCrop: string;
   comingSoon: string;
+  favouriteAdd: string;
+  favouriteRemove: string;
+  dataSourceBadge: string;
 }

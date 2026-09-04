@@ -84,7 +84,7 @@ export async function POST(request: Request) {
     growingDurationDays: Number(cropRow!.growing_duration_days),
     seasonWindows: cropRow!.season_windows as CropSummary["seasonWindows"],
     waterRequirementLevel: cropRow!.water_requirement_level as CropSummary["waterRequirementLevel"],
-    labourCostLevel: cropRow!.labour_cost_level as CropSummary["waterRequirementLevel"],
+    labourCostLevel: cropRow!.labour_cost_level as CropSummary["labourCostLevel"],
     capitalRequirementPerAcrePkr: Number(cropRow!.capital_requirement_per_acre_pkr),
     marketRiskBaseline: cropRow!.market_risk_baseline as CropSummary["marketRiskBaseline"],
   };

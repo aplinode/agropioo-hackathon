@@ -49,13 +49,47 @@ export default function FarmRecordsSection({ farmId, records, bundle }: Props) {
         )}
       </div>
 
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setActiveType(null)}
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+            activeType === null
+              ? 'bg-agro-canopy text-white'
+              : 'border border-agro-sprout bg-white text-agro-slate hover:border-agro-canopy hover:text-agro-canopy'
+          }`}
+        >
+          All
+        </button>
+        {RECORD_TYPES.map((type) => {
+          const Icon = typeIcon[type] || RecordIcon;
+          const label = bundle.records.types[type as keyof typeof bundle.records.types] || type;
+          return (
+            <button
+              key={type}
+              type="button"
+              onClick={() => setActiveType(type)}
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+                activeType === type
+                  ? 'bg-agro-canopy text-white'
+                  : 'border border-agro-sprout bg-white text-agro-slate hover:border-agro-canopy hover:text-agro-canopy'
+              }`}
+            >
+              <Icon size={14} />
+              {label}
+            </button>
+          );
+        })}
+      </div>
+
       {records.length === 0 ? (
         <div className="rounded-2xl border border-agro-sprout bg-white p-8 text-center">
           <p className="text-sm text-agro-slate">{bundle.detail.noRecords}</p>
           <Link
             href={`/records/new?farm=${farmId}`}
-            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
+            className="mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
           >
+            <PlusIcon size={16} />
             {bundle.detail.logFieldEvent}
           </Link>
         </div>
@@ -64,56 +98,23 @@ export default function FarmRecordsSection({ farmId, records, bundle }: Props) {
           <p className="text-sm text-agro-slate">{bundle.records.noRecordsFound}</p>
           <Link
             href={`/records/new?farm=${farmId}`}
-            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
+            className="mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
           >
+            <PlusIcon size={16} />
             {bundle.detail.logFieldEvent}
           </Link>
         </div>
       ) : (
         <>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setActiveType(null)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
-                activeType === null
-                  ? 'bg-agro-canopy text-white'
-                  : 'border border-agro-sprout bg-white text-agro-slate hover:border-agro-canopy hover:text-agro-canopy'
-              }`}
-            >
-              All
-            </button>
-            {RECORD_TYPES.map((type) => {
-              const Icon = typeIcon[type] || RecordIcon;
-              const label = bundle.records.types[type as keyof typeof bundle.records.types] || type;
-              return (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setActiveType(type)}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
-                    activeType === type
-                      ? 'bg-agro-canopy text-white'
-                      : 'border border-agro-sprout bg-white text-agro-slate hover:border-agro-canopy hover:text-agro-canopy'
-                  }`}
-                >
-                  <Icon size={14} />
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-
           <ul className="divide-y divide-agro-sprout overflow-hidden rounded-2xl border border-agro-sprout bg-white">
-            {filtered.map((record) => (
-              <FarmDetailRecordItem key={record.id as string} record={record} />
+            {filtered.map((record, idx) => (
+              <FarmDetailRecordItem key={String((record as { id?: string }).id || idx)} record={record} />
             ))}
           </ul>
-
           <div className="flex justify-center">
             <Link
               href={`/records/new?farm=${farmId}`}
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-agro-canopy px-5 text-sm font-semibold text-white transition-colors hover:bg-agro-forest"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-dashed border-agro-sprout px-5 text-sm font-semibold text-agro-slate transition-colors hover:border-agro-canopy hover:text-agro-canopy"
             >
               <PlusIcon size={16} />
               {bundle.detail.logFieldEvent}
