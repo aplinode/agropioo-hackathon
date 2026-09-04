@@ -1582,5 +1582,3 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.satellite.areaOutsidePk": "کوآرڊينيٽس پاکستان جي ٻاهر آهن۔ خپن جي کھيتي جي جڳھ بيهائين چيڪ ڪريو.",
   "app.satellite.invalidBoundary": "Invalid field boundary — please redraw.",
 };
-
-export type CatalogKey = keyof typeof sd;

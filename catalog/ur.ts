@@ -906,7 +906,7 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.records.types.disease": "بیماری",
   "app.records.types.harvest": "کٹائی",
 
-  "app.records.noRecordsFound": "",
+  "app.records.noRecordsFound": "اس فلٹر کے لئے کوئی ریکارڈ نہیں ملا۔",
 
   /* ── ریکارڈ کی فہرست ───────────────────────────────── */
   "app.records.farmRecords.pageTitle": "کھیت کے ریکارڈ — اگروپیو",
@@ -1510,9 +1510,6 @@ export const ur: Partial<Record<CatalogKey, string>> = {
   "app.crops.rotation.cauliflower_then_pea": "پھول گوبھی کے بعد مٹر - فصلوں کا چکر منافع بخش",
   "app.crops.rotation.okra_then_cowpea": "بامی کے بعد لوبیا - فصلوں کا چکر منافع بخش",
   "app.crops.rotation.garlic_then_wheat": "لہسن کے بعد گندم - فصلوں کا چکر منافع بخش",
-  "hiw.loop.benefit1Desc": "Last season's disease, doses, and dates shape this season's first answer.",
-  "app.advisor.chat.emptyBody": "Start a conversation to get advice on crops, weather, soil, and market prices.",
-  "app.dashboard.pricesWidgetNoTracked": "Track crops to see prices here",
 
   /* ── Offline PWA ── */
   "offline.banner": "آپ آف لائن ہیں۔ آپ کا ڈیٹا محفوظ ہے اور آپ کا کنکشن واپس آنے پر خودکار طور پر ہمگام ہو جائے گا۔",

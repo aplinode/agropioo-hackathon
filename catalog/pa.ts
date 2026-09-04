@@ -1507,10 +1507,7 @@ export const pa: Partial<Record<CatalogKey, string>> = {
   "app.crops.rotation.cauliflower_then_pea": "پھول گوبھی کے بعد مٹر - فصلوں کا چکر منافع بخش",
   "app.crops.rotation.okra_then_cowpea": "بامی کے بعد لوبیا - فصلوں کا چکر منافع بخش",
   "app.crops.rotation.garlic_then_wheat": "لہسن کے بعد گندم - فصلوں کا چکر منافع بخش",
-  "hiw.loop.benefit1Desc": "پچھلے موسم کی بیماری، خوراک، اور تاریخیں اس موسم کا پہلا جواب بناتی ہیں۔",
   "app.shell.nav.profitLoss": "نفع / نقصان",
-  "app.advisor.chat.emptyBody": "فصلوں، موسم، مٹی، اور بازاری قیموں پر مشورہ حاصل کرنے کے لیے گفتگو شروع کریں۔",
-  "app.dashboard.pricesWidgetNoTracked": "قیمتیں دیکھنے کے لیے فصلیں ٹریک کریں",
   "app.records.noRecordsFound": "اس فلٹر کے لیے کوئی ریکارڈ نہیں ملا۔",
 
   /* ── Offline PWA ── */

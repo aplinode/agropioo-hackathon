@@ -1501,5 +1501,3 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.satellite.invalidBoundary": "Invalid field boundary — please redraw.",
 };
 
-export type CatalogKey = keyof typeof ps;
-
