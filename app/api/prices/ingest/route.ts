@@ -128,7 +128,7 @@ export async function POST(request: Request): Promise<Response> {
           `insert into mandi_prices
              (mandi_id, crop_id, date, modal_price, min_price, max_price, unit, source, source_code, is_holiday)
            values ($1,$2,$3,$4,$5,$6,'Maund','govt_api',$7,$8)
-           on conflict (mandi_id, crop_id, date) do update set
+           on conflict (mandi_id, crop_id, date, source_code) do update set
              modal_price=excluded.modal_price,
              min_price=excluded.min_price,
              max_price=excluded.max_price,

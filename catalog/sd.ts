@@ -1314,6 +1314,11 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.prices.retry": "ٻي ڪريو",
   "app.prices.noPricesForCrop": "ھتي قريب ھنڌي فصل لاءِ قيمت نه مليل.",
   "app.prices.comingSoon": "جلدي آهي",
+  "app.prices.transportCost": "ٹرانسپورٹ ~روپे {cost}",
+  "app.prices.transport": "ٹرانسپورٹ",
+  "app.prices.favouriteAdd": "پسنديدن ۾ شامل ڪريو",
+  "app.prices.favouriteRemove": "پسنديدن ۾ بڻاوو",
+  "app.prices.dataSourceBadge": "ڊيٽا surged",
 
   /* ── Crop Recommendation Engine ─────────────────────── */
   "app.crops.eyebrow": "فصل جي سفارهات",

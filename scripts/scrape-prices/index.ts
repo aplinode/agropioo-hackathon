@@ -25,7 +25,7 @@
 import { randomUUID } from "node:crypto";
 
 import { postBatch, type IngestPayload, type IngestRow, type PostResult } from "./post";
-import { detectDrift, type DriftInputs, type DriftResult } from "./drift-detector";
+import { detectDrift, type DriftResult } from "./drift-detector";
 import { SELECTORS, type SourceCode } from "./selectors";
 import type { HolidayLookup, HolidayLookupResult } from "./holiday-check";
 

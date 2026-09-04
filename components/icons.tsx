@@ -346,8 +346,18 @@ export function ChevronRightIcon(props: IconProps) {
 
 export function ChevronDownIcon(props: IconProps) {
   return (
-    <svg {...base(props)} data-flip-rtl="">
-      <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    <svg {...base(props)}>
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+export function MoreVerticalIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <circle cx="12" cy="5" r="1.5" />
+      <circle cx="12" cy="12" r="1.5" />
+      <circle cx="12" cy="19" r="1.5" />
     </svg>
   );
 }
@@ -456,6 +466,14 @@ export function RestoreIcon(props: IconProps) {
   return (
     <svg {...base(props)}>
       <path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8M3 3v5h5" />
+    </svg>
+  );
+}
+
+export function StarIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
     </svg>
   );
 }

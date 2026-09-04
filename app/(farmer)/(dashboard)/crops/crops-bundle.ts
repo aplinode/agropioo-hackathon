@@ -138,6 +138,7 @@ export type CropsBundle = {
   errors: {
     serviceUnavailable: string;
     generic: string;
+    dataUnavailable: string;
     notFound: string;
     rateLimited: string;
   };

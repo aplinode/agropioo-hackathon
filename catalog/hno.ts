@@ -1185,6 +1185,11 @@ export const hno: Partial<Record<CatalogKey, string>> = {
   "app.prices.retry": "دوبارہ کوشش کریں",
   "app.prices.noPricesForCrop": "اس فصل کے قریب کوئی قیمت نہیں ملی۔",
   "app.prices.comingSoon": "جلد آ رہا ہے",
+  "app.prices.transportCost": "ٹرانسپورٹ ~روپے {cost}",
+  "app.prices.transport": "ٹرانسپورٹ",
+  "app.prices.favouriteAdd": "پسندیدہ میں شامل کریں",
+  "app.prices.favouriteRemove": "پسندیدہ سے ہٹائیں",
+  "app.prices.dataSourceBadge": "ڈیٹا ذریعہ",
   /* ── Crop Recommendation Engine (app.crops.*) ─ mirrored from en (en fallback for untranslated) ── */
   "app.crops.eyebrow": "فصل کی سفارش",
   "app.crops.title": "اس سیزن کیا بونا چاہیے؟",

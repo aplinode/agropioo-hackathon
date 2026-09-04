@@ -33,7 +33,7 @@ export class NoCandidatesError extends Error {
   status = 422;
   lowestViableBracket: "low" | "medium" | "high" | "very_high";
   constructor(lowestViableBracket: NoCandidatesError["lowestViableBracket"]) {
-    super("No crops match the season and budget filters.");
+    super("No crops found for this season and budget. Try adjusting your filters.");
     this.lowestViableBracket = lowestViableBracket;
   }
 }
@@ -59,6 +59,14 @@ export class FarmForbiddenError extends Error {
   status = 403;
   constructor() {
     super("Farm does not belong to the account.");
+  }
+}
+
+export class DataUnavailableError extends Error {
+  code = "data_unavailable" as const;
+  status = 422;
+  constructor(message = "No data found for this selection. Please adjust your filters.") {
+    super(message);
   }
 }
 
@@ -233,7 +241,7 @@ export async function recommendCrops(
   const pastCrop = await queryOne<{ category: CropCategory | null }>(
     `SELECT c.category
      FROM farms f
-     JOIN crops c ON c.name_en = f.primary_crop
+     JOIN crops c ON LOWER(c.name_en) = LOWER(f.primary_crop)
      WHERE f.id = $1
      LIMIT 1`,
     [input.farmId],

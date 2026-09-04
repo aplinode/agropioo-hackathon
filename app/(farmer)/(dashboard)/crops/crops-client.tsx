@@ -477,14 +477,16 @@ function RecommendationCard({
   onCompare,
   onSave,
   savingId,
+  soilType,
 }: {
   recommendation: CropRecommendation;
   bundle: CropsBundle;
   onCompare: () => void;
   onSave: () => void;
   savingId: string | null;
+  soilType: string;
 }) {
-  const soilLabel = recommendation.crop.id;
+  const soilLabel = bundle.soil[soilType as keyof typeof bundle.soil] ?? soilType;
   const reason = resolveReason(bundle, recommendation.reasonKey, recommendation.crop.nameEn, soilLabel, "");
   const isTop = recommendation.rank === 1;
 
@@ -798,6 +800,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
   const watchedSeason = watch("targetSeason");
   const watchedYear = watch("targetYear");
   const watchedBudget = watch("budgetBracket");
+  const watchedSoilType = watch("soilType");
 
   async function handleFormSubmit(values: FormValues) {
     setLoading(true);
@@ -837,6 +840,10 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
         if (res.status === 422 && data.error?.code === "no_candidates" && data.lowestViableBracket) {
           setNoCandidates(true);
           setLowestViableBracket(data.lowestViableBracket);
+          return;
+        }
+        if (res.status === 422 && data.error?.code === "data_unavailable") {
+          setError(data.error?.message ?? bundle.errors.generic);
           return;
         }
         setError(data.error?.message ?? bundle.errors.generic);
@@ -1115,6 +1122,7 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
                 onCompare={() => setShowCompare(true)}
                 onSave={() => saveRecommendation(rec.id)}
                 savingId={savingId}
+                soilType={watchedSoilType}
               />
             ))}
           </div>
