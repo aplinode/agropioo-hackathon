@@ -8,7 +8,6 @@ import PredictionChart from "@/components/prices/prediction-chart";
 import RecommendationBadge from "@/components/prices/recommendation-badge";
 import PriceAlertModal, { type AlertFormData, type SavedAlert } from "@/components/prices/price-alert-modal";
 import PriceHistoryChart, { type HistoryPoint } from "@/components/prices/price-history-chart";
-import FavoriteCropStar from "@/components/prices/favorite-crop-star";
 import { SearchIcon, ChevronDownIcon } from "@/components/icons";
 import type { PricesBundle } from "./prices-bundle";
 import type { ForecastPoint } from "@/lib/prices/forecast";
@@ -69,7 +68,6 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingAlert, setEditingAlert] = useState<SavedAlert | null>(null);
   const [alertActionPending, setAlertActionPending] = useState(false);
-  const [favourites, setFavourites] = useState<string[]>([]);
 
   const loadPrices = useCallback(async (params: { crop_id?: string; query?: string; farm_id?: string }) => {
     startTransition(async () => {
@@ -258,38 +256,6 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
     }
   }
 
-  async function toggleFavourite(cropId: string) {
-    const isFav = favourites.includes(cropId);
-    const url = "/api/favourites";
-    const method = isFav ? "DELETE" : "POST";
-    const body = isFav ? undefined : JSON.stringify({ crop_id: cropId, display_order: 0 });
-
-    const res = await fetch(url, {
-      method,
-      credentials: "same-origin",
-      headers: method === "POST" ? { "Content-Type": "application/json" } : undefined,
-      body,
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      setFavourites((data.favourites ?? []).map((f: { crop_id: string }) => f.crop_id));
-    }
-  }
-
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      const res = await fetch("/api/favourites", { credentials: "same-origin" });
-      if (!cancelled && res.ok) {
-        const data = await res.json();
-        setFavourites((data.favourites ?? []).map((f: { crop_id: string }) => f.crop_id));
-      }
-    }
-    load();
-    return () => { cancelled = true; };
-  }, []);
-
   function openNewAlert() {
     setEditingAlert(null);
     setModalOpen(true);
@@ -361,16 +327,6 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
             </select>
           </div>
 
-          {selectedCrop ? (
-            <div className="flex items-center">
-              <FavoriteCropStar
-                cropId={selectedCrop}
-                isFavorite={favourites.includes(selectedCrop)}
-                onToggle={toggleFavourite}
-                ariaLabel={favourites.includes(selectedCrop) ? "Remove from favourites" : "Add to favourites"}
-              />
-            </div>
-          ) : null}
 
           <form onSubmit={handleSearchSubmit} className="flex-1">
             <label htmlFor="price-search" className="sr-only">
@@ -413,16 +369,6 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
             </select>
           </div>
 
-          {selectedCrop ? (
-            <div className="flex items-center">
-              <FavoriteCropStar
-                cropId={selectedCrop}
-                isFavorite={favourites.includes(selectedCrop)}
-                onToggle={toggleFavourite}
-                ariaLabel={favourites.includes(selectedCrop) ? "Remove from favourites" : "Add to favourites"}
-              />
-            </div>
-          ) : null}
 
           <form onSubmit={handleSearchSubmit} className="flex-1">
             <label htmlFor="price-search" className="sr-only">
