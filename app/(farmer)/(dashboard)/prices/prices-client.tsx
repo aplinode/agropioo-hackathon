@@ -8,7 +8,6 @@ import PredictionChart from "@/components/prices/prediction-chart";
 import RecommendationBadge from "@/components/prices/recommendation-badge";
 import PriceAlertModal, { type AlertFormData, type SavedAlert } from "@/components/prices/price-alert-modal";
 import PriceHistoryChart, { type HistoryPoint } from "@/components/prices/price-history-chart";
-import FavoriteCropStar from "@/components/prices/favorite-crop-star";
 import { SearchIcon, ChevronDownIcon } from "@/components/icons";
 import type { PricesBundle } from "./prices-bundle";
 import type { ForecastPoint } from "@/lib/prices/forecast";
@@ -69,7 +68,6 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingAlert, setEditingAlert] = useState<SavedAlert | null>(null);
   const [alertActionPending, setAlertActionPending] = useState(false);
-  const [favourites, setFavourites] = useState<string[]>([]);
 
   const loadPrices = useCallback(async (params: { crop_id?: string; query?: string; farm_id?: string }) => {
     startTransition(async () => {
@@ -103,8 +101,10 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
   function handleFarmChange(farmId: string) {
     setSelectedFarmId(farmId);
     localStorage.setItem("selectedFarmId", farmId);
+    document.cookie = `selectedFarmId=${encodeURIComponent(farmId)}; path=/; max-age=${60 * 60 * 24 * 365}`;
     setSelectedCrop("");
     setSearchQuery("");
+    loadPrices({ farm_id: farmId });
   }
 
   function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -256,38 +256,6 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
     }
   }
 
-  async function toggleFavourite(cropId: string) {
-    const isFav = favourites.includes(cropId);
-    const url = "/api/favourites";
-    const method = isFav ? "DELETE" : "POST";
-    const body = isFav ? undefined : JSON.stringify({ crop_id: cropId, display_order: 0 });
-
-    const res = await fetch(url, {
-      method,
-      credentials: "same-origin",
-      headers: method === "POST" ? { "Content-Type": "application/json" } : undefined,
-      body,
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      setFavourites((data.favourites ?? []).map((f: { crop_id: string }) => f.crop_id));
-    }
-  }
-
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      const res = await fetch("/api/favourites", { credentials: "same-origin" });
-      if (!cancelled && res.ok) {
-        const data = await res.json();
-        setFavourites((data.favourites ?? []).map((f: { crop_id: string }) => f.crop_id));
-      }
-    }
-    load();
-    return () => { cancelled = true; };
-  }, []);
-
   function openNewAlert() {
     setEditingAlert(null);
     setModalOpen(true);
@@ -325,7 +293,7 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
                 id="farm-select"
                 value={selectedFarmId}
                 onChange={(e) => handleFarmChange(e.target.value)}
-                className="h-11 w-full truncate appearance-none rounded-xl border border-agro-sprout bg-white pl-4 pr-10 text-sm font-sans text-agro-ink outline-none transition-colors focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+                className="h-11 w-full truncate appearance-none rounded-xl border border-agro-canopy bg-white pl-4 pr-10 text-sm font-sans text-agro-ink outline-none transition-colors focus:ring-2 focus:ring-agro-canopy/20"
               >
                 <option value="">{bundle.selectFarm}</option>
                 {farms.map((farm) => (
@@ -348,7 +316,7 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
               id="crop-select"
               value={selectedCrop}
               onChange={(e) => handleCropChange(e.target.value)}
-              className="w-full rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+              className="w-full rounded-xl border border-agro-canopy bg-white px-3 py-2.5 text-sm text-agro-ink outline-none focus:ring-2 focus:ring-agro-canopy/20"
             >
               <option value="">{bundle.selectCrop}</option>
               {crops.map((crop) => (
@@ -359,16 +327,6 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
             </select>
           </div>
 
-          {selectedCrop ? (
-            <div className="flex items-center">
-              <FavoriteCropStar
-                cropId={selectedCrop}
-                isFavorite={favourites.includes(selectedCrop)}
-                onToggle={toggleFavourite}
-                ariaLabel={favourites.includes(selectedCrop) ? "Remove from favourites" : "Add to favourites"}
-              />
-            </div>
-          ) : null}
 
           <form onSubmit={handleSearchSubmit} className="flex-1">
             <label htmlFor="price-search" className="sr-only">
@@ -379,14 +337,14 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
                 size={18}
                 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-agro-cloud"
               />
-              <input
-                id="price-search"
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={bundle.searchPlaceholder}
-                className="w-full rounded-xl border border-agro-sprout bg-white py-2.5 pl-10 pr-4 text-sm text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
-              />
+               <input
+                 id="price-search"
+                 type="search"
+                 value={searchQuery}
+                 onChange={(e) => setSearchQuery(e.target.value)}
+                 placeholder={bundle.searchPlaceholder}
+                 className="w-full rounded-xl border border-agro-canopy bg-white py-2.5 pl-10 pr-4 text-sm text-agro-ink outline-none focus:ring-2 focus:ring-agro-canopy/20"
+               />
             </div>
           </form>
         </div>
@@ -400,7 +358,7 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
               id="crop-select"
               value={selectedCrop}
               onChange={(e) => handleCropChange(e.target.value)}
-              className="w-full rounded-xl border border-agro-sprout bg-white px-3 py-2.5 text-sm text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+              className="w-full rounded-xl border border-agro-canopy bg-white px-3 py-2.5 text-sm text-agro-ink outline-none focus:ring-2 focus:ring-agro-canopy/20"
             >
               <option value="">{bundle.selectCrop}</option>
               {crops.map((crop) => (
@@ -411,16 +369,6 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
             </select>
           </div>
 
-          {selectedCrop ? (
-            <div className="flex items-center">
-              <FavoriteCropStar
-                cropId={selectedCrop}
-                isFavorite={favourites.includes(selectedCrop)}
-                onToggle={toggleFavourite}
-                ariaLabel={favourites.includes(selectedCrop) ? "Remove from favourites" : "Add to favourites"}
-              />
-            </div>
-          ) : null}
 
           <form onSubmit={handleSearchSubmit} className="flex-1">
             <label htmlFor="price-search" className="sr-only">
@@ -431,14 +379,14 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
                 size={18}
                 className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-agro-cloud"
               />
-              <input
-                id="price-search"
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={bundle.searchPlaceholder}
-                className="w-full rounded-xl border border-agro-sprout bg-white py-2.5 pl-10 pr-4 text-sm text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
-              />
+               <input
+                 id="price-search"
+                 type="search"
+                 value={searchQuery}
+                 onChange={(e) => setSearchQuery(e.target.value)}
+                 placeholder={bundle.searchPlaceholder}
+                 className="w-full rounded-xl border border-agro-canopy bg-white py-2.5 pl-10 pr-4 text-sm text-agro-ink outline-none focus:ring-2 focus:ring-agro-canopy/20"
+               />
             </div>
           </form>
         </div>
