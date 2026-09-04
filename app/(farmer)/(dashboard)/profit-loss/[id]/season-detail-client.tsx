@@ -120,6 +120,18 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
     amount: Number(p.total_projected_pkr),
   }));
 
+  const totalProjectedCost = season.projected_costs.reduce((sum, p) => sum + Number((p as Record<string, unknown>).total_projected_pkr ?? 0), 0);
+  const totalActualCost = season.expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+  const projectedRevenue = season.expected_yield != null && season.expected_price != null ? season.expected_yield * season.expected_price : 0;
+  const actualRevenue = season.actual_revenue ?? season.actual_price ?? 0;
+
+  const yieldForm = useForm<UpdateSeasonInput>({
+    defaultValues: {
+      expected_yield: season.expected_yield ?? undefined,
+      expected_price: season.expected_price ?? undefined,
+    },
+  });
+
   return (
     <div className="space-y-6 pt-1">
       <div className="flex items-center gap-3">
@@ -162,9 +174,9 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
               totalActualCost,
               projectedRevenue,
               actualRevenue,
-              netProfitLoss: liveNetProfitLoss,
-              roi: liveRoi,
-              variance: liveVariance,
+              netProfitLoss: season.pl.netProfitLoss,
+              roi: season.pl.roi,
+              variance: season.pl.variance,
             }}
           />
         </div>
