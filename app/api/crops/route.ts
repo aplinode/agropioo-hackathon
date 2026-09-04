@@ -57,6 +57,7 @@ export async function POST(request: Request) {
       return errorResponse(err.code, err.message, err.status);
     }
     if (err instanceof RecommendationExistsError) {
+      console.log("crops recommendation_exists", err.existing);
       return jsonResponse(
         { error: errorBody(err.code, err.message), existing: err.existing },
         err.status,
@@ -85,6 +86,7 @@ export async function POST(request: Request) {
         `SELECT * FROM crop_recommendation_requests WHERE account_id = $1 AND farm_id = $2 AND target_season = $3 AND target_year = $4`,
         [session.accountId, parsed.data.farm_id, parsed.data.target_season, parsed.data.target_year],
       );
+      console.log("crops 23505 existing", existing);
       return jsonResponse(
         { error: errorBody("recommendation_exists", "You already have a recommendation for this farm, season, and year."), existing },
         409,

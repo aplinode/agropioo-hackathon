@@ -736,7 +736,9 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
       const data = await res.json();
 
       if (!res.ok) {
+        console.log("crops api error", res.status, data);
         if (res.status === 409 && data.error?.code === "recommendation_exists") {
+          console.log("crops 409 existing", data.existing);
           if (data.existing?.id) {
             await loadExisting(data.existing.id);
           } else {
