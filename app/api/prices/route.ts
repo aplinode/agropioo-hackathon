@@ -29,6 +29,7 @@ export async function GET(request: Request): Promise<Response> {
   const parsed = getPricesQuerySchema.safeParse({
     crop_id: searchParams.get("crop_id") ?? undefined,
     district: searchParams.get("district") ?? undefined,
+    farm_id: searchParams.get("farm_id") ?? undefined,
     query: searchParams.get("query") ?? undefined,
     include_bordering: searchParams.get("include_bordering") ?? "true",
   });
