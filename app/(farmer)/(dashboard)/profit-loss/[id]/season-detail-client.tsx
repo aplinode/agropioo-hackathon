@@ -40,6 +40,8 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [liveActualYield, setLiveActualYield] = useState<string>(season.actual_yield != null ? String(season.actual_yield) : "");
+  const [liveActualPrice, setLiveActualPrice] = useState<string>(season.actual_price != null ? String(season.actual_price) : "");
 
   const onRefresh = () => {
     if (typeof window !== "undefined") window.location.reload();
@@ -48,7 +50,7 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
   const totalProjectedCost = season.projected_costs.reduce((sum, p) => sum + Number(p.total_projected_pkr), 0);
   const totalActualCost = season.expenses.reduce((sum, e) => sum + Number(e.amount), 0);
   const projectedRevenue = season.expected_yield != null && season.expected_price != null ? Number(season.expected_yield) * Number(season.expected_price) : 0;
-  const actualRevenue = season.actual_yield != null && season.actual_price != null ? Number(season.actual_yield) * Number(season.actual_price) : 0;
+  const actualRevenue = liveActualYield !== "" && liveActualPrice !== "" ? Number(liveActualYield) * Number(liveActualPrice) : 0;
 
   const yieldForm = useForm<UpdateSeasonInput>({
     defaultValues: {
@@ -217,7 +219,14 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
           </form>
           <div className="mt-6">
             <h3 className="text-sm font-semibold text-agro-ink">Mark harvested</h3>
-            <HarvestForm seasonId={season.id} onDone={() => onRefresh()} />
+            <HarvestForm
+              seasonId={season.id}
+              actualYield={liveActualYield}
+              actualPrice={liveActualPrice}
+              onYieldChange={setLiveActualYield}
+              onPriceChange={setLiveActualPrice}
+              onDone={() => onRefresh()}
+            />
           </div>
         </div>
       </section>
@@ -246,9 +255,14 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
   );
 }
 
-function HarvestForm({ seasonId, onDone }: { seasonId: string; onDone: () => void }) {
-  const [actualYield, setActualYield] = useState("");
-  const [actualPrice, setActualPrice] = useState("");
+function HarvestForm({ seasonId, actualYield, actualPrice, onYieldChange, onPriceChange, onDone }: {
+  seasonId: string;
+  actualYield: string;
+  actualPrice: string;
+  onYieldChange: (val: string) => void;
+  onPriceChange: (val: string) => void;
+  onDone: () => void;
+}) {
   const [submitting, setSubmitting] = useState(false);
 
   const submit = async () => {
@@ -266,13 +280,19 @@ function HarvestForm({ seasonId, onDone }: { seasonId: string; onDone: () => voi
     <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="mt-3 space-y-3">
       <div>
         <label className="block text-sm font-semibold text-agro-ink">Actual yield (total units)</label>
-        <input type="number" step="0.01" value={actualYield} onChange={(e) => setActualYield(e.target.value)} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
+        <input type="number" step="0.01" value={actualYield} onChange={(e) => onYieldChange(e.target.value)} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
       </div>
       <div>
         <label className="block text-sm font-semibold text-agro-ink">Actual selling price (PKR per unit)</label>
-        <input type="number" step="0.01" value={actualPrice} onChange={(e) => setActualPrice(e.target.value)} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
+        <input type="number" step="0.01" value={actualPrice} onChange={(e) => onPriceChange(e.target.value)} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
       </div>
-      <button type="submit" disabled={submitting} className="inline-flex h-11 items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
+      {actualYield !== "" && actualPrice !== "" && (
+        <div className="rounded-lg border border-agro-canopy/30 bg-agro-mint/40 p-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">Live actual revenue</p>
+          <p className="mt-1 font-mono text-sm font-semibold text-agro-forest">PKR {(Number(actualYield) * Number(actualPrice)).toLocaleString("en-PK")}</p>
+        </div>
+      )}
+      <button type="submit" disabled={submitting} className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
         Mark harvested
       </button>
     </form>
