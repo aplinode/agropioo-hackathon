@@ -12,6 +12,7 @@ import ExpenseTimeSeries from "@/components/profit-loss/charts/expense-time-seri
 import ExpenseBreakdown from "@/components/profit-loss/charts/expense-breakdown";
 import BreakEvenBar from "@/components/profit-loss/charts/break-even-bar";
 import { ArrowLeftIcon, TrashIcon, ArchiveIcon, RestoreIcon } from "@/components/icons";
+import ConfirmModal from "@/components/profit-loss/confirm-modal";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -43,55 +44,53 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
   const [error, setError] = useState<string | null>(null);
   const [liveActualYield, setLiveActualYield] = useState<string>(season.actual_yield != null ? String(season.actual_yield) : "");
   const [liveActualPrice, setLiveActualPrice] = useState<string>(season.actual_price != null ? String(season.actual_price) : "");
+  const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: "archive" | "delete" | "restore" | null }>({ open: false, action: null });
 
   const onRefresh = () => {
     if (typeof window !== "undefined") window.location.reload();
   };
 
-  const totalProjectedCost = season.projected_costs.reduce((sum, p) => sum + Number(p.total_projected_pkr), 0);
-  const totalActualCost = season.expenses.reduce((sum, e) => sum + Number(e.amount), 0);
-  const projectedRevenue = season.expected_yield != null && season.expected_price != null ? Number(season.expected_yield) * Number(season.expected_price) : 0;
-  const dbActualRevenue = (season as Record<string, unknown>).actual_revenue != null ? Number((season as Record<string, unknown>).actual_revenue) : null;
-  const actualRevenue = dbActualRevenue != null && dbActualRevenue > 0 ? dbActualRevenue : (season.actual_price != null ? Number(season.actual_price) : 0);
-
-  const liveNetProfitLoss = actualRevenue - totalActualCost;
-  const liveRoi = actualRevenue > 0 || totalActualCost > 0 ? Math.round(((actualRevenue - totalActualCost) / totalActualCost) * 1000) / 10 : null;
-  const liveVariance = { absolute: totalActualCost - totalProjectedCost, percentage: totalProjectedCost > 0 ? Math.round(((totalActualCost - totalProjectedCost) / totalProjectedCost) * 1000) / 10 : null };
-
-  const yieldForm = useForm<UpdateSeasonInput>({
-    defaultValues: {
-      expected_yield: season.expected_yield ?? undefined,
-      expected_price: season.expected_price ?? undefined,
-    },
-  });
-
   const handleArchive = async () => {
-    if (!confirm("Archive this season? It will be hidden from your list but all data will be preserved.")) return;
     setRefreshing(true);
     const res = await fetch(`/api/profit-loss/${season.id}/archive`, { method: "POST" });
     setRefreshing(false);
+    setConfirmModal({ open: false, action: null });
     if (res.ok) onRefresh();
   };
 
   const handleRestore = async () => {
-    if (!confirm("Restore this season? It will return to your active list.")) return;
     setRefreshing(true);
     const res = await fetch(`/api/profit-loss/${season.id}/restore`, { method: "POST" });
     setRefreshing(false);
+    setConfirmModal({ open: false, action: null });
     if (res.ok) onRefresh();
   };
 
   const handleDelete = async () => {
-    if (!confirm("Permanently delete this season? This cannot be undone.")) return;
     setRefreshing(true);
     const res = await fetch(`/api/profit-loss/${season.id}`, { method: "DELETE" });
     setRefreshing(false);
+    setConfirmModal({ open: false, action: null });
     if (res.ok) router.push("/profit-loss");
     else {
       const err = await res.json();
       setError(err.error?.message ?? "Failed to delete");
     }
   };
+
+  const openConfirm = (action: "archive" | "delete" | "restore") => setConfirmModal({ open: true, action });
+  const closeConfirm = () => setConfirmModal({ open: false, action: null });
+
+  const confirmTitle =
+    confirmModal.action === "delete" ? "Delete season?" : confirmModal.action === "archive" ? "Archive season?" : "Restore season?";
+  const confirmDescription =
+    confirmModal.action === "delete"
+      ? "This will permanently delete this season and all its data. This cannot be undone."
+      : confirmModal.action === "archive"
+        ? "This season will be hidden from your list, but all data will be saved."
+        : "This season will return to your active list.";
+  const confirmLabel = confirmModal.action === "delete" ? "Delete" : confirmModal.action === "archive" ? "Archive" : "Restore";
+  const confirmVariant = confirmModal.action === "delete" ? "danger" : "warning";
 
   const handleHarvest = async (data: UpdateSeasonInput) => {
     setRefreshing(true);
@@ -133,15 +132,15 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
         </div>
         <div className="ms-auto flex items-center gap-2">
           {season.archived_at ? (
-            <button onClick={handleRestore} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint hover:text-agro-canopy disabled:opacity-50">
+            <button onClick={() => openConfirm("restore")} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint hover:text-agro-canopy disabled:opacity-50">
               <RestoreIcon size={14} /> Restore
             </button>
           ) : (
             <>
-              <button onClick={handleArchive} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint hover:text-agro-canopy disabled:opacity-50">
+              <button onClick={() => openConfirm("archive")} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-sprout px-3 text-xs font-semibold text-agro-ink transition-colors hover:bg-agro-mint hover:text-agro-canopy disabled:opacity-50">
                 <ArchiveIcon size={14} /> Archive
               </button>
-              <button onClick={handleDelete} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-canopy/30 px-3 text-xs font-semibold text-agro-canopy transition-colors hover:bg-agro-mint disabled:opacity-50">
+              <button onClick={() => openConfirm("delete")} disabled={refreshing} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-agro-canopy/30 px-3 text-xs font-semibold text-agro-canopy transition-colors hover:bg-agro-mint disabled:opacity-50">
                 <TrashIcon size={14} /> Delete
               </button>
             </>
@@ -154,7 +153,7 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
       <section className="grid gap-4">
         <div className="flex items-center gap-2">
           <div className="h-1 w-8 rounded-full bg-agro-canopy" />
-          <h2 className="font-display text-lg font-semibold text-agro-forest">P&L Summary</h2>
+          <h2 className="font-display text-lg font-semibold text-agro-forest">Profit summary</h2>
         </div>
         <div className="rounded-2xl border border-agro-sprout bg-white p-1">
           <PLSummaryComponent
@@ -257,6 +256,21 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
           }))} />
         </div>
       </section>
+      <ConfirmModal
+        isOpen={confirmModal.open}
+        title={confirmTitle}
+        description={confirmDescription}
+        confirmLabel={confirmLabel}
+        cancelLabel="Cancel"
+        variant={confirmVariant}
+        onConfirm={() => {
+          if (confirmModal.action === "delete") handleDelete();
+          else if (confirmModal.action === "archive") handleArchive();
+          else if (confirmModal.action === "restore") handleRestore();
+        }}
+        onCancel={closeConfirm}
+        isPending={refreshing}
+      />
     </div>
   );
 }
