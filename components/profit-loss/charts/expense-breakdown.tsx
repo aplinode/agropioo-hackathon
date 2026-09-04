@@ -46,7 +46,24 @@ export default function ExpenseBreakdown({ expenses }: { expenses: ExpenseRow[] 
     const outerStart = polarToCartesian(slice.startAngle, radius);
     const outerEnd = polarToCartesian(slice.endAngle, radius);
     const innerEnd = polarToCartesian(slice.endAngle, radius * 0.5);
-    const largeArc = slice.endAngle - slice.startAngle > Math.PI ? 1 : 0;
+    const sweep = slice.endAngle - slice.startAngle;
+    const largeArc = sweep > Math.PI ? 1 : 0;
+
+    if (sweep >= 2 * Math.PI - 0.001) {
+      const outerLeft = polarToCartesian(Math.PI, radius);
+      const innerLeft = polarToCartesian(Math.PI, radius * 0.5);
+      return [
+        `M ${innerStart.x} ${innerStart.y}`,
+        `L ${outerStart.x} ${outerStart.y}`,
+        `A ${radius} ${radius} 0 1 1 ${outerLeft.x} ${outerLeft.y}`,
+        `A ${radius} ${radius} 0 1 1 ${outerStart.x} ${outerStart.y}`,
+        `L ${innerStart.x} ${innerStart.y}`,
+        `A ${radius * 0.5} ${radius * 0.5} 0 1 0 ${innerLeft.x} ${innerLeft.y}`,
+        `A ${radius * 0.5} ${radius * 0.5} 0 1 0 ${innerStart.x} ${innerStart.y}`,
+        "Z",
+      ].join(" ");
+    }
+
     return [
       `M ${innerStart.x} ${innerStart.y}`,
       `L ${outerStart.x} ${outerStart.y}`,
