@@ -10,8 +10,8 @@
 | Tier | Purpose | Features |
 |------|---------|----------|
 | **Tier 1 — Must-Have** | Judges expect these as baseline | #1, #2, #3, #4 |
-| **Tier 2 — Differentiators** | These make you stand out from competitors | #5, #6, #7, #8, #9 |
-| **Tier 3 — Wow Factor** | These win hackathons | #10, #11, #12, #13, #14 |
+| **Tier 2 — Differentiators** | These make you stand out from competitors | #5, #6, #7 |
+| **Tier 3 — Wow Factor** | These win hackathons | #8, #9, #10, #11 |
 
 ---
 
@@ -189,30 +189,7 @@
 
 ---
 
-### Feature #9: Satellite Change Detection (Time-Lapse Analysis)
-
-**Problem:** Farmers and agri-officers cannot easily track how their fields change over weeks/months.
-
-**Solution:** Compare satellite images of the same field across time → visualize crop growth progress, detect illegal encroachment, monitor water body depletion, or assess disaster damage.
-
-**How It Works (No Hardware):**
-- User selects a field and time range
-- System fetches multi-temporal satellite imagery
-- Image differencing algorithms highlight changes
-- Time-lapse slider shows field evolution
-- Automated alerts for significant changes (e.g., crop health drop, flooding)
-
-**APIs / Tech Stack:**
-- **Sentinel Hub Timelapse API**
-- **Google Earth Engine** (historical Landsat/Sentinel archive)
-- Mapbox GL JS (animated map overlays)
-- Image comparison slider UI component
-
-**Impact Metric:** Powerful visual proof for insurance claims, government reporting, and farm management.
-
----
-
-### Feature #10: AI Pest Outbreak Prediction
+### Feature #9: AI Pest Outbreak Prediction
 
 **Problem:** Pest attacks destroy entire harvests overnight because farmers react too late.
 
@@ -235,31 +212,32 @@
 
 ---
 
-### Feature #11: Voice-First UI (Phone Call Mode)
+### Feature #10: Voice-Enabled UI by Voice Agents
 
-**Problem:** Many farmers in rural areas don't own smartphones or can't read — a traditional app UI excludes them entirely.
+**Problem:** Even with a smartphone app, many farmers find it difficult to navigate complex UIs while working in the field — dirty hands, poor eyesight, or low literacy make tapping and reading a barrier.
 
-**Solution:** Farmer calls a toll-free phone number → IVR (Interactive Voice Response) system answers → farmer speaks their question → AI understands and responds with advice in their language. No smartphone or internet required.
+**Solution:** The entire Agropioo app is voice-controlled. A voice agent understands natural speech in regional languages and performs any action hands-free — from checking weather to logging expenses to asking crop advice. The farmer just speaks; the agent does everything.
 
 **How It Works (No Hardware):**
-- Farmer dials a toll-free number (provisioned via Twilio/Exotel)
-- IVR greets in local language: "Agropioo mein aapka swagat hai, apni samasya batayein"
-- Speech captured and sent to STT (Speech-to-Text) API
-- NLP processes the query, generates response
-- TTS (Text-to-Speech) speaks the answer back to the farmer
-- Call summary logged in farmer's profile for follow-up
+- Farmer opens the app and speaks naturally: "What's today's weather advice for my wheat crop?"
+- Voice agent (powered by multimodal AI) understands intent, context, and the farmer's profile
+- Agent performs the action end-to-end: fetches data, generates advice, and speaks the answer
+- Complex multi-step tasks work too: "Log my irrigation expense of 2000 rupees and add a photo of the field"
+- Agent uses on-device processing where possible for low bandwidth and privacy
+- Works entirely within the app — no phone call or separate IVR needed
 
 **APIs / Tech Stack:**
-- **Twilio API** or **Exotel API** (telephony, IVR)
-- **Whisper AI** or **Azure Speech Services** (speech-to-text)
-- **ElevenLabs** or **Google Cloud TTS** (text-to-speech, Pakistani language support)
-- Same NLP backend as Feature #5
+- **Whisper AI** (open-source, run locally or via free API tier for multilingual speech-to-text)
+- **Coqui TTS** or **Web Speech API** (browser-native, free text-to-speech in regional languages)
+- **Local LLM** (e.g., Llama 3 via Ollama) or **Gemini free tier** (voice agent with function calling)
+- Web Speech API (browser-native, lightweight fallback for STT/TTS)
+- RAG system for farming knowledge + real-time API integration
 
-**Impact Metric:** Reaches the 500M+ rural population who lack smartphone access.
+**Impact Metric:** Makes Agropioo fully accessible to farmers with low literacy — no reading or tapping required, just speak and listen.
 
 ---
 
-### Feature #12: Carbon Footprint Tracker & Carbon Credit Estimator
+### Feature #11: Carbon Footprint Tracker & Carbon Credit Estimator
 
 **Problem:** Sustainable farmers are not rewarded for eco-friendly practices, and carbon credit markets are inaccessible to smallholder farmers.
 
@@ -283,7 +261,7 @@
 
 ---
 
-### Feature #13: Offline-First PWA + SMS Alerts
+### Feature #12: Offline-First PWA + SMS Alerts
 
 **Problem:** Rural areas have poor or no internet connectivity — apps that require constant internet are useless in the field.
 
@@ -316,13 +294,12 @@
 | 3 | Smart Weather Advisory | Weather API + Rules Engine | OpenWeatherMap, IMD | 🔴 Must-Have |
 | 4 | Mandi Price Tracker & Predictor | ML / Time Series | Agmarknet, Data.gov.in | 🔴 Must-Have |
 | 5 | Regional Language Voice Chatbot | NLP / Speech | Whisper, Google TTS, Gemini | 🟡 Differentiator |
-| 7 | Crop Recommendation Engine | ML / Analytics | Soil Health Card, ICAR | 🟡 Differentiator |
-| 8 | Farm Profit/Loss Calculator | Finance / Analytics | CACP, Mandi API | 🟡 Differentiator |
-| 10 | Satellite Change Detection | GIS / Image Processing | Sentinel Hub, GEE | 🟢 Wow Factor |
-| 11 | AI Pest Outbreak Prediction | ML / Predictive | Weather + Pest Data APIs | 🟢 Wow Factor |
-| 12 | Voice-First Phone Call UI | Telephony / NLP | Twilio, Whisper, ElevenLabs | 🟢 Wow Factor |
-| 13 | Carbon Credit Tracker | Sustainability / Blockchain | IPCC, FAO EX-ACT | 🟢 Wow Factor |
-| 14 | Offline-First PWA + SMS Alerts | PWA / SMS | Twilio, Workbox | 🟢 Wow Factor |
+| 6 | Crop Recommendation Engine | ML / Analytics | Soil Health Card, ICAR | 🟡 Differentiator |
+| 7 | Farm Profit/Loss Calculator | Finance / Analytics | CACP, Mandi API | 🟡 Differentiator |
+| 8 | AI Pest Outbreak Prediction | ML / Predictive | Weather + Pest Data APIs | 🟢 Wow Factor |
+| 9 | Voice-Enabled UI by Voice Agents | Voice AI / NLP | Whisper, Coqui TTS, Ollama | 🟢 Wow Factor |
+| 10 | Carbon Footprint Tracker & Carbon Credit Estimator | Sustainability / Blockchain | IPCC, FAO EX-ACT | 🟢 Wow Factor |
+| 11 | Offline-First PWA + SMS Alerts | PWA / SMS | Twilio, Workbox | 🟢 Wow Factor |
 
 ---
 
@@ -334,7 +311,7 @@
 2. **Satellite Field Monitoring** — Shows technical depth (real satellite imagery)
 3. **Mandi Price Predictor** — Solves a REAL farmer pain point
 4. **Regional Language Voice Bot** — Accessibility wins judge hearts
-6. **Offline-First + SMS Alerts** — Shows practical, real-world thinking
+5. **Offline-First + SMS Alerts** — Shows practical, real-world thinking
 
 **Demo Flow:**
 > *"Meet Ramesh, a farmer in Punjab. He opens Agropioo on his phone..."*
