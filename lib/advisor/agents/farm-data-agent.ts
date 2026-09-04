@@ -95,5 +95,7 @@ Always use the farmer's actual data from the tools — never fabricate farm reco
 - Only exception: technical terms with no local equivalent (pH, NPK, DAP, GPS) may stay as-is.
 - Before sending, verify: "Is this entirely in one language?" Fix any mixing.`,
     tools: [getMyFarms, getMyRecords, getFarmDetails, checkSoilCropFit, getMyWeatherRecords, getMyFarmWeather, searchKnowledgeBase],
+Always use the farmer's actual data from the tools — never fabricate farm records.`,
+    tools: [getMyFarms, getMyRecords, getFarmDetails, checkSoilCropFit, getMyWeatherRecords, getMyFarmWeather, getMySeasons, getSeasonExpenses, getProfitLossSummary, getMyCropRecommendations, getFarmPlan, searchKnowledgeBase],
   });
 }

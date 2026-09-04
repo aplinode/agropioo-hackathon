@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { type UpdateSeasonInput } from "@/lib/validation/profit-loss";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { PLSummary } from "@/lib/calculations/profit-loss";
 import PLSummaryComponent from "@/components/profit-loss/pl-summary";
 import BreakEvenDisplay from "@/components/profit-loss/break-even-display";
@@ -119,6 +119,18 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
     date: new Date().toISOString().slice(0, 7),
     amount: Number(p.total_projected_pkr),
   }));
+
+  const totalProjectedCost = season.projected_costs.reduce((sum, p) => sum + Number((p as Record<string, unknown>).total_projected_pkr ?? 0), 0);
+  const totalActualCost = season.expenses.reduce((sum, e) => sum + Number(e.amount), 0);
+  const projectedRevenue = season.expected_yield != null && season.expected_price != null ? season.expected_yield * season.expected_price : 0;
+  const actualRevenue = season.actual_revenue ?? season.actual_price ?? 0;
+
+  const yieldForm = useForm<UpdateSeasonInput>({
+    defaultValues: {
+      expected_yield: season.expected_yield ?? undefined,
+      expected_price: season.expected_price ?? undefined,
+    },
+  });
 
   return (
     <div className="space-y-6 pt-1">

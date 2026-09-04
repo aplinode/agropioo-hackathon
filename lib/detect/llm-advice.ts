@@ -1,6 +1,13 @@
 import OpenAI from "openai";
 
-const openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+let openaiClient: OpenAI | null = null;
+
+function getClient() {
+  if (!openaiClient && process.env.OPENAI_API_KEY) {
+    openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return openaiClient;
+}
 
 export interface LlmAdvice {
   causes: string;
@@ -50,7 +57,17 @@ Provide structured advice in JSON format:
 
 Respond ONLY with valid JSON, no markdown, no extra text.`;
 
-  const response = await openaiClient.chat.completions.create({
+  const client = getClient();
+  if (!client) {
+    return {
+      causes: "Consult your local agriculture office for advice.",
+      steps: ["Consult local agriculture office."],
+      rescanTiming: "Check again in 7 days.",
+      caution: "Always confirm with local agriculture office before spraying.",
+    };
+  }
+
+  const response = await client.chat.completions.create({
     model,
     messages: [
       { role: "system", content: systemPrompt },

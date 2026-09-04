@@ -27,3 +27,11 @@ export const manifest = {
     },
   ],
 };
+
+export default function handler() {
+  return new Response(JSON.stringify(manifest), {
+    headers: {
+      "content-type": "application/manifest+json",
+    },
+  });
+}
