@@ -16,6 +16,9 @@ export default function PLSummary({ data }: { data: {
   const varianceColor = data.variance.absolute > 0 ? "text-agro-error" : data.variance.absolute < 0 ? "text-agro-canopy" : "text-agro-slate";
   const plColor = data.netProfitLoss >= 0 ? "text-agro-canopy" : "text-agro-error";
 
+  const actualRevenueDisplay = data.actualRevenue >= 0 ? fmt(data.actualRevenue) : "—";
+  const projectedRevenueDisplay = data.projectedRevenue >= 0 ? fmt(data.projectedRevenue) : "—";
+
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
       <div className={gridItem}>
@@ -35,11 +38,11 @@ export default function PLSummary({ data }: { data: {
       </div>
       <div className={gridItem}>
         <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">Projected revenue</p>
-        <p className="mt-1 font-mono text-sm font-semibold text-agro-ink">{data.projectedRevenue > 0 ? fmt(data.projectedRevenue) : "—"}</p>
+        <p className="mt-1 font-mono text-sm font-semibold text-agro-ink">{projectedRevenueDisplay}</p>
       </div>
       <div className={gridItem}>
         <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">Actual revenue</p>
-        <p className="mt-1 font-mono text-sm font-semibold text-agro-ink">{data.actualRevenue > 0 ? fmt(data.actualRevenue) : "—"}</p>
+        <p className="mt-1 font-mono text-sm font-semibold text-agro-ink">{actualRevenueDisplay}</p>
       </div>
       <div className={gridItemAccent}>
         <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">Net P&L</p>

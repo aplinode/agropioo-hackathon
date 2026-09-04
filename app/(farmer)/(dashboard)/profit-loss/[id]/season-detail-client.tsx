@@ -34,6 +34,7 @@ type SeasonDetail = {
   pl: PLSummary;
   break_even: { yield: string; price: string } | null;
   crop_unit: string;
+  actual_revenue: number;
 };
 
 export default function SeasonDetailClient({ season }: { season: SeasonDetail }) {
@@ -50,7 +51,12 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
   const totalProjectedCost = season.projected_costs.reduce((sum, p) => sum + Number(p.total_projected_pkr), 0);
   const totalActualCost = season.expenses.reduce((sum, e) => sum + Number(e.amount), 0);
   const projectedRevenue = season.expected_yield != null && season.expected_price != null ? Number(season.expected_yield) * Number(season.expected_price) : 0;
-  const actualRevenue = liveActualYield !== "" && liveActualPrice !== "" ? Number(liveActualYield) * Number(liveActualPrice) : 0;
+  const dbActualRevenue = (season as Record<string, unknown>).actual_revenue != null ? Number((season as Record<string, unknown>).actual_revenue) : null;
+  const actualRevenue = dbActualRevenue != null && dbActualRevenue > 0 ? dbActualRevenue : (season.actual_price != null ? Number(season.actual_price) : 0);
+
+  const liveNetProfitLoss = actualRevenue - totalActualCost;
+  const liveRoi = actualRevenue > 0 || totalActualCost > 0 ? Math.round(((actualRevenue - totalActualCost) / totalActualCost) * 1000) / 10 : null;
+  const liveVariance = { absolute: totalActualCost - totalProjectedCost, percentage: totalProjectedCost > 0 ? Math.round(((totalActualCost - totalProjectedCost) / totalProjectedCost) * 1000) / 10 : null };
 
   const yieldForm = useForm<UpdateSeasonInput>({
     defaultValues: {
@@ -157,9 +163,9 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
               totalActualCost,
               projectedRevenue,
               actualRevenue,
-              netProfitLoss: season.pl.netProfitLoss,
-              roi: season.pl.roi,
-              variance: season.pl.variance,
+              netProfitLoss: liveNetProfitLoss,
+              roi: liveRoi,
+              variance: liveVariance,
             }}
           />
         </div>
@@ -283,13 +289,13 @@ function HarvestForm({ seasonId, actualYield, actualPrice, onYieldChange, onPric
         <input type="number" step="0.01" value={actualYield} onChange={(e) => onYieldChange(e.target.value)} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
       </div>
       <div>
-        <label className="block text-sm font-semibold text-agro-ink">Actual selling price (PKR per unit)</label>
+        <label className="block text-sm font-semibold text-agro-ink">Actual revenue (PKR)</label>
         <input type="number" step="0.01" value={actualPrice} onChange={(e) => onPriceChange(e.target.value)} className="focus-ring-none mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink transition-colors duration-200 focus:outline-none focus:ring-2 focus:border-agro-canopy focus:ring-agro-canopy/20" />
       </div>
-      {actualYield !== "" && actualPrice !== "" && (
+      {actualPrice !== "" && (
         <div className="rounded-lg border border-agro-canopy/30 bg-agro-mint/40 p-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">Live actual revenue</p>
-          <p className="mt-1 font-mono text-sm font-semibold text-agro-forest">PKR {(Number(actualYield) * Number(actualPrice)).toLocaleString("en-PK")}</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-agro-slate">Actual revenue</p>
+           <p className="mt-1 font-mono text-sm font-semibold text-agro-forest">PKR {Number(actualPrice).toLocaleString("en-PK")}</p>
         </div>
       )}
       <button type="submit" disabled={submitting} className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-agro-canopy px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-agro-forest hover:shadow-md disabled:opacity-50">
