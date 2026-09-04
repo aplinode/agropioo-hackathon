@@ -35,7 +35,9 @@ export default async function SeasonDetailPage({
 
   const totalProjectedCost = (projectedCosts ?? []).reduce((sum, p) => sum + Number(p.total_projected_pkr), 0);
   const totalActualCost = (expenses ?? []).reduce((sum, e) => sum + Number(e.amount), 0);
-  const actualRevenue = (data.actual_yield && data.actual_price) ? Number(data.actual_yield) * Number(data.actual_price) : 0;
+  const actualRevenue = (data.actual_yield != null && data.actual_price != null)
+    ? Number(data.actual_yield) * Number(data.actual_price)
+    : 0;
 
   const pl: { netProfitLoss: number; roi: number | null; variance: { absolute: number; percentage: number | null }; status: 'profit' | 'loss' | 'break_even' } = {
     netProfitLoss: actualRevenue - totalActualCost,

@@ -8,7 +8,7 @@ export type ProjectedCategory = (typeof PROJECTED_CATEGORIES)[number];
 
 export const seasonEnum = z.enum(SEASONS);
 export const yearEnum = z.enum(YEAR_OPTIONS as unknown as [string, ...string[]]);
-export const cropEnum = z.enum(CROPS);
+export const cropEnum = z.enum(CROPS, { message: 'Please select a valid crop from the list' });
 export const expenseCategoryEnum = z.enum(EXPENSE_CATEGORIES);
 export const projectedCategoryEnum = z.enum(PROJECTED_CATEGORIES);
 
