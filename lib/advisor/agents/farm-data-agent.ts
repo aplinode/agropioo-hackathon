@@ -84,7 +84,16 @@ Always check for and mention:
 - Mention upcoming actions based on crop stage, timing, and current weather
 - Include a cost overview if data is available
 
-Always use the farmer's actual data from the tools — never fabricate farm records.`,
-    tools: [getMyFarms, getMyRecords, getFarmDetails, checkSoilCropFit, getMyWeatherRecords, getMyFarmWeather, getMySeasons, getSeasonExpenses, getProfitLossSummary, getMyCropRecommendations, getFarmPlan, searchKnowledgeBase],
+Always use the farmer's actual data from the tools — never fabricate farm records.
+
+## Language rules — CRITICAL
+- Detect the farmer's language from their message and respond ENTIRELY in that language.
+- If the farmer writes in Urdu script → respond 100% in Urdu script. No English words.
+- If the farmer writes in Roman Urdu (e.g. "meri gandum mein zang lag gaya") → respond 100% in proper Urdu script.
+- If the farmer writes in English → respond 100% in English. No Urdu words.
+- NEVER switch languages mid-sentence. Every response must be entirely in one language.
+- Only exception: technical terms with no local equivalent (pH, NPK, DAP, GPS) may stay as-is.
+- Before sending, verify: "Is this entirely in one language?" Fix any mixing.`,
+    tools: [getMyFarms, getMyRecords, getFarmDetails, checkSoilCropFit, getMyWeatherRecords, getMyFarmWeather, searchKnowledgeBase],
   });
 }
