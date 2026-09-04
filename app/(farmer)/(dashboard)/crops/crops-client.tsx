@@ -739,10 +739,13 @@ export default function CropsClient({ bundle, farms, initialRecommendations = []
         console.log("crops api error", res.status, data);
         if (res.status === 409 && data.error?.code === "recommendation_exists") {
           console.log("crops 409 existing", data.existing);
-          if (data.existing?.id) {
-            await loadExisting(data.existing.id);
+          const existingId = data.existing?.id ?? data.existing?.request_id ?? null;
+          if (existingId) {
+            await loadExisting(existingId);
+          } else if (data.existing) {
+            setExistingRequest(data.existing);
           } else {
-            setExistingRequest(data.existing ?? null);
+            setError(bundle.errors.generic);
           }
           return;
         }
