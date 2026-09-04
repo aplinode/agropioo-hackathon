@@ -46,6 +46,21 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
   const [liveActualPrice, setLiveActualPrice] = useState<string>(season.actual_price != null ? String(season.actual_price) : "");
   const [confirmModal, setConfirmModal] = useState<{ open: boolean; action: "archive" | "delete" | "restore" | null }>({ open: false, action: null });
 
+  const yieldForm = useForm<UpdateSeasonInput>({
+    defaultValues: {
+      expected_yield: season.expected_yield ?? undefined,
+      expected_price: season.expected_price ?? undefined,
+    },
+  });
+
+  const totalProjectedCost = useMemo(() => season.projected_costs.reduce((sum, p) => sum + Number(p.total_projected_pkr ?? 0), 0), [season.projected_costs]);
+  const totalActualCost = useMemo(() => season.expenses.reduce((sum, e) => sum + Number(e.amount ?? 0), 0), [season.expenses]);
+  const projectedRevenue = useMemo(() => (season.expected_yield != null && season.expected_price != null ? season.expected_yield * season.expected_price : 0), [season.expected_yield, season.expected_price]);
+  const actualRevenue = season.actual_revenue ?? 0;
+  const liveNetProfitLoss = season.pl.netProfitLoss;
+  const liveRoi = season.pl.roi;
+  const liveVariance = season.pl.variance;
+
   const onRefresh = () => {
     if (typeof window !== "undefined") window.location.reload();
   };
@@ -119,18 +134,6 @@ export default function SeasonDetailClient({ season }: { season: SeasonDetail })
     date: new Date().toISOString().slice(0, 7),
     amount: Number(p.total_projected_pkr),
   }));
-
-  const totalProjectedCost = season.projected_costs.reduce((sum, p) => sum + Number((p as Record<string, unknown>).total_projected_pkr ?? 0), 0);
-  const totalActualCost = season.expenses.reduce((sum, e) => sum + Number(e.amount), 0);
-  const projectedRevenue = season.expected_yield != null && season.expected_price != null ? season.expected_yield * season.expected_price : 0;
-  const actualRevenue = season.actual_revenue ?? season.actual_price ?? 0;
-
-  const yieldForm = useForm<UpdateSeasonInput>({
-    defaultValues: {
-      expected_yield: season.expected_yield ?? undefined,
-      expected_price: season.expected_price ?? undefined,
-    },
-  });
 
   return (
     <div className="space-y-6 pt-1">
