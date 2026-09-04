@@ -106,6 +106,7 @@ export default function PricesClient({ bundle, crops, mandis, farms, initial }: 
     document.cookie = `selectedFarmId=${encodeURIComponent(farmId)}; path=/; max-age=${60 * 60 * 24 * 365}`;
     setSelectedCrop("");
     setSearchQuery("");
+    loadPrices({ farm_id: farmId });
   }
 
   function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
