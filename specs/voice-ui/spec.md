@@ -41,7 +41,7 @@ The voice agent can perform any action available in the app, including but not l
 - Navigating between any app page
 - Answering general farming questions via the advisor agent
 
-Actions are executed through the same server-side route handlers and tool system used by the text-based UI, ensuring consistent authorization, validation, and data scoping.
+Actions are executed through the same server-side route handlers and tool system used by the text-based UI, ensuring consistent authorization, validation, and data scoping. The voice agent is built with the OpenAI Agents SDK (TypeScript), sharing the same SDK and agent infrastructure as the app-control chat, with a dedicated set of voice-specific tools and routing rules.
 
 ### FR-7 Voice Navigation
 The voice agent can navigate the farmer to any page in the app. When navigation occurs, the agent announces the destination and the current page's purpose. Navigation commands include natural variations like "take me to...", "show me...", "open...", "go to...".
