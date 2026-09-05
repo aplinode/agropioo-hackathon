@@ -19,10 +19,10 @@ Give farmers complete hands-free, eyes-free control of the Agropioo app. A farme
 A floating microphone button is visible on every page of the authenticated farmer app. Tapping it activates voice input regardless of which feature the farmer is currently using. The voice agent has access to the entire app's capabilities: reading data, creating records, navigating between pages, and answering questions.
 
 ### FR-2 Voice Input (Speech-to-Text)
-The global mic button captures audio and sends it to a server-side speech-to-text API (Whisper, Gemini, or equivalent). The API auto-detects the spoken language across all 8 project locales: English, Urdu, Punjabi, Pashto, Sindhi, Saraiki, Balochi, Hindko. Recording starts on mic tap and auto-stops when silence is detected; there is no hard duration limit.
+The global mic button captures audio and sends it to a server-side speech-to-text endpoint. The STT endpoint uses a Whisper-compatible model (e.g., OpenAI Whisper via `OPENAI_BASE_URL` + `OPENAI_API_KEY`, Groq, or Gemini) and auto-detects the spoken language across all 8 project locales. Recording starts on mic tap and auto-stops when silence is detected; there is no hard duration limit.
 
 ### FR-3 Voice Output (Text-to-Speech)
-When the agent produces a response, the app reads it aloud in the detected spoken language using text-to-speech. TTS uses browser-native Web Speech API when a voice exists for the detected language, and falls back to a server-side TTS API (Coqui, ElevenLabs, Gemini, or equivalent) when no suitable browser voice is available. The farmer can stop playback at any time by tapping the mic button or a dedicated stop button.
+When the agent produces a response, the app reads it aloud in the detected spoken language using browser-native Web Speech API (`speechSynthesis`). If the browser does not provide a voice for the detected language, the text is displayed but not spoken. No server-side TTS API is used. The farmer can stop playback at any time by tapping the mic button or a dedicated stop button.
 
 ### FR-4 Push-to-Talk Activation
 Voice mode is activated only by explicit user action: the floating mic button. Tap starts recording; auto-stop on silence sends the audio for transcription. The app never listens continuously in the background.
@@ -70,7 +70,16 @@ Audio is captured using the browser MediaRecorder API in WebM/Opus format (or th
 ### FR-15 Security and Authorization
 Every voice-triggered action goes through the same `requireSessionApi()` guard as the existing route handlers. All data-accessing tools are scoped to the farmer's `accountId`. The voice agent cannot access or modify other farmers' data. Navigation commands are validated against the app's allowed routes.
 
-### FR-16 Destructive Action Confirmation
+### FR-16 Split Voice Routes
+Voice processing uses two dedicated route handlers: `POST /api/voice/stt` for speech-to-text transcription, and `POST /api/voice/action` for agent execution and response generation. Both routes reuse the existing `requireSessionApi()` guard and rate limiter.
+
+### FR-17 Global Mic Overlay
+The floating mic button and its associated voice UI (listening indicator, status messages, TTS controls) are rendered by a single client component placed in the root dashboard layout. This component persists across all dashboard pages without per-page re-initialization.
+
+### FR-18 Write Confirmation
+Before executing any write action (create, update, delete, archive), the voice agent describes what it will do and asks the farmer to confirm via voice. The agent waits for an explicit affirmative response before proceeding. If the farmer does not confirm, the action is cancelled and the agent explains what happened.
+
+### FR-19 Destructive Action Confirmation
 Before executing any destructive action (delete, archive, permanent removal), the voice agent asks the farmer to confirm via voice. The agent waits for an explicit affirmative response before proceeding. If the farmer does not confirm, the action is cancelled and the agent explains what happened.
 
 ### FR-17 Processing Feedback
@@ -104,7 +113,7 @@ If the farmer's voice command is missing required information or ambiguous, the 
 - Voice input/output for the marketing site (public pages, signup, login).
 - Always-on listening or wake-word activation.
 - Phone-call mode, IVR, or SMS-based voice.
-- Offline/on-device STT or TTS (server-side APIs require network).
+- Offline/on-device STT or TTS (server-side APIs require network; browser-native TTS is used when available).
 - Voice biometrics or voice-profile personalization beyond the existing farmer account context.
 - Photo upload triggered by voice (requires camera UI that is out of scope for the voice layer itself).
 - Agronomist voice mode or expert escalation via voice.
@@ -112,6 +121,8 @@ If the farmer's voice command is missing required information or ambiguous, the 
 
 ## Acceptance Criteria
 
+- [ ] Voice requests are processed through dedicated server endpoints for transcription and agent action.
+- [ ] The floating mic button and voice UI are managed by a single overlay component in the root dashboard layout, persisting across all pages.
 - [ ] A floating microphone button is visible on every authenticated farmer app page.
 - [ ] Tapping the mic starts recording; auto-stop on silence sends audio for transcription.
 - [ ] Transcription auto-detects the spoken language across all 8 locales.
@@ -129,6 +140,7 @@ If the farmer's voice command is missing required information or ambiguous, the 
 - [ ] When offline, the mic button is visible but inactive.
 - [ ] All new visible strings introduced by this feature have translation keys inserted for all 8 locales in the Neon `translations` table before merge.
 - [ ] Before deleting or archiving any data, the agent asks for voice confirmation and waits for explicit approval.
+- [ ] Before creating or updating any record, the agent describes the action and asks for voice confirmation.
 - [ ] While processing, the agent provides spoken status updates (e.g., "Record bana raha hoon...", "Ho gaya") and a visual loading indicator.
 - [ ] Tapping the mic while the agent is speaking immediately stops all audio and cancels the current operation.
 - [ ] When information is missing or intent is ambiguous, the agent asks voice follow-up questions until it has enough detail or the farmer cancels.
