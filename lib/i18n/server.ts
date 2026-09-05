@@ -21,6 +21,7 @@ import type { PricesBundle } from "@/app/(farmer)/(dashboard)/prices/prices-bund
 import type { CropsBundle } from "@/app/(farmer)/(dashboard)/crops/crops-bundle";
 import type { SatelliteBundle } from "@/app/(farmer)/(dashboard)/satellite/satellite-bundle";
 import type { AppControlBundle } from "@/components/app-control/app-control-bundle";
+import type { PestBundle } from "@/components/pest/pest-bundle";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -163,6 +164,7 @@ export async function getShellBundle() {
       weather: t("app.shell.nav.weather").text,
       notifications: t("app.shell.nav.notifications").text,
       settings: t("app.shell.nav.settings").text,
+      pest: t("app.pest.pageTitle").text,
       more: t("app.shell.nav.more").text,
       satellite: t("app.shell.nav.satellite").text,
     },
@@ -233,6 +235,10 @@ export async function getDashboardBundle(): Promise<DashboardBundle> {
     signOut: t("app.shell.signOut").text,
     weatherNoLocation: t("app.dashboard.weatherNoLocation").text,
     weatherYourArea: t("app.dashboard.weatherYourArea").text,
+    pestWidgetTitle: t("app.pest.widget.title").text,
+    pestWidgetAllClear: t("app.pest.widget.allClear").text,
+    pestWidgetHighestRisk: t("app.pest.widget.highestRisk").text,
+    pestWidgetMonitoring: t("app.pest.monitoring").text,
     demo: {
       todayLabel: t("app.dashboard.demo.todayLabel").text,
       location: t("app.dashboard.demo.location").text,
@@ -1005,6 +1011,113 @@ export async function getSatelliteBundle(): Promise<SatelliteBundle> {
 }
 
 /**
+ * Flat translation bundle for the pest prediction feature.
+ * Built server-side and passed as props to client components.
+ */
+export async function getPestBundle(): Promise<PestBundle> {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    eyebrow: t("app.pest.eyebrow").text,
+    pageTitle: t("app.pest.pageTitle").text,
+    description: t("app.pest.description").text,
+    farmSelectorLabel: t("app.pest.farmSelectorLabel").text,
+    noFarmsTitle: t("app.pest.noFarmsTitle").text,
+    noFarmsBody: t("app.pest.noFarmsBody").text,
+    addFarm: t("app.pest.addFarm").text,
+    weatherUnavailable: t("app.pest.weatherUnavailable").text,
+    weatherUnavailableBody: t("app.pest.weatherUnavailableBody").text,
+    noPrediction: t("app.pest.noPrediction").text,
+    monitoring: t("app.pest.monitoring").text,
+    monitoringBody: t("app.pest.monitoringBody").text,
+    severity: {
+      warning: t("app.pest.severity.warning").text,
+      critical: t("app.pest.severity.critical").text,
+    },
+    status: {
+      active: t("app.pest.status.active").text,
+      monitoring: t("app.pest.status.monitoring").text,
+    },
+    historyTitle: t("app.pest.historyTitle").text,
+    historySubtitle: t("app.pest.historySubtitle").text,
+    historyEmpty: t("app.pest.historyEmpty").text,
+    historyDate: t("app.pest.historyDate").text,
+    historyFarm: t("app.pest.historyFarm").text,
+    historyPest: t("app.pest.historyPest").text,
+    historyRisk: t("app.pest.historyRisk").text,
+    historyStatus: t("app.pest.historyStatus").text,
+    historyViewAll: t("app.pest.historyViewAll").text,
+    detail: {
+      back: t("app.pest.detail.back").text,
+      weatherConditions: t("app.pest.detail.weatherConditions").text,
+      recommendation: t("app.pest.detail.recommendation").text,
+      farm: t("app.pest.detail.farm").text,
+      crop: t("app.pest.detail.crop").text,
+      stage: t("app.pest.detail.stage").text,
+    },
+    alerts: {
+      title: t("app.pest.alerts.title").text,
+      dismiss: t("app.pest.alerts.dismiss").text,
+      noAlerts: t("app.pest.alerts.noAlerts").text,
+      viewAll: t("app.pest.alerts.viewAll").text,
+      markRead: t("app.pest.alerts.markRead").text,
+      markedRead: t("app.pest.alerts.markedRead").text,
+    },
+    source: {
+      live: t("app.pest.source.live").text,
+      cached: t("app.pest.source.cached").text,
+      demo: t("app.pest.source.demo").text,
+      outdated: t("app.pest.source.outdated").text,
+    },
+    buttons: {
+      refresh: t("app.pest.buttons.refresh").text,
+      updateStage: t("app.pest.buttons.updateStage").text,
+    },
+    errors: {
+      generic: t("app.pest.errors.generic").text,
+      noFarm: t("app.pest.errors.noFarm").text,
+      serviceUnavailable: t("app.pest.errors.serviceUnavailable").text,
+      dataUnavailable: t("app.pest.errors.dataUnavailable").text,
+    },
+    recommendations: {
+      aphid: t("app.pest.recommendations.aphid").text,
+      whitefly: t("app.pest.recommendations.whitefly").text,
+      bollworm: t("app.pest.recommendations.bollworm").text,
+      jassid: t("app.pest.recommendations.jassid").text,
+      armyworm: t("app.pest.recommendations.armyworm").text,
+      rust: t("app.pest.recommendations.rust").text,
+      locust: t("app.pest.recommendations.locust").text,
+      default: t("app.pest.recommendations.default").text,
+    },
+    treatment: {
+      chemical: t("app.pest.treatment.chemical").text,
+      organic: t("app.pest.treatment.organic").text,
+      costEstimate: t("app.pest.treatment.costEstimate").text,
+    },
+    widget: {
+      title: t("app.pest.widget.title").text,
+      allClear: t("app.pest.widget.allClear").text,
+      warningCount: t("app.pest.widget.warningCount").text,
+      warningCountPlural: t("app.pest.widget.warningCountPlural").text,
+      criticalCount: t("app.pest.widget.criticalCount").text,
+      criticalCountPlural: t("app.pest.widget.criticalCountPlural").text,
+      highestRisk: t("app.pest.widget.highestRisk").text,
+      topFarm: t("app.pest.widget.topFarm").text,
+    },
+    growthStage: {
+      title: t("app.pest.growthStage.title").text,
+      crop: t("app.pest.growthStage.crop").text,
+      stage: t("app.pest.growthStage.stage").text,
+      save: t("app.pest.growthStage.save").text,
+      saving: t("app.pest.growthStage.saving").text,
+      success: t("app.pest.growthStage.success").text,
+      error: t("app.pest.growthStage.error").text,
+    },
+  };
+}
+
+/**
  * Flat translation bundle for the app-control chat feature.
  * Built server-side and passed as props to client components.
  */
@@ -1112,3 +1225,4 @@ export function siteHeaderStrings(t: Translator) {
     dashboard: t("nav.dashboard").text,
   };
 }
+
