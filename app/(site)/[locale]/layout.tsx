@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { SuggestionChip } from "@/components/suggestion-chip";
+import { OfflineProviders } from "@/components/offline/offline-providers";
 import { isLocale, LOCALES, LOCALE_REGISTRY } from "@/lib/i18n/config";
 import { SetHtmlAttributes } from "@/components/set-html-attributes";
 
@@ -34,6 +35,7 @@ export default async function LocaleLayout({
       <SetHtmlAttributes lang={locale.htmlLang} dir={locale.dir} />
       {children}
       {!isLocalized && <SuggestionChip />}
+      <OfflineProviders locale={locale.code} />
     </>
   );
 }

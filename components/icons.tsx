@@ -477,3 +477,19 @@ export function StarIcon(props: IconProps) {
     </svg>
   );
 }
+
+export function RefreshCwIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M3 12a9 9 0 019-9 9.75 9.75 0 016.74 2.74L21 8M21 3v5h-5M3 12a9 9 0 019-9 9.75 9.75 0 016.74 2.74L21 8M19 12a9 9 0 01-9 9 9.75 9.75 0 01-6.74-2.74L3 16M21 19v-5h-5" />
+    </svg>
+  );
+}
+
+export function SatelliteIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 2l2.5 5 5 .5-3.5 3.5.5 5-4.5-2.5L7.5 16l.5-5-3.5-3.5 5-.5z" />
+    </svg>
+  );
+}

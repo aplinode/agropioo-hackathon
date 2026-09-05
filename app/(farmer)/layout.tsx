@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { LOCALE_REGISTRY } from "@/lib/i18n/config";
 import { getAppLocale, getDictionary } from "@/lib/i18n/server";
 import { SetHtmlAttributes } from "@/components/set-html-attributes";
+import { OfflineProviders } from "@/components/offline/offline-providers";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export default async function FarmerAppLayout({ children }: LayoutProps<"/">) {
     <>
       <SetHtmlAttributes lang={entry.htmlLang} dir={entry.dir} />
       {children}
+      <OfflineProviders locale={localeCode} />
     </>
   );
 }

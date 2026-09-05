@@ -70,8 +70,9 @@ export async function POST(request: Request) {
     const data = await queryOne(
       `INSERT INTO farms (
           account_id, name, location, district, lat, lng, crops, acres, growth_stages,
-          primary_crop, sowing_date, soil_type, irrigation_method
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+          primary_crop, sowing_date, soil_type, irrigation_method, client_uuid
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+        ON CONFLICT (client_uuid) DO NOTHING
         RETURNING *`,
       [
         session.accountId,
@@ -87,11 +88,20 @@ export async function POST(request: Request) {
         input.sowing_date ?? null,
         input.soil_type ?? null,
         input.irrigation_method ?? null,
+        input.client_uuid ?? null,
       ]
     );
 
-    if (!data) return errorResponse('server_error', 'Failed to create farm', 500);
-    return jsonResponse(data, 201);
+    let result = data;
+    if (!result && input.client_uuid) {
+      result = await queryOne(
+        `SELECT * FROM farms WHERE client_uuid = $1 LIMIT 1`,
+        [input.client_uuid]
+      );
+    }
+
+    if (!result) return errorResponse('server_error', 'Failed to create farm', 500);
+    return jsonResponse(result, 201);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     return errorResponse('server_error', message, 500);
