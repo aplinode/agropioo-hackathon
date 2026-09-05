@@ -108,11 +108,7 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
       setStatus('saved');
       setTimeout(() => router.push('/farms'), 600);
     } catch {
-      await queueWrite({
-        url: '/api/records',
-        method: 'POST',
-        body: JSON.stringify({ ...data, client_uuid: clientUuidRef.current }),
-      });
+      await queueWrite('/api/records', 'POST', { ...data, client_uuid: clientUuidRef.current });
       setQueuedMessage('Saved offline — will sync when you are back online.');
       setStatus('saved');
     }

@@ -847,18 +847,18 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
       setStatus("saved");
       setTimeout(() => router.push(`/farms/${farm.id}`), 600);
     } catch {
-      await queueWrite({
-        url: "/api/farms",
-        method: "POST",
-        body: JSON.stringify({
+      await queueWrite(
+        "/api/farms",
+        "POST",
+        {
           ...data,
           primary_crop: primaryCrop,
           sowing_date: sowing || null,
           soil_type: soil || null,
           irrigation_method: irrigation,
           client_uuid: clientUuidRef.current,
-        }),
-      });
+        },
+      );
       setQueuedMessage("Saved offline — will sync when you are back online.");
       setStatus("saved");
     }

@@ -233,7 +233,7 @@ export default function DetectUpload({
       await enterChatMode(diagnosis);
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") return;
-      await queuePhotoUpload(blob, name);
+      await queuePhotoUpload("/api/detect", blob);
       showError("service", bundle.serviceUnavailable);
     } finally {
       abortRef.current = null;
