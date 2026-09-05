@@ -17,8 +17,8 @@ Give farmers a conversational interface that lets them control the entire Agropi
 
 ## Functional Requirements
 
-### FR-1: Separate App-Control Chat
-A dedicated chat interface exists alongside the existing advisor chat. It is accessible from the app navigation (e.g., a "Voice Agent" or "App Control" entry in the bottom tab bar or sidebar). The app-control chat has its own conversation history, independent from the advisor's conversations.
+### FR-1: Floating App-Control Chat
+A dedicated floating chat interface exists alongside the existing advisor chat. A chat icon is visible on every authenticated farmer app page. Tapping it opens a chat window that can be minimized to a floating bubble or maximized to a full-screen panel. The app-control chat has its own conversation history, independent from the advisor's conversations. The voice agent has its own separate icon and window — the two do not share UI.
 
 ### FR-2: App-Wide Action Execution
 The chat agent can execute any action available in the app, including but not limited to:
@@ -42,20 +42,27 @@ The agent can inject interactive elements into its responses:
 - **Confirmation prompts:** "Create this expense?", with Yes/No buttons
 - **Action cards:** Structured summaries (price tables, weather forecasts, P&L summaries) rendered as formatted chat bubbles
 - **Retry buttons:** Appear when an action fails, allowing the farmer to retry without re-typing
+- **Mini page previews:** Simplified renderings of app pages (farm lists, price tables, record summaries) embedded directly in chat bubbles
 
 ### FR-5: Page-Aware Context
 The chat agent receives the current page path and relevant page state as context. When the farmer is on the profit-loss page and asks about expenses, the agent knows which season/farm they are viewing and tailors its response accordingly. Context is passed with every message.
 
 ### FR-6: Voice Navigation
-The agent can navigate the farmer to any page in the app. When navigation occurs via a button tap or explicit request, the agent announces the destination and the current page's purpose. The chat persists across page navigations.
+The agent can navigate the farmer to any page in the app. When navigation occurs via a button tap or explicit request, the agent announces the destination and the current page's purpose. The chat persists as a floating panel across page navigations — it does not close when the farmer navigates.
 
 ### FR-7: Confirmation for Writes
 Before executing any write action (create, update, delete, archive), the agent describes what it will do and asks the farmer to confirm. The farmer confirms via text input or by tapping a Yes/No button in the chat. The agent waits for explicit affirmative response before proceeding.
 
-### FR-8: Conversation Persistence
-Every chat exchange is stored in a dedicated `app_control_conversations` and `app_control_messages` table (separate from advisor conversations). Conversations appear in a sidebar list and can be reviewed, renamed, and deleted. Message history includes both text and attachment references.
+### FR-8: Guided Multi-Step Dialogue
+For complex actions that require multiple pieces of information (e.g., creating an expense requires amount, category, date, and farm), the agent breaks the task into steps and guides the farmer through each one sequentially. The agent asks one clarifying question at a time, validates each response, and proceeds only when it has enough information. The farmer can also provide all details in a single message if they prefer.
 
-### FR-9: Error Handling
+### FR-9: Conversation Persistence
+Every chat exchange is stored in a dedicated `app_control_conversations` and `app_control_messages` table (separate from advisor conversations). Conversations appear in a sidebar list and can be reviewed, renamed, and deleted. Message history includes both text and attachment references. Conversations are auto-named by the agent based on the topic of the first message (e.g., "Add irrigation expense", "Tomato prices in Hyderabad").
+
+### FR-10: Agent Architecture
+The app-control chat extends the existing advisor agent system. It reuses the same triage agent and multi-agent routing infrastructure, but with a dedicated set of app-control tools (create_record, update_record, delete_record, navigate_to_page, etc.). The agent architecture is shared; only the tool sets and routing rules differ between advisor and app-control modes.
+
+### FR-11: Error Handling
 When an action fails (API error, validation error, permission denied, network issue), the agent responds with a friendly explanation in plain language, suggests an alternative if available, and offers a retry option. Raw error codes, stack traces, or technical jargon are never exposed to the farmer.
 
 ### FR-10: Language Support
@@ -76,6 +83,15 @@ Uploaded images are validated for type and size before processing. The maximum a
 ### FR-15: Empty / Ambiguous Input
 If the farmer sends an empty message, the agent prompts them to type a command. If the intent is ambiguous or information is missing, the agent asks clarifying questions via text until it has enough detail to execute the action.
 
+### FR-16: Floating Panel Behavior
+The chat window starts as a minimized floating bubble on every page. Tapping the bubble expands it to a full chat panel. The panel can be minimized back to a bubble or closed entirely. The chat persists across page navigations — if the farmer navigates to another page, the floating bubble remains visible and the conversation continues. The panel does not auto-close on navigation.
+
+### FR-17: Guided Multi-Step Dialogue
+For complex actions that require multiple pieces of information (e.g., creating an expense requires amount, category, date, and farm), the agent breaks the task into steps and guides the farmer through each one sequentially. The agent asks one clarifying question at a time, validates each response, and proceeds only when it has enough information. The farmer can also provide all details in a single message if they prefer.
+
+### FR-18: Auto-Named Conversations
+Conversations are auto-named by the agent based on the topic of the first message (e.g., "Add irrigation expense", "Tomato prices in Hyderabad"). The farmer can rename conversations manually from the sidebar.
+
 ## Edge Cases & Rules
 
 - **Empty message:** The agent responds with "Kya aap kuch kehna chahte hain? Apna sawal likhein ya button use karein." (or equivalent in the detected language).
@@ -90,7 +106,7 @@ If the farmer sends an empty message, the agent prompts them to type a command. 
 
 ## Out of Scope
 
-- Voice input/output within the chat (voice is a separate feature; the chat is text-only with optional image attachments).
+- Voice input/output within the chat (voice is a completely separate feature with its own icon and window).
 - Always-on agent suggestions or proactive notifications outside of explicit user messages.
 - Multi-user or shared conversations (each farmer's conversations are private).
 - Offline mode for the chat (requires network for agent processing).
@@ -100,20 +116,24 @@ If the farmer sends an empty message, the agent prompts them to type a command. 
 
 ## Acceptance Criteria
 
-- [ ] A dedicated app-control chat is accessible from the app navigation, separate from the advisor chat.
+- [ ] A floating chat icon is visible on every authenticated farmer app page. Tapping opens a chat panel that can be minimized or maximized.
+- [ ] The chat persists as a floating panel across page navigations.
 - [ ] The agent can create, view, update, and delete farm records via chat commands.
 - [ ] The agent can navigate the farmer to any app page via chat commands or navigation buttons.
 - [ ] The agent receives the current page as context and uses it to tailor responses.
 - [ ] The agent confirms all write actions (create, update, delete) via chat before executing.
 - [ ] The chat composer supports text input and image attachments.
 - [ ] The agent can process attached images (e.g., crop disease detection).
-- [ ] Agent responses can include interactive elements: navigation buttons, confirmation prompts, action cards, retry buttons.
+- [ ] Agent responses can include interactive elements: navigation buttons, confirmation prompts, action cards, retry buttons, and mini page previews.
 - [ ] The agent explains failures in plain language and offers retry options.
 - [ ] The agent detects input language and responds in the same language across all 8 locales.
 - [ ] RTL locales render the chat UI in right-to-left layout.
 - [ ] Agent responses stream progressively.
 - [ ] Conversations are persisted in a dedicated database table and appear in a sidebar list with rename/delete.
+- [ ] Conversations are auto-named by the agent based on the first message topic.
 - [ ] Chat requests are rate-limited per IP and per account.
 - [ ] All agent actions respect accountId scoping and cannot access other farmers' data.
+- [ ] The agent extends the existing advisor agent system with dedicated app-control tools.
+- [ ] The agent handles multi-step tasks through guided sequential dialogue.
 - [ ] All new visible strings introduced by this feature have translation keys inserted for all 8 locales in the Neon `translations` table before merge.
 - [ ] `npm run lint` and `npm run build` pass.
