@@ -11,6 +11,7 @@ import {
   HomeIcon,
   LeafIcon,
   LogOutIcon,
+  SatelliteIcon,
   SproutIcon,
   TagIcon,
   TrendingUpIcon,
@@ -43,6 +44,7 @@ export default function AppSidebar({ bundle }: AppSidebarProps) {
     { href: "/weather", label: nav.weather, Icon: WeatherIcon },
     { href: "/notifications", label: nav.notifications, Icon: BellIcon },
     { href: "/settings", label: nav.settings, Icon: GearIcon },
+    { href: "/satellite", label: nav.satellite, Icon: SatelliteIcon },
   ];
 
   function isActive(href: string) {

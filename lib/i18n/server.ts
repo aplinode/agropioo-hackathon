@@ -163,6 +163,7 @@ export async function getShellBundle() {
       notifications: t("app.shell.nav.notifications").text,
       settings: t("app.shell.nav.settings").text,
       more: t("app.shell.nav.more").text,
+      satellite: t("app.shell.nav.satellite").text,
     },
     signOut: t("app.shell.signOut").text,
     aria: {
