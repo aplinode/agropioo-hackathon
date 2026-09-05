@@ -1,4 +1,4 @@
-# Implementation Plan: AI Pest Outbreak Prediction
+﻿# Implementation Plan: AI Pest Outbreak Prediction
 
 **Branch**: `09-pest-outbreak-prediction` | **Date**: 2026-09-05 | **Spec**: [spec.md](../spec.md)
 **Input**: Feature specification from `/specs/pest-outbreak-prediction/spec.md`
@@ -178,11 +178,10 @@ Every visible string follows the existing catalog → DB sync pattern under `app
 
 1. `npm run lint` passes.
 2. `npm run build` passes.
-3. Manual run-through:
-   - Dashboard shows pest widget with counts and top farm.
-   - `/pest` page shows 7-day forecast with probabilities and recommendations.
-   - History page lists past alerts and predictions.
-   - Growth stage update recalculates risk.
-   - Cron endpoint generates predictions and sends alerts when risk > 70%.
-   - Empty/missing-data states render fallback copy.
-4. Translation catalog coverage: all `app.pest.*` keys present in all 8 locales.
+3. Endpoint verification: Hit every API endpoint manually or via automated tests. Confirm expected status, response shape, and error behavior for each route.
+4. Error coverage: Exercise 4xx and 5xx paths for every route handler. Confirm uniform error shape `{ error: { code, message } }` and correct HTTP status codes.
+5. End-to-end smoke test: Run through the full user journey â€” dashboard -> `/pest` page -> history -> growth stage update -> alert receipt. Confirm no console errors and correct UI states.
+6. Database verification via Neon MCP: Inspect Postgres during implementation. Verify migrations apply cleanly, indexes exist, and rows are inserted/updated correctly in `pest_predictions`, `pest_alerts`, `pest_incidence_records`, `pest_treatments`, and `notifications`. Confirm no constraint violations or silent failures.
+7. Data integrity checks: During cron execution, validate scraped data parsing, prediction storage for all active farms, alert firing only when `risk_score >= 70`, and accurate email/in-app delivery channel population.
+8. Research-first: Before implementing scrapers, model rules, or LLM prompts, research target government sites, existing weather/price scrapers in this repo, and the configured LLM provider. Use only verified sources and established patterns.
+9. Translation coverage: Verify every visible string resolves through `app.pest.*` keys and that all 8 locales have non-empty translations in the database.
