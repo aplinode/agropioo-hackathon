@@ -1,0 +1,67 @@
+/**
+ * Typed translation bundle for the satellite monitoring feature.
+ * Built server-side and passed as props to client components.
+ */
+export type SatelliteBundle = {
+  nav: string;
+  pageTitle: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  farmSelectorLabel: string;
+  selectFarmPrompt: string;
+  noFarms: string;
+  drawBoundaryBtn: string;
+  saveBoundaryBtn: string;
+  cancelDrawBtn: string;
+  clearBoundaryBtn: string;
+  drawInstructions: string;
+  drawing: string;
+  savingBoundary: string;
+  processingTitle: string;
+  processingBody: string;
+  processingSub: string;
+  noBoundaryTitle: string;
+  noBoundaryBody: string;
+  noSnapshots: string;
+  noSnapshotsBody: string;
+  cloudCover: string;
+  cloudCoverYes: string;
+  cloudCoverNo: string;
+  weekEnding: string;
+  weekStartShort: string;
+  meanNdvi: string;
+  health: string;
+  dateCol: string;
+  legendTitle: string;
+  legendWaterShadow: string;
+  legendStressed: string;
+  legendModerate: string;
+  legendHealthy: string;
+  legendNodata: string;
+  jobPending: string;
+  jobProcessing: string;
+  jobCompleted: string;
+  jobFailed: string;
+  jobFailedBody: string;
+  retry: string;
+  refreshStatus: string;
+  refreshing: string;
+  historyHeading: string;
+  historyEmpty: string;
+  healthGood: string;
+  healthWatch: string;
+  healthStressed: string;
+  loading: string;
+  noImagery: string;
+  errorGeneric: string;
+  errorServiceUnavailable: string;
+  errorNoFarm: string;
+  mapLegend: string;
+  zoomToFarm: string;
+  boundarySaved: string;
+  boundaryError: string;
+  areaTooLarge: string;
+  areaOutsidePk: string;
+  invalidBoundary: string;
+};

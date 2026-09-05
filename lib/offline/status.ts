@@ -1,18 +1,10 @@
 /**
- * Connectivity status via Next.js 16's built-in experimental `useOffline` hook.
- * Re-exported so consuming components import from `@/lib/offline/status`
- * rather than reaching into `next/offline`.
+ * Server-safe connectivity helpers.
  *
- * The hook is only available in Client Components (it requires React
- * hydration + browser event listeners). Server components must use the
- * static `isLikelyOnline()` helper instead.
+ * useOfflineStatus() and useOffline are re-exported from ./hooks
+ * (client-only boundary). This module is safe to import from Server
+ * Components.
  */
-
-import { useOffline } from "next/offline";
-
-import type { OfflineStatus } from "./types";
-
-export { useOffline };
 
 const DNS_CHECK_URL = "https://1.1.1.1/cdn-cgi/.gitconfig";
 const DNS_CHECK_TIMEOUT_MS = 4_000;
@@ -42,19 +34,6 @@ export async function checkInternet(): Promise<boolean> {
     lastDnsResult = false;
     return false;
   }
-}
-
-/**
- * Use in Client Components to get real-time connectivity status.
- * `useOffline()` returns `true` when offline — we invert to `online`.
- * Triggers re-render when the browser fires `online`/`offline` events.
- */
-export function useOfflineStatus(): OfflineStatus {
-  const isOffline = useOffline();
-  return {
-    online: !isOffline,
-    canConnect: !isOffline,
-  };
 }
 
 /**

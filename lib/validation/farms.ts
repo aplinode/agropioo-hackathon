@@ -34,6 +34,7 @@ export const createFarmSchema = z.object({
     .transform((v) => (v && v.length > 0 ? v : null)),
   soil_type: z.enum(SOIL_TYPES).optional(),
   irrigation_method: z.enum(IRRIGATION_METHODS).optional(),
+  client_uuid: z.string().uuid().optional(),
 });
 
 export const updateFarmSchema = z.object({
@@ -53,6 +54,7 @@ export const updateFarmSchema = z.object({
   soil_type: z.enum(SOIL_TYPES).optional(),
   irrigation_method: z.enum(IRRIGATION_METHODS).optional(),
   growth_stages: z.any().optional(),
+  client_uuid: z.string().uuid().optional(),
 });
 
 export const createRecordSchema = z.object({
@@ -67,6 +69,7 @@ export const createRecordSchema = z.object({
   yield_qty: z.coerce.number().gte(0).optional().nullable(),
   labor_cost: z.coerce.number().gte(0).optional().nullable(),
   transport_cost: z.coerce.number().gte(0).optional().nullable(),
+  client_uuid: z.string().uuid().optional(),
 });
 
 export const updateRecordSchema = z.object({

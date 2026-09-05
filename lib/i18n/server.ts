@@ -19,6 +19,7 @@ import type { DetectBundle } from "@/app/(farmer)/(dashboard)/detect/detect-bund
 import type { WeatherBundle } from "@/app/(farmer)/(dashboard)/weather/weather-bundle";
 import type { PricesBundle } from "@/app/(farmer)/(dashboard)/prices/prices-bundle";
 import type { CropsBundle } from "@/app/(farmer)/(dashboard)/crops/crops-bundle";
+import type { SatelliteBundle } from "@/app/(farmer)/(dashboard)/satellite/satellite-bundle";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -918,6 +919,76 @@ export async function getCropsBundle(): Promise<CropsBundle> {
       okra_then_cowpea: t("app.crops.rotation.okra_then_cowpea").text,
       garlic_then_wheat: t("app.crops.rotation.garlic_then_wheat").text,
     },
+  };
+}
+
+/** Flat translation bundle for the satellite monitoring feature. */
+export async function getSatelliteBundle(): Promise<SatelliteBundle> {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    nav: t("app.satellite.nav").text,
+    pageTitle: t("app.satellite.pageTitle").text,
+    eyebrow: t("app.satellite.eyebrow").text,
+    title: t("app.satellite.title").text,
+    description: t("app.satellite.description").text,
+    farmSelectorLabel: t("app.satellite.farmSelectorLabel").text,
+    selectFarmPrompt: t("app.satellite.selectFarmPrompt").text,
+    noFarms: t("app.satellite.noFarms").text,
+    drawBoundaryBtn: t("app.satellite.drawBoundaryBtn").text,
+    saveBoundaryBtn: t("app.satellite.saveBoundaryBtn").text,
+    cancelDrawBtn: t("app.satellite.cancelDrawBtn").text,
+    clearBoundaryBtn: t("app.satellite.clearBoundaryBtn").text,
+    drawInstructions: t("app.satellite.drawInstructions").text,
+    drawing: t("app.satellite.drawing").text,
+    savingBoundary: t("app.satellite.savingBoundary").text,
+    processingTitle: t("app.satellite.processingTitle").text,
+    processingBody: t("app.satellite.processingBody").text,
+    processingSub: t("app.satellite.processingSub").text,
+    noBoundaryTitle: t("app.satellite.noBoundaryTitle").text,
+    noBoundaryBody: t("app.satellite.noBoundaryBody").text,
+    noSnapshots: t("app.satellite.noSnapshots").text,
+    noSnapshotsBody: t("app.satellite.noSnapshotsBody").text,
+    cloudCover: t("app.satellite.cloudCover").text,
+    cloudCoverYes: t("app.satellite.cloudCoverYes").text,
+    cloudCoverNo: t("app.satellite.cloudCoverNo").text,
+    weekEnding: t("app.satellite.weekEnding").text,
+    weekStartShort: t("app.satellite.weekStartShort").text,
+    meanNdvi: t("app.satellite.meanNdvi").text,
+    health: t("app.satellite.health").text,
+    dateCol: t("app.satellite.dateCol").text,
+    legendTitle: t("app.satellite.legendTitle").text,
+    legendWaterShadow: t("app.satellite.legend.waterShadow").text,
+    legendStressed: t("app.satellite.legend.stressed").text,
+    legendModerate: t("app.satellite.legend.moderate").text,
+    legendHealthy: t("app.satellite.legend.healthy").text,
+    legendNodata: t("app.satellite.legendNodata").text,
+    jobPending: t("app.satellite.jobPending").text,
+    jobProcessing: t("app.satellite.jobProcessing").text,
+    jobCompleted: t("app.satellite.jobCompleted").text,
+    jobFailed: t("app.satellite.jobFailed").text,
+    jobFailedBody: t("app.satellite.jobFailedBody").text,
+    retry: t("app.satellite.retry").text,
+    refreshStatus: t("app.satellite.refreshStatus").text,
+    refreshing: t("app.satellite.refreshing").text,
+    historyHeading: t("app.satellite.historyHeading").text,
+    historyEmpty: t("app.satellite.historyEmpty").text,
+    healthGood: t("app.satellite.healthGood").text,
+    healthWatch: t("app.satellite.healthWatch").text,
+    healthStressed: t("app.satellite.healthStressed").text,
+    loading: t("app.satellite.loading").text,
+    noImagery: t("app.satellite.noImagery").text,
+    errorGeneric: t("app.satellite.error.generic").text,
+    errorServiceUnavailable: t("app.satellite.error.serviceUnavailable").text,
+    errorNoFarm: t("app.satellite.error.noFarm").text,
+    mapLegend: t("app.satellite.mapLegend").text,
+    zoomToFarm: t("app.satellite.zoomToFarm").text,
+    boundarySaved: t("app.satellite.boundarySaved").text,
+    boundaryError: t("app.satellite.boundaryError").text,
+    areaTooLarge: t("app.satellite.areaTooLarge").text,
+    areaOutsidePk: t("app.satellite.areaOutsidePk").text,
+    invalidBoundary: t("app.satellite.invalidBoundary").text,
   };
 }
 

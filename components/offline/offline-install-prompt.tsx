@@ -2,17 +2,19 @@
 
 import { useEffect, useState } from "react";
 
-import { useOfflineStatus } from "@/lib/offline/status";
+import { useOfflineStatus } from "@/lib/offline/hooks";
+import type { ResolvedString } from "@/lib/i18n/logic";
 
 type BeforeInstallPromptEvent = Event & {
   prompt(): Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
-/**
- * Offline banner — shows when connectivity is lost (specs/offline-pwa/spec.md §6).
- */
-export function OfflineBanner() {
+interface OfflineBannerProps {
+  message: ResolvedString;
+}
+
+export function OfflineBanner({ message }: OfflineBannerProps) {
   const status = useOfflineStatus();
 
   if (status.online && status.canConnect) {
@@ -41,28 +43,27 @@ export function OfflineBanner() {
         <line x1="7" y1="15" x2="17" y2="15" />
         <line x1="7" y1="19" x2="17" y2="19" />
       </svg>
-      <span>You&apos;re offline. Your data is saved and will sync when you&apos;re back online.</span>
+      <span>{message.text}</span>
     </div>
   );
 }
 
-/**
- * Install prompt that handles three cases:
- * 1. Android/Chrome/Edge: `beforeinstallprompt` event → show install button
- * 2. iOS Safari: show a banner instructing share-sheet → "Add to Home Screen"
- * 3. Other browsers: hidden
- */
 function isIOS(): boolean {
   if (typeof navigator === "undefined") return false;
   return /iPhone|iPad|iPod/.test(navigator.userAgent);
 }
 
-export function InstallPrompt() {
+interface InstallPromptProps {
+  installAction: ResolvedString;
+  iosPrompt: ResolvedString;
+}
+
+export function InstallPrompt({ installAction, iosPrompt }: InstallPromptProps) {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showIosPrompt, setShowIosPrompt] = useState(() => {
+  const showIosPrompt = useState(() => {
     if (typeof window === "undefined") return false;
     return !("BeforeInstallPromptEvent" in window) && isIOS();
-  });
+  })[0];
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
@@ -100,7 +101,7 @@ export function InstallPrompt() {
         className="fixed inset-x-4 bottom-4 z-40 rounded-lg bg-agro-paper px-4 py-3 shadow-lg ring-1 ring-agro-forest"
       >
         <p className="text-sm text-agro-ink">
-          Add Agropioo to your Home Screen for offline access. Tap the Share button, then &quot;Add to Home Screen&quot;.
+          {iosPrompt.text}
         </p>
       </div>
     );
@@ -112,7 +113,7 @@ export function InstallPrompt() {
       onClick={handleInstall}
       className="fixed inset-x-4 bottom-4 z-40 rounded-lg bg-agro-forest px-4 py-3 text-center text-sm font-semibold text-white shadow-lg transition-colors hover:opacity-90"
     >
-      Add to Home Screen
+      {installAction.text}
     </button>
   );
 }

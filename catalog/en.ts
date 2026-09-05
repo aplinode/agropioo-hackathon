@@ -1310,6 +1310,7 @@ export const en = {
   "app.prices.eyebrow": "Mandi prices",
   "app.prices.title": "Know the rate before you sell",
   "app.prices.description": "Today's rates from nearby mandis, with a plain word on holding or selling.",
+  "app.prices.selectFarm": "Select farm",
   "app.prices.selectCrop": "Select crop",
   "app.prices.searchPlaceholder": "Search crop or mandi across Pakistan",
   "app.prices.noData": "No price data available",

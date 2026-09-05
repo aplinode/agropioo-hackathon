@@ -61,6 +61,7 @@ export async function PATCH(_request: Request, { params }: { params: Promise<{ i
 
     const input = parsed.data as UpdateFarmInput;
     const updatePayload: Record<string, unknown> = { ...input };
+    delete updatePayload.client_uuid;
     if (input.growth_stages) {
       const merged = { ...(farm.growth_stages as Record<string, string>), ...input.growth_stages };
       updatePayload.growth_stages = merged;

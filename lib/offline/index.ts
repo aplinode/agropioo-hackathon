@@ -1,11 +1,14 @@
 /**
- * Offline PWA public API (specs/offline-pwa/spec.md).
+ * Offline PWA public API.
  *
- * Components and hooks consumers import from `@/lib/offline`.
+ * Server-safe exports — usable from Server Components.
+ * Client-only hooks (useOfflineStatus, useDrainOnReconnect)
+ * live in ./hooks and must be imported separately to avoid
+ * pulling useEffect into server bundles.
  */
 
-export { useOfflineStatus, isLikelyOnline, checkInternet } from "./status";
-export { useDrainOnReconnect, drainQueue, computeRetryAt, clearQueue } from "./drain";
+export { isLikelyOnline, checkInternet } from "./status";
+export { drainQueue, computeRetryAt, clearQueue } from "./drain";
 export {
   generateClientUuid,
   queueWrite,

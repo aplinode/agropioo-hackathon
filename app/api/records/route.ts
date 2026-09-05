@@ -53,8 +53,10 @@ export async function POST(request: Request) {
       const insertResult = await client.query(
         `INSERT INTO records (
            account_id, farm_id, type, season, year, event_date,
-           title, note, weather, yield_qty, labor_cost, transport_cost
-         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+           title, note, weather, yield_qty, labor_cost, transport_cost,
+           client_uuid
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+         ON CONFLICT (client_uuid) DO NOTHING
          RETURNING *`,
         [
           session.accountId,
@@ -69,15 +71,26 @@ export async function POST(request: Request) {
           input.yield_qty ?? null,
           input.labor_cost ?? null,
           input.transport_cost ?? null,
+          input.client_uuid ?? null,
         ]
       );
+
+      let row = insertResult.rows[0];
+
+      if (!row && input.client_uuid) {
+        const existing = await client.query(
+          `SELECT * FROM records WHERE client_uuid = $1 LIMIT 1`,
+          [input.client_uuid]
+        );
+        row = existing.rows[0];
+      }
 
       await client.query(
         `UPDATE farms SET growth_stages = $1, updated_at = now() WHERE id = $2`,
         [JSON.stringify(growthStages), input.farm_id]
       );
 
-      return insertResult.rows[0];
+      return row;
     });
 
     return jsonResponse(record, 201);
