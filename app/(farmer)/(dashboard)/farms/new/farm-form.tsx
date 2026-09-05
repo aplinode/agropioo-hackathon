@@ -295,6 +295,7 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
   const containerRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<number | undefined>(undefined);
   const skipAutoGeocodeRef = useRef(false);
+  const justPickedRef = useRef(false);
 
   useImperativeHandle(ref, () => ({
     skipAutoGeocode: () => {
@@ -303,7 +304,10 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
   }));
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (justPickedRef.current) {
+      justPickedRef.current = false;
+      return;
+    }
     setQuery(value);
   }, [value]);
 
@@ -401,20 +405,22 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
     lat: number;
     lon: number;
   }) => {
+    skipAutoGeocodeRef.current = true;
+    justPickedRef.current = true;
     const placeName = item.display_name;
     onChange(placeName);
     onLocationPick(item.lat, item.lon, placeName);
     setOpen(false);
     setQuery(placeName);
-    skipAutoGeocodeRef.current = true;
   };
 
   const handlePresetSelect = async (area: string) => {
+    skipAutoGeocodeRef.current = true;
+    justPickedRef.current = true;
     const fullLoc = `${area}, ${district}`;
     onChange(fullLoc);
     setQuery(fullLoc);
     setOpen(false);
-    skipAutoGeocodeRef.current = true;
 
     try {
       const results = await photonSearch(`${fullLoc}, Pakistan`, 1);
@@ -730,7 +736,6 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
     try {
       if (displayName) {
         setSelectedLocationName(displayName);
-        setValue("location", displayName);
       } else {
         const result = await photonReverse(lat, lng);
         if (result) {

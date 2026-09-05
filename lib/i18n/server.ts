@@ -919,6 +919,16 @@ export async function getCropsBundle(): Promise<CropsBundle> {
       okra_then_cowpea: t("app.crops.rotation.okra_then_cowpea").text,
       garlic_then_wheat: t("app.crops.rotation.garlic_then_wheat").text,
     },
+    savedPlans: {
+      title: t("app.crops.savedPlans.title").text,
+      empty: t("app.crops.savedPlans.empty").text,
+      farm: t("app.crops.savedPlans.farm").text,
+      season: t("app.crops.savedPlans.season").text,
+      year: t("app.crops.savedPlans.year").text,
+      crop: t("app.crops.savedPlans.crop").text,
+      updated: t("app.crops.savedPlans.updated").text,
+      viewPlan: t("app.crops.savedPlans.viewPlan").text,
+    },
   };
 }
 

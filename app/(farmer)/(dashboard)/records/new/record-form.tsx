@@ -101,8 +101,7 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
       }
       await res.json();
       setStatus('saved');
-      const farmId = data.farm_id;
-      setTimeout(() => router.push(`/farms/${farmId}/records`), 600);
+      setTimeout(() => router.push('/farms'), 600);
     } catch {
       setServerErrors({ form: 'Network error' });
       setStatus('error');

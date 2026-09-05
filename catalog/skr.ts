@@ -1502,4 +1502,18 @@ export const skr: Partial<Record<CatalogKey, string>> = {
   "app.satellite.areaTooLarge": "The drawn area is too large — please draw around a single field.",
   "app.satellite.areaOutsidePk": "کوآرڈینیٹس پاکستان د پیړو دننه لري۔ خپلے کھیت دی ټھیک ټھیک جگہ ویکھو۔",
   "app.satellite.invalidBoundary": "Invalid field boundary — please redraw.",
+  /* ΓöÇΓöÇ ╪▒█î┌⌐╪º╪▒┌ê ╪╣╪º┘à ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+
+
+  /* ΓöÇΓöÇ ╪▒█î┌⌐╪º╪▒┌ê╪º┌║ ╪»█î ┘ü█ü╪▒╪│╪¬ ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+
+  /* ΓöÇΓöÇ ┘å█î╪º ╪▒█î┌⌐╪º╪▒┌ê ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+
+
+  /* ΓöÇΓöÇ Mandi Price Tracker ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
+  "app.prices.selectFarm": "Select farm",
+
+  /* ΓöÇΓöÇ Crop Recommendation Engine (app.crops.*) ΓöÇ mirrored from en (en fallback for untranslated) ΓöÇΓöÇ */
+  "app.crops.errors.dataUnavailable": "No data found for this selection. Please adjust your filters and try again.",
+
 };

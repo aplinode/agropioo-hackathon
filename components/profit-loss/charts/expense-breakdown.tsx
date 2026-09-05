@@ -3,7 +3,14 @@
 type ExpenseRow = { category: string; amount: number };
 
 export default function ExpenseBreakdown({ expenses }: { expenses: ExpenseRow[] }) {
-  if (expenses.length === 0) return null;
+  if (expenses.length === 0) {
+    return (
+      <div className="mt-4 flex flex-col items-center gap-2 rounded-xl border border-dashed border-agro-sprout bg-agro-paper p-6 text-center">
+        <p className="text-sm font-medium text-agro-slate">No expenses recorded yet</p>
+        <p className="text-xs text-agro-cloud">Log your first expense to see the breakdown</p>
+      </div>
+    );
+  }
 
   const categories = Array.from(new Set(expenses.map((e) => e.category)));
   const totals: Record<string, number> = {};
@@ -39,7 +46,24 @@ export default function ExpenseBreakdown({ expenses }: { expenses: ExpenseRow[] 
     const outerStart = polarToCartesian(slice.startAngle, radius);
     const outerEnd = polarToCartesian(slice.endAngle, radius);
     const innerEnd = polarToCartesian(slice.endAngle, radius * 0.5);
-    const largeArc = slice.endAngle - slice.startAngle > Math.PI ? 1 : 0;
+    const sweep = slice.endAngle - slice.startAngle;
+    const largeArc = sweep > Math.PI ? 1 : 0;
+
+    if (sweep >= 2 * Math.PI - 0.001) {
+      const outerLeft = polarToCartesian(Math.PI, radius);
+      const innerLeft = polarToCartesian(Math.PI, radius * 0.5);
+      return [
+        `M ${innerStart.x} ${innerStart.y}`,
+        `L ${outerStart.x} ${outerStart.y}`,
+        `A ${radius} ${radius} 0 1 1 ${outerLeft.x} ${outerLeft.y}`,
+        `A ${radius} ${radius} 0 1 1 ${outerStart.x} ${outerStart.y}`,
+        `L ${innerStart.x} ${innerStart.y}`,
+        `A ${radius * 0.5} ${radius * 0.5} 0 1 0 ${innerLeft.x} ${innerLeft.y}`,
+        `A ${radius * 0.5} ${radius * 0.5} 0 1 0 ${innerStart.x} ${innerStart.y}`,
+        "Z",
+      ].join(" ");
+    }
+
     return [
       `M ${innerStart.x} ${innerStart.y}`,
       `L ${outerStart.x} ${outerStart.y}`,

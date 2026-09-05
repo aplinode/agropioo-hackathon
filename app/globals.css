@@ -103,11 +103,35 @@ body {
   outline-offset: 3px;
 }
 
-/* Inputs that carry their own rounded ring: suppress the global sharp
-   outline so the focus indicator follows the field's real shape. */
+/* Consistent farm-page-green focus for every input, select, date field, and textarea */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-agro-canopy) !important;
+  box-shadow: 0 0 0 2px rgba(28, 100, 40, 0.2) !important;
+}
+
+/* Preserve the same visual for elements that suppress the global outline */
+input.focus-ring-none:focus,
+textarea.focus-ring-none:focus,
+select.focus-ring-none:focus {
+  border-color: var(--color-agro-canopy) !important;
+  box-shadow: 0 0 0 2px rgba(28, 100, 40, 0.2) !important;
+  outline: none;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-color: var(--color-agro-canopy) !important;
+  box-shadow: 0 0 0 2px rgba(28, 100, 40, 0.2) !important;
+}
+
 input.focus-ring-none:focus-visible,
 textarea.focus-ring-none:focus-visible,
 select.focus-ring-none:focus-visible {
+  border-color: var(--color-agro-canopy) !important;
+  box-shadow: 0 0 0 2px rgba(28, 100, 40, 0.2) !important;
   outline: none;
 }
 
