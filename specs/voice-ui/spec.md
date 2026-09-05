@@ -16,7 +16,7 @@ Give farmers complete hands-free, eyes-free control of the Agropioo app. A farme
 ## Functional Requirements
 
 ### FR-1 Global Voice Control
-A floating microphone button is visible on every page of the authenticated farmer app. Tapping it activates voice input regardless of which feature the farmer is currently using. The voice agent has access to the entire app's capabilities: reading data, creating records, navigating between pages, and answering questions.
+A floating microphone button with waveform animation is visible on every page of the authenticated farmer app, positioned in the bottom corner. Tapping it activates voice input regardless of which feature the farmer is currently using. The voice agent has its own separate icon and window, independent from the app-control chat. The voice agent has access to the entire app's capabilities: reading data, creating records, navigating between pages, and answering questions.
 
 ### FR-2 Voice Input (Speech-to-Text)
 The global mic button captures audio and sends it to a server-side speech-to-text endpoint. The STT endpoint uses a Whisper-compatible model (e.g., OpenAI Whisper via `OPENAI_BASE_URL` + `OPENAI_API_KEY`, Groq, or Gemini) and auto-detects the spoken language across all 8 project locales. Recording starts on mic tap and auto-stops when silence is detected; there is no hard duration limit.
@@ -47,7 +47,7 @@ Actions are executed through the same server-side route handlers and tool system
 The voice agent can navigate the farmer to any page in the app. When navigation occurs, the agent announces the destination and the current page's purpose. Navigation commands include natural variations like "take me to...", "show me...", "open...", "go to...".
 
 ### FR-8 Conversation Persistence
-Every voice exchange is stored as an advisor message (role: `farmer` for the transcript, role: `advisor` for the text response) in the same `advisor_messages` table used by text chat. Voice conversations appear in the advisor sidebar and can be reviewed, renamed, and deleted like any other conversation. The conversation context carries across page navigations.
+Every voice exchange is stored in a dedicated voice conversation table, separate from both advisor and app-control chat conversations. Voice conversations appear in a sidebar list and can be reviewed, renamed, and deleted. The agent has access to summaries of all previous conversations (including voice, advisor, and app-control), allowing it to maintain context across sessions and modalities.
 
 ### FR-9 Permission Handling
 The app requests microphone permission only when the farmer first taps the mic button. If permission is denied, the app shows a clear message explaining why microphone access is needed and how to enable it in device settings. The mic button remains visible on all pages but enters an inactive state.
@@ -89,7 +89,10 @@ While the agent is processing a request, it provides spoken status updates at ke
 Tapping the mic button while the agent is speaking immediately stops all audio playback and cancels any in-progress agent action. The app returns to idle state, ready for a new voice command.
 
 ### FR-19 Follow-Up Dialogue
-If the farmer's voice command is missing required information or ambiguous, the agent asks one or more clarifying questions via voice. The conversation continues in voice until the agent has enough information to execute the action, or until the farmer explicitly cancels.
+If the farmer's voice command is missing required information or ambiguous, the agent asks one or more clarifying questions via voice. The conversation continues in voice until the agent has enough information to execute the action, or until the farmer explicitly cancels. The agent waits up to 30 seconds for each confirmation before timing out and asking if the farmer wants to continue or cancel.
+
+### FR-20 Structured Data Presentation
+When the agent needs to present structured data (price lists, farm summaries, weather forecasts), it reads the data aloud in a clear, organized format. For lists, the agent reads each item with its key details. For tables, the agent presents the most relevant columns. The agent offers to navigate to the relevant page for full details after presenting the summary.
 
 ## Edge Cases & Rules
 
@@ -105,7 +108,7 @@ If the farmer's voice command is missing required information or ambiguous, the 
 - **Ambiguous intent:** If the agent cannot determine the farmer's intent with reasonable confidence, it asks a clarifying question in the detected language before taking any action.
 - **Auto-detected language mismatch:** If the detected language differs significantly from the farmer's app locale, the agent responds in the detected language and notes the switch (e.g., "Main ne Punjabi suna, isliye main Punjabi mein jawab de rahi hoon.").
 - **Emergency stop:** Tapping the mic while the agent is speaking or processing immediately cancels the current operation and returns to idle. No partial actions are committed without confirmation after an emergency stop.
-- **Follow-up dialogue timeout:** If the farmer does not respond to a clarifying question within 10 seconds, the agent cancels the operation and prompts the farmer to try again.
+- **Follow-up dialogue timeout:** If the farmer does not respond to a clarifying question within 30 seconds, the agent asks if they want to continue or cancel.
 - **Destructive action cancellation:** If the farmer says "no", "cancel", or equivalent to a destructive-action confirmation, the agent aborts and confirms the cancellation.
 
 ## Out of Scope
@@ -123,25 +126,28 @@ If the farmer's voice command is missing required information or ambiguous, the 
 
 - [ ] Voice requests are processed through dedicated server endpoints for transcription and agent action.
 - [ ] The floating mic button and voice UI are managed by a single overlay component in the root dashboard layout, persisting across all pages.
-- [ ] A floating microphone button is visible on every authenticated farmer app page.
+- [ ] A floating microphone button with waveform animation is visible in the bottom corner on every authenticated farmer app page, separate from the chat icon.
 - [ ] Tapping the mic starts recording; auto-stop on silence sends audio for transcription.
 - [ ] Transcription auto-detects the spoken language across all 8 locales.
 - [ ] The agent's text response is displayed in the chat and read aloud via TTS.
 - [ ] The agent can perform app-wide actions: create records, fetch data, navigate pages, answer questions.
-- [ ] The agent navigates the farmer to different pages when requested.
+- [ ] The agent can set reminders, schedule alerts, and create future-dated actions via voice.
+- [ ] The agent navigates the farmer to different pages when requested — navigation happens immediately with an announcement.
 - [ ] The agent receives the current page as context and tailors responses accordingly.
 - [ ] The farmer can stop TTS playback by tapping the mic button or a stop button.
-- [ ] Voice exchanges are persisted as advisor messages and appear in the advisor sidebar.
+- [ ] Voice exchanges are persisted in a dedicated voice conversation table, separate from advisor and app-control chat history.
+- [ ] The agent has access to summaries of all previous conversations across all modalities.
 - [ ] Microphone permission is requested only on first mic tap; if denied, the button becomes inactive and a clear message is shown.
 - [ ] When STT fails or returns empty text, the farmer sees a localized apology and retry option — no raw errors.
 - [ ] Voice requests are rate-limited per the same limits as text chat.
 - [ ] All agent actions respect accountId scoping and cannot access other farmers' data.
 - [ ] RTL locales render voice UI strings in right-to-left layout.
 - [ ] When offline, the mic button is visible but inactive.
-- [ ] All new visible strings introduced by this feature have translation keys inserted for all 8 locales in the Neon `translations` table before merge.
+- [ ] When information is missing or intent is ambiguous, the agent asks voice follow-up questions with a 30-second timeout per confirmation.
+- [ ] The agent reads structured data aloud (price lists, farm summaries, weather forecasts) and offers to show full details on screen.
 - [ ] Before deleting or archiving any data, the agent asks for voice confirmation and waits for explicit approval.
 - [ ] Before creating or updating any record, the agent describes the action and asks for voice confirmation.
-- [ ] While processing, the agent provides spoken status updates (e.g., "Record bana raha hoon...", "Ho gaya") and a visual loading indicator.
+- [ ] While processing, the agent provides spoken status updates and a visual loading indicator.
 - [ ] Tapping the mic while the agent is speaking immediately stops all audio and cancels the current operation.
-- [ ] When information is missing or intent is ambiguous, the agent asks voice follow-up questions until it has enough detail or the farmer cancels.
+- [ ] All new visible strings introduced by this feature have translation keys inserted for all 8 locales in the Neon `translations` table before merge.
 - [ ] `npm run lint` and `npm run build` pass.
