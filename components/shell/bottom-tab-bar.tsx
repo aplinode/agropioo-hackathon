@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useOfflineStatus } from "@/lib/offline/hooks";
 import {
   CameraIcon,
   ChatIcon,
@@ -20,6 +21,7 @@ interface BottomTabBarProps {
 
 export default function BottomTabBar({ bundle }: BottomTabBarProps) {
   const pathname = usePathname();
+  const { online } = useOfflineStatus();
   const { nav, aria } = bundle;
 
   const tabs = [
@@ -39,6 +41,11 @@ export default function BottomTabBar({ bundle }: BottomTabBarProps) {
       aria-label={aria.farmerTools}
       className="fixed inset-x-0 bottom-0 z-40 border-t border-agro-sprout bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
+      <div className="absolute -top-1 left-1/2 -translate-x-1/2">
+        {!online && (
+          <span className="inline-flex h-2 w-2 rounded-full bg-agro-wheat" title="Offline" />
+        )}
+      </div>
       <ul className="grid grid-cols-5">
         {tabs.map(({ href, label, Icon }) => {
           const active = isActive(href);

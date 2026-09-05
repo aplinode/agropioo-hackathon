@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { compressImageClient } from "@/lib/detect/compress-client";
+import { queuePhotoUpload } from "@/lib/offline/queue-helpers";
 import { formatMessage } from "@/lib/i18n/logic";
 import { FurrowMotif } from "@/components/FurrowMotif";
 import {
@@ -232,6 +233,7 @@ export default function DetectUpload({
       await enterChatMode(diagnosis);
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") return;
+      await queuePhotoUpload(blob, name);
       showError("service", bundle.serviceUnavailable);
     } finally {
       abortRef.current = null;

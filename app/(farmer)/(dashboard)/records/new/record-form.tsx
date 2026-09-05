@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createRecordSchema, type CreateRecordInput } from "@/lib/validation/farms";
 import { RECORD_TYPES, SEASONS, YEAR_OPTIONS, WEATHER_CONDITIONS } from "@/lib/farms/constants";
+import { generateClientUuid, queueWrite } from "@/lib/offline/queue-helpers";
 import type { FarmsBundle } from "@/app/(farmer)/(dashboard)/farms/farms-bundle";
 import {
   ArrowRightIcon,
@@ -20,6 +21,8 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
   const [farms, setFarms] = useState<{ id: string; name: string }[]>([]);
   const [lockedFarmName, setLockedFarmName] = useState<string | null>(null);
   const [weatherOverride, setWeatherOverride] = useState<string>('');
+  const [queuedMessage, setQueuedMessage] = useState<string | null>(null);
+  const clientUuidRef = useRef(generateClientUuid());
   const isFarmLocked = Boolean(defaultFarmId);
 
   const {
@@ -80,11 +83,13 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
   const onSubmit = async (data: CreateRecordInput) => {
     setStatus('loading');
     setServerErrors({});
+    setQueuedMessage(null);
     try {
+      const payload = { ...data, client_uuid: clientUuidRef.current };
       const res = await fetch('/api/records', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         const body = await res.json() as Record<string, unknown>;
@@ -103,8 +108,13 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
       setStatus('saved');
       setTimeout(() => router.push('/farms'), 600);
     } catch {
-      setServerErrors({ form: 'Network error' });
-      setStatus('error');
+      await queueWrite({
+        url: '/api/records',
+        method: 'POST',
+        body: JSON.stringify({ ...data, client_uuid: clientUuidRef.current }),
+      });
+      setQueuedMessage('Saved offline — will sync when you are back online.');
+      setStatus('saved');
     }
   };
 
@@ -260,6 +270,7 @@ export default function RecordForm({ bundle, defaultFarmId }: { bundle: FarmsBun
         )}
       </button>
       {(serverErrors.form || status === 'error') && <p className="text-center text-sm font-medium text-agro-forest">{serverErrors.form}</p>}
+      {queuedMessage && <p className="text-center text-sm font-medium text-agro-forest">{queuedMessage}</p>}
     </form>
   );
 }

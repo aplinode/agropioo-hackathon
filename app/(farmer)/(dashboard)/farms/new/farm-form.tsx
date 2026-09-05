@@ -9,6 +9,7 @@ import { createFarmSchema, type CreateFarmInput } from "@/lib/validation/farms";
 import { PAKISTAN_DISTRICTS } from "@/lib/farms/districts";
 import { CROPS, IRRIGATION_METHODS, SOIL_TYPES, type Crop, type IrrigationMethod, type SoilType } from "@/lib/farms/constants";
 import { photonReverse, photonSearch } from "@/lib/maps/photon";
+import { generateClientUuid, queueWrite } from "@/lib/offline/queue-helpers";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -690,6 +691,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
   const [serverErrors, setServerErrors] = useState<Record<string, string>>(
     {}
   );
+  const [queuedMessage, setQueuedMessage] = useState<string | null>(null);
   const [marker, setMarker] = useState<{ lat: number; lng: number }>({
     lat: 30.3753,
     lng: 69.3451,
@@ -698,6 +700,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
   const [isGeocoding, setIsGeocoding] = useState<boolean>(false);
   const [districtSuggestions, setDistrictSuggestions] = useState<string[]>([]);
   const locationSearchRef = useRef<{ skipAutoGeocode: () => void }>(null);
+  const clientUuidRef = useRef(generateClientUuid());
 
   const {
     register,
@@ -811,6 +814,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
   const onSubmit = async (data: CreateFarmInput) => {
     setStatus("loading");
     setServerErrors({});
+    setQueuedMessage(null);
     try {
       const res = await fetch("/api/farms", {
         method: "POST",
@@ -821,6 +825,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
           sowing_date: sowing || null,
           soil_type: soil || null,
           irrigation_method: irrigation,
+          client_uuid: clientUuidRef.current,
         }),
       });
       if (!res.ok) {
@@ -842,8 +847,20 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
       setStatus("saved");
       setTimeout(() => router.push(`/farms/${farm.id}`), 600);
     } catch {
-      setServerErrors({ form: "Network error" });
-      setStatus("error");
+      await queueWrite({
+        url: "/api/farms",
+        method: "POST",
+        body: JSON.stringify({
+          ...data,
+          primary_crop: primaryCrop,
+          sowing_date: sowing || null,
+          soil_type: soil || null,
+          irrigation_method: irrigation,
+          client_uuid: clientUuidRef.current,
+        }),
+      });
+      setQueuedMessage("Saved offline — will sync when you are back online.");
+      setStatus("saved");
     }
   };
 
@@ -1096,6 +1113,11 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
       {(serverErrors.form || status === "error") && (
         <p className="text-center text-sm font-medium text-agro-forest">
           {serverErrors.form}
+        </p>
+      )}
+      {queuedMessage && (
+        <p className="text-center text-sm font-medium text-agro-forest">
+          {queuedMessage}
         </p>
       )}
     </form>
