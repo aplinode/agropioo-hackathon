@@ -10,17 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APP_URL: ${{ secrets.APP_URL }}
-      SATELLITE_CRON_SECRET: ${{ secrets.SATELLITE_CRON_SECRET }}
+      CRON_SECRET: ${{ secrets.CRON_SECRET }}
     steps:
       - name: Skip when secrets are missing
-        if: ${{ env.APP_URL == '' || env.SATELLITE_CRON_SECRET == '' }}
+        if: ${{ env.APP_URL == '' || env.CRON_SECRET == '' }}
         run: |
-          echo "APP_URL or SATELLITE_CRON_SECRET is not set. Skipping."
+            echo "APP_URL or CRON_SECRET is not set. Skipping."
           exit 0
 
       - name: Trigger nightly satellite refresh
         run: |
           curl -sS -X POST "$APP_URL/api/satellite/cron/refresh" \
-            -H "Authorization: Bearer $SATELLITE_CRON_SECRET" \
+            -H "Authorization: Bearer $CRON_SECRET" \
             -H "Content-Type: application/json" \
             -w "\nrefresh_status=%{http_code}\n"
