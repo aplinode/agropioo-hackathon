@@ -20,6 +20,7 @@ import type { WeatherBundle } from "@/app/(farmer)/(dashboard)/weather/weather-b
 import type { PricesBundle } from "@/app/(farmer)/(dashboard)/prices/prices-bundle";
 import type { CropsBundle } from "@/app/(farmer)/(dashboard)/crops/crops-bundle";
 import type { SatelliteBundle } from "@/app/(farmer)/(dashboard)/satellite/satellite-bundle";
+import type { AppControlBundle } from "@/components/app-control/app-control-bundle";
 
 export interface Translator {
   (key: CatalogKey, params?: Readonly<Record<string, string | number>>): ResolvedString;
@@ -1000,6 +1001,98 @@ export async function getSatelliteBundle(): Promise<SatelliteBundle> {
     areaTooLarge: t("app.satellite.areaTooLarge").text,
     areaOutsidePk: t("app.satellite.areaOutsidePk").text,
     invalidBoundary: t("app.satellite.invalidBoundary").text,
+  };
+}
+
+/**
+ * Flat translation bundle for the app-control chat feature.
+ * Built server-side and passed as props to client components.
+ */
+export async function getAppControlBundle(): Promise<AppControlBundle> {
+  const locale = await getAppLocale();
+  const dict = await getDictionary(locale);
+  const t = dict.t;
+  return {
+    pageTitle: t("app.appControl.pageTitle").text,
+    floating: {
+      open: t("app.appControl.floating.open").text,
+      close: t("app.appControl.floating.close").text,
+      ariaLabel: t("app.appControl.floating.ariaLabel").text,
+      pulseAria: t("app.appControl.floating.pulseAria").text,
+      unread: t("app.appControl.floating.unread").text,
+    },
+    panel: {
+      minimize: t("app.appControl.panel.minimize").text,
+      maximize: t("app.appControl.panel.maximize").text,
+      close: t("app.appControl.panel.close").text,
+      newTab: t("app.appControl.panel.newTab").text,
+      newTabAria: t("app.appControl.panel.newTabAria").text,
+    },
+    tabs: {
+      close: t("app.appControl.tabs.close").text,
+      closeAria: t("app.appControl.tabs.closeAria").text,
+      deleteTitle: t("app.appControl.tabs.deleteTitle").text,
+      deleteConfirm: t("app.appControl.tabs.deleteConfirm").text,
+      cancel: t("app.appControl.tabs.cancel").text,
+    },
+    sidebar: {
+      title: t("app.appControl.sidebar.title").text,
+      newConversation: t("app.appControl.sidebar.newConversation").text,
+      noConversations: t("app.appControl.sidebar.noConversations").text,
+      rename: t("app.appControl.sidebar.rename").text,
+      delete: t("app.appControl.sidebar.delete").text,
+      deleteTitle: t("app.appControl.sidebar.deleteTitle").text,
+      deleteConfirm: t("app.appControl.sidebar.deleteConfirm").text,
+      cancel: t("app.appControl.sidebar.cancel").text,
+      closeSidebar: t("app.appControl.sidebar.closeSidebar").text,
+    },
+    chat: {
+      placeholder: t("app.appControl.chat.placeholder").text,
+      send: t("app.appControl.chat.send").text,
+      thinking: t("app.appControl.chat.thinking").text,
+      openingGreeting: t("app.appControl.chat.openingGreeting").text,
+      tryAsking: t("app.appControl.chat.tryAsking").text,
+      suggested1: t("app.appControl.chat.suggested1").text,
+      suggested2: t("app.appControl.chat.suggested2").text,
+      suggested3: t("app.appControl.chat.suggested3").text,
+      suggested4: t("app.appControl.chat.suggested4").text,
+      emptyEyebrow: t("app.appControl.chat.emptyEyebrow").text,
+      emptyTitle: t("app.appControl.chat.emptyTitle").text,
+      emptyBody: t("app.appControl.chat.emptyBody").text,
+      onlineStatus: t("app.appControl.chat.onlineStatus").text,
+      typing: t("app.appControl.chat.typing").text,
+      composerHint: t("app.appControl.chat.composerHint").text,
+      farmerYou: t("app.appControl.chat.farmerYou").text,
+      showMore: t("app.appControl.chat.showMore").text,
+      showLess: t("app.appControl.chat.showLess").text,
+      attachment: t("app.appControl.chat.attachment").text,
+      removeAttachment: t("app.appControl.chat.removeAttachment").text,
+      fileTooLarge: t("app.appControl.chat.fileTooLarge").text,
+      unsupportedType: t("app.appControl.chat.unsupportedType").text,
+      confirmYes: t("app.appControl.chat.confirmYes").text,
+      confirmNo: t("app.appControl.chat.confirmNo").text,
+      retry: t("app.appControl.chat.retry").text,
+    },
+    cards: {
+      navigate: t("app.appControl.cards.navigate").text,
+      confirmation: t("app.appControl.cards.confirmation").text,
+      priceTable: t("app.appControl.cards.priceTable").text,
+      pnlSummary: t("app.appControl.cards.pnlSummary").text,
+      weatherForecast: t("app.appControl.cards.weatherForecast").text,
+      recordDiff: t("app.appControl.cards.recordDiff").text,
+    },
+    errors: {
+      serviceUnavailable: t("app.appControl.errors.serviceUnavailable").text,
+      rateLimited: t("app.appControl.errors.rateLimited").text,
+      network: t("app.appControl.errors.network").text,
+      generic: t("app.appControl.errors.generic").text,
+    },
+    aria: {
+      openSidebar: t("app.appControl.aria.openSidebar").text,
+      sendMessage: t("app.appControl.aria.sendMessage").text,
+      chatMessages: t("app.appControl.aria.chatMessages").text,
+      attachFile: t("app.appControl.aria.attachFile").text,
+    },
   };
 }
 
