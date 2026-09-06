@@ -26,6 +26,6 @@ export const config = {
   // at launch) — excluding them keeps them off the locale rewriter entirely;
   // a rewritten /verify would fall into the [...rest] catch-all instead.
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|dashboard|farms|profit-loss|advisor|detect|pest|prices|notifications|settings|more|records|forgot-password|reset-password|verify|weather|onboarding|crops|satellite).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|dashboard|farms|profit-loss|advisor|detect|pest|prices|notifications|settings|more|records|forgot-password|reset-password|verify|weather|onboarding|crops).*)",
   ],
 };
