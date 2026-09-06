@@ -34,8 +34,8 @@ export default function ExpenseBreakdown({ expenses }: { expenses: ExpenseRow[] 
     return slice;
   });
 
-  const paletteClasses = ["fill-agro-forest", "fill-agro-canopy", "fill-agro-leaf", "fill-agro-sprout", "fill-agro-mint", "fill-agro-forest/80"];
-  const legendBgClasses = ["bg-agro-forest", "bg-agro-canopy", "bg-agro-leaf", "bg-agro-sprout", "bg-agro-mint", "bg-agro-forest/80"];
+  const paletteClasses = ["fill-agro-forest", "fill-agro-canopy", "fill-agro-leaf", "fill-agro-sprout", "fill-agro-earth", "fill-agro-wheat"];
+  const legendBgClasses = ["bg-agro-forest", "bg-agro-canopy", "bg-agro-leaf", "bg-agro-sprout", "bg-agro-earth", "bg-agro-wheat"];
 
   const polarToCartesian = (angle: number, r: number) => {
     return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
@@ -50,16 +50,17 @@ export default function ExpenseBreakdown({ expenses }: { expenses: ExpenseRow[] 
     const largeArc = sweep > Math.PI ? 1 : 0;
 
     if (sweep >= 2 * Math.PI - 0.001) {
-      const outerLeft = polarToCartesian(Math.PI, radius);
-      const innerLeft = polarToCartesian(Math.PI, radius * 0.5);
+      const outerTop = polarToCartesian(-Math.PI / 2, radius);
+      const outerBot = polarToCartesian(Math.PI / 2, radius);
+      const innerTop = polarToCartesian(-Math.PI / 2, radius * 0.5);
+      const innerBot = polarToCartesian(Math.PI / 2, radius * 0.5);
       return [
-        `M ${innerStart.x} ${innerStart.y}`,
-        `L ${outerStart.x} ${outerStart.y}`,
-        `A ${radius} ${radius} 0 1 1 ${outerLeft.x} ${outerLeft.y}`,
-        `A ${radius} ${radius} 0 1 1 ${outerStart.x} ${outerStart.y}`,
-        `L ${innerStart.x} ${innerStart.y}`,
-        `A ${radius * 0.5} ${radius * 0.5} 0 1 0 ${innerLeft.x} ${innerLeft.y}`,
-        `A ${radius * 0.5} ${radius * 0.5} 0 1 0 ${innerStart.x} ${innerStart.y}`,
+        `M ${outerTop.x} ${outerTop.y}`,
+        `A ${radius} ${radius} 0 1 1 ${outerBot.x} ${outerBot.y}`,
+        `A ${radius} ${radius} 0 1 1 ${outerTop.x} ${outerTop.y}`,
+        `M ${innerTop.x} ${innerTop.y}`,
+        `A ${radius * 0.5} ${radius * 0.5} 0 1 0 ${innerBot.x} ${innerBot.y}`,
+        `A ${radius * 0.5} ${radius * 0.5} 0 1 0 ${innerTop.x} ${innerTop.y}`,
         "Z",
       ].join(" ");
     }
@@ -78,7 +79,7 @@ export default function ExpenseBreakdown({ expenses }: { expenses: ExpenseRow[] 
     <div className="mt-4 flex flex-col items-center gap-3">
       <svg viewBox={`0 0 ${width} ${height}`} className="h-auto w-full max-w-sm">
         {slices.map((slice, i) => (
-          <path key={slice.category} d={pathForSlice(slice)} className={`stroke-white ${paletteClasses[i % paletteClasses.length]}`} strokeWidth="2" />
+          <path key={slice.category} d={pathForSlice(slice)} fillRule="evenodd" className={`stroke-white ${paletteClasses[i % paletteClasses.length]}`} strokeWidth="2" />
         ))}
       </svg>
       <div className="grid grid-cols-2 gap-2">
