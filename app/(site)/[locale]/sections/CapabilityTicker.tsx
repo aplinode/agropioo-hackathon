@@ -26,7 +26,6 @@ export default async function CapabilityTicker({ locale }: { locale: Locale }) {
 
   const capabilities = [
     L("home.ticker.cropDoctor"),
-    L("home.ticker.satelliteNdvi"),
     L("home.ticker.mandiPrices"),
     L("home.ticker.weatherAdvisories"),
     L("home.ticker.farmRecords"),

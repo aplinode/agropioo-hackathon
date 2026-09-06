@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Agropioo — AI-Powered Farm Intelligence Platform",
   description:
-    "Agropioo unites an AI advisor, satellite field monitoring, market price intelligence, and digital farm records on one platform. Built for Pakistan. A product of Aplinode.",
+    "Agropioo unites an AI advisor, market price intelligence, and digital farm records on one platform. Built for Pakistan. A product of Aplinode.",
 };
 
 export const viewport: Viewport = {
