@@ -57,7 +57,7 @@ function weatherFactor(day: ForecastDay): number {
   let score = 0;
   if (day.condition === "Rain" || day.condition === "Drizzle") score += 15;
   if (day.humidity > 80) score += 10;
-  if (day.temp_max > 35 && day.temp_max < 30) score += 5;
+  if (day.temp_max > 35) score += 5;
   if (day.precip_mm > 5) score += 10;
   return Math.min(score, 30);
 }
