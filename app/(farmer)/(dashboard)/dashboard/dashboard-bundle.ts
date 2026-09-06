@@ -43,14 +43,18 @@ export type DashboardBundle = {
   dismissChecklist: string;
   setupProgress: string;
   demoFooter: string;
-  languageLabel: string;
-  signOut: string;
-  weatherNoLocation: string;
-  weatherYourArea: string;
   pricesWidgetTitle: string;
   pricesWidgetView: string;
   pricesWidgetPerMaund: string;
   pricesWidgetNoTracked: string;
+  languageLabel: string;
+  signOut: string;
+  weatherNoLocation: string;
+  weatherYourArea: string;
+  pestWidgetTitle: string;
+  pestWidgetAllClear: string;
+  pestWidgetHighestRisk: string;
+  pestWidgetMonitoring: string;
   demo: {
     todayLabel: string;
     location: string;
