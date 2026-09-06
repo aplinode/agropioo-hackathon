@@ -24,6 +24,8 @@ export const RATE_RULES = {
   codeCheckPass: { limit: 30, windowMs: HOUR_MS },
   detectIp: { limit: 10, windowMs: HOUR_MS },
   cropsIp: { limit: 20, windowMs: HOUR_MS },
+  appControlChatIp: { limit: 30, windowMs: HOUR_MS },
+  appControlChatAccount: { limit: 50, windowMs: HOUR_MS },
 } as const;
 
 /**
