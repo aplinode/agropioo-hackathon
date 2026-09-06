@@ -911,7 +911,6 @@ export const skr: Partial<Record<CatalogKey, string>> = {
   "app.advisor.aria.openSidebar": "گفتگو کھولو",
   "app.advisor.aria.sendMessage": "پیغام بھیجو",
   "app.advisor.aria.chatMessages": "چیٹ پیغامات",
-  "app.detect.eyebrow": "فصل ڈاکٹر",
 
   /* ── App Control Chat ─────────────────────────────────── */
   "app.appControl.pageTitle": "ایپ کنٹرول",
