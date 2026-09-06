@@ -12,7 +12,7 @@ Build a floating, multi-tab conversational interface that lets farmers control t
 - **Navigation**: Explicit allowlist of farmer-app routes; agent cannot navigate outside it.
 - **Page context**: React context provider at layout level; pages push rich state (farmId, season, etc.) into it.
 - **Conversations**: Dedicated tables (`app_control_conversations`, `app_control_messages`) with per-feature summaries.
-- **Multi-tab**: True tabs inside the panel — each tab has its own message list, streaming state, and abort controller.
+- **Multi-tab**: Sidebar list of past conversations inside the panel; active conversation loads into a single chat box with its own streaming state and abort controller.
 - **Memory**: App-control summaries only; advisor summaries are not shared.
 - **Reminders**: Deferred — agent suggests but does not directly create scheduled reminders.
 - **Accessibility**: `prefers-reduced-motion` respected for bubble pulse; 44×44px touch targets; RTL per-message.
@@ -26,6 +26,8 @@ components/app-control/  →  Shared UI pieces
 app/api/app-control/  →  Route handlers
 lib/app-control/  →  Agent, tools, streaming, context
 ```
+
+**Note**: The panel UI was simplified to a single conversation view with an inline sidebar for past conversations, instead of true multi-tab.
 
 ## Database
 
@@ -205,33 +207,24 @@ The `toSSEStream` function signature changes to accept a richer event emitter. T
 
 The outer shell that exists on every farmer page. Manages:
 - Floating bubble (minimized state) with pulse animation + unread dot.
-- Expanded 80% modal overlay panel.
+- Expanded 85vh modal overlay panel.
 - Persistence across navigations (Next.js `usePathname` change does not unmount because this lives in the Server layout).
 - Z-index: bubble `z-50`, panel `z-50` (below `ConfirmDialog` at `z-[60]`).
 
 ### `components/app-control/app-control-panel.tsx`
 
 The expanded chat panel. Contains:
-- Multi-tab bar (top of panel).
-- Active tab content: sidebar + chat area + composer.
+- Single conversation view with inline sidebar for past conversations.
+- Chat area + composer.
 - Minimize/close buttons.
-
-### `components/app-control/app-control-tabs.tsx`
-
-Tab bar inside the panel. Each tab:
-- Shows conversation title.
-- Has close button (with confirmation dialog).
-- Active tab highlighted.
-- New tab button.
-
-### `components/app-control/app-control-sidebar.tsx`
-
-Reuses `AdvisorSidebar` pattern but for app-control conversations. Same rename/delete flow with `ConfirmDialog`.
 
 ### `components/app-control/app-control-chat.tsx`
 
-The main chat client for one active tab. Extends `advisor-chat.tsx` with:
-- Multi-tab state (each tab has its own `messages`, `streamingText`, `thinking`, `error`, `abortController`).
+The main chat client. Extends `advisor-chat.tsx` with:
+- Single conversation state (`messages`, `streamingText`, `thinking`, `error`, `abortController`).
+- Inline sidebar toggle for past conversations list.
+- New conversation creation.
+- Conversation deletion via `ConfirmDialog`.
 - Attachment support: file input + thumbnail preview in composer.
 - Structured event rendering: `action_card`, `navigation_button`, `retry` events render as interactive elements.
 - `Show more` expandable sections for long responses.
@@ -353,20 +346,19 @@ export const attachmentSchema = z.object({
 6. **Agent**: Build `lib/app-control/agent.ts` with hybrid SDK + custom HITL layer; add tools in `lib/app-control/tools/`.
 7. **Route handlers**: Build `app/api/app-control/chat/route.ts` (multipart), conversations routes, messages route.
 8. **i18n**: Create `lib/i18n/app-control-bundle.ts`; add catalog keys for all 8 locales.
-9. **UI shell**: Build `components/app-control/app-control-floating-chat.tsx` (bubble + panel).
-10. **Tabs**: Build `components/app-control/app-control-tabs.tsx` + `app-control-sidebar.tsx`.
-11. **Chat client**: Build `components/app-control/app-control-chat.tsx` with multi-tab state, structured events, attachments.
-12. **Composer**: Build `components/app-control/chat-composer.tsx` with file attachment + preview.
-13. **Action cards**: Build `components/app-control/action-card.tsx` for price tables, P&L, diffs, nav buttons, retry.
-14. **Bubbles**: Build `components/app-control/chat-bubble.tsx` with RTL per-message, expandable sections, interactive elements.
-15. **Page integration**: Mount `AppControlFloatingChat` in layout; add `PageContextProvider` to key pages (dashboard, farms, records, prices, profit-loss, detect).
-16. **Translations**: Insert all new keys into Neon `translations` table for all 8 locales.
-17. **Verify**: `npm run lint`, `npm run build`, manual run-through of acceptance criteria.
+ 9. **UI shell**: Build `components/app-control/app-control-floating-chat.tsx` (bubble + panel).
+ 10. **Chat client**: Build `components/app-control/app-control-chat.tsx` with single conversation state, inline sidebar for past conversations, structured events, attachments.
+ 11. **Composer**: Build `components/app-control/chat-composer.tsx` with file attachment + preview.
+ 12. **Action cards**: Build `components/app-control/action-card.tsx` for price tables, P&L, diffs, nav buttons, retry.
+ 13. **Bubbles**: Build `components/app-control/chat-bubble.tsx` with RTL per-message, expandable sections, interactive elements.
+ 14. **Page integration**: Mount `AppControlFloatingChat` in layout; add `PageContextProvider` to key pages (dashboard, farms, records, prices, profit-loss, detect).
+ 15. **Translations**: Insert all new keys into Neon `translations` table for all 8 locales.
+ 16. **Verify**: `npm run lint`, `npm run build`, manual run-through of acceptance criteria.
 
 ## Open Questions (resolved)
 
 - Hybrid agent approach ✅
-- True multi-tab conversations ✅
+- Single conversation with sidebar history ✅
 - New SSE event types for structured responses ✅
 - Single multipart endpoint for attachments ✅
 - Explicit navigation allowlist ✅
