@@ -8,7 +8,6 @@ import {
   CloudRainIcon,
   GearIcon,
   LeafIcon,
-  SatelliteIcon,
   TagIcon,
   TrendingUpIcon,
   WheatIcon,
@@ -24,7 +23,6 @@ const primaryTools = [
   { href: "/advisor", label: "Advisor", description: "Ask about your crop", Icon: ChatIcon },
   { href: "/detect", label: "Detect", description: "Scan a sick leaf", Icon: CameraIcon },
   { href: "/crops", label: "Crops", description: "Get crop recommendations", Icon: WheatIcon },
-  { href: "/satellite", label: "Satellite", description: "Field health from space", Icon: SatelliteIcon },
 ];
 
 const otherTools = [

@@ -18,7 +18,6 @@ export type ShellBundle = {
     notifications: string;
     settings: string;
     more: string;
-    satellite: string;
   };
   signOut: string;
   aria: {
