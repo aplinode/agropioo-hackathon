@@ -267,6 +267,14 @@ select.focus-ring-none:focus-visible {
 /* Firefox: slightly brighter on hover via color-scheme trick isn't possible,
    but the thin track + green thumb already looks polished. */
 
+/* --- Pest page dropdowns ----------------------------------------------------
+ * Consistent green focus + downward-opening selects across pest page.
+ */
+.pest-select:focus {
+  border-color: var(--agro-canopy) !important;
+  box-shadow: 0 0 0 2px rgba(28, 100, 40, 0.2) !important;
+}
+
 @keyframes rise-in {
   from {
     opacity: 0;
