@@ -22,3 +22,7 @@ export const renameConversationSchema = z.object({
     .min(1, "Enter a title.")
     .max(100, "Title too long."),
 });
+
+export const createConversationSchema = z.object({
+  language: z.string().min(2).max(5).default("en"),
+});
