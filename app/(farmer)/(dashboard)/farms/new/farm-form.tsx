@@ -157,6 +157,24 @@ const DISTRICT_SUGGESTIONS: Record<string, string[]> = {
   Bahawalpur: ["Milad Chowk", "Model Town", "Bahawalpur Road", "Satellite Town", "Hasilpur Road", "Yazman Road", "Chishtian Road", "Ahmadpur East"],
 };
 
+function normalizeDistrictName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\b(district|dist\.|division|tehsil|taluka|city)\b/g, " ")
+    .replace(/[^a-z\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function matchDistrict(candidate: string | undefined): string | undefined {
+  if (!candidate) return undefined;
+  const normalized = normalizeDistrictName(candidate);
+  if (!normalized) return undefined;
+  return PAKISTAN_DISTRICTS.find(
+    (d) => normalizeDistrictName(d) === normalized
+  );
+}
+
 function CustomSelect({
   value,
   onChange,
@@ -700,6 +718,7 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
   const [isGeocoding, setIsGeocoding] = useState<boolean>(false);
   const [districtSuggestions, setDistrictSuggestions] = useState<string[]>([]);
   const locationSearchRef = useRef<{ skipAutoGeocode: () => void }>(null);
+  const skipLocationResetRef = useRef(false);
   const clientUuidRef = useRef(generateClientUuid());
 
   const {
@@ -757,6 +776,18 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
           const fullName = result.display_name || placeName;
           setSelectedLocationName(fullName);
           setValue("location", placeName);
+
+          const matchedDistrict = matchDistrict(
+            addr.district ||
+              addr.county ||
+              addr.municipality ||
+              addr.city ||
+              addr.town
+          );
+          if (matchedDistrict && matchedDistrict !== selectedDistrict) {
+            skipLocationResetRef.current = true;
+            setValue("district", matchedDistrict);
+          }
         }
       }
     } catch (err) {
@@ -807,6 +838,10 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
   }, [selectedDistrict]);
 
   useEffect(() => {
+    if (skipLocationResetRef.current) {
+      skipLocationResetRef.current = false;
+      return;
+    }
     setValue("location", "");
     setSelectedLocationName("");
   }, [selectedDistrict, setValue]);
