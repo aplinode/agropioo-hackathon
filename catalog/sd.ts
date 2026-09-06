@@ -693,6 +693,7 @@ export const sd: Partial<Record<CatalogKey, string>> = {
   "app.shell.nav.notifications": "خبرون",
   "app.shell.nav.settings": "ترتيبون",
   "app.shell.nav.more": "وڌيڪ",
+  "app.shell.nav.pest": "سڻدڻ جي خبرداري",
   "app.shell.signOut": "لاگ آئيٽ",
   "app.shell.aria.farmerTools": "کيec وارو جا ڪال",
   "app.shell.aria.currentPage": "موجوده صفحو",

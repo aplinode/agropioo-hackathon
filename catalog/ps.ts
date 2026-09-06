@@ -688,6 +688,7 @@ export const ps: Partial<Record<CatalogKey, string>> = {
   "app.shell.nav.settings": "ترتیبات",
   "app.shell.nav.satellite": "سیټلایټ",
   "app.shell.nav.more": "نور",
+  "app.shell.nav.pest": "د ځنډل خبرداری",
   "app.shell.signOut": "وتونه",
   "app.shell.aria.farmerTools": "د کښتکار امترز",
   "app.shell.aria.currentPage": "فعلي صفحه",

@@ -237,6 +237,36 @@ select.focus-ring-none:focus-visible {
   mask-composite: intersect;
 }
 
+/* --- Sidebar fancy scrollbar ---------------------------------------------------
+ * Green-themed scrollbar inside the dark forest sidebar.
+ * Thin by default, thicker on hover, smooth transitions.
+ */
+.sidebar-nav {
+  scrollbar-width: thin;
+  scrollbar-color: var(--agro-canopy) transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: var(--agro-canopy);
+  border-radius: 9999px;
+  transition: background 0.2s;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: var(--agro-leaf);
+}
+
+/* Firefox: slightly brighter on hover via color-scheme trick isn't possible,
+   but the thin track + green thumb already looks polished. */
+
 @keyframes rise-in {
   from {
     opacity: 0;

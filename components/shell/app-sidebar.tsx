@@ -54,55 +54,58 @@ export default function AppSidebar({ bundle }: AppSidebarProps) {
   }
 
   return (
-    <aside className="fixed inset-y-0 start-0 z-40 hidden w-64 flex-col justify-between overflow-y-auto bg-agro-forest px-4 py-6 text-white lg:flex">
-      <div>
+    <aside className="app-sidebar fixed inset-y-0 start-0 z-40 hidden w-64 flex-col bg-agro-forest px-4 py-6 text-white lg:flex">
+      {/* Fixed top — logo + brand */}
+      <div className="shrink-0">
         <Link href="/" className="inline-flex items-center px-2">
           <Image src={logoOnDark} alt="Agropioo" className="h-11 w-auto" />
         </Link>
         <p className="mt-1 px-2 font-mono text-[0.65rem] uppercase tracking-[0.22em] text-white/50">
           {productOf}
         </p>
-
-        <nav aria-label={aria.farmerTools} className="mt-8">
-          <ul className="space-y-1">
-            {destinations.map(({ href, label, Icon }) => {
-              const active = isActive(href);
-              return (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    aria-current={active ? "page" : undefined}
-                    className={`relative flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm transition-colors ${
-                      active
-                        ? "bg-white/10 font-semibold text-white"
-                        : "font-medium text-white/70 hover:bg-white/5 hover:text-white"
-                    }`}
-                  >
-                    {active && (
-                      <span
-                        className="absolute start-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-e-full bg-agro-sprout"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <Icon
-                      className={`h-5 w-5 shrink-0 ${active ? "text-agro-sprout" : "text-white/45"}`}
-                    />
-                    {label}
-                    {href === "/weather" && alertsUnread > 0 && (
-                      <span
-                        className="ms-1 inline-flex h-2 w-2 rounded-full bg-agro-sprout"
-                        aria-label={`${alertsUnread} unread alerts`}
-                      />
-                    )}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
       </div>
 
-      <div className="space-y-3">
+      {/* Scrollable nav — only this section scrolls */}
+      <nav aria-label={aria.farmerTools} className="sidebar-nav mt-8 min-h-0 flex-1 overflow-y-auto">
+        <ul className="space-y-1">
+          {destinations.map(({ href, label, Icon }) => {
+            const active = isActive(href);
+            return (
+              <li key={href}>
+                <Link
+                  href={href}
+                  aria-current={active ? "page" : undefined}
+                  className={`relative flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm transition-colors ${
+                    active
+                      ? "bg-white/10 font-semibold text-white"
+                      : "font-medium text-white/70 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  {active && (
+                    <span
+                      className="absolute start-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-e-full bg-agro-sprout"
+                      aria-hidden="true"
+                    />
+                  )}
+                  <Icon
+                    className={`h-5 w-5 shrink-0 ${active ? "text-agro-sprout" : "text-white/45"}`}
+                  />
+                  <span className="truncate">{label}</span>
+                  {href === "/weather" && alertsUnread > 0 && (
+                    <span
+                      className="ms-1 inline-flex h-2 w-2 rounded-full bg-agro-sprout"
+                      aria-label={`${alertsUnread} unread alerts`}
+                    />
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      {/* Fixed bottom — signout + brand, always visible */}
+      <div className="shrink-0 space-y-3 pt-4">
         <Link
           href="/login"
           className="flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"

@@ -716,6 +716,7 @@ export const bal: Partial<Record<CatalogKey, string>> = {
   "app.shell.nav.settings": "ترتیبات",
   "app.shell.nav.satellite": "سیٹلائٹ",
   "app.shell.nav.more": "مزید",
+  "app.shell.nav.pest": "کیڑوں کی خبرداری",
   "app.shell.signOut": "لاگ آؤٹ",
   "app.shell.aria.farmerTools": "کسان کے اوزار",
   "app.shell.aria.currentPage": "موجودہ صفحہ",

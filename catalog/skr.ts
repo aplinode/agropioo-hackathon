@@ -687,6 +687,7 @@ export const skr: Partial<Record<CatalogKey, string>> = {
   "app.shell.nav.notifications": "اطلاعات",
   "app.shell.nav.settings": "ترتیبات",
   "app.shell.nav.more": "مزید",
+  "app.shell.nav.pest": "کیڑے دی خبرداری",
   "app.shell.signOut": "لاگ آؤٹ",
   "app.shell.aria.farmerTools": "کسان دے اوزار",
   "app.shell.aria.currentPage": "موجودہ صفحہ",
