@@ -1,6 +1,4 @@
 "use client";
-import { useState } from "react";
-import { ChevronRightIcon } from "@/components/icons";
 import AppControlChat from "@/components/app-control/app-control-chat";
 import type { AppControlBundle } from "@/components/app-control/app-control-bundle";
 

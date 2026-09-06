@@ -1,6 +1,6 @@
 import { tool } from "@openai/agents";
 import { z } from "zod";
-import { query } from "@/lib/db";
+import { queryOne } from "@/lib/db";
 import { fetchCurrentWeather } from "@/lib/farms/weather";
 
 export const getWeatherSummary = tool({

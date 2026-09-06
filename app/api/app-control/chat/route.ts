@@ -15,7 +15,6 @@ cloudinary.config({
 });
 
 const MAX_INPUT_TOKENS_ESTIMATE = 2000;
-const MAX_CONTEXT_MESSAGES = 20;
 
 async function uploadAttachment(buffer: Buffer, accountId: string, filename: string): Promise<string> {
   const safeName = filename.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 40);
@@ -156,20 +155,6 @@ export async function POST(request: Request) {
     }
   }
 
-  const existingMessages = await query<{ role: string; content: string }>(
-    `SELECT role, content FROM app_control_messages
-     WHERE conversation_id = $1
-     ORDER BY created_at ASC
-     LIMIT $2`,
-    [convId, MAX_CONTEXT_MESSAGES]
-  );
-
-  const historyText = (existingMessages ?? [])
-    .map((m: { role: string; content: string }) =>
-      m.role === "farmer" ? `Farmer: ${m.content}` : `Agent: ${m.content}`,
-    )
-    .join("\n\n");
-
   const pageContext = parsePageContext(request);
 
   const ctx: AppControlContext = {
@@ -199,7 +184,6 @@ export async function POST(request: Request) {
 
   const now = new Date();
   const sseStream = toAppControlSSEStream(result, convId, undefined, async (output) => {
-    const contentToSave = JSON.stringify({ text: output, attachments });
     await query(
       `INSERT INTO app_control_messages (conversation_id, role, content, attachments) VALUES ($1, $2, $3, $4)`,
       [convId, "farmer", message, JSON.stringify(attachments)]

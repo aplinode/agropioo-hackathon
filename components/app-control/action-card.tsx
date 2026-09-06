@@ -1,6 +1,6 @@
 "use client";
 import type { ReactNode } from "react";
-import { ArrowRightIcon, ChevronRightIcon, WarningIcon, RefreshCwIcon } from "@/components/icons";
+import { ArrowRightIcon, WarningIcon, RefreshCwIcon } from "@/components/icons";
 
 type ActionCard = {
   type: "price_table" | "pnl_summary" | "weather_forecast" | "record_diff" | "confirmation";

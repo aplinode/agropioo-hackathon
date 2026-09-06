@@ -1,5 +1,4 @@
 "use client";
-import type { ReactNode } from "react";
 import { textDirection } from "@/lib/i18n/logic";
 
 type ChatMessage = {
@@ -14,11 +13,10 @@ type Props = {
   message: ChatMessage;
   isStreaming?: boolean;
   streamingText?: string;
-  onAction?: (action: string, data?: Record<string, unknown>) => void;
   dir?: "ltr" | "rtl";
 };
 
-export default function ChatBubble({ message, isStreaming, streamingText, onAction, dir }: Props) {
+export default function ChatBubble({ message, isStreaming, streamingText, dir }: Props) {
   const isFarmer = message.role === "farmer";
   const text = isStreaming && streamingText !== undefined ? streamingText : message.content;
   const direction = dir ?? textDirection(text);

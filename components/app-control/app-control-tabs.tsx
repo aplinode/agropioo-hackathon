@@ -1,6 +1,5 @@
 "use client";
-import { useState } from "react";
-import { XIcon } from "@/components/icons";
+import { XIcon, PlusIcon } from "@/components/icons";
 
 type ConversationMeta = {
   id: string;
@@ -13,20 +12,11 @@ type Props = {
   activeId: string | null;
   onSelect: (id: string) => void;
   onNew: () => void;
-  onRename: (id: string, title: string) => void;
   onDelete: (id: string) => void;
   onClose: () => void;
-  bundle: {
-    sidebar: {
-      title: string;
-      newConversation: string;
-      noConversations: string;
-      closeSidebar: string;
-    };
-  };
 };
 
-export default function AppControlTabs({ conversations, activeId, onSelect, onNew, onRename, onDelete, onClose, bundle }: Props) {
+export default function AppControlTabs({ conversations, activeId, onSelect, onNew, onDelete, onClose }: Props) {
   return (
     <div className="flex items-center gap-1 border-b border-agro-sprout bg-white/80 px-2 py-1.5 backdrop-blur">
       <button

@@ -1,35 +1,24 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
 import type { AppControlBundle } from "@/components/app-control/app-control-bundle";
-import type { ConversationMeta, ChatMessage } from "@/components/app-control/app-control-sidebar";
+import type { ConversationMeta } from "@/components/app-control/app-control-sidebar";
 import AppControlSidebar from "@/components/app-control/app-control-sidebar";
 import AppControlTabs from "@/components/app-control/app-control-tabs";
 import ChatBubble from "@/components/app-control/chat-bubble";
 import ChatComposer from "@/components/app-control/chat-composer";
-import ActionCard from "@/components/app-control/action-card";
-import ConfirmDialog from "@/app/(farmer)/(dashboard)/advisor/confirm-dialog";
 import { usePageContext } from "@/lib/app-control/page-context";
 
 type TabState = {
   conversationId: string;
-  messages: ChatMessage[];
+  messages: Array<{ id: string; role: "farmer" | "agent" | "system"; content: string; attachments?: Array<{ type: string; url: string; name: string }> }>;
   streamingText: string;
   thinking: boolean;
   error: string | null;
 };
 
-type AppControlEvent =
-  | { type: "tool_start"; name: string }
-  | { type: "tool_result"; name: string; result: string }
-  | { type: "action_card"; card: { type: string; data: Record<string, unknown> } }
-  | { type: "navigation_button"; path: string; label: string }
-  | { type: "retry"; message: string };
-
 type Props = {
   bundle: AppControlBundle;
 };
-
-const DRAFT_KEY = "app-control-draft";
 
 export default function AppControlChat({ bundle }: Props) {
   const pageContext = usePageContext();
@@ -37,7 +26,6 @@ export default function AppControlChat({ bundle }: Props) {
   const [tabs, setTabs] = useState<TabState[]>([]);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const abortControllersRef = useRef<Map<string, AbortController>>(new Map());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const nextIdRef = useRef(1);
@@ -228,18 +216,6 @@ export default function AppControlChat({ bundle }: Props) {
     const lastFarmer = [...activeTab.messages].reverse().find((m) => m.role === "farmer");
     if (lastFarmer) {
       sendMessage(lastFarmer.content, []);
-    }
-  };
-
-  const handleAction = (action: string, data?: Record<string, unknown>) => {
-    if (action === "confirm" && data) {
-      const confirmed = { ...data, confirmed: true };
-      const message = JSON.stringify(confirmed);
-      sendMessage(message, []);
-    } else if (action === "cancel") {
-      sendMessage("No, cancel that action.", []);
-    } else if (action === "navigate" && data?.path) {
-      window.location.href = data.path as string;
     }
   };
 
