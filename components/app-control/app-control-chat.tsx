@@ -16,6 +16,13 @@ type TabState = {
   error: string | null;
 };
 
+type ChatMessage = {
+  id: string;
+  role: "farmer" | "agent" | "system";
+  content: string;
+  attachments?: Array<{ type: string; url: string; name: string }>;
+};
+
 type Props = {
   bundle: AppControlBundle;
 };
