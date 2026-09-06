@@ -708,6 +708,7 @@ export const en = {
   "app.shell.nav.notifications": "Notifications",
   "app.shell.nav.settings": "Settings",
   "app.shell.nav.more": "More",
+  "app.shell.nav.pest": "Pest Alert",
   "app.shell.signOut": "Sign out",
   "app.shell.aria.farmerTools": "Farmer tools",
   "app.shell.aria.currentPage": "current page",

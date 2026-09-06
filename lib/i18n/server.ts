@@ -164,7 +164,7 @@ export async function getShellBundle() {
       weather: t("app.shell.nav.weather").text,
       notifications: t("app.shell.nav.notifications").text,
       settings: t("app.shell.nav.settings").text,
-      pest: t("app.pest.pageTitle").text,
+      pest: t("app.shell.nav.pest").text,
       more: t("app.shell.nav.more").text,
       satellite: t("app.shell.nav.satellite").text,
     },

@@ -26,6 +26,7 @@ Build a pest outbreak prediction feature within the existing Agropioo Next.js ap
 - **Cold-start behavior**: Use generic provincial models when district-level historical data is insufficient.
 - **Alert deduplication**: No duplicate alerts for the same pest type on the same farm within a 6-hour window, except escalation alerts when risk continues to rise within that window.
 - **History retention**: Store all predictions and alerts; prune records older than 1 year via a scheduled cleanup job.
+- **Pest page architecture**: Server component (`page.tsx`) fetches farms from DB and passes as props to client component (`PestPageClient.tsx`). Client handles farm selection, forecast fetching via `/api/pest/forecast`, and UI state. This keeps DB queries server-side while enabling interactive farm switching without full page reloads.
 
 ## Project Structure
 
@@ -57,11 +58,13 @@ app/
 │       └── pest-prediction/route.ts # Daily cron: scrape + predict + alert
 components/
 ├── pest/
-│   ├── PestRiskWidget.tsx     # Dashboard widget (warning/critical counts + top farm)
-│   ├── PestForecastChart.tsx  # 7-day risk chart per farm
-│   ├── PestAlertCard.tsx      # Alert detail with chemical + organic recommendations
-│   ├── PestHistoryList.tsx    # History list with filters
-│   └── GrowthStageEditor.tsx  # Update crop growth stage per farm
+│   ├── PestRiskWidget.tsx       # Dashboard widget (warning/critical counts + top farm)
+│   ├── PestPageClient.tsx       # Client component: farm selector + 7-day cards + growth stage
+│   ├── PestForecastChart.tsx    # 7-day risk chart per farm (legacy, replaced by PestPageClient)
+│   ├── PestAlertCard.tsx        # Alert detail with chemical + organic recommendations
+│   ├── PestHistoryList.tsx      # History list with filters
+│   ├── GrowthStageEditor.tsx    # Update crop growth stage per farm (dropdown)
+│   └── pest-bundle.ts           # Typed translation bundle for pest feature
 lib/
 ├── pest/
 │   ├── scraper.ts             # Scrape provincial gov sites + cache in pest_incidence_records
@@ -124,9 +127,11 @@ Every visible string follows the existing catalog → DB sync pattern under `app
 ## UI Structure
 
 - **Dashboard widget** (`components/pest/PestRiskWidget.tsx`): Shows count of farms at warning/critical risk, plus highest-risk farm and pest type. Top 3 only if many farms. Server-fetched data passed as props.
-- **`/pest` page** (`app/(farmer)/(dashboard)/pest/page.tsx`): Farm selector at top. 7-day forecast chart with daily probability, pest name, and action recommendation per farm. Client-side farm switching. Empty state when no farms or no prediction available.
+- **`/pest` page** (`app/(farmer)/(dashboard)/pest/page.tsx`): Server component fetches farms from DB, passes to `PestPageClient`. Client component handles farm selection and forecast fetching.
+  - **`PestPageClient.tsx`**: Client component with farm selector dropdown (shows farm name + district), location/crop info chips, 7-day forecast as individual day cards (each with day name, date, risk % color-coded, progress bar, predicted pest, confidence %), "Today" badge on first card, loading spinner, and growth stage dropdown editor below. All dropdowns open downward with green (`agro-canopy`) focus border. Fetches from `/api/pest/forecast?farm_id=X` on farm change.
 - **History page** (`app/(farmer)/(dashboard)/pest/history/page.tsx`): List of past predictions and alerts sorted by date. Filters by farm, risk level, type. Detail view opens in modal.
-- **Growth stage editor** (`components/pest/GrowthStageEditor.tsx`): Inline editor on farm detail or pest page to update crop stage. Triggers on-demand prediction recalculation via `POST /api/pest/growth-stage`.
+- **Growth stage editor** (`components/pest/GrowthStageEditor.tsx`): Dropdown-based editor on pest page to update crop stage. 13 growth stages in dropdown. Triggers on-demand prediction recalculation via `POST /api/pest/growth-stage`.
+- **Sidebar** (`components/shell/app-sidebar.tsx`): Nav label uses `app.shell.nav.pest` key ("Pest Alert" in English). Fancy green scrollbar inside sidebar nav area. SignOut and Aplinode brand always visible at bottom.
 
 ## Edge Cases & Rules
 

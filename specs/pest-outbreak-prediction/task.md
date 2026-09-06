@@ -28,14 +28,17 @@
 
 ## Phase 4 — Frontend: Components & Pages
 
-- [ ] T016 Add `app.pest.*` translation keys to `catalog/en.ts` and draft translations in all 7 other locale catalogs.
-- [ ] T017 Implement `lib/i18n/server.ts` `getPestBundle()` for server-side string resolution.
+- [x] T016 Add `app.pest.*` translation keys to `catalog/en.ts` and draft translations in all 7 other locale catalogs.
+- [x] T017 Implement `lib/i18n/server.ts` `getPestBundle()` for server-side string resolution.
 - [ ] T018 Build `components/pest/PestRiskWidget.tsx` for dashboard: warning/critical counts + highest-risk farm + pest type.
-- [ ] T019 Build `app/(farmer)/(dashboard)/pest/page.tsx` with farm selector and 7-day forecast chart using client components.
+- [x] T019 Build `app/(farmer)/(dashboard)/pest/page.tsx` as server component fetching farms → passes to `PestPageClient.tsx`. Client component handles farm selector dropdown (name + district), location/crop info chips, 7-day forecast as individual day cards (day name, date, risk % color-coded, progress bar, predicted pest, confidence %, "Today" badge), loading spinner, and growth stage dropdown editor.
 - [ ] T020 Build `app/(farmer)/(dashboard)/pest/history/page.tsx` with filters and history list.
 - [ ] T021 Build `app/(farmer)/(dashboard)/pest/history/[id]/page.tsx` detail view.
-- [ ] T022 Build `components/pest/GrowthStageEditor.tsx` for inline crop stage updates.
+- [x] T022 Build `components/pest/GrowthStageEditor.tsx` for dropdown-based crop stage updates (13 stages, green focus border).
 - [ ] T023 Integrate pest widget into dashboard and wire navigation.
+- [x] T034 Add `app.shell.nav.pest` translation key ("Pest Alert") to all 8 locale catalogs. Update sidebar nav label.
+- [x] T035 Restructure sidebar: scrollable nav area with fancy green scrollbar, fixed logo top, fixed signout + Aplinode brand bottom.
+- [x] T036 Fix all pest page dropdowns: open downward, green (`agro-canopy`) focus border, `pest-select` utility class in globals.css.
 
 ## Phase 5 — Verification & Quality Gates
 

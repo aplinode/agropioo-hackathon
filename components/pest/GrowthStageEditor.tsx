@@ -3,6 +3,22 @@
 import { useState } from "react";
 import type { PestBundle } from "./pest-bundle";
 
+const GROWTH_STAGES = [
+  "Sowing",
+  "Vegetative",
+  "Tillering",
+  "Grand growth",
+  "Panicle initiation",
+  "Squaring",
+  "Flowering",
+  "Boll filling",
+  "Tasselling",
+  "Grain filling",
+  "Ripening",
+  "Harvest",
+  "Ready",
+];
+
 interface GrowthStageEditorProps {
   bundle: PestBundle;
   farmId: string;
@@ -49,12 +65,16 @@ export default function GrowthStageEditor({ bundle, farmId, crops, initialStages
         </div>
         <div>
           <label className="text-xs font-semibold uppercase tracking-wider text-agro-slate">{bundle.growthStage.stage}</label>
-          <input
-            type="text"
+          <select
             value={stage}
             onChange={(e) => setStage(e.target.value)}
-            className="mt-2 h-12 w-full rounded-xl border border-agro-sprout bg-white px-4 text-sm text-agro-ink outline-none focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
-          />
+            className="pest-select mt-2 h-12 w-full appearance-none rounded-xl border border-agro-sprout bg-white px-4 pr-10 text-sm font-medium text-agro-ink outline-none transition-colors focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+            style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23475569' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 6l3.5 4 3.5-4z'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 0.75rem center" }}
+          >
+            {GROWTH_STAGES.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
         </div>
       </div>
       <div className="mt-4 flex items-center gap-3">
