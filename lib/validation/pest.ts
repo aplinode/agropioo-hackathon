@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const forecastQuerySchema = z.object({
   farm_id: z.string().uuid("Invalid farm"),
+  crop: z.string().optional(),
 });
 
 export const alertsQuerySchema = z.object({

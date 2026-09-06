@@ -11,7 +11,10 @@ export async function GET(request: Request) {
 
   try {
     const url = new URL(request.url);
-    const parsed = forecastQuerySchema.safeParse({ farm_id: url.searchParams.get("farm_id") });
+    const parsed = forecastQuerySchema.safeParse({
+      farm_id: url.searchParams.get("farm_id"),
+      crop: url.searchParams.get("crop"),
+    });
     if (!parsed.success) {
       return Response.json(
         { error: { code: "validation_error", message: "Invalid input", issues: parsed.error.issues } },
@@ -35,7 +38,7 @@ export async function GET(request: Request) {
     if (!farm || farm.length === 0) return errorResponse("not_found", "Farm not found", 404);
     const farmRow = farm[0];
 
-    const crop = farmRow.primary_crop ?? farmRow.crops[0] ?? "wheat";
+    const crop = parsed.data.crop ?? farmRow.primary_crop ?? farmRow.crops[0] ?? "wheat";
     const growthStage = farmRow.growth_stages?.[crop] ?? "Sowing";
 
     const forecast = await getForecast(Number(farmRow.lat), Number(farmRow.lng));
@@ -60,6 +63,7 @@ export async function GET(request: Request) {
     return jsonResponse({
       farm_id: farmRow.id,
       farm_name: farmRow.name,
+      crop,
       weather_data_unavailable: weatherSource === "unavailable",
       days: results.map((r) => ({
         date: r.date,

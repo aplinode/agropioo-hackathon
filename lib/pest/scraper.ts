@@ -39,7 +39,15 @@ const PROVINCIAL_SOURCES = [
   },
 ];
 
-const TIMEOUT_MS = 10_000;
+const TIMEOUT_MS = 8_000;
+
+const KNOWN_PESTS = new Set(["aphid", "whitefly", "bollworm", "jassid", "armyworm", "rust", "locust"]);
+
+function isValidIncidence(row: Omit<PestIncidenceRecord, "id" | "fetched_at" | "data_may_be_outdated">): boolean {
+  if (!KNOWN_PESTS.has(row.pest_type)) return false;
+  if (!row.district || row.district.length < 3 || row.district === row.province) return false;
+  return row.reported_count === null || row.reported_count > 0;
+}
 
 async function fetchWithTimeout(url: string): Promise<Response | null> {
   try {
@@ -139,40 +147,48 @@ export async function scrapeProvincialSources(): Promise<PestIncidenceRecord[]> 
   const results: PestIncidenceRecord[] = [];
   const today = new Date().toISOString().slice(0, 10);
 
-  for (const source of PROVINCIAL_SOURCES) {
-    const res = await fetchWithTimeout(source.url);
-    if (!res || !res.ok) {
-      const cached = await queryOne<PestIncidenceRecord>(
-        `SELECT * FROM pest_incidence_records WHERE province = $1 AND data_date = $2 ORDER BY fetched_at DESC LIMIT 1`,
-        [source.province, today],
-      );
-      if (cached) {
-        results.push({ ...cached, data_may_be_outdated: true });
+  const settled = await Promise.allSettled(
+    PROVINCIAL_SOURCES.map(async (source) => {
+      const res = await fetchWithTimeout(source.url);
+      if (!res || !res.ok) {
+        const cached = await queryOne<PestIncidenceRecord>(
+          `SELECT * FROM pest_incidence_records WHERE province = $1 AND data_date = $2 ORDER BY fetched_at DESC LIMIT 1`,
+          [source.province, today],
+        );
+        if (cached) {
+          return [{ ...cached, data_may_be_outdated: true } as PestIncidenceRecord];
+        }
+        return [];
       }
-      continue;
-    }
 
-    const html = await res.text();
-    const parsed = source.parser(html, source.province);
-    for (const row of parsed) {
-      const existing = await queryOne<PestIncidenceRecord>(
-        `SELECT * FROM pest_incidence_records WHERE province = $1 AND district = $2 AND crop = $3 AND pest_type = $4 AND data_date = $5`,
-        [row.province, row.district, row.crop, row.pest_type, row.data_date],
-      );
-      if (existing) {
-        await query(
-          `UPDATE pest_incidence_records SET raw_payload = $1, fetched_at = now(), data_may_be_outdated = false WHERE id = $2`,
-          [JSON.stringify(row.raw_payload), existing.id],
+      const html = await res.text();
+      const parsed = source.parser(html, source.province).filter(isValidIncidence);
+      const stored: PestIncidenceRecord[] = [];
+      for (const row of parsed) {
+        const existing = await queryOne<PestIncidenceRecord>(
+          `SELECT * FROM pest_incidence_records WHERE province = $1 AND district = $2 AND crop = $3 AND pest_type = $4 AND data_date = $5`,
+          [row.province, row.district, row.crop, row.pest_type, row.data_date],
         );
-        results.push({ ...existing, raw_payload: row.raw_payload, data_may_be_outdated: false });
-      } else {
-        const inserted = await queryOne<PestIncidenceRecord>(
-          `INSERT INTO pest_incidence_records (province, district, crop, pest_type, reported_count, source_url, data_date, raw_payload, data_may_be_outdated) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,false) RETURNING *`,
-          [row.province, row.district, row.crop, row.pest_type, row.reported_count, row.source_url, row.data_date, JSON.stringify(row.raw_payload)],
-        );
-        if (inserted) results.push(inserted);
+        if (existing) {
+          await query(
+            `UPDATE pest_incidence_records SET raw_payload = $1, fetched_at = now(), data_may_be_outdated = false WHERE id = $2`,
+            [JSON.stringify(row.raw_payload), existing.id],
+          );
+          stored.push({ ...existing, raw_payload: row.raw_payload, data_may_be_outdated: false });
+        } else {
+          const inserted = await queryOne<PestIncidenceRecord>(
+            `INSERT INTO pest_incidence_records (province, district, crop, pest_type, reported_count, source_url, data_date, raw_payload, data_may_be_outdated) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,false) RETURNING *`,
+            [row.province, row.district, row.crop, row.pest_type, row.reported_count, row.source_url, row.data_date, JSON.stringify(row.raw_payload)],
+          );
+          if (inserted) stored.push(inserted);
+        }
       }
-    }
+      return stored;
+    }),
+  );
+
+  for (const outcome of settled) {
+    if (outcome.status === "fulfilled") results.push(...outcome.value);
   }
 
   return results;

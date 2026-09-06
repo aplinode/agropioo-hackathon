@@ -26,6 +26,7 @@ type DayForecast = {
 type ForecastResponse = {
   farm_id: string;
   farm_name: string;
+  crop: string;
   weather_data_unavailable: boolean;
   days: DayForecast[];
 };
@@ -111,15 +112,21 @@ function DayCard({ day, index }: { day: DayForecast; index: number }) {
 export default function PestPageClient({ bundle, farms }: PestPageClientProps) {
   bundleRef = bundle;
   const [selectedFarmId, setSelectedFarmId] = useState(farms[0]?.id ?? "");
+  const [selectedCrop, setSelectedCrop] = useState<string>("");
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
   const selectedFarm = useMemo(() => farms.find((f) => f.id === selectedFarmId) ?? farms[0], [farms, selectedFarmId]);
+  const availableCrops = selectedFarm?.crops ?? [];
 
-  const fetchForecast = useCallback(async (farmId: string) => {
+  const activeCrop = selectedCrop || availableCrops[0] || "";
+
+  const fetchForecast = useCallback(async (farmId: string, crop: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/pest/forecast?farm_id=${farmId}`);
+      const params = new URLSearchParams({ farm_id: farmId });
+      if (crop) params.set("crop", crop);
+      const res = await fetch(`/api/pest/forecast?${params.toString()}`);
       if (res.ok) {
         const data: ForecastResponse = await res.json();
         setForecast(data);
@@ -132,8 +139,19 @@ export default function PestPageClient({ bundle, farms }: PestPageClientProps) {
   }, []);
 
   useEffect(() => {
-    if (selectedFarmId) fetchForecast(selectedFarmId);
-  }, [selectedFarmId, fetchForecast]);
+    if (selectedFarmId) fetchForecast(selectedFarmId, activeCrop);
+  }, [selectedFarmId, selectedCrop, activeCrop, fetchForecast]);
+
+  function handleFarmChange(farmId: string) {
+    setSelectedFarmId(farmId);
+    setSelectedCrop("");
+    setForecast(null);
+  }
+
+  function handleCropChange(crop: string) {
+    setSelectedCrop(crop);
+    setForecast(null);
+  }
 
   return (
     <div className="space-y-6">
@@ -148,22 +166,42 @@ export default function PestPageClient({ bundle, farms }: PestPageClientProps) {
         <p className="mt-2 max-w-lg leading-relaxed text-agro-slate">{bundle.description}</p>
       </div>
 
-      {/* Farm selector */}
+      {/* Farm + crop selector */}
       <div className="rounded-2xl border border-agro-sprout bg-white p-5">
-        <label className="text-xs font-semibold uppercase tracking-wider text-agro-slate">
-          {bundle.farmSelectorLabel}
-        </label>
-        <select
-          value={selectedFarmId}
-          onChange={(e) => setSelectedFarmId(e.target.value)}
-          className="pest-select mt-2 h-12 w-full appearance-none rounded-xl border border-agro-sprout bg-white px-4 pr-10 text-sm font-medium text-agro-ink outline-none transition-colors focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
-        >
-          {farms.map((f) => (
-            <option key={f.id} value={f.id}>
-              {f.name} — {f.district}
-            </option>
-          ))}
-        </select>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wider text-agro-slate">
+              {bundle.farmSelectorLabel}
+            </label>
+            <select
+              value={selectedFarmId}
+              onChange={(e) => handleFarmChange(e.target.value)}
+              className="pest-select mt-2 h-12 w-full appearance-none rounded-xl border border-agro-sprout bg-white px-4 pr-10 text-sm font-medium text-agro-ink outline-none transition-colors focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+            >
+              {farms.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.name} — {f.district}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold uppercase tracking-wider text-agro-slate">
+              Crop
+            </label>
+            <select
+              value={activeCrop}
+              onChange={(e) => handleCropChange(e.target.value)}
+              className="pest-select mt-2 h-12 w-full appearance-none rounded-xl border border-agro-sprout bg-white px-4 pr-10 text-sm font-medium text-agro-ink outline-none transition-colors focus:border-agro-canopy focus:ring-2 focus:ring-agro-canopy/20"
+            >
+              {availableCrops.length === 0 && <option value="">No crops</option>}
+              {availableCrops.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         {selectedFarm && (
           <div className="mt-3 flex flex-wrap gap-3 text-xs text-agro-slate">
@@ -173,11 +211,11 @@ export default function PestPageClient({ bundle, farms }: PestPageClientProps) {
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-lg bg-agro-mint/50 px-2.5 py-1">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-agro-leaf" />
-              {selectedFarm.crops.join(", ")}
+              {activeCrop}
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-lg bg-agro-mint/50 px-2.5 py-1">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-agro-earth" />
-              {selectedFarm.lat.toFixed(2)}, {selectedFarm.lng.toFixed(2)}
+              {Number(selectedFarm.lat).toFixed(2)}, {Number(selectedFarm.lng).toFixed(2)}
             </span>
           </div>
         )}
@@ -197,7 +235,9 @@ export default function PestPageClient({ bundle, farms }: PestPageClientProps) {
       {!loading && forecast && (
         <div>
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-agro-forest">7-Day Pest Risk Forecast</h2>
+            <h2 className="text-base font-semibold text-agro-forest">
+              7-Day Pest Risk Forecast{forecast.crop ? ` — ${forecast.crop}` : ""}
+            </h2>
             <span className="text-xs text-agro-slate">
               {forecast.weather_data_unavailable ? bundle.source.demo : bundle.source.live}
             </span>
@@ -215,7 +255,7 @@ export default function PestPageClient({ bundle, farms }: PestPageClientProps) {
         <GrowthStageEditor
           bundle={bundle}
           farmId={selectedFarm.id}
-          crops={selectedFarm.crops}
+          crops={[activeCrop]}
           initialStages={selectedFarm.growth_stages ?? {}}
         />
       )}

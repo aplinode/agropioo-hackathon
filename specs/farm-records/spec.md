@@ -67,6 +67,7 @@ Give every farmer a structured digital memory of each farm — crops, growth sta
 ### Map Integration
 
 - **FR23 Farm location map.** Farm creation and edit forms include an embedded Leaflet map (OpenStreetMap tiles, no API key required). Farmer taps map to drop a pin; latitude and longitude stored on farm record. Map shows saved pin on farm detail page.
+- **FR33 Map pick auto-fills admin fields.** When the farmer drops or drags the map pin, the selected point is reverse-geocoded (Photon/OpenStreetMap) and the resolved district/city is written into the district field — only when it matches an entry in the Pakistan districts list — while the resolved village/town/area is written into the location/village field. Existing district/location values are replaced by the reverse-geocoded values.
 
 ### Validation
 
@@ -99,6 +100,7 @@ Give every farmer a structured digital memory of each farm — crops, growth sta
 - Duplicate farm names: allowed (farmer may have multiple farms with similar names).
 - Season/year per record: each record carries its own season/year; same farm can have records across Summer, Winter, Rainy, Dry in different years.
 - Per-crop stage: each crop on a farm tracks its own stage independently; UI shows stage chip per crop on farm card and detail. Manual override stops auto-advance for that crop.
+- Map pick resolves to a place whose district does not match any entry in the Pakistan districts list: the district field keeps its previous value (or stays empty) and only the location/village field is populated from the reverse geocode; the farmer finishes the district manually.
 - Weather API failure: record creation does not fail if OpenWeatherMap is unreachable; farmer sees warning and must manually select weather condition.
 - Archived farms: excluded from `/farms` list by default; can be restored or permanently deleted. Records preserved through archive/restore cycle.
 
@@ -180,6 +182,7 @@ All UI colors MUST come from `--color-agro-*` CSS tokens defined in the project'
 - [ ] Farm card shows all seasons as chips pulled from records
 - [ ] Farm detail shows all records by default with season/year filter dropdown
 - [ ] District dropdown includes all Pakistan districts with search
+- [ ] Dropping or dragging the map pin fills the District/City and Location/Village fields from the reverse-geocoded address; district is only replaced when it matches the districts list
 - [ ] Farm creation/edit includes embedded Leaflet map for location
 - [ ] Weather auto-fetched from OpenWeatherMap; farmer can override; snapshot stored on record
 - [ ] Farm detail shows current weather badge

@@ -23,58 +23,103 @@ export type PredictionResult = {
   status: "active" | "monitoring";
 };
 
-const PEST_RULES: Record<string, { weight: number; stages: string[]; conditions: string[] }> = {
-  aphid: { weight: 1.0, stages: ["Vegetative", "Tillering", "Panicle initiation"], conditions: ["Clear", "Cloudy"] },
-  whitefly: { weight: 1.2, stages: ["Squaring", "Flowering", "Boll filling"], conditions: ["Clear", "Cloudy"] },
-  bollworm: { weight: 1.3, stages: ["Squaring", "Flowering", "Boll filling"], conditions: ["Clear"] },
-  jassid: { weight: 0.9, stages: ["Vegetative", "Tillering"], conditions: ["Clear", "Cloudy"] },
-  armyworm: { weight: 1.1, stages: ["Vegetative", "Grain filling", "Tasselling"], conditions: ["Clear"] },
-  rust: { weight: 1.4, stages: ["Vegetative", "Grain filling", "Panicle initiation"], conditions: ["Rainy", "Cloudy"] },
-  locust: { weight: 1.5, stages: ["Sowing", "Vegetative", "Grand growth"], conditions: ["Clear", "Cloudy"] },
+export type PestIncidence = {
+  pest_type: string;
+  reported_count: number | null;
+  district: string;
+};
+
+const AFFECTED_STAGE_POINTS = 25;
+const AMBIENT_WEATHER_POINTS = 15;
+const RISK_ACTIVE = 70;
+
+const PEST_RULES: Record<
+  string,
+  { weight: number; stages: string[]; conditions: string[] }
+> = {
+  aphid: { weight: 1.0, stages: ["Vegetative", "Tillering", "Panicle initiation"], conditions: ["Clear", "Clouds"] },
+  jassid: { weight: 0.95, stages: ["Vegetative", "Tillering"], conditions: ["Clear", "Clouds"] },
+  whitefly: { weight: 1.05, stages: ["Squaring", "Flowering", "Boll filling"], conditions: ["Clear", "Clouds", "Mist"] },
+  bollworm: { weight: 1.1, stages: ["Squaring", "Flowering", "Boll filling"], conditions: ["Clear", "Clouds"] },
+  armyworm: { weight: 1.0, stages: ["Vegetative", "Grain filling", "Tasselling"], conditions: ["Clear", "Clouds", "Mist", "Rain"] },
+  rust: { weight: 1.05, stages: ["Vegetative", "Grain filling", "Panicle initiation"], conditions: ["Rain", "Clouds", "Mist"] },
+  locust: { weight: 1.0, stages: ["Sowing", "Vegetative", "Grand growth"], conditions: ["Clear", "Clouds"] },
 };
 
 const STAGE_VULNERABILITY: Record<string, number> = {
-  Sowing: 0.3,
-  Tillering: 0.7,
-  Vegetative: 0.9,
-  Grain_filling: 0.8,
-  Ready: 0.4,
-  Squaring: 0.8,
-  Flowering: 0.9,
-  Boll_filling: 0.85,
-  Grand_growth: 0.8,
-  Ripening: 0.5,
-  Harvest: 0.2,
-  Panicle_initiation: 0.75,
-  Tasselling: 0.8,
+  sowing: 0.3,
+  tillering: 0.7,
+  vegetative: 0.9,
+  grain_filling: 0.8,
+  ready: 0.4,
+  squaring: 0.8,
+  flowering: 0.9,
+  boll_filling: 0.85,
+  grand_growth: 0.8,
+  ripening: 0.5,
+  harvest: 0.2,
+  panicle_initiation: 0.75,
+  tasselling: 0.8,
+};
+
+const CONDITION_FAMILY: Record<string, string> = {
+  Thunderstorm: "Rain",
+  Squall: "Rain",
+  Tornado: "Rain",
+  Drizzle: "Rain",
+  Rain: "Rain",
+  Snow: "Rain",
+  Mist: "Mist",
+  Haze: "Mist",
+  Fog: "Mist",
+  Smoke: "Mist",
+  Dust: "Mist",
+  Sand: "Mist",
+  Ash: "Mist",
+  Clouds: "Clouds",
+  Clear: "Clear",
 };
 
 function normalizeStage(stage: string): string {
   return stage.replace(/\s+/g, "_").toLowerCase();
 }
 
+function familyOf(condition: string): string {
+  return CONDITION_FAMILY[condition] ?? "Clear";
+}
+
 function weatherFactor(day: ForecastDay): number {
   let score = 0;
-  if (day.condition === "Rain" || day.condition === "Drizzle") score += 15;
-  if (day.humidity > 80) score += 10;
-  if (day.temp_max > 35) score += 5;
+  const family = familyOf(day.condition);
+  if (family === "Rain") score += 15;
   if (day.precip_mm > 5) score += 10;
+  if (day.humidity > 80) score += 10;
+  if (day.humidity > 60) score += 5;
+  if (day.temp_max > 35) score += 5;
   return Math.min(score, 30);
 }
 
-async function historicalFactor(province: string, district: string, crop: string, pest: string): Promise<number> {
-  const rows = await getLatestIncidence(province, district, crop);
-  const all = rows as Array<{ pest_type: string; reported_count: number | null }>;
-  const match = all.find((r) => r.pest_type === pest && r.reported_count && r.reported_count > 0);
-  if (!match) return 0;
-  const count = Math.min(match.reported_count ?? 0, 100);
-  return (count / 100) * 25;
+function historicalFactor(incidence: PestIncidence[], pest: string): number {
+  let total = 0;
+  for (const row of incidence) {
+    if (row.pest_type === pest && row.reported_count && row.reported_count > 0) {
+      total += row.reported_count;
+    }
+  }
+  if (total <= 0) return 0;
+  return Math.min(total, 25);
 }
 
-export async function scoreRisk(input: PredictionInput): Promise<PredictionResult[]> {
+export async function scoreRisk(
+  input: PredictionInput,
+  incidence?: PestIncidence[],
+): Promise<PredictionResult[]> {
   const results: PredictionResult[] = [];
   const stageKey = normalizeStage(input.growthStage);
   const stageVuln = STAGE_VULNERABILITY[stageKey] ?? 0.5;
+
+  const rows = incidence ?? (await getLatestIncidence(input.province, input.district, input.crop));
+  const incidenceRows = rows as PestIncidence[];
 
   for (const day of input.forecast) {
     if (input.weatherSource === "unavailable") {
@@ -88,35 +133,47 @@ export async function scoreRisk(input: PredictionInput): Promise<PredictionResul
       continue;
     }
 
+    const family = familyOf(day.condition);
+    const weather = weatherFactor(day);
+
     let bestPest: string | null = null;
     let bestScore = 0;
-    let totalConfidence = 0;
-    let pestCount = 0;
+    let secondBest = 0;
 
     for (const [pest, rule] of Object.entries(PEST_RULES)) {
-      const stageMatch = rule.stages.some((s) => normalizeStage(s) === stageKey) ? 15 : 0;
-      const weatherMatch = rule.conditions.includes(day.condition) ? 10 : 0;
-      const hist = await historicalFactor(input.province, input.district, input.crop, pest);
-      const pestScore = (stageVuln * 30) + stageMatch + weatherMatch + weatherFactor(day) + hist;
-      const weighted = pestScore * rule.weight;
+      const stageMatchesVulnerable = rule.stages.some((s) => normalizeStage(s) === stageKey) ? 1 : 0;
+      const weatherConducive = rule.conditions.includes(family) ? 1 : 0;
+
+      const stageBase = stageVuln * 35;
+      const raw =
+        stageBase +
+        stageMatchesVulnerable * AFFECTED_STAGE_POINTS +
+        weatherConducive * AMBIENT_WEATHER_POINTS +
+        weather +
+        historicalFactor(incidenceRows, pest);
+
+      const weighted = Math.round(raw * rule.weight);
 
       if (weighted > bestScore) {
+        secondBest = bestScore;
         bestScore = weighted;
         bestPest = pest;
+      } else if (weighted > secondBest) {
+        secondBest = weighted;
       }
-      totalConfidence += weighted;
-      pestCount++;
     }
 
     const riskScore = Math.min(Math.round(bestScore), 100);
-    const confidence = pestCount > 0 ? Math.min(Math.round((bestScore / (totalConfidence / pestCount)) * 100), 100) : 0;
+    const confidence = Math.min(100, Math.max(15, Math.round(45 + (bestScore - secondBest) * 2)));
+    const status: "active" | "monitoring" =
+      riskScore >= RISK_ACTIVE || confidence >= 60 ? "active" : "monitoring";
 
     results.push({
       date: day.date,
       riskScore,
       predictedPest: riskScore >= 20 ? bestPest : null,
       confidence,
-      status: confidence < 60 ? "monitoring" : "active",
+      status,
     });
   }
 
