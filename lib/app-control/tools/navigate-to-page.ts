@@ -16,7 +16,7 @@ const NAVIGATION_ALLOWLIST = [
 export const navigateToPage = tool({
   name: "navigate_to_page",
   description:
-    "Navigate the farmer to a specific page in the app. Use this when the farmer wants to go to a different section (farms, records, prices, advisor, etc.). The path must be one of the allowed pages.",
+    "Navigate the farmer to a specific page in the app. Use this when the farmer wants to go to a different section. The path must be one of the allowed pages.",
   parameters: z.object({
     path: z.string().describe("The page path to navigate to, e.g. /farms, /records, /prices"),
   }),
@@ -26,10 +26,22 @@ export const navigateToPage = tool({
       return `I can't navigate to "${normalized}". I can only take you to: ${NAVIGATION_ALLOWLIST.join(", ")}.`;
     }
 
+    const labelMap: Record<string, string> = {
+      "/dashboard": "Dashboard",
+      "/farms": "Farms",
+      "/records": "Records",
+      "/prices": "Prices",
+      "/profit-loss": "Profit & Loss",
+      "/detect": "Crop Doctor",
+      "/schemes": "Schemes",
+      "/weather": "Weather",
+      "/advisor": "Advisor",
+    };
+
     return JSON.stringify({
       type: "navigation_button",
       path: normalized,
-      label: `Go to ${normalized.replace(/^\//, "").replace(/^\w/, (c) => c.toUpperCase())}`,
+      label: `Go to ${labelMap[normalized] ?? normalized}`,
     });
   },
 });

@@ -2,7 +2,7 @@
 
 ## Goal
 
-Build a floating, multi-tab conversational interface that lets farmers control the entire Agropioo app through natural text chat with image attachments, interactive response cards, and human-in-the-loop confirmation for write actions.
+Build a floating conversational interface that lets farmers control the entire Agropioo app through natural text chat with image attachments, interactive response cards, and human-in-the-loop confirmation for write actions.
 
 ## Key Decisions (locked)
 
@@ -12,7 +12,7 @@ Build a floating, multi-tab conversational interface that lets farmers control t
 - **Navigation**: Explicit allowlist of farmer-app routes; agent cannot navigate outside it.
 - **Page context**: React context provider at layout level; pages push rich state (farmId, season, etc.) into it.
 - **Conversations**: Dedicated tables (`app_control_conversations`, `app_control_messages`) with per-feature summaries.
-- **Multi-tab**: True tabs inside the panel — each tab has its own message list, streaming state, and abort controller.
+- **UI**: Single conversation view with inline sidebar for past conversations — no multi-tab.
 - **Memory**: App-control summaries only; advisor summaries are not shared.
 - **Reminders**: Deferred — agent suggests but does not directly create scheduled reminders.
 - **Accessibility**: `prefers-reduced-motion` respected for bubble pulse; 44×44px touch targets; RTL per-message.
@@ -134,7 +134,6 @@ Creates the app-control agent. Hybrid architecture:
 
 ```ts
 export function createAppControlAgent(ctx: AppControlContext) {
-  // SDK Agent handles read actions and routing
   const agent = new Agent({
     name: "AppControl",
     instructions: APP_CONTROL_INSTRUCTIONS,
@@ -142,12 +141,19 @@ export function createAppControlAgent(ctx: AppControlContext) {
     tools: [
       // Read/navigation tools (SDK-managed)
       navigateToPage,
+      getDashboardSummary,
       getFarmSummary,
+      getFarmDetails,
       getRecordDetails,
+      getRecentRecords,
       getPriceSummary,
       getWeatherSummary,
       // Advisor handoff
       handoffToAdvisor,
+      // Write tools (HITL confirmation)
+      createRecord,
+      updateRecord,
+      deleteRecord,
     ],
     handoffs: [],
     inputGuardrails: appControlInputGuardrails,
@@ -163,8 +169,12 @@ export function createAppControlAgent(ctx: AppControlContext) {
 ### `lib/app-control/tools/`
 
 - `navigate-to-page.ts` — validates target against allowlist, returns navigation event.
-- `get-farm-summary.ts` — read-only farm data.
+- `get-dashboard-summary.ts` — quick overview of farmer's account (farm count, recent records, alerts).
+- `get-farm-summary.ts` — read-only farm data summary.
+- `get-farm-details.ts` — detailed farm information including soil type, irrigation method, growth stages.
 - `get-record-details.ts` — read-only record data.
+- `get-recent-records.ts` — recent farming activities across all farms or filtered by farm/type.
+- `get-profit-loss-summary.ts` — season-level profitability summary with costs, revenue, net profit/loss, and ROI.
 - `create-record.ts` — write tool; returns confirmation card, waits for user Yes/No.
 - `update-record.ts` — write tool; shows diff card, waits for confirmation.
 - `delete-record.ts` — write tool; confirms before deleting.
@@ -205,28 +215,16 @@ The `toSSEStream` function signature changes to accept a richer event emitter. T
 
 The outer shell that exists on every farmer page. Manages:
 - Floating bubble (minimized state) with pulse animation + unread dot.
-- Expanded 80% modal overlay panel.
+- Expanded 85vh modal overlay panel.
 - Persistence across navigations (Next.js `usePathname` change does not unmount because this lives in the Server layout).
 - Z-index: bubble `z-50`, panel `z-50` (below `ConfirmDialog` at `z-[60]`).
 
 ### `components/app-control/app-control-panel.tsx`
 
 The expanded chat panel. Contains:
-- Multi-tab bar (top of panel).
-- Active tab content: sidebar + chat area + composer.
+- Single conversation view with inline sidebar for past conversations.
+- Chat area + composer.
 - Minimize/close buttons.
-
-### `components/app-control/app-control-tabs.tsx`
-
-Tab bar inside the panel. Each tab:
-- Shows conversation title.
-- Has close button (with confirmation dialog).
-- Active tab highlighted.
-- New tab button.
-
-### `components/app-control/app-control-sidebar.tsx`
-
-Reuses `AdvisorSidebar` pattern but for app-control conversations. Same rename/delete flow with `ConfirmDialog`.
 
 ### `components/app-control/app-control-chat.tsx`
 
