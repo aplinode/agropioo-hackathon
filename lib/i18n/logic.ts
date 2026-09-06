@@ -100,6 +100,12 @@ export function resolveString(
   return { text: "", isFallback: true };
 }
 
+const ARABIC_URDU_RE = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+export function textDirection(text: string): "rtl" | "ltr" {
+  return ARABIC_URDU_RE.test(text) ? "rtl" : "ltr";
+}
+
 /** Substitutes {name} placeholders; unknown names stay visible instead of crashing. */
 export function formatMessage(
   template: string,
