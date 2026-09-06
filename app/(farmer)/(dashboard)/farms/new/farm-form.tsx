@@ -166,23 +166,6 @@ function normalizeDistrictName(name: string): string {
     .trim();
 }
 
-function pickShortName(addr: Record<string, string> | undefined): string | undefined {
-  if (!addr) return undefined;
-  return (
-    addr.village ||
-    addr.hamlet ||
-    addr.neighbourhood ||
-    addr.suburb ||
-    addr.locality ||
-    addr.town ||
-    addr.city_district ||
-    addr.municipality ||
-    addr.city ||
-    addr.county ||
-    addr.district
-  );
-}
-
 function matchDistrict(candidate: string | undefined): string | undefined {
   if (!candidate) return undefined;
   const normalized = normalizeDistrictName(candidate);
@@ -440,30 +423,28 @@ const LocationSearch = forwardRef<{ skipAutoGeocode: () => void }, {
     display_name: string;
     lat: number;
     lon: number;
-    address?: Record<string, string>;
   }) => {
     skipAutoGeocodeRef.current = true;
     justPickedRef.current = true;
-    const shortName =
-      pickShortName(item.address) || item.display_name.split(",")[0].trim() || item.display_name;
-    onChange(shortName);
-    onLocationPick(item.lat, item.lon, item.display_name);
+    const placeName = item.display_name;
+    onChange(placeName);
+    onLocationPick(item.lat, item.lon, placeName);
     setOpen(false);
-    setQuery(shortName);
+    setQuery(placeName);
   };
 
   const handlePresetSelect = async (area: string) => {
     skipAutoGeocodeRef.current = true;
     justPickedRef.current = true;
     const fullLoc = `${area}, ${district}`;
-    onChange(area);
-    setQuery(area);
+    onChange(fullLoc);
+    setQuery(fullLoc);
     setOpen(false);
 
     try {
       const results = await photonSearch(`${fullLoc}, Pakistan`, 1);
       if (results[0]) {
-        onLocationPick(results[0].lat, results[0].lon, results[0].display_name);
+        onLocationPick(results[0].lat, results[0].lon);
       }
     } catch (e) {
       console.error(e);
@@ -782,7 +763,13 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
         if (result) {
           const addr = result.address || {};
           const placeName =
-            pickShortName(addr) ||
+            addr.village ||
+            addr.suburb ||
+            addr.town ||
+            addr.neighbourhood ||
+            addr.city_district ||
+            addr.city ||
+            addr.county ||
             result.display_name ||
             "Selected Location";
 
@@ -1106,23 +1093,18 @@ export default function NewFarmForm({ bundle }: { bundle: FarmsBundle }) {
         </div>
       </div>
 
-      <FarmMap marker={marker} onPickLocation={handlePickLocation} label={selectedLocationName || null} />
+      <FarmMap marker={marker} onPickLocation={handlePickLocation} />
 
         {isGeocoding ? (
           <p className="mt-2 flex items-center gap-1.5 text-xs text-agro-slate animate-pulse">
             <MapPinIcon size={14} className="text-agro-canopy" />
-            Finding exact location for the pin...
+            Finding address for selected location...
           </p>
         ) : selectedLocationName ? (
           <div className="mt-2 flex items-center gap-2 rounded-xl bg-agro-mint px-3.5 py-2.5 text-xs font-medium text-agro-canopy border border-agro-sprout">
             <MapPinIcon size={16} className="shrink-0 text-agro-canopy" />
-            <span className="min-w-0">
-              <span className="line-clamp-2">
-                <strong>Exact location:</strong> {watch("location")}
-              </span>
-              <span className="block font-mono text-[10px] text-agro-slate">
-                {marker.lat.toFixed(5)}, {marker.lng.toFixed(5)} · {selectedLocationName}
-              </span>
+            <span className="line-clamp-2">
+              <strong>Selected Location:</strong> {selectedLocationName}
             </span>
           </div>
         ) : null}
