@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BellIcon,
+  BugIcon,
   CameraIcon,
   ChatIcon,
   GearIcon,
@@ -39,6 +40,7 @@ export default function AppSidebar({ bundle }: AppSidebarProps) {
     { href: "/profit-loss", label: nav.profitLoss, Icon: TrendingUpIcon },
     { href: "/advisor", label: nav.advisor, Icon: ChatIcon },
     { href: "/detect", label: nav.detect, Icon: CameraIcon },
+    { href: "/pest", label: nav.pest, Icon: BugIcon },
     { href: "/crops", label: nav.crops, Icon: WheatIcon },
     { href: "/prices", label: nav.prices, Icon: TagIcon },
     { href: "/weather", label: nav.weather, Icon: WeatherIcon },

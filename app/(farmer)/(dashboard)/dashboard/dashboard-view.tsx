@@ -25,6 +25,7 @@ import { LatinInline } from "@/components/latin-inline";
 import type { Locale } from "@/lib/i18n/config";
 import type { DashboardBundle } from "./dashboard-bundle";
 import DashboardPricesWidget, { type WidgetCropPrice } from "@/components/prices/dashboard-prices-widget";
+import PestRiskWidget from "@/components/pest/PestRiskWidget";
 
 const CHECKLIST_DISMISS_KEY = "agropioo-checklist-dismissed";
 
@@ -145,6 +146,13 @@ type DashboardViewProps = {
   totalFarms?: number;
   user?: { fullName: string; email: string };
   widgetPrices?: WidgetCropPrice[];
+  pestRisks?: Array<{
+    id: string;
+    name: string;
+    risk: number;
+    pest: string | null;
+    status: "active" | "monitoring";
+  }>;
 };
 
 const CHECKLIST_ITEMS = [
@@ -169,6 +177,7 @@ export default function DashboardView({
   totalFarms,
   user: realUser,
   widgetPrices = [],
+  pestRisks = [],
 }: DashboardViewProps) {
   const isEmpty = variant === "empty";
   const completedCount = isEmpty ? 0 : 1;
@@ -500,6 +509,23 @@ export default function DashboardView({
 
       {/* Mandi prices summary widget */}
       <DashboardPricesWidget prices={widgetPrices} bundle={bundle} />
+
+      {/* Pest risk widget */}
+      <PestRiskWidget
+        title={bundle.pestWidgetTitle}
+        allClear={bundle.pestWidgetAllClear}
+        severityWarning={bundle.severityWatch}
+        severityCritical={bundle.severityCritical}
+        highestRisk={bundle.pestWidgetHighestRisk}
+        monitoring={bundle.pestWidgetMonitoring}
+        farms={pestRisks.map((r) => ({
+          id: r.id,
+          name: r.name,
+          risk: r.risk,
+          pest: r.pest,
+          status: r.status as "active" | "monitoring",
+        }))}
+      />
 
       {/* Detect CTA — the page's single high-emphasis surface (deep green) */}
       <Link

@@ -11,6 +11,7 @@ export type ShellBundle = {
     profitLoss: string;
     advisor: string;
     detect: string;
+    pest: string;
     crops: string;
     prices: string;
     weather: string;

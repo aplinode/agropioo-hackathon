@@ -6,6 +6,14 @@ import { query, queryOne } from "@/lib/db";
 import { computeFarmHealth } from "@/lib/farms/health";
 import type { WidgetCropPrice } from "@/components/prices/dashboard-prices-widget";
 
+type PestRiskRow = {
+  farm_id: string;
+  farm_name: string;
+  risk_score: number;
+  predicted_pest: string | null;
+  status: string;
+};
+
 export const metadata: Metadata = {
   title: "Dashboard — Agropioo",
   description:
@@ -66,6 +74,7 @@ export default async function DashboardPage({
   }
 
   let widgetPrices: WidgetCropPrice[] = [];
+  let pestRisks: PestRiskRow[] = [];
   try {
     // Get user's tracked crops, fallback to first 3 crops by name
     const trackedRows = await query<{ crop_id: string }>(
@@ -122,6 +131,21 @@ export default async function DashboardPage({
     console.error("Error fetching dashboard prices widget data:", err);
   }
 
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const pestRows = await query<PestRiskRow>(
+      `SELECT pp.farm_id, f.name AS farm_name, pp.risk_score, pp.predicted_pest, pp.status
+       FROM pest_predictions pp
+       JOIN farms f ON f.id = pp.farm_id
+       WHERE pp.account_id = $1 AND pp.prediction_date = $2
+       ORDER BY pp.risk_score DESC`,
+      [session.accountId, today],
+    );
+    pestRisks = pestRows ?? [];
+  } catch (err) {
+    console.error("Error fetching pest risks for dashboard:", err);
+  }
+
   return (
     <DashboardView
       variant={emptyView ? "empty" : "default"}
@@ -132,6 +156,13 @@ export default async function DashboardPage({
       totalFarms={totalFarms}
       user={user}
       widgetPrices={widgetPrices}
+      pestRisks={pestRisks.map((r) => ({
+        id: r.farm_id,
+        name: r.farm_name,
+        risk: r.risk_score,
+        pest: r.predicted_pest,
+        status: r.status as "active" | "monitoring",
+      }))}
     />
   );
 }

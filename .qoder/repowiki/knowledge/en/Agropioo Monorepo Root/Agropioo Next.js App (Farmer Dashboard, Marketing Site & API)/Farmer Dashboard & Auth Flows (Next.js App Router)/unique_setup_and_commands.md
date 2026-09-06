@@ -1,1 +1,0 @@
-No build scripts inside this scope; the module relies on Next.js conventions — run the dev server at `/` to reach the farmer app, which redirects unauthenticated users through its dashboard layout's `requireSessionPage()` guard.
