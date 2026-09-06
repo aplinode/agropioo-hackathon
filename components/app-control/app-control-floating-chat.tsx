@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import AppControlPanel from "@/components/app-control/app-control-panel";
+import SimpleAppControlChat from "@/components/app-control/app-control-chat";
 import type { AppControlBundle } from "@/components/app-control/app-control-bundle";
 
 type Props = {
@@ -39,7 +39,7 @@ export default function AppControlFloatingChat({ bundle }: Props) {
               </button>
             </div>
             <div className="flex-1 overflow-hidden">
-              <AppControlPanel bundle={bundle} />
+              <SimpleAppControlChat bundle={bundle} />
             </div>
           </div>
         </div>
