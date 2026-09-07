@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { textDirection } from "@/lib/i18n/logic";
 
 type ChatMessage = {
@@ -21,6 +22,8 @@ export default function ChatBubble({ message, isStreaming, streamingText, dir }:
   const text = isStreaming && streamingText !== undefined ? streamingText : message.content;
   const direction = dir ?? textDirection(text);
   const isLong = text.length > 300;
+  const [expanded, setExpanded] = useState(false);
+  const showFull = expanded && !isStreaming;
 
   return (
     <div className={`flex ${isFarmer ? "justify-end" : "justify-start"} mb-3`}>
@@ -53,7 +56,7 @@ export default function ChatBubble({ message, isStreaming, streamingText, dir }:
           </div>
         )}
 
-        <div className={isLong && !isStreaming ? "line-clamp-4" : ""}>
+        <div className={isLong && !showFull ? "line-clamp-4" : ""}>
           {text || <span className="text-agro-ink/40">…</span>}
         </div>
 
@@ -61,12 +64,9 @@ export default function ChatBubble({ message, isStreaming, streamingText, dir }:
           <button
             type="button"
             className="mt-1 text-xs font-medium text-agro-canopy underline-offset-2 hover:underline"
-            onClick={() => {
-              const el = document.getElementById(`msg-${message.id}`);
-              el?.classList.toggle("line-clamp-4");
-            }}
+            onClick={() => setExpanded((prev) => !prev)}
           >
-            Show more
+            {expanded ? "Show less" : "Show more"}
           </button>
         )}
 
