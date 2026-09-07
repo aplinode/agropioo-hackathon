@@ -2,6 +2,45 @@ import { tool } from "@openai/agents";
 import { z } from "zod";
 import { queryOne } from "@/lib/db";
 
+export function createGetFarmDetailsTool(accountId: string) {
+  return tool({
+    name: "get_farm_details",
+    description:
+      "Get detailed information about a specific farm including soil type, irrigation method, crop details, growth stages, and sowing date. Use this when the farmer asks about a specific farm's details, soil, irrigation, or crops.",
+    parameters: z.object({
+      farmId: z.string().describe("The farm ID to get details for"),
+    }),
+    async execute({ farmId }) {
+      const farm = await queryOne<FarmDetailRow>(
+        `SELECT id, name, location, district, acres, crops, growth_stages, soil_type, irrigation_method, primary_crop, sowing_date
+         FROM farms
+         WHERE id = $1 AND account_id = $2 AND archived_at IS NULL`,
+        [farmId, accountId]
+      );
+
+      if (!farm) {
+        return "Farm not found. Please check your farm list.";
+      }
+
+      const crops = formatCrops(farm.crops);
+      const stage = formatGrowthStage(farm.growth_stages);
+      const soil = farm.soil_type || "not recorded";
+      const irrigation = farm.irrigation_method || "not recorded";
+      const sowing = farm.sowing_date || "not recorded";
+
+      return `Farm: ${farm.name}
+Location: ${farm.location}, ${farm.district}
+Size: ${farm.acres} acres
+Soil type: ${soil}
+Irrigation: ${irrigation}
+Primary crop: ${farm.primary_crop || "not set"}
+Sowing date: ${sowing}
+Crops: ${crops}
+Growth stages: ${stage}`;
+    },
+  });
+}
+
 type FarmDetailRow = {
   id: string;
   name: string;
@@ -32,40 +71,3 @@ function formatGrowthStage(stages: Record<string, string>): string {
   if (entries.length === 0) return "not set";
   return entries.map(([crop, stage]) => `${crop}: ${stage}`).join(", ");
 }
-
-export const getFarmDetails = tool({
-  name: "get_farm_details",
-  description:
-    "Get detailed information about a specific farm including soil type, irrigation method, crop details, growth stages, and sowing date. Use this when the farmer asks about a specific farm's details, soil, irrigation, or crops.",
-  parameters: z.object({
-    farmId: z.string().describe("The farm ID to get details for"),
-  }),
-  async execute({ farmId }) {
-    const farm = await queryOne<FarmDetailRow>(
-      `SELECT id, name, location, district, acres, crops, growth_stages, soil_type, irrigation_method, primary_crop, sowing_date
-       FROM farms
-       WHERE id = $1 AND archived_at IS NULL`,
-      [farmId]
-    );
-
-    if (!farm) {
-      return "Farm not found. Please check your farm list.";
-    }
-
-    const crops = formatCrops(farm.crops);
-    const stage = formatGrowthStage(farm.growth_stages);
-    const soil = farm.soil_type || "not recorded";
-    const irrigation = farm.irrigation_method || "not recorded";
-    const sowing = farm.sowing_date || "not recorded";
-
-    return `Farm: ${farm.name}
-Location: ${farm.location}, ${farm.district}
-Size: ${farm.acres} acres
-Soil type: ${soil}
-Irrigation: ${irrigation}
-Primary crop: ${farm.primary_crop || "not set"}
-Sowing date: ${sowing}
-Crops: ${crops}
-Growth stages: ${stage}`;
-  },
-});

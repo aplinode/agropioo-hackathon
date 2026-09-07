@@ -1,18 +1,18 @@
 import { Agent } from "@openai/agents";
 import { appControlModel } from "./model";
 import { navigateToPage } from "./tools/navigate-to-page";
-import { getDashboardSummary } from "./tools/get-dashboard-summary";
-import { getFarmSummary } from "./tools/get-farm-summary";
-import { getFarmDetails } from "./tools/get-farm-details";
-import { getRecordDetails } from "./tools/get-record-details";
-import { getRecentRecords } from "./tools/get-recent-records";
-import { getProfitLossSummary } from "./tools/get-profit-loss-summary";
+import { createGetDashboardSummaryTool } from "./tools/get-dashboard-summary";
+import { createGetFarmSummaryTool } from "./tools/get-farm-summary";
+import { createGetFarmDetailsTool } from "./tools/get-farm-details";
+import { createGetRecordDetailsTool } from "./tools/get-record-details";
+import { createGetRecentRecordsTool } from "./tools/get-recent-records";
+import { createGetProfitLossSummaryTool } from "./tools/get-profit-loss-summary";
 import { getPriceSummary } from "./tools/get-price-summary";
-import { getWeatherSummary } from "./tools/get-weather-summary";
+import { createGetWeatherSummaryTool } from "./tools/get-weather-summary";
 import { handoffToAdvisor } from "./tools/handoff-to-advisor";
-import { createRecord } from "./tools/create-record";
-import { updateRecord } from "./tools/update-record";
-import { deleteRecord } from "./tools/delete-record";
+import { createCreateRecordTool } from "./tools/create-record";
+import { createUpdateRecordTool } from "./tools/update-record";
+import { createDeleteRecordTool } from "./tools/delete-record";
 
 export type AppControlContext = {
   accountId: string;
@@ -35,7 +35,7 @@ const NAVIGATION_ALLOWLIST = [
 ];
 
 function buildInstructions(ctx: AppControlContext): string {
-  return `You are the Agropioo App Control assistant. You help the farmer control and navigate the app using natural language.
+  return `You are the Agropioo App Control assistant. You help the farmer control and navigate the app using natural language. You also answer questions about the farmer's OWN data — their farms, records, prices, weather, and finances — by calling the data tools.
 
 Current context:
 - Page: ${ctx.currentPath || "unknown"}
@@ -48,14 +48,17 @@ Navigation rules:
 - To navigate, use the navigate_to_page tool. Do NOT describe navigation in prose — always call the tool.
 
 Reading rules:
-- Use get_dashboard_summary for an overview of the farmer's account.
+- Use get_dashboard_summary for an overview of the farmer's account. This also answers count questions like "how many farms do I have", "how many records", and "how many alerts".
 - Use get_farm_details for detailed information about a specific farm.
 - Use get_recent_records to see what activities the farmer has been doing.
 - Use get_profit_loss_summary for season-level profitability, costs, revenue, and ROI.
 - Use get_farm_summary for a quick list of all farms.
 - Use get_record_details for specific record information.
 - Use get_price_summary for current mandi prices.
-- Use get_weather_summary for weather conditions.
+- Use get_weather_summary for weather conditions at a specific farm.
+
+IMPORTANT: Use the tools to fetch the farmer's REAL data before answering. Never invent farm names, record counts, or prices. When the farmer asks "how many farms do I have" or "show my farms", call get_farm_summary (or get_dashboard_summary for a count) and report the actual numbers.
+If a tool returns no data, tell the farmer honestly and suggest checking the relevant app section.
 
 Confirmation rules for write actions (create, update, delete records):
 - Before executing any write action, show the user exactly what will happen and ask for confirmation.
@@ -87,17 +90,17 @@ export function createAppControlAgent(ctx: AppControlContext) {
     model: appControlModel(),
     tools: [
       navigateToPage,
-      getDashboardSummary,
-      getFarmSummary,
-      getFarmDetails,
-      getRecordDetails,
-      getRecentRecords,
-      getProfitLossSummary,
+      createGetDashboardSummaryTool(ctx.accountId),
+      createGetFarmSummaryTool(ctx.accountId),
+      createGetFarmDetailsTool(ctx.accountId),
+      createGetRecordDetailsTool(ctx.accountId),
+      createGetRecentRecordsTool(ctx.accountId),
+      createGetProfitLossSummaryTool(ctx.accountId),
       getPriceSummary,
-      getWeatherSummary,
-      createRecord,
-      updateRecord,
-      deleteRecord,
+      createGetWeatherSummaryTool(ctx.accountId),
+      createCreateRecordTool(ctx.accountId),
+      createUpdateRecordTool(ctx.accountId),
+      createDeleteRecordTool(ctx.accountId),
       handoffToAdvisor,
     ],
     handoffs: [],
