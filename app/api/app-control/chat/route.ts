@@ -194,8 +194,11 @@ export async function POST(request: Request) {
       [convId, "agent", output]
     );
     await query(
-      `UPDATE app_control_conversations SET updated_at = $1 WHERE id = $2`,
-      [now.toISOString(), convId]
+      `UPDATE app_control_conversations
+       SET title = CASE WHEN title = 'New conversation' OR title = '' THEN $1 ELSE title END,
+           updated_at = $2
+       WHERE id = $3`,
+      [message.slice(0, 60) || "New conversation", now.toISOString(), convId]
     );
 
     const outputTokens = estimateTokens(output);

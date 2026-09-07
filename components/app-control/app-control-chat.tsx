@@ -232,15 +232,15 @@ export default function SimpleAppControlChat({ bundle }: Props) {
             ) : (
               <ul className="py-1">
                 {conversations.map((conv) => (
-                  <li key={conv.id} className="group flex items-center gap-1">
+                  <li key={conv.id} className="group flex min-w-0 items-center gap-1">
                     <button
                       type="button"
                       onClick={() => openConversation(conv)}
-                      className={`flex-1 truncate px-3 py-2 text-start text-sm ${
+                      className={`min-w-0 flex-1 px-3 py-2 text-start text-sm leading-snug ${
                         conversationId === conv.id ? "bg-agro-leaf/15 text-agro-forest" : "text-agro-ink hover:bg-agro-stone/20"
                       }`}
                     >
-                      <span className="truncate">{conv.title}</span>
+                      <span className="line-clamp-3 whitespace-normal break-words">{conv.title}</span>
                     </button>
                     <button
                       type="button"
@@ -268,7 +268,7 @@ export default function SimpleAppControlChat({ bundle }: Props) {
           >
             <MenuIcon size={18} />
           </button>
-          <h3 className="text-sm font-medium text-agro-ink">
+          <h3 className="min-w-0 flex-1 truncate text-sm font-medium text-agro-ink">
             {conversationId ? conversations.find((c) => c.id === conversationId)?.title ?? "Chat" : "New chat"}
           </h3>
         </div>
