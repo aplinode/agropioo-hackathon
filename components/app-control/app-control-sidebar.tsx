@@ -70,7 +70,7 @@ export default function AppControlSidebar({ conversations, activeId, onSelect, o
             {conversations.map((conv) => (
               <li
                 key={conv.id}
-                className={`group flex items-center gap-2 rounded-lg px-2 py-2 ${
+                className={`group flex min-w-0 items-center gap-2 rounded-lg px-2 py-2 ${
                   activeId === conv.id ? "bg-agro-leaf/15 ring-1 ring-inset ring-agro-leaf/30" : "hover:bg-agro-stone/20"
                 }`}
               >
@@ -91,10 +91,10 @@ export default function AppControlSidebar({ conversations, activeId, onSelect, o
                     <button
                       type="button"
                       onClick={() => onSelect(conv.id)}
-                      className="flex-1 truncate text-start text-sm"
+                      className="min-w-0 flex-1 text-start text-sm leading-snug"
                       title={conv.title}
                     >
-                      {conv.title}
+                      <span className="line-clamp-3 whitespace-normal break-words">{conv.title}</span>
                     </button>
                     <div className="hidden gap-0.5 group-hover:flex">
                       <button
