@@ -10,7 +10,7 @@ profit/loss tracking, all in the farmer's own language (8 locales, with RTL).
 
 **Builders:** Sheikh Mohammad Ahmed (Team Lead), Mustafa Shahzad (Co-Creator) · Aplinode.
 
-[**Demo Video:**](https://youtu.be/KzR7_XsakdQ?si=o3REP5N6hPw_Ltc1)
+**Demo Video:** [Click Here](https://youtu.be/KzR7_XsakdQ?si=o3REP5N6hPw_Ltc1)
 
 ---
 
